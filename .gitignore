@@ -1,0 +1,53 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.keystore
+*.jks
+local.keystore
+/app/release/
+/app/build/
+
+# Gradle / build
+build/
+**/build/
+out/
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IDE
+*.iws
+*.ipr
+
+# Kotlin / KSP / generated sources (keep app/schemas/ tracked for Room migrations)
+.kotlin/
+**/generated/
+
+# Signing & secrets
+*.p12
+*.pfx
+*.pem
+*.key
+keystore.properties
+signing.properties
+secrets.properties
+google-services.json
+.env
+.env.*
+!.env.example
+
+# OS junk
+Thumbs.db
+desktop.ini
+
+# Logs / crash dumps
+*.log
+hs_err_pid*
+replay_pid*

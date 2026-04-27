@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Belt-and-suspenders: even though the app has no INTERNET permission and
+    cannot open a socket, this config would deny all cleartext and trust no
+    CAs if somehow a network call were attempted.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors />
+    </base-config>
+</network-security-config>

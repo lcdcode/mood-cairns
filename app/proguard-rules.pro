@@ -1,0 +1,4 @@
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn org.slf4j.**

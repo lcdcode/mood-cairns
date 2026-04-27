@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mood Cairns</string>
+    <string name="widget_title">Log mood</string>
+    <string name="widget_subtitle">Tap to open Mood Cairns</string>
+    <string name="widget_description">Quick-log your mood</string>
+</resources>
