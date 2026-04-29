@@ -4,8 +4,10 @@ A private, fully offline Android mood tracker. Log how you're feeling against
 your own scales, in your own time windows, on your own device. Nothing is ever
 uploaded — sync, if you want it, is your job (Syncthing works well).
 
-## AI Declaration
+## AI Declaration and Note about versions
 Written with assistance from Claude Code and Opus 4.7.
+
+NOTE: Written using some older libraries to get it working as a proof of concept writing and building on-device in Termux. These will be updated with time and SDK updated to ver 35/36 soon.
 
 ## What it does
 
