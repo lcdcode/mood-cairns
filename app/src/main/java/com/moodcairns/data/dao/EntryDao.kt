@@ -35,6 +35,9 @@ interface EntryDao {
     )
     fun observeRange(from: Instant, to: Instant): Flow<List<EntryWithValues>>
 
+    @Query("SELECT MIN(recordedAt) FROM entry")
+    fun observeEarliestRecordedAt(): Flow<Instant?>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertEntry(entry: Entry): Long
 

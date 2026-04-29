@@ -28,6 +28,8 @@ data class ScaleSeries(
     val daily: List<DayPoint>,
 )
 
+enum class ChartMode { Raw, RollingAvg }
+
 data class ChartsUiState(
     val startDate: LocalDate = LocalDate.now().minusDays(29),
     val endDate: LocalDate = LocalDate.now(),
@@ -36,7 +38,9 @@ data class ChartsUiState(
     val scales: List<Scale> = emptyList(),
     val series: List<ScaleSeries> = emptyList(),
     val entryCount: Int = 0,
+    val chartMode: ChartMode = ChartMode.Raw,
     val loaded: Boolean = false,
+    val earliestDate: LocalDate? = null,
 ) {
     val days: Int get() = (endDate.toEpochDay() - startDate.toEpochDay()).toInt() + 1
 }
@@ -46,6 +50,7 @@ private data class Filters(
     val end: LocalDate,
     val slots: Set<PromptSlot>,
     val selected: Set<Long>,
+    val mode: ChartMode,
     val initialized: Boolean,
 )
 
@@ -62,19 +67,25 @@ class ChartsViewModel @Inject constructor(
             end = LocalDate.now(),
             slots = PromptSlot.values().toSet(),
             selected = emptySet(),
+            mode = ChartMode.Raw,
             initialized = false,
         ),
     )
 
     private val scalesFlow = scales.observeAll()
+    private val earliestFlow = entries.observeEarliestRecordedAt()
 
     val state: StateFlow<ChartsUiState> = filters
         .flatMapLatest { f ->
             val zone = ZoneId.systemDefault()
             val from = f.start.atStartOfDay(zone).toInstant()
             val to = f.end.plusDays(1).atStartOfDay(zone).toInstant().minusNanos(1)
-            combine(entries.observeRange(from, to), scalesFlow) { rows, scaleList ->
-                buildState(f, rows, scaleList)
+            combine(
+                entries.observeRange(from, to),
+                scalesFlow,
+                earliestFlow,
+            ) { rows, scaleList, earliest ->
+                buildState(f, rows, scaleList, earliest)
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChartsUiState())
@@ -94,13 +105,26 @@ class ChartsViewModel @Inject constructor(
         it.copy(selected = next)
     }
 
+    fun setChartMode(mode: ChartMode) = filters.update { it.copy(mode = mode) }
+
     private fun buildState(
         f: Filters,
         rows: List<EntryWithValues>,
         scaleList: List<Scale>,
+        earliest: java.time.Instant?,
     ): ChartsUiState {
         val zone = ZoneId.systemDefault()
-        val startDay = f.start.toEpochDay()
+        val earliestLocal = earliest?.atZone(zone)?.toLocalDate()
+
+        // On first init, clamp the default start (today − 29) up to the earliest entry
+        // date so the chart opens on a window that actually contains data.
+        val effectiveStart = if (!f.initialized && earliestLocal != null && f.start < earliestLocal) {
+            earliestLocal.coerceAtMost(f.end)
+        } else {
+            f.start
+        }
+
+        val startDay = effectiveStart.toEpochDay()
         val days = (f.end.toEpochDay() - startDay).toInt() + 1
 
         val selected = if (!f.initialized || f.selected.isEmpty()) {
@@ -128,17 +152,19 @@ class ChartsViewModel @Inject constructor(
         }
 
         return ChartsUiState(
-            startDate = f.start,
+            startDate = effectiveStart,
             endDate = f.end,
             slotFilter = f.slots,
             selectedScaleIds = selected,
             scales = scaleList,
             series = series,
             entryCount = filteredRows.size,
+            chartMode = f.mode,
             loaded = true,
+            earliestDate = earliestLocal,
         ).also {
             if (!f.initialized) {
-                filters.value = f.copy(selected = selected, initialized = true)
+                filters.value = f.copy(start = effectiveStart, selected = selected, initialized = true)
             }
         }
     }

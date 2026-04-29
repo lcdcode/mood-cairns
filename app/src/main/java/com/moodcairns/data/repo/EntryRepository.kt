@@ -18,6 +18,8 @@ class EntryRepository @Inject constructor(private val dao: EntryDao) {
     fun observeRange(from: Instant, to: Instant): Flow<List<EntryWithValues>> =
         dao.observeRange(from, to)
 
+    fun observeEarliestRecordedAt(): Flow<Instant?> = dao.observeEarliestRecordedAt()
+
     suspend fun save(
         recordedAt: Instant,
         slot: PromptSlot,

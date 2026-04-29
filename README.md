@@ -1,5 +1,7 @@
 # Mood Cairns
 
+![Mood Cairns icon](./media/ic_launcher_round_512.png)
+
 A private, fully offline Android mood tracker. Log how you're feeling against
 your own scales, in your own time windows, on your own device. Nothing is ever
 uploaded — sync, if you want it, is your job (Syncthing works well).
