@@ -86,7 +86,7 @@ app/build/outputs/apk/debug/mood-cairns-1.0.0-debug.apk
 ```
 
 This is what's used for personal-use installs — it's signed with the standard
-debug keystore but installs under the real `com.moodcairns` application id.
+debug keystore but installs under the real `com.lcdcode.moodcairns` application id.
 
 ### Build a release APK
 

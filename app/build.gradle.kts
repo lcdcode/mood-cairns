@@ -17,11 +17,11 @@ ksp {
 }
 
 android {
-    namespace = "com.moodcairns"
+    namespace = "com.lcdcode.moodcairns"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.moodcairns"
+        applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
