@@ -39,6 +39,7 @@ data class ChartsUiState(
     val series: List<ScaleSeries> = emptyList(),
     val entryCount: Int = 0,
     val chartMode: ChartMode = ChartMode.Raw,
+    val absoluteYAxis: Boolean = false,
     val loaded: Boolean = false,
     val earliestDate: LocalDate? = null,
 ) {
@@ -51,6 +52,7 @@ private data class Filters(
     val slots: Set<PromptSlot>,
     val selected: Set<Long>,
     val mode: ChartMode,
+    val absoluteY: Boolean,
     val initialized: Boolean,
 )
 
@@ -68,6 +70,7 @@ class ChartsViewModel @Inject constructor(
             slots = PromptSlot.values().toSet(),
             selected = emptySet(),
             mode = ChartMode.Raw,
+            absoluteY = false,
             initialized = false,
         ),
     )
@@ -106,6 +109,8 @@ class ChartsViewModel @Inject constructor(
     }
 
     fun setChartMode(mode: ChartMode) = filters.update { it.copy(mode = mode) }
+
+    fun setAbsoluteYAxis(value: Boolean) = filters.update { it.copy(absoluteY = value) }
 
     private fun buildState(
         f: Filters,
@@ -160,6 +165,7 @@ class ChartsViewModel @Inject constructor(
             series = series,
             entryCount = filteredRows.size,
             chartMode = f.mode,
+            absoluteYAxis = f.absoluteY,
             loaded = true,
             earliestDate = earliestLocal,
         ).also {

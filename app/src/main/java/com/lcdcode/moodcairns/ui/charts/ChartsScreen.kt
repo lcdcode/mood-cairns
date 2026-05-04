@@ -105,6 +105,11 @@ fun ChartsScreen(
                 onSelect = viewModel::setChartMode,
             )
 
+            YAxisModeRow(
+                absolute = state.absoluteYAxis,
+                onToggle = viewModel::setAbsoluteYAxis,
+            )
+
             SlotFilterRow(
                 selected = state.slotFilter,
                 onToggle = viewModel::toggleSlot,
@@ -149,6 +154,7 @@ fun ChartsScreen(
                     mode = state.chartMode,
                     totalDays = state.days,
                     startDate = state.startDate,
+                    absoluteY = state.absoluteYAxis,
                 )
             }
         }
@@ -202,6 +208,27 @@ private fun ChartModeRow(mode: ChartMode, onSelect: (ChartMode) -> Unit) {
                         ChartMode.Raw -> "Raw"
                         ChartMode.RollingAvg -> "7-day avg"
                     })
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun YAxisModeRow(absolute: Boolean, onToggle: (Boolean) -> Unit) {
+    Column {
+        Text("Y axis", style = MaterialTheme.typography.labelMedium)
+        Spacer(Modifier.height(4.dp))
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            val options = listOf(false, true)
+            options.forEachIndexed { index, isAbs ->
+                SegmentedButton(
+                    selected = isAbs == absolute,
+                    onClick = { onToggle(isAbs) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                ) {
+                    Text(if (isAbs) "Absolute" else "Auto-fit")
                 }
             }
         }
@@ -269,6 +296,7 @@ private fun ChartArea(
     mode: ChartMode,
     totalDays: Int,
     startDate: LocalDate,
+    absoluteY: Boolean,
 ) {
     val pointsForMode: (ScaleSeries) -> List<DayPoint> = { s ->
         when (mode) {
@@ -279,7 +307,7 @@ private fun ChartArea(
     val nonEmpty = series.filter { pointsForMode(it).isNotEmpty() }
     val modelProducer = remember { CartesianChartModelProducer() }
 
-    LaunchedEffect(nonEmpty, mode, totalDays) {
+    LaunchedEffect(nonEmpty, mode, totalDays, absoluteY) {
         if (nonEmpty.isEmpty()) return@LaunchedEffect
         modelProducer.runTransaction {
             lineSeries {
@@ -287,7 +315,7 @@ private fun ChartArea(
                     val pts = pointsForMode(s)
                     series(
                         x = pts.map { it.dayIndex },
-                        y = pts.map { it.value },
+                        y = pts.map { p -> if (absoluteY) normalize(p.value, s.scale) else p.value },
                     )
                 }
             }
@@ -298,12 +326,22 @@ private fun ChartArea(
 
     // Pin the x range to the selected window so points draw at their true day index
     // rather than getting auto-scaled to span the data extent — keeps the chart aligned
-    // with the start/mid/end date labels below it.
-    val rangeProvider = remember(totalDays) {
-        CartesianLayerRangeProvider.fixed(
-            minX = 0.0,
-            maxX = (totalDays - 1).coerceAtLeast(0).toDouble(),
-        )
+    // with the start/mid/end date labels below it. In absolute mode, also pin y to
+    // [0,1] since each series is normalized against its own scale's min/max.
+    val rangeProvider = remember(totalDays, absoluteY) {
+        if (absoluteY) {
+            CartesianLayerRangeProvider.fixed(
+                minX = 0.0,
+                maxX = (totalDays - 1).coerceAtLeast(0).toDouble(),
+                minY = 0.0,
+                maxY = 1.0,
+            )
+        } else {
+            CartesianLayerRangeProvider.fixed(
+                minX = 0.0,
+                maxX = (totalDays - 1).coerceAtLeast(0).toDouble(),
+            )
+        }
     }
 
     var chartWidthPx by remember { mutableIntStateOf(0) }
@@ -460,6 +498,12 @@ private fun TappedPointCard(
             }
         }
     }
+}
+
+private fun normalize(value: Float, scale: com.lcdcode.moodcairns.data.entity.Scale): Float {
+    val span = (scale.maxValue - scale.minValue).toFloat()
+    if (span <= 0f) return 0.5f
+    return ((value - scale.minValue) / span).coerceIn(0f, 1f)
 }
 
 private fun formatValue(v: Float): String {
