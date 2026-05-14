@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -27,14 +30,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.Scale
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +56,29 @@ fun ScaleListScreen(
     viewModel: ScaleListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val haptic = LocalHapticFeedback.current
+
+    var isDragging by remember { mutableStateOf(false) }
+    var activeList by remember { mutableStateOf(state.active) }
+    LaunchedEffect(state.active, isDragging) {
+        if (!isDragging) activeList = state.active
+    }
+
+    val lazyListState = rememberLazyListState()
+    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        val fromKey = from.key as? String ?: return@rememberReorderableLazyListState
+        val toKey = to.key as? String ?: return@rememberReorderableLazyListState
+        if (!fromKey.startsWith("a-") || !toKey.startsWith("a-")) {
+            return@rememberReorderableLazyListState
+        }
+        val updated = activeList.toMutableList()
+        val fromIdx = updated.indexOfFirst { "a-${it.id}" == fromKey }
+        val toIdx = updated.indexOfFirst { "a-${it.id}" == toKey }
+        if (fromIdx == -1 || toIdx == -1) return@rememberReorderableLazyListState
+        updated.add(toIdx, updated.removeAt(fromIdx))
+        activeList = updated
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     Scaffold(
         topBar = {
@@ -63,7 +97,7 @@ fun ScaleListScreen(
             }
         },
     ) { padding ->
-        if (state.active.isEmpty() && state.archived.isEmpty()) {
+        if (activeList.isEmpty() && state.archived.isEmpty()) {
             Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("No scales yet.")
             }
@@ -71,20 +105,31 @@ fun ScaleListScreen(
         }
 
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier.padding(padding).fillMaxSize(),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            if (state.active.isNotEmpty()) {
+            if (activeList.isNotEmpty()) {
                 item(key = "hdr-active") {
                     SectionHeader("Active")
                 }
-                items(state.active, key = { "a-${it.id}" }) { scale ->
-                    ScaleRow(
-                        scale = scale,
-                        onClick = { onEdit(scale.id) },
-                        onToggleArchive = { viewModel.setArchived(scale.id, true) },
-                    )
+                items(activeList, key = { "a-${it.id}" }) { scale ->
+                    ReorderableItem(reorderableState, key = "a-${scale.id}") { _ ->
+                        val dragModifier = Modifier.draggableHandle(
+                            onDragStarted = { _ -> isDragging = true },
+                            onDragStopped = {
+                                viewModel.onReorder(activeList.map { it.id })
+                                isDragging = false
+                            },
+                        )
+                        ScaleRow(
+                            scale = scale,
+                            onClick = { onEdit(scale.id) },
+                            onToggleArchive = { viewModel.setArchived(scale.id, true) },
+                            dragHandleModifier = dragModifier,
+                        )
+                    }
                 }
             }
             if (state.archived.isNotEmpty()) {
@@ -120,6 +165,7 @@ private fun ScaleRow(
     onClick: () -> Unit,
     onToggleArchive: () -> Unit,
     archived: Boolean = false,
+    dragHandleModifier: Modifier? = null,
 ) {
     Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
         Row(
@@ -144,7 +190,15 @@ private fun ScaleRow(
             TextButton(onClick = onToggleArchive) {
                 Text(if (archived) "Unarchive" else "Archive")
             }
+            if (dragHandleModifier != null) {
+                IconButton(modifier = dragHandleModifier, onClick = {}) {
+                    Icon(
+                        Icons.Default.DragHandle,
+                        contentDescription = "Reorder",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }
-

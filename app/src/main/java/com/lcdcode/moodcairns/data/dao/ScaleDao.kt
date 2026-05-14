@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.lcdcode.moodcairns.data.entity.Scale
 import kotlinx.coroutines.flow.Flow
@@ -30,4 +31,15 @@ interface ScaleDao {
 
     @Query("UPDATE scale SET archived = :archived WHERE id = :id")
     suspend fun setArchived(id: Long, archived: Boolean)
+
+    @Query("UPDATE scale SET sortOrder = :sortOrder WHERE id = :id")
+    suspend fun setSortOrder(id: Long, sortOrder: Int)
+
+    @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM scale")
+    suspend fun maxSortOrder(): Int
+
+    @Transaction
+    suspend fun applySortOrder(orderedIds: List<Long>) {
+        orderedIds.forEachIndexed { index, id -> setSortOrder(id, index) }
+    }
 }

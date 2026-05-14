@@ -22,6 +22,7 @@ data class ScaleEditUiState(
     val step: String = "1",
     val colorArgb: Int = PALETTE.first(),
     val isBuiltIn: Boolean = false,
+    val sortOrder: Int = 0,
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
@@ -61,6 +62,7 @@ class ScaleEditViewModel @Inject constructor(
                             step = existing.step.toString(),
                             colorArgb = existing.colorArgb,
                             isBuiltIn = existing.isBuiltIn,
+                            sortOrder = existing.sortOrder,
                             loaded = true,
                         )
                     }
@@ -99,6 +101,7 @@ class ScaleEditViewModel @Inject constructor(
 
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
+            val sortOrder = if (cur.id == 0L) repo.nextSortOrder() else cur.sortOrder
             val scale = Scale(
                 id = cur.id,
                 name = name,
@@ -108,6 +111,7 @@ class ScaleEditViewModel @Inject constructor(
                 colorArgb = cur.colorArgb,
                 isBuiltIn = cur.isBuiltIn,
                 archived = false,
+                sortOrder = sortOrder,
             )
             try {
                 repo.upsert(scale)

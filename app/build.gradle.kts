@@ -107,6 +107,8 @@ dependencies {
     implementation(libs.vico.compose.m3)
 
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.reorderable)
 }
 
 // Privacy guard: fail the build if the merged manifest ever declares a network

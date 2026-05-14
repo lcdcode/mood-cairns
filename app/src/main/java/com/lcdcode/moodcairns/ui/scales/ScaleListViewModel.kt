@@ -34,4 +34,8 @@ class ScaleListViewModel @Inject constructor(
     fun setArchived(id: Long, archived: Boolean) = viewModelScope.launch {
         repo.setArchived(id, archived)
     }
+
+    fun onReorder(orderedIds: List<Long>) = viewModelScope.launch {
+        repo.reorder(orderedIds)
+    }
 }

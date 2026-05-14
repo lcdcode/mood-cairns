@@ -15,4 +15,6 @@ class ScaleRepository @Inject constructor(private val dao: ScaleDao) {
         if (scale.id == 0L) dao.insert(scale) else dao.update(scale)
     }
     suspend fun setArchived(id: Long, archived: Boolean) = dao.setArchived(id, archived)
+    suspend fun reorder(orderedIds: List<Long>) = dao.applySortOrder(orderedIds)
+    suspend fun nextSortOrder(): Int = dao.maxSortOrder() + 1
 }
