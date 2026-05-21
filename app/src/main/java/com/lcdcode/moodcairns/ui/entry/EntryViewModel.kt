@@ -25,6 +25,8 @@ data class EntryUiState(
     val promptWindowId: Long? = null,
     val saving: Boolean = false,
     val savedId: Long? = null,
+    val editingId: Long? = null,
+    val editLoaded: Boolean = false,
 )
 
 @HiltViewModel
@@ -34,6 +36,8 @@ class EntryViewModel @Inject constructor(
     private val entries: EntryRepository,
 ) : ViewModel() {
 
+    private val editingId: Long? = savedState.get<Long>(ARG_ENTRY_ID)?.takeIf { it > 0 }
+
     private val _state = MutableStateFlow(
         EntryUiState(
             slot = savedState.get<String>(ARG_SLOT)?.let(PromptSlot::valueOf) ?: PromptSlot.MANUAL,
@@ -42,15 +46,35 @@ class EntryViewModel @Inject constructor(
                 ?.takeIf { it >= 0 }
                 ?.let(Instant::ofEpochMilli)
                 ?: Instant.now(),
+            editingId = editingId,
+            editLoaded = editingId == null,
         ),
     )
     val state: StateFlow<EntryUiState> = _state.asStateFlow()
 
     init {
+        if (editingId != null) {
+            viewModelScope.launch {
+                entries.getById(editingId)?.let { existing ->
+                    _state.update {
+                        it.copy(
+                            recordedAt = existing.entry.recordedAt,
+                            slot = existing.entry.slot,
+                            promptWindowId = existing.entry.promptWindowId,
+                            note = existing.entry.note.orEmpty(),
+                            values = existing.values.associate { v -> v.scaleId to v.value },
+                            editLoaded = true,
+                        )
+                    }
+                }
+            }
+        }
         viewModelScope.launch {
             scales.observeActive().collect { list ->
                 _state.update { cur ->
-                    // Default each slider to the midpoint of its scale.
+                    // Default each slider to the midpoint of its scale, but
+                    // preserve any value already set (either from the user or,
+                    // when editing, from the persisted entry).
                     val defaults = list.associate { s -> s.id to ((s.minValue + s.maxValue) / 2f) }
                     cur.copy(
                         scales = list,
@@ -74,13 +98,25 @@ class EntryViewModel @Inject constructor(
         if (cur.saving) return
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
-            val id = entries.save(
-                recordedAt = cur.recordedAt,
-                slot = cur.slot,
-                promptWindowId = cur.promptWindowId,
-                note = cur.note,
-                values = cur.values,
-            )
+            val id = if (cur.editingId != null) {
+                entries.update(
+                    id = cur.editingId,
+                    recordedAt = cur.recordedAt,
+                    slot = cur.slot,
+                    promptWindowId = cur.promptWindowId,
+                    note = cur.note,
+                    values = cur.values,
+                )
+                cur.editingId
+            } else {
+                entries.save(
+                    recordedAt = cur.recordedAt,
+                    slot = cur.slot,
+                    promptWindowId = cur.promptWindowId,
+                    note = cur.note,
+                    values = cur.values,
+                )
+            }
             _state.update { it.copy(saving = false, savedId = id) }
         }
     }
@@ -89,5 +125,6 @@ class EntryViewModel @Inject constructor(
         const val ARG_SLOT = "slot"
         const val ARG_WINDOW_ID = "windowId"
         const val ARG_RECORDED_AT = "recordedAt"
+        const val ARG_ENTRY_ID = "entryId"
     }
 }

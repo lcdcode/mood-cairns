@@ -52,7 +52,7 @@ fun EntryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("How are you?") },
+                title = { Text(if (state.editingId != null) "Edit entry" else "How are you?") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

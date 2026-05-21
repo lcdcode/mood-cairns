@@ -81,10 +81,13 @@ class ChartsViewModel @Inject constructor(
     val state: StateFlow<ChartsUiState> = filters
         .flatMapLatest { f ->
             val zone = ZoneId.systemDefault()
+            // Half-open interval [from, toExclusive): start-of-startDate up to
+            // (but not including) start-of-the-day-after-endDate, so entries
+            // recorded at any time on the selected end date are included.
             val from = f.start.atStartOfDay(zone).toInstant()
-            val to = f.end.plusDays(1).atStartOfDay(zone).toInstant().minusNanos(1)
+            val toExclusive = f.end.plusDays(1).atStartOfDay(zone).toInstant()
             combine(
-                entries.observeRange(from, to),
+                entries.observeRange(from, toExclusive),
                 scalesFlow,
                 earliestFlow,
             ) { rows, scaleList, earliest ->

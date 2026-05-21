@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Relation
 import androidx.room.Transaction
+import androidx.room.Update
 import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import kotlinx.coroutines.flow.Flow
@@ -29,11 +30,11 @@ interface EntryDao {
     @Query(
         """
         SELECT * FROM entry
-        WHERE recordedAt BETWEEN :from AND :to
+        WHERE recordedAt >= :from AND recordedAt < :toExclusive
         ORDER BY recordedAt ASC
         """,
     )
-    fun observeRange(from: Instant, to: Instant): Flow<List<EntryWithValues>>
+    fun observeRange(from: Instant, toExclusive: Instant): Flow<List<EntryWithValues>>
 
     @Query("SELECT MIN(recordedAt) FROM entry")
     fun observeEarliestRecordedAt(): Flow<Instant?>
@@ -53,4 +54,21 @@ interface EntryDao {
 
     @Query("DELETE FROM entry WHERE id = :id")
     suspend fun delete(id: Long)
+
+    @Transaction
+    @Query("SELECT * FROM entry WHERE id = :id")
+    suspend fun getById(id: Long): EntryWithValues?
+
+    @Update
+    suspend fun updateEntry(entry: Entry)
+
+    @Query("DELETE FROM entry_value WHERE entryId = :entryId")
+    suspend fun deleteValuesForEntry(entryId: Long)
+
+    @Transaction
+    suspend fun updateEntryWithValues(entry: Entry, values: List<EntryValue>) {
+        updateEntry(entry)
+        deleteValuesForEntry(entry.id)
+        insertValues(values)
+    }
 }

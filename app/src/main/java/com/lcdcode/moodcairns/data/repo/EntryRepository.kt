@@ -15,8 +15,8 @@ class EntryRepository @Inject constructor(private val dao: EntryDao) {
 
     fun observeAll(): Flow<List<EntryWithValues>> = dao.observeAll()
 
-    fun observeRange(from: Instant, to: Instant): Flow<List<EntryWithValues>> =
-        dao.observeRange(from, to)
+    fun observeRange(from: Instant, toExclusive: Instant): Flow<List<EntryWithValues>> =
+        dao.observeRange(from, toExclusive)
 
     fun observeEarliestRecordedAt(): Flow<Instant?> = dao.observeEarliestRecordedAt()
 
@@ -39,4 +39,27 @@ class EntryRepository @Inject constructor(private val dao: EntryDao) {
     }
 
     suspend fun delete(id: Long) = dao.delete(id)
+
+    suspend fun getById(id: Long): EntryWithValues? = dao.getById(id)
+
+    suspend fun update(
+        id: Long,
+        recordedAt: Instant,
+        slot: PromptSlot,
+        promptWindowId: Long?,
+        note: String?,
+        values: Map<Long, Float>,
+    ) {
+        val entry = Entry(
+            id = id,
+            recordedAt = recordedAt,
+            slot = slot,
+            promptWindowId = promptWindowId,
+            note = note?.takeIf { it.isNotBlank() },
+        )
+        dao.updateEntryWithValues(
+            entry,
+            values.map { (scaleId, value) -> EntryValue(entryId = id, scaleId = scaleId, value = value) },
+        )
+    }
 }

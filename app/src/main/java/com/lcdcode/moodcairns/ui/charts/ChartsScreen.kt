@@ -1,6 +1,6 @@
 package com.lcdcode.moodcairns.ui.charts
 
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,21 +40,20 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
@@ -66,6 +65,8 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -269,26 +270,62 @@ private fun ScaleToggleRow(
     onToggle: (Long) -> Unit,
 ) {
     if (scales.isEmpty()) return
+    val scrollState = rememberScrollState()
+    val surface = MaterialTheme.colorScheme.surface
     Column {
         Text("Scales", style = MaterialTheme.typography.labelMedium)
         Spacer(Modifier.height(4.dp))
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            scales.filter { !it.archived }.forEach { scale ->
-                FilterChip(
-                    selected = scale.id in selected,
-                    onClick = { onToggle(scale.id) },
-                    label = { Text(scale.name) },
-                    leadingIcon = {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color(scale.colorArgb),
-                            modifier = Modifier.size(12.dp),
-                        ) {}
-                    },
-                    colors = FilterChipDefaults.filterChipColors(),
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                scales.filter { !it.archived }.forEach { scale ->
+                    FilterChip(
+                        selected = scale.id in selected,
+                        onClick = { onToggle(scale.id) },
+                        label = { Text(scale.name) },
+                        leadingIcon = {
+                            Surface(
+                                shape = CircleShape,
+                                color = Color(scale.colorArgb),
+                                modifier = Modifier.size(12.dp),
+                            ) {}
+                        },
+                        colors = FilterChipDefaults.filterChipColors(),
+                    )
+                }
+            }
+            // Edge fades signal that more chips exist off-screen. These overlays
+            // are purely decorative and do not intercept pointer events.
+            if (scrollState.canScrollBackward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to surface,
+                                    0.08f to Color.Transparent,
+                                    1f to Color.Transparent,
+                                ),
+                            ),
+                        ),
+                )
+            }
+            if (scrollState.canScrollForward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.Transparent,
+                                    0.92f to Color.Transparent,
+                                    1f to surface,
+                                ),
+                            ),
+                        ),
                 )
             }
         }
@@ -349,7 +386,6 @@ private fun ChartArea(
         }
     }
 
-    var chartWidthPx by remember { mutableIntStateOf(0) }
     var tappedDay by remember { mutableStateOf<Int?>(null) }
 
     val dateLabelFormatter = remember(startDate) {
@@ -359,21 +395,31 @@ private fun ChartArea(
         }
     }
 
+    // Vico's marker pipeline handles touch in chart-data coordinates, so the
+    // reported `x` already accounts for the current zoom/scroll state. A no-op
+    // marker (no visible decoration on the chart itself) is enough — the
+    // TappedPointCard below the chart is the actual UX surface.
+    val invisibleMarker = remember { object : CartesianMarker {} }
+    val markerListener = remember {
+        object : CartesianMarkerVisibilityListener {
+            override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+                tappedDay = targets.firstOrNull()?.x?.roundToInt()
+            }
+            override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
+                tappedDay = targets.firstOrNull()?.x?.roundToInt()
+            }
+            // Intentionally don't clear on hide: Vico hides the marker on touch
+            // release, but the detail card should persist until the user taps a
+            // different point or hits Close.
+            override fun onHidden(marker: CartesianMarker) = Unit
+        }
+    }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp)
-                .onSizeChanged { chartWidthPx = it.width }
-                .pointerInput(totalDays, chartWidthPx) {
-                    detectTapGestures { offset ->
-                        if (chartWidthPx > 0 && totalDays > 0) {
-                            val frac = (offset.x / chartWidthPx).coerceIn(0f, 1f)
-                            val day = (frac * (totalDays - 1)).roundToInt()
-                            tappedDay = day
-                        }
-                    }
-                },
+                .height(240.dp),
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(
@@ -382,6 +428,16 @@ private fun ChartArea(
                         rangeProvider = rangeProvider,
                     ),
                     bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateLabelFormatter),
+                    marker = invisibleMarker,
+                    markerVisibilityListener = markerListener,
+                    // Inset the data area slightly on both sides so the points
+                    // at minX (start date) and maxX (end date) aren't drawn
+                    // centered on the chart's clip edge, which would cut their
+                    // markers in half.
+                    layerPadding = cartesianLayerPadding(
+                        unscalableStart = 8.dp,
+                        unscalableEnd = 8.dp,
+                    ),
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.fillMaxSize(),

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class HistoryUiState(
@@ -20,7 +21,7 @@ data class HistoryUiState(
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    entries: EntryRepository,
+    private val entries: EntryRepository,
     scales: ScaleRepository,
 ) : ViewModel() {
 
@@ -31,4 +32,8 @@ class HistoryViewModel @Inject constructor(
                 scalesById = scaleList.associateBy { it.id },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryUiState())
+
+    fun delete(entryId: Long) {
+        viewModelScope.launch { entries.delete(entryId) }
+    }
 }

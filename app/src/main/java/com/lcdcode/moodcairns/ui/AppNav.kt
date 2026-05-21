@@ -36,11 +36,17 @@ object Routes {
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
     fun windowEdit(id: Long? = null) = "$WINDOW_EDIT?windowId=${id ?: 0L}"
 
-    fun entry(slot: PromptSlot = PromptSlot.MANUAL, windowId: Long? = null, recordedAt: Long? = null) =
-        "$ENTRY?slot=${slot.name}&windowId=${windowId ?: -1L}&recordedAt=${recordedAt ?: -1L}"
+    fun entry(
+        slot: PromptSlot = PromptSlot.MANUAL,
+        windowId: Long? = null,
+        recordedAt: Long? = null,
+        entryId: Long? = null,
+    ) = "$ENTRY?slot=${slot.name}&windowId=${windowId ?: -1L}&recordedAt=${recordedAt ?: -1L}&entryId=${entryId ?: -1L}"
+
+    fun entryEdit(entryId: Long) = entry(entryId = entryId)
 
     fun entryFromArgs(args: NotificationEntryArgs) =
-        "$ENTRY?slot=${args.slot}&windowId=${args.windowId ?: -1L}&recordedAt=-1"
+        "$ENTRY?slot=${args.slot}&windowId=${args.windowId ?: -1L}&recordedAt=-1&entryId=-1"
 }
 
 @Composable
@@ -122,15 +128,17 @@ fun AppNav(
             HistoryScreen(
                 onBack = { nav.popBackStack() },
                 onAddPast = { nav.navigate(Routes.entry()) },
+                onEdit = { id -> nav.navigate(Routes.entryEdit(id)) },
             )
         }
 
         composable(
-            route = "${Routes.ENTRY}?slot={slot}&windowId={windowId}&recordedAt={recordedAt}",
+            route = "${Routes.ENTRY}?slot={slot}&windowId={windowId}&recordedAt={recordedAt}&entryId={entryId}",
             arguments = listOf(
                 navArgument("slot") { type = NavType.StringType; defaultValue = PromptSlot.MANUAL.name },
                 navArgument("windowId") { type = NavType.LongType; defaultValue = -1L },
                 navArgument("recordedAt") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("entryId") { type = NavType.LongType; defaultValue = -1L },
             ),
         ) {
             EntryScreen(
