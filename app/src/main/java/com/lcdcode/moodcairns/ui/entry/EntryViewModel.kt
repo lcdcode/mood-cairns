@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui.entry
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,7 @@ data class EntryUiState(
     val savedId: Long? = null,
     val editingId: Long? = null,
     val editLoaded: Boolean = false,
+    val error: String? = null,
 )
 
 @HiltViewModel
@@ -55,7 +57,13 @@ class EntryViewModel @Inject constructor(
     init {
         if (editingId != null) {
             viewModelScope.launch {
-                entries.getById(editingId)?.let { existing ->
+                val existing = entries.getById(editingId)
+                if (existing == null) {
+                    // The entry was deleted between navigation and load — fall
+                    // back to a "create new" flow rather than silently calling
+                    // update() against a missing id later.
+                    _state.update { it.copy(editingId = null, editLoaded = true) }
+                } else {
                     _state.update {
                         it.copy(
                             recordedAt = existing.entry.recordedAt,
@@ -96,32 +104,45 @@ class EntryViewModel @Inject constructor(
     fun save() {
         val cur = _state.value
         if (cur.saving) return
-        _state.update { it.copy(saving = true) }
+        _state.update { it.copy(saving = true, error = null) }
         viewModelScope.launch {
-            val id = if (cur.editingId != null) {
-                entries.update(
-                    id = cur.editingId,
-                    recordedAt = cur.recordedAt,
-                    slot = cur.slot,
-                    promptWindowId = cur.promptWindowId,
-                    note = cur.note,
-                    values = cur.values,
-                )
-                cur.editingId
-            } else {
-                entries.save(
-                    recordedAt = cur.recordedAt,
-                    slot = cur.slot,
-                    promptWindowId = cur.promptWindowId,
-                    note = cur.note,
-                    values = cur.values,
-                )
+            try {
+                val id = if (cur.editingId != null) {
+                    entries.update(
+                        id = cur.editingId,
+                        recordedAt = cur.recordedAt,
+                        slot = cur.slot,
+                        promptWindowId = cur.promptWindowId,
+                        note = cur.note,
+                        values = cur.values,
+                    )
+                    cur.editingId
+                } else {
+                    entries.save(
+                        recordedAt = cur.recordedAt,
+                        slot = cur.slot,
+                        promptWindowId = cur.promptWindowId,
+                        note = cur.note,
+                        values = cur.values,
+                    )
+                }
+                _state.update { it.copy(saving = false, savedId = id) }
+            } catch (t: Throwable) {
+                Log.w(TAG, "Save failed", t)
+                _state.update {
+                    it.copy(
+                        saving = false,
+                        error = "Couldn't save: ${t.message ?: t.javaClass.simpleName}",
+                    )
+                }
             }
-            _state.update { it.copy(saving = false, savedId = id) }
         }
     }
 
+    fun dismissError() = _state.update { it.copy(error = null) }
+
     companion object {
+        private const val TAG = "EntryViewModel"
         const val ARG_SLOT = "slot"
         const val ARG_WINDOW_ID = "windowId"
         const val ARG_RECORDED_AT = "recordedAt"

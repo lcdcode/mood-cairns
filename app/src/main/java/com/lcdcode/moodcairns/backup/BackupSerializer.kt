@@ -2,10 +2,9 @@ package com.lcdcode.moodcairns.backup
 
 import android.util.Base64
 import com.lcdcode.moodcairns.BuildConfig
-import com.lcdcode.moodcairns.data.dao.EntryDao
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
-import com.lcdcode.moodcairns.data.dao.ScaleDao
+import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
 import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.PromptSlot
@@ -20,10 +19,12 @@ import javax.inject.Singleton
 
 @Singleton
 class BackupSerializer @Inject constructor(
-    private val scaleDao: ScaleDao,
+    private val moodHolder: MoodDatabaseHolder,
     private val windowDao: PromptWindowDao,
-    private val entryDao: EntryDao,
 ) {
+    private val scaleDao get() = moodHolder.scaleDao()
+    private val entryDao get() = moodHolder.entryDao()
+
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
     /**

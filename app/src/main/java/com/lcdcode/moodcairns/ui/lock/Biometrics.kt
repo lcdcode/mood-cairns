@@ -7,9 +7,10 @@ import androidx.fragment.app.FragmentActivity
 
 object Biometrics {
 
-    private const val AUTHENTICATORS =
-        BiometricManager.Authenticators.BIOMETRIC_STRONG or
-            BiometricManager.Authenticators.BIOMETRIC_WEAK
+    // Only Class 3 (STRONG) biometrics. Some OEM face-unlock implementations
+    // shipped as Class 2 (WEAK) have been bypassable with a photograph; refusing
+    // WEAK is worth the loss of compatibility on a personal-mood-data app.
+    private const val AUTHENTICATORS = BiometricManager.Authenticators.BIOMETRIC_STRONG
 
     fun canAuthenticate(activity: FragmentActivity): Boolean =
         BiometricManager.from(activity).canAuthenticate(AUTHENTICATORS) ==

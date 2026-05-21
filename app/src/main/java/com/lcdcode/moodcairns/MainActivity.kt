@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +27,7 @@ import com.lcdcode.moodcairns.ui.NotificationEntryArgs
 import com.lcdcode.moodcairns.ui.lock.LockScreen
 import com.lcdcode.moodcairns.ui.lock.SetPinScreen
 import com.lcdcode.moodcairns.ui.theme.MoodCairnsTheme
+import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.notifications.PromptAlarmReceiver
 import com.lcdcode.moodcairns.work.PromptScheduler
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +45,14 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Prevent the OS recents/task switcher from caching screenshots of any
+        // screen (history, notes, charts, PIN entry), and block screen recording
+        // and casting. Sensitive content is rendered everywhere in this app, so
+        // applying app-wide is simpler than per-screen.
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE,
+        )
         enableEdgeToEdge()
         pendingEntryArgs.value = readNotificationArgs(intent)
         scheduler.ensureDailyRolloverScheduled()
@@ -71,9 +81,13 @@ class MainActivity : FragmentActivity() {
                         }
                     }
 
-                    when (state) {
+                    when (val s = state) {
                         LockState.NeedsSetup -> SetPinScreen()
                         LockState.Locked -> LockScreen(biometricEnabled = lockRepository.biometricEnabled)
+                        LockState.Migrating -> com.lcdcode.moodcairns.ui.lock.MigratingScreen()
+                        is LockState.MigrationFailed -> com.lcdcode.moodcairns.ui.lock.MigrationFailedScreen(
+                            message = s.message,
+                        )
                         LockState.Unlocked -> AppNav(
                             initialEntryArgs = pendingArgs,
                             onEntryArgsConsumed = { pendingEntryArgs.value = null },
@@ -103,9 +117,14 @@ class MainActivity : FragmentActivity() {
     private fun readNotificationArgs(intent: Intent?): NotificationEntryArgs? {
         if (intent == null) return null
         if (!intent.getBooleanExtra(PromptAlarmReceiver.EXTRA_FROM_NOTIFICATION, false)) return null
-        val slot = intent.getStringExtra(PromptAlarmReceiver.EXTRA_SLOT) ?: return null
+        val rawSlot = intent.getStringExtra(PromptAlarmReceiver.EXTRA_SLOT) ?: return null
+        // The activity is exported (required for the launcher icon), so any app on
+        // the device can call us with crafted extras. Validate the slot against the
+        // enum before passing it down — an unknown value would otherwise throw out
+        // of PromptSlot.valueOf later in EntryViewModel.
+        val validSlot = runCatching { PromptSlot.valueOf(rawSlot) }.getOrNull() ?: return null
         val windowId = intent.getLongExtra(PromptAlarmReceiver.EXTRA_WINDOW_ID, -1L)
         intent.removeExtra(PromptAlarmReceiver.EXTRA_FROM_NOTIFICATION)
-        return NotificationEntryArgs(slot = slot, windowId = windowId.takeIf { it >= 0 })
+        return NotificationEntryArgs(slot = validSlot.name, windowId = windowId.takeIf { it >= 0 })
     }
 }

@@ -8,6 +8,7 @@ import androidx.core.content.getSystemService
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,7 +45,7 @@ class PromptScheduler @Inject constructor(
         scope.launch {
             val windows = windowDao.enabled()
             val today = LocalDate.now()
-            Log.i(TAG, "scheduleNow: ${windows.size} enabled windows")
+            if (BuildConfig.DEBUG) Log.i(TAG, "scheduleNow: ${windows.size} enabled windows")
             for (day in listOf(today, today.plusDays(1))) {
                 for (w in windows) {
                     val fireAt = pickFireTime(day, w) ?: continue
@@ -58,7 +59,7 @@ class PromptScheduler @Inject constructor(
     suspend fun scheduleNowBlocking() {
         val windows = windowDao.enabled()
         val today = LocalDate.now()
-        Log.i(TAG, "scheduleNowBlocking: ${windows.size} enabled windows")
+        if (BuildConfig.DEBUG) Log.i(TAG, "scheduleNowBlocking: ${windows.size} enabled windows")
         for (day in listOf(today, today.plusDays(1))) {
             for (w in windows) {
                 val fireAt = pickFireTime(day, w) ?: continue
@@ -95,7 +96,9 @@ class PromptScheduler @Inject constructor(
         } else {
             alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireMs, pi)
         }
-        Log.i(TAG, "scheduleTestIn: set alarm for +${seconds}s (exact=${canExact(alarmMgr)})")
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "scheduleTestIn: set alarm for +${seconds}s (exact=${canExact(alarmMgr)})")
+        }
     }
 
     fun cancelAll() {
@@ -121,7 +124,10 @@ class PromptScheduler @Inject constructor(
         } else {
             alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMs, pi)
         }
-        Log.i(TAG, "alarm set: ${window.label} day=$day at=$fireAt exact=${canExact(alarmMgr)}")
+        if (BuildConfig.DEBUG) {
+            // Window label is user-supplied free text; keep it out of release logcat.
+            Log.i(TAG, "alarm set: ${window.label} day=$day at=$fireAt exact=${canExact(alarmMgr)}")
+        }
     }
 
     private fun canExact(alarmMgr: AlarmManager): Boolean {

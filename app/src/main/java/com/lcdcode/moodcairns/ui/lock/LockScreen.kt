@@ -39,8 +39,10 @@ fun LockScreen(
     val activity = LocalContext.current as? FragmentActivity
     var promptedBiometric by remember { mutableStateOf(false) }
 
-    LaunchedEffect(activity, biometricEnabled) {
-        if (!promptedBiometric && biometricEnabled && activity != null && Biometrics.canAuthenticate(activity)) {
+    val canBiometric = biometricEnabled && viewModel.canBiometricUnlock()
+
+    LaunchedEffect(activity, canBiometric) {
+        if (!promptedBiometric && canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
             promptedBiometric = true
             Biometrics.prompt(
                 activity = activity,
@@ -66,6 +68,10 @@ fun LockScreen(
 
             Spacer(Modifier.height(8.dp))
 
+            val lockoutMs = state.lockoutRemainingMs
+            val lockoutText = lockoutMs?.let { formatLockoutDuration(it) }
+            val supporting = lockoutText?.let { "Try again in $it" } ?: state.error
+
             OutlinedTextField(
                 value = state.pin,
                 onValueChange = viewModel::onPinChanged,
@@ -73,16 +79,21 @@ fun LockScreen(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                isError = state.error != null,
-                supportingText = state.error?.let { { Text(it) } },
+                isError = supporting != null,
+                supportingText = supporting?.let { { Text(it) } },
+                enabled = lockoutMs == null,
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Button(onClick = viewModel::submit, modifier = Modifier.fillMaxWidth()) {
-                Text("Unlock")
+            Button(
+                onClick = viewModel::submit,
+                enabled = lockoutMs == null,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(if (lockoutText != null) "Locked ($lockoutText)" else "Unlock")
             }
 
-            if (biometricEnabled && activity != null && Biometrics.canAuthenticate(activity)) {
+            if (canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
                 TextButton(onClick = {
                     Biometrics.prompt(
                         activity = activity,
@@ -93,5 +104,16 @@ fun LockScreen(
                 }) { Text("Use biometric") }
             }
         }
+    }
+}
+
+private fun formatLockoutDuration(ms: Long): String {
+    val totalSec = ((ms + 999) / 1000).coerceAtLeast(1)
+    val minutes = totalSec / 60
+    val seconds = totalSec % 60
+    return when {
+        minutes <= 0L -> "${seconds}s"
+        seconds == 0L -> "${minutes}m"
+        else -> "${minutes}m ${seconds}s"
     }
 }

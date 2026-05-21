@@ -62,6 +62,12 @@ class SettingsViewModel @Inject constructor(
 
     fun setBiometricEnabled(enabled: Boolean) {
         lockRepo.biometricEnabled = enabled
+        // Mirror the change into the key blob so future biometric unlocks have
+        // (or no longer have) a DB key to use. Populating relies on
+        // [LockManager.onBiometricEnabledChanged] holding the in-memory DB key
+        // — only callable while unlocked, which is the only state from which
+        // Settings is reachable.
+        lockManager.onBiometricEnabledChanged(enabled)
         lockState.update { it.copy(second = enabled, third = it.third + 1) }
     }
 

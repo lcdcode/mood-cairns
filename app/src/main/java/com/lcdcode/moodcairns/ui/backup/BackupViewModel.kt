@@ -69,20 +69,30 @@ class BackupViewModel @Inject constructor(
             pin.fill('0')
             return
         }
-        if (!lockRepo.verifyPin(pin)) {
-            pin.fill('0')
-            _ui.update { it.copy(pinPrompt = null, message = "Incorrect PIN") }
-            return
-        }
-        _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
         when (prompt.mode) {
-            PinPromptMode.Export -> runExport(pin)
+            PinPromptMode.Export -> {
+                // Confirm the user really knows the device PIN before exporting
+                // every entry to disk under it.
+                if (!lockRepo.verifyPin(pin)) {
+                    pin.fill('0')
+                    _ui.update { it.copy(pinPrompt = null, message = "Incorrect PIN") }
+                    return
+                }
+                _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
+                runExport(pin)
+            }
             PinPromptMode.Import -> {
+                // Do NOT compare against the current device PIN: the backup envelope
+                // carries its own salt + iteration count, so any install (including
+                // a fresh one after device loss) should be able to restore as long
+                // as the correct backup-encryption PIN is provided. AES-GCM's tag
+                // check is the authoritative gate.
                 val uri = prompt.importUri
                 if (uri == null) {
                     pin.fill('0')
-                    _ui.update { it.copy(busy = false) }
+                    _ui.update { it.copy(pinPrompt = null, busy = false) }
                 } else {
+                    _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
                     runImport(uri, pin)
                 }
             }

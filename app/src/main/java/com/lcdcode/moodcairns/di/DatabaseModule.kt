@@ -2,48 +2,40 @@ package com.lcdcode.moodcairns.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.lcdcode.moodcairns.data.dao.EntryDao
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
-import com.lcdcode.moodcairns.data.dao.ScaleDao
-import com.lcdcode.moodcairns.data.db.AppDatabase
-import com.lcdcode.moodcairns.data.db.MIGRATION_1_2
-import com.lcdcode.moodcairns.data.db.Seed
+import com.lcdcode.moodcairns.data.db.ScheduleDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import javax.inject.Singleton
 
+/**
+ * Provides only the plaintext [ScheduleDatabase] at the DI graph level.
+ *
+ * The SQLCipher-encrypted mood database lives behind
+ * [com.lcdcode.moodcairns.data.db.MoodDatabaseHolder] (which is itself
+ * @Singleton-provided by Hilt's constructor injection); it has no DAO bindings
+ * here on purpose, since its lifecycle is tied to unlock state rather than to
+ * application start. Consumers obtain DAOs by calling
+ * `moodHolder.scaleDao()` / `moodHolder.entryDao()` — see [LockManager] for
+ * when the holder is open.
+ *
+ * Seeding of default scales + prompt windows is also intentionally moved out
+ * of the Room onCreate callback and into LockManager.completeSetup so that the
+ * fresh-install path and the legacy-migration path don't race over seed rows.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext ctx: Context): AppDatabase {
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        lateinit var db: AppDatabase
-        db = Room.databaseBuilder(ctx, AppDatabase::class.java, AppDatabase.NAME)
-            .addMigrations(MIGRATION_1_2)
-            .addCallback(object : androidx.room.RoomDatabase.Callback() {
-                override fun onCreate(connection: SupportSQLiteDatabase) {
-                    scope.launch {
-                        db.scaleDao().insertAllIgnore(Seed.scales)
-                        db.promptWindowDao().insertAllIgnore(Seed.windows)
-                    }
-                }
-            })
+    fun provideScheduleDatabase(@ApplicationContext ctx: Context): ScheduleDatabase =
+        Room.databaseBuilder(ctx, ScheduleDatabase::class.java, ScheduleDatabase.NAME)
             .build()
-        return db
-    }
 
-    @Provides fun provideScaleDao(db: AppDatabase): ScaleDao = db.scaleDao()
-    @Provides fun provideEntryDao(db: AppDatabase): EntryDao = db.entryDao()
-    @Provides fun providePromptWindowDao(db: AppDatabase): PromptWindowDao = db.promptWindowDao()
+    @Provides
+    fun providePromptWindowDao(db: ScheduleDatabase): PromptWindowDao = db.promptWindowDao()
 }

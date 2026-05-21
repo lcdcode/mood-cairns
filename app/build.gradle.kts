@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.sqlcipher.android)
 
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
