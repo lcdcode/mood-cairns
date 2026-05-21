@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 data class EntryUiState(
     val scales: List<Scale> = emptyList(),
-    val values: Map<Long, Int> = emptyMap(),
+    val values: Map<Long, Float> = emptyMap(),
     val note: String = "",
     val recordedAt: Instant = Instant.now(),
     val slot: PromptSlot = PromptSlot.MANUAL,
@@ -51,7 +51,7 @@ class EntryViewModel @Inject constructor(
             scales.observeActive().collect { list ->
                 _state.update { cur ->
                     // Default each slider to the midpoint of its scale.
-                    val defaults = list.associate { s -> s.id to ((s.minValue + s.maxValue) / 2) }
+                    val defaults = list.associate { s -> s.id to ((s.minValue + s.maxValue) / 2f) }
                     cur.copy(
                         scales = list,
                         values = defaults + cur.values.filterKeys { id -> list.any { it.id == id } },
@@ -61,7 +61,7 @@ class EntryViewModel @Inject constructor(
         }
     }
 
-    fun setValue(scaleId: Long, value: Int) {
+    fun setValue(scaleId: Long, value: Float) {
         _state.update { it.copy(values = it.values + (scaleId to value)) }
     }
 

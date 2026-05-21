@@ -25,7 +25,7 @@ class EntryRepository @Inject constructor(private val dao: EntryDao) {
         slot: PromptSlot,
         promptWindowId: Long?,
         note: String?,
-        values: Map<Long, Int>,
+        values: Map<Long, Float>,
     ): Long {
         val entry = Entry(
             recordedAt = recordedAt,

@@ -137,7 +137,7 @@ private fun EntryCard(
                         "  ${scale.name}",
                         modifier = Modifier.weight(1f),
                     )
-                    Text("${v.value} / ${scale.maxValue}")
+                    Text("${formatHistoryValue(v.value)} / ${scale.maxValue}")
                 }
             }
             entry.entry.note?.let {
@@ -150,4 +150,10 @@ private fun EntryCard(
 @Composable
 private fun SlotChip(slot: PromptSlot) {
     AssistChip(onClick = {}, label = { Text(slot.name.lowercase().replaceFirstChar { it.uppercase() }) })
+}
+
+private fun formatHistoryValue(v: Float): String {
+    val rounded = kotlin.math.round(v)
+    return if (kotlin.math.abs(v - rounded) < 1e-3f) rounded.toInt().toString()
+    else "%.2f".format(v).trimEnd('0').trimEnd('.')
 }

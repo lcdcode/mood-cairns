@@ -26,7 +26,7 @@ data class ScaleDto(
     val name: String,
     val minValue: Int,
     val maxValue: Int,
-    val step: Int,
+    val step: Float,
     val colorArgb: Int,
     val isBuiltIn: Boolean,
     val archived: Boolean,
@@ -56,7 +56,7 @@ data class EntryDto(
 @Serializable
 data class EntryValueDto(
     val scaleId: Long,
-    val value: Int,
+    val value: Float,
 )
 
 /**

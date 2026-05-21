@@ -13,7 +13,7 @@ data class Scale(
     val name: String,
     val minValue: Int,
     val maxValue: Int,
-    val step: Int = 1,
+    val step: Float = 1f,
     val colorArgb: Int,
     val isBuiltIn: Boolean = false,
     val archived: Boolean = false,

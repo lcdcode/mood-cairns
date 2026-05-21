@@ -109,6 +109,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.reorderable)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.sqlite.jdbc)
 }
 
 // Privacy guard: fail the build if the merged manifest ever declares a network

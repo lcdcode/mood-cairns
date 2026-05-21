@@ -54,11 +54,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.cartesian.Zoom
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import java.time.LocalDate
@@ -347,6 +352,13 @@ private fun ChartArea(
     var chartWidthPx by remember { mutableIntStateOf(0) }
     var tappedDay by remember { mutableStateOf<Int?>(null) }
 
+    val dateLabelFormatter = remember(startDate) {
+        val fmt = DateTimeFormatter.ofPattern("d MMM")
+        CartesianValueFormatter { _, x, _ ->
+            startDate.plusDays(x.toLong().coerceAtLeast(0)).format(fmt)
+        }
+    }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -369,14 +381,13 @@ private fun ChartArea(
                         lineProvider = LineCartesianLayer.LineProvider.series(lines),
                         rangeProvider = rangeProvider,
                     ),
+                    bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateLabelFormatter),
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.fillMaxSize(),
+                zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
             )
         }
-
-        Spacer(Modifier.height(4.dp))
-        DateAxisRow(startDate = startDate, totalDays = totalDays)
 
         Spacer(Modifier.height(8.dp))
 
@@ -408,37 +419,6 @@ private fun ChartArea(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DateAxisRow(startDate: LocalDate, totalDays: Int) {
-    val fmt = remember { DateTimeFormatter.ofPattern("d MMM") }
-    val end = startDate.plusDays((totalDays - 1).coerceAtLeast(0).toLong())
-    val mid = startDate.plusDays(((totalDays - 1).coerceAtLeast(0) / 2).toLong())
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            startDate.format(fmt),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        if (totalDays > 2) {
-            Text(
-                mid.format(fmt),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (totalDays > 1) {
-            Text(
-                end.format(fmt),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
     }
 }

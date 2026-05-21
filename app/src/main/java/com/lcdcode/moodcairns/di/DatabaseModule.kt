@@ -7,6 +7,7 @@ import com.lcdcode.moodcairns.data.dao.EntryDao
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.dao.ScaleDao
 import com.lcdcode.moodcairns.data.db.AppDatabase
+import com.lcdcode.moodcairns.data.db.MIGRATION_1_2
 import com.lcdcode.moodcairns.data.db.Seed
 import dagger.Module
 import dagger.Provides
@@ -29,6 +30,7 @@ object DatabaseModule {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         lateinit var db: AppDatabase
         db = Room.databaseBuilder(ctx, AppDatabase::class.java, AppDatabase.NAME)
+            .addMigrations(MIGRATION_1_2)
             .addCallback(object : androidx.room.RoomDatabase.Callback() {
                 override fun onCreate(connection: SupportSQLiteDatabase) {
                     scope.launch {

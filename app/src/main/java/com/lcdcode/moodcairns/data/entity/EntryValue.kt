@@ -26,5 +26,5 @@ import androidx.room.Index
 data class EntryValue(
     val entryId: Long,
     val scaleId: Long,
-    val value: Int,
+    val value: Float,
 )

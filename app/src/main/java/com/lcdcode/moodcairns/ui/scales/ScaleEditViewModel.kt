@@ -59,7 +59,7 @@ class ScaleEditViewModel @Inject constructor(
                             name = existing.name,
                             minValue = existing.minValue.toString(),
                             maxValue = existing.maxValue.toString(),
-                            step = existing.step.toString(),
+                            step = formatStep(existing.step),
                             colorArgb = existing.colorArgb,
                             isBuiltIn = existing.isBuiltIn,
                             sortOrder = existing.sortOrder,
@@ -76,7 +76,7 @@ class ScaleEditViewModel @Inject constructor(
     fun setName(v: String) = _state.update { it.copy(name = v, error = null) }
     fun setMin(v: String) = _state.update { it.copy(minValue = v.filter(Char::isDigit).take(4), error = null) }
     fun setMax(v: String) = _state.update { it.copy(maxValue = v.filter(Char::isDigit).take(4), error = null) }
-    fun setStep(v: String) = _state.update { it.copy(step = v.filter(Char::isDigit).take(3), error = null) }
+    fun setStep(v: String) = _state.update { it.copy(step = sanitizeDecimal(v, maxLen = 5), error = null) }
     fun setColor(argb: Int) = _state.update { it.copy(colorArgb = argb) }
 
     fun save() {
@@ -84,14 +84,14 @@ class ScaleEditViewModel @Inject constructor(
         val name = cur.name.trim()
         val min = cur.minValue.toIntOrNull()
         val max = cur.maxValue.toIntOrNull()
-        val step = cur.step.toIntOrNull()
+        val step = cur.step.toFloatOrNull()
 
         val err = when {
             name.isEmpty() -> "Name required"
             min == null || max == null || step == null -> "Enter numeric min, max, and step"
             min >= max -> "Min must be less than max"
-            step < 1 -> "Step must be at least 1"
-            (max - min) % step != 0 -> "Range (${max - min}) must be a multiple of step ($step)"
+            step <= 0f -> "Step must be greater than zero"
+            !isMultipleOfStep(max - min, step) -> "Range (${max - min}) must be a multiple of step (${formatStep(step)})"
             else -> null
         }
         if (err != null) {
@@ -123,4 +123,34 @@ class ScaleEditViewModel @Inject constructor(
     }
 
     companion object { const val ARG_SCALE_ID = "scaleId" }
+}
+
+/** Keeps only digits and at most one decimal point; caps total length. */
+internal fun sanitizeDecimal(raw: String, maxLen: Int): String {
+    val sb = StringBuilder()
+    var seenDot = false
+    for (c in raw) {
+        when {
+            c.isDigit() -> sb.append(c)
+            c == '.' && !seenDot -> { sb.append(c); seenDot = true }
+            else -> { /* drop */ }
+        }
+        if (sb.length >= maxLen) break
+    }
+    return sb.toString()
+}
+
+/** True when [range] is an integer multiple of [step], within float tolerance. */
+internal fun isMultipleOfStep(range: Int, step: Float): Boolean {
+    if (step <= 0f) return false
+    val quotient = range / step
+    val rounded = kotlin.math.round(quotient)
+    return kotlin.math.abs(quotient - rounded) < 1e-4f
+}
+
+/** Renders step without a trailing ".0" when it's whole. */
+internal fun formatStep(step: Float): String {
+    val rounded = kotlin.math.round(step)
+    return if (kotlin.math.abs(step - rounded) < 1e-4f) rounded.toInt().toString()
+    else step.toString().trimEnd('0').trimEnd('.')
 }

@@ -145,7 +145,7 @@ class ChartsViewModel @Inject constructor(
                 val v = row.values.firstOrNull { it.scaleId == scale.id } ?: continue
                 val dayIdx = (row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay).toInt()
                 if (dayIdx in 0 until days) {
-                    perDaySum[dayIdx] += v.value.toFloat()
+                    perDaySum[dayIdx] += v.value
                     perDayCount[dayIdx] += 1
                 }
             }

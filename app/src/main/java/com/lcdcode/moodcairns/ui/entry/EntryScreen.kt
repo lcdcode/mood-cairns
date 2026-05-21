@@ -86,7 +86,7 @@ fun EntryScreen(
             state.scales.forEach { scale ->
                 ScaleSlider(
                     scale = scale,
-                    value = state.values[scale.id] ?: ((scale.minValue + scale.maxValue) / 2),
+                    value = state.values[scale.id] ?: ((scale.minValue + scale.maxValue) / 2f),
                     onValueChange = { viewModel.setValue(scale.id, it) },
                 )
             }
@@ -117,10 +117,11 @@ fun EntryScreen(
 @Composable
 private fun ScaleSlider(
     scale: Scale,
-    value: Int,
-    onValueChange: (Int) -> Unit,
+    value: Float,
+    onValueChange: (Float) -> Unit,
 ) {
     val accent = Color(scale.colorArgb)
+    val display = formatEntryValue(value)
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -128,20 +129,33 @@ private fun ScaleSlider(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(scale.name, fontWeight = FontWeight.Medium)
-            Text("$value / ${scale.maxValue}")
+            Text("$display / ${scale.maxValue}")
         }
         Slider(
-            value = value.toFloat(),
-            onValueChange = { onValueChange(it.toInt()) },
+            value = value,
+            onValueChange = { onValueChange(snapToStep(it, scale)) },
             valueRange = scale.minValue.toFloat()..scale.maxValue.toFloat(),
-            steps = ((scale.maxValue - scale.minValue) / scale.step - 1).coerceAtLeast(0),
+            steps = (((scale.maxValue - scale.minValue) / scale.step).toInt() - 1).coerceAtLeast(0),
             colors = SliderDefaults.colors(
                 thumbColor = accent,
                 activeTrackColor = accent,
             ),
             modifier = Modifier.semantics {
-                contentDescription = "${scale.name}, value $value out of ${scale.maxValue}"
+                contentDescription = "${scale.name}, value $display out of ${scale.maxValue}"
             },
         )
     }
+}
+
+private fun snapToStep(raw: Float, scale: Scale): Float {
+    if (scale.step <= 0f) return raw
+    val offset = raw - scale.minValue
+    val snapped = scale.minValue + kotlin.math.round(offset / scale.step) * scale.step
+    return snapped.coerceIn(scale.minValue.toFloat(), scale.maxValue.toFloat())
+}
+
+private fun formatEntryValue(v: Float): String {
+    val rounded = kotlin.math.round(v)
+    return if (kotlin.math.abs(v - rounded) < 1e-3f) rounded.toInt().toString()
+    else "%.2f".format(v).trimEnd('0').trimEnd('.')
 }

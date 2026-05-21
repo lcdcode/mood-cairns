@@ -93,7 +93,7 @@ fun ScaleEditScreen(
                     onValueChange = viewModel::setStep,
                     label = { Text("Step") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.weight(1f),
                 )
             }

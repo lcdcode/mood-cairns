@@ -13,7 +13,7 @@ import com.lcdcode.moodcairns.data.entity.Scale
 
 @Database(
     entities = [Scale::class, Entry::class, EntryValue::class, PromptWindow::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

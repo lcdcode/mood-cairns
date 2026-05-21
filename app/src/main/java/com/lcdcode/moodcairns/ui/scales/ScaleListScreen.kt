@@ -181,7 +181,7 @@ private fun ScaleRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(scale.name, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "${scale.minValue}–${scale.maxValue} · step ${scale.step}" +
+                    "${scale.minValue}–${scale.maxValue} · step ${formatStep(scale.step)}" +
                         if (scale.isBuiltIn) " · built-in" else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
