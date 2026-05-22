@@ -30,6 +30,29 @@ android {
         base.archivesName = "mood-cairns-$versionName"
     }
 
+    // Release signing config is wired only when all four MOOD_CAIRNS_* properties
+    // are present (typically in ~/.gradle/gradle.properties, outside the repo).
+    // This lets debug builds work on machines without the keystore, while keeping
+    // secrets out of version control.
+    val releaseStoreFile = findProperty("MOOD_CAIRNS_STORE_FILE") as String?
+    val releaseStorePassword = findProperty("MOOD_CAIRNS_STORE_PASSWORD") as String?
+    val releaseKeyAlias = findProperty("MOOD_CAIRNS_KEY_ALIAS") as String?
+    val releaseKeyPassword = findProperty("MOOD_CAIRNS_KEY_PASSWORD") as String?
+    val hasReleaseSigning = listOf(
+        releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword,
+    ).all { !it.isNullOrBlank() }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -38,6 +61,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             // No applicationIdSuffix — personal-use builds install under the real id.

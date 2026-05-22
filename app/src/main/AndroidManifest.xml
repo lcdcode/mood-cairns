@@ -47,11 +47,22 @@
             </intent-filter>
         </activity>
 
+        <!--
+            MoodApp implements WorkManager's Configuration.Provider for on-demand
+            initialization, so its default startup hook must be stripped from the
+            merged manifest. Leaving the InitializationProvider itself intact lets
+            other androidx.startup-based libs continue to register if added later.
+        -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
-            tools:node="merge" />
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
         <receiver
             android:name=".notifications.PromptAlarmReceiver"
