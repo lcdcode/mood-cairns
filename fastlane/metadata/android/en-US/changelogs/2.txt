@@ -1,0 +1,5 @@
+v1.0.1
+
+* Track Room migration schemas in source for reproducible builds.
+* Add unit tests for legacy DB migration and DB key crypto.
+* Fix README license reference (now correctly GPL-3.0-only).

@@ -1,0 +1,1 @@
+Private, fully offline mood tracker. No network access. Your data's yours..
