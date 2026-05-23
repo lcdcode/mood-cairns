@@ -116,5 +116,4 @@ app/src/main/java/com/moodcairns/
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
-This is a personal project and I make no guarantees.
+GPL-3.0-only — see [LICENSE](LICENSE).
