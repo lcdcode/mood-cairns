@@ -2,14 +2,23 @@
 
 ![Mood Cairns icon](./media/ic_launcher_round_512.png)
 
-A private, fully offline Android mood tracker. Log how you're feeling against
-your own scales, in your own time windows, on your own device. Nothing is ever
-uploaded — sync, if you want it, is your job (Syncthing works well).
+A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
 
-## AI Declaration and Note about versions
+## AI Declaration
+
 Written with assistance from Claude Code and Opus 4.7.
 
-NOTE: Written using some older libraries to get it working as a proof of concept writing and building on-device in Termux. These will be updated with time and SDK updated to ver 35/36 soon.
+**All code is human reviewed and approved.**
+
+Additional agents used:
+   - voltagrnt-qa-sec:code-reviewer
+   - voltagent-qa-sec:security-auditor
+
+## Notes about SDK and Methodology
+
+This project was built targeting Android SDK 34 as it was developed as a proof of concept to *write, compile, and install all on-device using Termux.* I wanted the challenge of a self-contained mobile development platform.
+
+Termux aapt2 version does not yet support SDK 35 but this is a work in progress.
 
 ## What it does
 
