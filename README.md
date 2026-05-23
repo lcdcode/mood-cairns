@@ -82,7 +82,7 @@ sdk.dir=/path/to/your/android-sdk
 Output lands at:
 
 ```
-app/build/outputs/apk/debug/mood-cairns-1.0.0-debug.apk
+app/build/outputs/apk/debug/mood-cairns-1.0.2-debug.apk
 ```
 
 This is what's used for personal-use installs — it's signed with the standard
@@ -95,9 +95,6 @@ debug keystore but installs under the real `com.lcdcode.moodcairns` application 
 ./gradlew :app:verifyNoNetworkDebug     # privacy guard
 ./gradlew :app:assembleDebug            # APK
 ```
-
-If you're running on Termux on-device with the configuration cache enabled,
-some custom tasks need `--no-configuration-cache`.
 
 ## Project layout
 

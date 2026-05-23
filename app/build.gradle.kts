@@ -1,3 +1,11 @@
+import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.register
 import org.w3c.dom.Element
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -24,8 +32,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
         resourceConfigurations.add("en")
         base.archivesName = "mood-cairns-$versionName"
     }
@@ -151,34 +159,50 @@ val forbiddenPermissions = listOf(
     "android.permission.CHANGE_WIFI_STATE",
 )
 
+// Typed task class so Gradle's configuration cache can serialize the task graph.
+// Inline `doLast {}` lambdas capture script-scope references that CC can't handle.
+abstract class VerifyNoNetworkTask : DefaultTask() {
+    @get:InputFile
+    abstract val mergedManifest: RegularFileProperty
+
+    @get:Input
+    abstract val forbiddenPermissions: ListProperty<String>
+
+    @TaskAction
+    fun verify() {
+        val doc = DocumentBuilderFactory.newInstance().apply {
+            isNamespaceAware = true
+        }.newDocumentBuilder().parse(mergedManifest.get().asFile)
+        val forbidden = forbiddenPermissions.get().toSet()
+        val nodes = doc.getElementsByTagName("uses-permission")
+        val offenders = mutableListOf<String>()
+        for (i in 0 until nodes.length) {
+            val el = nodes.item(i) as Element
+            val name = el.getAttributeNS(
+                "http://schemas.android.com/apk/res/android", "name",
+            )
+            if (name in forbidden) offenders += name
+        }
+        if (offenders.isNotEmpty()) {
+            throw GradleException(
+                "Privacy constraint violated: merged manifest declares forbidden " +
+                    "permission(s): $offenders. This app must remain fully offline.",
+            )
+        }
+    }
+}
+
 androidComponents {
     onVariants { variant ->
-        val verifyTask = tasks.register("verifyNoNetwork${variant.name.replaceFirstChar { it.uppercase() }}") {
-            val manifestFile = variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.MERGED_MANIFEST)
-            inputs.file(manifestFile)
-            doLast {
-                val file = manifestFile.get().asFile
-                val doc = DocumentBuilderFactory.newInstance().apply {
-                    isNamespaceAware = true
-                }.newDocumentBuilder().parse(file)
-                val nodes = doc.getElementsByTagName("uses-permission")
-                val offenders = mutableListOf<String>()
-                for (i in 0 until nodes.length) {
-                    val el = nodes.item(i) as Element
-                    val name = el.getAttributeNS("http://schemas.android.com/apk/res/android", "name")
-                    if (name in forbiddenPermissions) offenders += name
-                }
-                if (offenders.isNotEmpty()) {
-                    throw GradleException(
-                        "Privacy constraint violated: merged manifest declares forbidden permission(s): $offenders. " +
-                            "This app must remain fully offline.",
-                    )
-                }
-            }
+        val capitalized = variant.name.replaceFirstChar { it.uppercase() }
+        val verifyTask = tasks.register<VerifyNoNetworkTask>("verifyNoNetwork$capitalized") {
+            mergedManifest.set(
+                variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.MERGED_MANIFEST),
+            )
+            forbiddenPermissions.set(this@Build_gradle.forbiddenPermissions)
         }
         afterEvaluate {
-            tasks.named("assemble${variant.name.replaceFirstChar { it.uppercase() }}")
-                .configure { dependsOn(verifyTask) }
+            tasks.named("assemble$capitalized").configure { dependsOn(verifyTask) }
         }
     }
 }

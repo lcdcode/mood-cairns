@@ -1,0 +1,4 @@
+v1.0.2
+
+* Make the verifyNoNetwork privacy-guard task configuration-cache compatible
+  so release builds no longer need --no-configuration-cache.
