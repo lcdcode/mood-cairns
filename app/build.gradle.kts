@@ -32,8 +32,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
         resourceConfigurations.add("en")
         base.archivesName = "mood-cairns-$versionName"
     }
@@ -63,6 +63,11 @@ android {
 
     buildTypes {
         release {
+            // AGP 8.3+ embeds META-INF/version-control-info.textproto with the live
+            // git HEAD at build time, which breaks F-Droid reproducible builds (the
+            // hash differs between the developer build and F-Droid's buildserver).
+            vcsInfo { include = false }
+
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

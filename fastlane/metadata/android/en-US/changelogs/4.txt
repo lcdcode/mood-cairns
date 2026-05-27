@@ -1,0 +1,5 @@
+v1.0.3
+
+* Stop embedding git commit metadata (version-control-info.textproto) in the
+  release APK so F-Droid reproducible builds are not tied to the build host's
+  git checkout state.
