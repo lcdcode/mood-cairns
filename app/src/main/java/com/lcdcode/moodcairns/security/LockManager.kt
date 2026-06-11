@@ -1,6 +1,5 @@
 package com.lcdcode.moodcairns.security
 
-import android.os.SystemClock
 import android.util.Log
 import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.db.LegacyMigrator
@@ -64,7 +63,7 @@ class LockManager @Inject constructor(
     private val _state = MutableStateFlow<LockState>(initialState())
     val state: StateFlow<LockState> = _state.asStateFlow()
 
-    private var backgroundedAt: Long? = null
+    private val autoLock = AutoLockPolicy()
 
     /** In-memory copy of the SQLCipher DB encryption key while unlocked. */
     @Volatile private var dbKey: ByteArray? = null
@@ -74,17 +73,28 @@ class LockManager @Inject constructor(
     private fun initialState(): LockState =
         if (!repo.isPinSet()) LockState.NeedsSetup else LockState.Locked
 
+    /**
+     * Call when the app stops being visible (Activity onStop, excluding
+     * configuration changes). Do not call from onPause: see [AutoLockPolicy]
+     * for why pause-driven locking misfires under transient overlays.
+     */
     fun onAppBackgrounded() {
-        if (_state.value is LockState.Unlocked) {
-            backgroundedAt = SystemClock.elapsedRealtime()
-        }
+        if (_state.value is LockState.Unlocked) autoLock.noteBackgrounded()
     }
 
+    /** Call when the app becomes visible again (Activity onStart). */
     fun onAppForegrounded() {
-        val bg = backgroundedAt ?: return
-        backgroundedAt = null
-        val elapsed = SystemClock.elapsedRealtime() - bg
-        if (elapsed >= repo.timeoutMs) lockNow()
+        if (autoLock.shouldLockOnForeground(repo.timeoutMs)) lockNow()
+    }
+
+    /**
+     * Call just before launching the system file picker so the handoff
+     * doesn't trip an "Immediate" auto-lock. Suppression is one-shot and
+     * capped at [FILE_PICKER_GRACE_MS]; lingering in the picker longer than
+     * that locks the app as usual.
+     */
+    fun suppressLockForFilePicker() {
+        autoLock.armGrace(FILE_PICKER_GRACE_MS)
     }
 
     /**
@@ -338,5 +348,8 @@ class LockManager @Inject constructor(
 
     companion object {
         private const val TAG = "LockManager"
+
+        /** Auto-lock grace while the user is in the system file picker. */
+        private const val FILE_PICKER_GRACE_MS = 2L * 60_000L
     }
 }

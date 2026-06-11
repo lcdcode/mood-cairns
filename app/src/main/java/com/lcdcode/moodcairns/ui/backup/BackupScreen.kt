@@ -122,7 +122,10 @@ fun BackupScreen(
             ) { Text("Export now") }
 
             OutlinedButton(
-                onClick = { importLauncher.launch(arrayOf("application/json")) },
+                onClick = {
+                    viewModel.noteFilePickerOpening()
+                    importLauncher.launch(arrayOf("application/json"))
+                },
                 enabled = !state.busy,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text("Import from file (replaces all data)") }

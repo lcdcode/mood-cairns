@@ -104,14 +104,21 @@ class MainActivity : FragmentActivity() {
         readNotificationArgs(intent)?.let { pendingEntryArgs.value = it }
     }
 
-    override fun onPause() {
-        super.onPause()
-        lockManager.onAppBackgrounded()
+    override fun onStart() {
+        super.onStart()
+        lockManager.onAppForegrounded()
     }
 
-    override fun onResume() {
-        super.onResume()
-        lockManager.onAppForegrounded()
+    // Auto-lock keys off onStop, not onPause: onPause fires under transient
+    // overlays (system permission prompt, biometric sheet, dialog windows)
+    // while the app is still on screen, which with an "Immediate" timeout
+    // locked the app under its own dialogs. onStop fires only when the app
+    // genuinely leaves the screen (home, app switch, screen off).
+    override fun onStop() {
+        super.onStop()
+        // Rotation and other config changes recreate the activity without the
+        // app ever leaving the foreground; don't treat them as backgrounding.
+        if (!isChangingConfigurations) lockManager.onAppBackgrounded()
     }
 
     private fun readNotificationArgs(intent: Intent?): NotificationEntryArgs? {

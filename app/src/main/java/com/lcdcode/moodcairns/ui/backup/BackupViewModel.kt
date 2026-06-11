@@ -9,6 +9,7 @@ import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
+import com.lcdcode.moodcairns.security.LockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +34,7 @@ class BackupViewModel @Inject constructor(
     private val serializer: BackupSerializer,
     private val store: BackupStore,
     private val importer: ImportService,
+    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private val _ui = MutableStateFlow(BackupUiState())
@@ -48,6 +50,13 @@ class BackupViewModel @Inject constructor(
     fun requestExport() {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.Export)) }
     }
+
+    /**
+     * Call right before launching the import file picker. The picker is an
+     * external full-screen activity, so without a grace window an "Immediate"
+     * auto-lock would fire mid-import and drop the picked file.
+     */
+    fun noteFilePickerOpening() = lockManager.suppressLockForFilePicker()
 
     fun requestImport(uri: Uri) {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.Import, importUri = uri)) }
