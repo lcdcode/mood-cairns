@@ -9,7 +9,8 @@ import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
-import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.security.LockManager
+import com.lcdcode.moodcairns.security.PinVerifyResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,7 @@ class BackupViewModel @Inject constructor(
     private val serializer: BackupSerializer,
     private val store: BackupStore,
     private val importer: ImportService,
-    private val lockRepo: LockRepository,
+    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private val _ui = MutableStateFlow(BackupUiState())
@@ -72,14 +73,27 @@ class BackupViewModel @Inject constructor(
         when (prompt.mode) {
             PinPromptMode.Export -> {
                 // Confirm the user really knows the device PIN before exporting
-                // every entry to disk under it.
-                if (!lockRepo.verifyPin(pin)) {
-                    pin.fill('0')
-                    _ui.update { it.copy(pinPrompt = null, message = "Incorrect PIN") }
-                    return
+                // every entry to disk under it. Throttled through LockManager so
+                // this dialog can't be used to brute-force the PIN while unlocked.
+                when (val verify = lockManager.verifyPinThrottled(pin)) {
+                    is PinVerifyResult.RateLimited -> {
+                        pin.fill('0')
+                        _ui.update {
+                            it.copy(
+                                pinPrompt = null,
+                                message = "Too many attempts. Try again in ${ceilSeconds(verify.retryAfterMs)}s",
+                            )
+                        }
+                    }
+                    PinVerifyResult.WrongPin -> {
+                        pin.fill('0')
+                        _ui.update { it.copy(pinPrompt = null, message = "Incorrect PIN") }
+                    }
+                    PinVerifyResult.Success -> {
+                        _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
+                        runExport(pin)
+                    }
                 }
-                _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-                runExport(pin)
             }
             PinPromptMode.Import -> {
                 // Do NOT compare against the current device PIN: the backup envelope
@@ -134,5 +148,7 @@ class BackupViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "BackupViewModel"
+
+        private fun ceilSeconds(ms: Long): Long = ((ms + 999) / 1000).coerceAtLeast(1)
     }
 }

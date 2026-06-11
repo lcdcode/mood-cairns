@@ -52,6 +52,10 @@ class ChangePinViewModel @Inject constructor(
             ChangePinResult.Success -> _state.update { it.copy(saving = false, saved = true) }
             ChangePinResult.WrongPin ->
                 _state.update { it.copy(saving = false, error = "Current PIN is incorrect") }
+            is ChangePinResult.RateLimited ->
+                _state.update {
+                    it.copy(saving = false, error = "Too many attempts. Try again in ${ceilSeconds(result.retryAfterMs)}s")
+                }
             ChangePinResult.Locked ->
                 _state.update { it.copy(saving = false, error = "App is locked; unlock and try again") }
         }
@@ -59,5 +63,7 @@ class ChangePinViewModel @Inject constructor(
 
     companion object {
         private const val MIN_PIN_LEN = 4
+
+        private fun ceilSeconds(ms: Long): Long = ((ms + 999) / 1000).coerceAtLeast(1)
     }
 }

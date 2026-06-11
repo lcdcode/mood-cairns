@@ -37,8 +37,21 @@ sealed interface PinUnlockResult {
 sealed interface ChangePinResult {
     data object Success : ChangePinResult
     data object WrongPin : ChangePinResult
+    /** Current-PIN entry is throttled. [retryAfterMs] is the remaining wait in milliseconds. */
+    data class RateLimited(val retryAfterMs: Long) : ChangePinResult
     /** No in-memory DB key, i.e. the app is locked. Should be unreachable from Settings. */
     data object Locked : ChangePinResult
+}
+
+/**
+ * Outcome of a standalone PIN check (PIN change, backup export) that shares the
+ * lock screen's failed-attempt budget so it can't be abused as an unthrottled
+ * brute-force oracle while the app is unlocked.
+ */
+sealed interface PinVerifyResult {
+    data object Success : PinVerifyResult
+    data object WrongPin : PinVerifyResult
+    data class RateLimited(val retryAfterMs: Long) : PinVerifyResult
 }
 
 @Singleton
@@ -148,7 +161,11 @@ class LockManager @Inject constructor(
         val key = dbKey
         try {
             if (key == null) return ChangePinResult.Locked
-            if (!repo.verifyPin(currentPin)) return ChangePinResult.WrongPin
+            when (val verify = verifyPinThrottled(currentPin)) {
+                is PinVerifyResult.RateLimited -> return ChangePinResult.RateLimited(verify.retryAfterMs)
+                PinVerifyResult.WrongPin -> return ChangePinResult.WrongPin
+                PinVerifyResult.Success -> Unit  // proceed with re-wrap
+            }
 
             val salt = DbKeyCrypto.newSalt()
             val kek = DbKeyCrypto.deriveKek(newPin, salt)
@@ -181,6 +198,35 @@ class LockManager @Inject constructor(
         return (until - now).coerceAtLeast(0L)
     }
 
+    /**
+     * Verify [pin] against the stored hash under the same failed-attempt lockout
+     * the lock screen uses. Any sensitive action gated by a PIN re-entry (PIN
+     * change, backup export) must go through this rather than calling
+     * [LockRepository.verifyPin] directly, so it can't be turned into an
+     * unthrottled brute-force oracle while the app is unlocked. A correct PIN
+     * clears the lockout counters; a wrong one advances them and may start a
+     * backoff. Caller owns zeroing [pin].
+     */
+    fun verifyPinThrottled(pin: CharArray): PinVerifyResult {
+        val remaining = pinLockoutRemainingMs()
+        if (remaining > 0L) return PinVerifyResult.RateLimited(remaining)
+        if (!repo.verifyPin(pin)) {
+            val penalty = registerFailedAttempt()
+            return if (penalty > 0L) PinVerifyResult.RateLimited(penalty) else PinVerifyResult.WrongPin
+        }
+        repo.clearLockoutState()
+        return PinVerifyResult.Success
+    }
+
+    /** Record one failed PIN attempt and return the backoff it triggers, in ms (0 if none yet). */
+    private fun registerFailedAttempt(): Long {
+        val attempts = repo.failedAttempts + 1
+        repo.failedAttempts = attempts
+        val penalty = penaltyForAttempts(attempts)
+        if (penalty > 0L) repo.lockoutUntilMs = System.currentTimeMillis() + penalty
+        return penalty
+    }
+
     fun tryUnlockWithPin(pin: CharArray): PinUnlockResult {
         val remaining = pinLockoutRemainingMs()
         if (remaining > 0L) {
@@ -190,15 +236,8 @@ class LockManager @Inject constructor(
         val pinOk = repo.verifyPin(pin)
         if (!pinOk) {
             pin.fill('\u0000')
-            val attempts = repo.failedAttempts + 1
-            repo.failedAttempts = attempts
-            val penalty = penaltyForAttempts(attempts)
-            return if (penalty > 0L) {
-                repo.lockoutUntilMs = System.currentTimeMillis() + penalty
-                PinUnlockResult.RateLimited(penalty)
-            } else {
-                PinUnlockResult.WrongPin
-            }
+            val penalty = registerFailedAttempt()
+            return if (penalty > 0L) PinUnlockResult.RateLimited(penalty) else PinUnlockResult.WrongPin
         }
         // PIN is good. Either unwrap the existing DB key, or — on first unlock
         // after an upgrade from a pre-encryption build — synthesise one now.
