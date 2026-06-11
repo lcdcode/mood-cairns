@@ -10,6 +10,12 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * AES-GCM envelope encryption keyed by a PBKDF2-derived key. Used to encrypt the
  * JSON backup before writing it to user-visible storage.
+ *
+ * The derived key comes from a user-supplied secret (a backup passphrase for new
+ * exports; the device PIN for backups created before passphrases existed). The
+ * envelope carries its own salt + iteration count, so [PBKDF2_ITERATIONS] only
+ * affects newly created backups - older ones decrypt with whatever count they
+ * recorded, keeping every prior export importable.
  */
 object BackupCrypto {
     const val KDF_ALGORITHM = "PBKDF2WithHmacSHA256"
@@ -18,7 +24,7 @@ object BackupCrypto {
     const val TAG_BITS = 128
     const val IV_BYTES = 12
     const val SALT_BYTES = 16
-    const val PBKDF2_ITERATIONS = 200_000
+    const val PBKDF2_ITERATIONS = 600_000
 
     fun newSalt(): ByteArray = ByteArray(SALT_BYTES).also { SecureRandom().nextBytes(it) }
     fun newIv(): ByteArray = ByteArray(IV_BYTES).also { SecureRandom().nextBytes(it) }

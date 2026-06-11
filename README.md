@@ -31,11 +31,13 @@ Termux aapt2 version does not yet support SDK 35 but this is a work in progress.
   log entry screen.
 - **History and charts.** Browse past entries, see per-scale trends over time.
 - **Encrypted backups.** Manual export writes an AES-GCM-encrypted JSON file
-  to `Documents/MoodCairns/`. The encryption key is derived from your PIN with
-  PBKDF2-HMAC-SHA256 (200k iterations) and a fresh per-backup salt embedded in
-  the envelope, so any install — including a fresh one — can decrypt with the
-  same PIN. Drop a file manager or Syncthing on that folder if you want
-  off-device copies.
+  to `Documents/MoodCairns/`. The encryption key is derived from a backup
+  passphrase you choose (minimum 8 characters) with PBKDF2-HMAC-SHA256 (600k
+  iterations) and a fresh per-backup salt embedded in the envelope, so any
+  install — including a fresh one — can decrypt with the same passphrase.
+  Backups from older versions, which were encrypted with the device PIN, still
+  import — just enter that PIN as the passphrase. Drop a file manager or
+  Syncthing on that folder if you want off-device copies.
 - **PIN + biometric lock.** PIN-gated app entry, with optional biometric
   unlock. PIN is hashed (PBKDF2, 600k iterations) before being stored.
 

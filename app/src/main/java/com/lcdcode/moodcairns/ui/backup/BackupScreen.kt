@@ -65,20 +65,29 @@ fun BackupScreen(
     }
 
     state.pinPrompt?.let { prompt ->
-        PinDialog(
-            title = when (prompt.mode) {
-                PinPromptMode.Export -> "Encrypt backup with PIN"
-                PinPromptMode.Import -> "Decrypt backup"
-            },
-            body = when (prompt.mode) {
-                PinPromptMode.Export ->
-                    "Enter your PIN. The backup can only be decrypted with this same PIN — even on a fresh install."
-                PinPromptMode.Import ->
-                    "Enter the PIN that was used to encrypt this backup."
-            },
-            onConfirm = viewModel::submitPin,
-            onDismiss = viewModel::cancelPinPrompt,
-        )
+        when (prompt.mode) {
+            PinPromptMode.Export -> SecretDialog(
+                title = "Encrypt backup",
+                body = "Choose a passphrase to encrypt this backup. You'll need this exact " +
+                    "passphrase to restore it — even on a fresh install. It is not your app " +
+                    "PIN and cannot be recovered if you forget it.",
+                label = "Passphrase",
+                requireConfirmation = true,
+                minLength = BackupViewModel.MIN_PASSPHRASE_LEN,
+                onConfirm = viewModel::submitSecret,
+                onDismiss = viewModel::cancelPinPrompt,
+            )
+            PinPromptMode.Import -> SecretDialog(
+                title = "Decrypt backup",
+                body = "Enter the passphrase used to encrypt this backup. For older backups, " +
+                    "this is the PIN that was set when they were created.",
+                label = "Passphrase or PIN",
+                requireConfirmation = false,
+                minLength = 0,
+                onConfirm = viewModel::submitSecret,
+                onDismiss = viewModel::cancelPinPrompt,
+            )
+        }
     }
 
     Scaffold(
@@ -101,7 +110,7 @@ fun BackupScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                "Backups are AES-GCM encrypted with a key derived from your PIN and written to Documents/MoodCairns. Syncthing or any file manager can sync them off-device — the app never uploads anything.",
+                "Backups are AES-GCM encrypted with a key derived from a passphrase you choose and written to Documents/MoodCairns. Syncthing or any file manager can sync them off-device — the app never uploads anything.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -153,13 +162,22 @@ private fun BackupRow(file: BackupFileInfo) {
 }
 
 @Composable
-private fun PinDialog(
+private fun SecretDialog(
     title: String,
     body: String,
+    label: String,
+    requireConfirmation: Boolean,
+    minLength: Int,
     onConfirm: (CharArray) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var pin by remember { mutableStateOf("") }
+    var secret by remember { mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
+
+    val tooShort = secret.length < minLength
+    val mismatch = requireConfirmation && confirm != secret
+    val canSubmit = secret.isNotEmpty() && !tooShort && !mismatch
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
@@ -167,29 +185,54 @@ private fun PinDialog(
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(body, style = MaterialTheme.typography.bodyMedium)
                 OutlinedTextField(
-                    value = pin,
-                    onValueChange = { pin = it },
-                    label = { Text("PIN") },
+                    value = secret,
+                    onValueChange = { secret = it },
+                    label = { Text(label) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = secret.isNotEmpty() && tooShort,
+                    supportingText = if (minLength > 0) {
+                        { Text("At least $minLength characters") }
+                    } else {
+                        null
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 )
+                if (requireConfirmation) {
+                    OutlinedTextField(
+                        value = confirm,
+                        onValueChange = { confirm = it },
+                        label = { Text("Confirm $label") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        isError = confirm.isNotEmpty() && mismatch,
+                        supportingText = if (confirm.isNotEmpty() && mismatch) {
+                            { Text("Passphrases do not match") }
+                        } else {
+                            null
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    val chars = pin.toCharArray()
-                    pin = ""
+                    val chars = secret.toCharArray()
+                    secret = ""
+                    confirm = ""
                     onConfirm(chars)
                 },
-                enabled = pin.isNotEmpty(),
+                enabled = canSubmit,
             ) { Text("Continue") }
         },
         dismissButton = {
             TextButton(onClick = {
-                pin = ""
+                secret = ""
+                confirm = ""
                 onDismiss()
             }) { Text("Cancel") }
         },

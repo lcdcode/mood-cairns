@@ -27,7 +27,7 @@ class ImportService @Inject constructor(
      * the schedule side is tiny (a handful of rows) and overwriting it
      * idempotently is cheap on retry.
      */
-    suspend fun importReplace(uri: Uri, pin: CharArray): ImportResult {
+    suspend fun importReplace(uri: Uri, secret: CharArray): ImportResult {
         // Cap the input to avoid OOM on a huge (intentional or accidental) file.
         // Real backups are well under a megabyte even with thousands of entries;
         // 50 MB is a generous ceiling that still keeps the JVM heap safe.
@@ -55,7 +55,7 @@ class ImportService @Inject constructor(
         }
 
         val entities = try {
-            val file = serializer.parse(raw, pin)
+            val file = serializer.parse(raw, secret)
             serializer.toEntities(file)
         } catch (t: Throwable) {
             return ImportResult.Failure(t.message ?: "Invalid backup file")

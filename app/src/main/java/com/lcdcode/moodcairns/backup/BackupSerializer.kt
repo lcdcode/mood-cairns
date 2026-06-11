@@ -33,10 +33,10 @@ class BackupSerializer @Inject constructor(
      * envelope. The salt/iter are carried in the envelope so any install —
      * including a fresh one — can decrypt given the same PIN.
      */
-    suspend fun exportJson(pin: CharArray): String {
+    suspend fun exportJson(passphrase: CharArray): String {
         val salt = BackupCrypto.newSalt()
         val iter = BackupCrypto.PBKDF2_ITERATIONS
-        val key = BackupCrypto.deriveKey(pin, salt, iter)
+        val key = BackupCrypto.deriveKey(passphrase, salt, iter)
         try {
             val scales = scaleDao.observeAll().first().map(::toDto)
             val windows = windowDao.observeAll().first().map(::toDto)
@@ -67,11 +67,12 @@ class BackupSerializer @Inject constructor(
     }
 
     /**
-     * Parse and decrypt [raw] using [pin] and the salt/iter carried inside the
-     * envelope itself. Throws with a user-readable message on corrupt data or
-     * wrong PIN.
+     * Parse and decrypt [raw] using [secret] and the salt/iter carried inside the
+     * envelope itself. [secret] is the backup passphrase, or - for backups made
+     * before passphrases existed - the device PIN used at export time. Throws
+     * with a user-readable message on corrupt data or a wrong secret.
      */
-    fun parse(raw: String, pin: CharArray): BackupFile {
+    fun parse(raw: String, secret: CharArray): BackupFile {
         val envelope = runCatching {
             json.decodeFromString(EncryptedBackup.serializer(), raw)
         }.getOrNull() ?: error("Unrecognized backup file format")
@@ -88,11 +89,11 @@ class BackupSerializer @Inject constructor(
         val ct = runCatching { Base64.decode(envelope.ciphertext, Base64.NO_WRAP) }
             .getOrNull() ?: error("Backup ciphertext is malformed")
 
-        val key = BackupCrypto.deriveKey(pin, salt, envelope.iter)
+        val key = BackupCrypto.deriveKey(secret, salt, envelope.iter)
         val plaintext = try {
             BackupCrypto.decrypt(key, iv, ct)
         } catch (_: Throwable) {
-            error("Could not decrypt backup — wrong PIN, or file is corrupt")
+            error("Could not decrypt backup — wrong passphrase, or file is corrupt")
         } finally {
             key.fill(0)
         }

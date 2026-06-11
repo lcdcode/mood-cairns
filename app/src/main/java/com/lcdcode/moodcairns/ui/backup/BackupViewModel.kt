@@ -9,8 +9,6 @@ import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
-import com.lcdcode.moodcairns.security.LockManager
-import com.lcdcode.moodcairns.security.PinVerifyResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,7 +33,6 @@ class BackupViewModel @Inject constructor(
     private val serializer: BackupSerializer,
     private val store: BackupStore,
     private val importer: ImportService,
-    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private val _ui = MutableStateFlow(BackupUiState())
@@ -61,61 +58,55 @@ class BackupViewModel @Inject constructor(
     }
 
     /**
-     * Confirm a PIN entered in the export/import dialog. [pin] is zeroed by this
-     * function — callers must not reuse it.
+     * Confirm a secret entered in the export/import dialog. [secret] is zeroed by
+     * this function — callers must not reuse it. For export it is the new backup
+     * passphrase (the dialog enforces the minimum length and confirmation match);
+     * for import it is whatever the backup was encrypted with, including an old
+     * device PIN, so no length rule is applied here.
      */
-    fun submitPin(pin: CharArray) {
+    fun submitSecret(secret: CharArray) {
         val prompt = _ui.value.pinPrompt
         if (prompt == null) {
-            pin.fill('0')
+            secret.fill('\u0000')
             return
         }
         when (prompt.mode) {
             PinPromptMode.Export -> {
-                // Confirm the user really knows the device PIN before exporting
-                // every entry to disk under it. Throttled through LockManager so
-                // this dialog can't be used to brute-force the PIN while unlocked.
-                when (val verify = lockManager.verifyPinThrottled(pin)) {
-                    is PinVerifyResult.RateLimited -> {
-                        pin.fill('0')
-                        _ui.update {
-                            it.copy(
-                                pinPrompt = null,
-                                message = "Too many attempts. Try again in ${ceilSeconds(verify.retryAfterMs)}s",
-                            )
-                        }
+                // Defence in depth: the dialog already blocks short passphrases,
+                // but never trust the UI to be the only gate.
+                if (secret.size < MIN_PASSPHRASE_LEN) {
+                    secret.fill('\u0000')
+                    _ui.update {
+                        it.copy(
+                            pinPrompt = null,
+                            message = "Passphrase must be at least $MIN_PASSPHRASE_LEN characters",
+                        )
                     }
-                    PinVerifyResult.WrongPin -> {
-                        pin.fill('0')
-                        _ui.update { it.copy(pinPrompt = null, message = "Incorrect PIN") }
-                    }
-                    PinVerifyResult.Success -> {
-                        _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-                        runExport(pin)
-                    }
+                    return
                 }
+                _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
+                runExport(secret)
             }
             PinPromptMode.Import -> {
-                // Do NOT compare against the current device PIN: the backup envelope
-                // carries its own salt + iteration count, so any install (including
-                // a fresh one after device loss) should be able to restore as long
-                // as the correct backup-encryption PIN is provided. AES-GCM's tag
-                // check is the authoritative gate.
+                // The envelope carries its own salt + iteration count, so any
+                // install (including a fresh one after device loss) can restore
+                // given the correct secret. AES-GCM's tag check is the gate; no
+                // minimum length, since legacy backups used short PINs.
                 val uri = prompt.importUri
                 if (uri == null) {
-                    pin.fill('0')
+                    secret.fill('\u0000')
                     _ui.update { it.copy(pinPrompt = null, busy = false) }
                 } else {
                     _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-                    runImport(uri, pin)
+                    runImport(uri, secret)
                 }
             }
         }
     }
 
-    private fun runExport(pin: CharArray) = viewModelScope.launch {
+    private fun runExport(passphrase: CharArray) = viewModelScope.launch {
         val text = try {
-            val json = serializer.exportJson(pin)
+            val json = serializer.exportJson(passphrase)
             val name = store.suggestName()
             store.writeBackup(name, json)
             "Exported $name"
@@ -123,22 +114,22 @@ class BackupViewModel @Inject constructor(
             Log.w(TAG, "Export failed", t)
             "Export failed: ${t.message ?: t.javaClass.simpleName}"
         } finally {
-            pin.fill('0')
+            passphrase.fill('\u0000')
         }
         _ui.update { it.copy(busy = false, message = text) }
         refresh()
     }
 
-    private fun runImport(uri: Uri, pin: CharArray) = viewModelScope.launch {
+    private fun runImport(uri: Uri, secret: CharArray) = viewModelScope.launch {
         val text = try {
-            val result = importer.importReplace(uri, pin)
+            val result = importer.importReplace(uri, secret)
             when (result) {
                 is ImportResult.Success ->
                     "Imported ${result.entries} entries, ${result.scales} scales, ${result.windows} windows"
                 is ImportResult.Failure -> "Import failed: ${result.message}"
             }
         } finally {
-            pin.fill('0')
+            secret.fill('\u0000')
         }
         _ui.update { it.copy(busy = false, message = text) }
         refresh()
@@ -149,6 +140,7 @@ class BackupViewModel @Inject constructor(
     companion object {
         private const val TAG = "BackupViewModel"
 
-        private fun ceilSeconds(ms: Long): Long = ((ms + 999) / 1000).coerceAtLeast(1)
+        /** Minimum length for a new backup passphrase. Not applied on import. */
+        const val MIN_PASSPHRASE_LEN = 8
     }
 }
