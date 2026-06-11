@@ -45,6 +45,34 @@ class DbKeyCryptoTest {
     }
 
     @Test
+    fun changingPin_rewrapsSameKey_newPinOpensIt_oldPinDoesNot() {
+        // Regression guard: a PIN change must re-wrap the existing DB key under a
+        // KEK derived from the new PIN. Earlier the PIN hash was rotated while the
+        // wrap was left keyed to the old PIN, which permanently locked the user
+        // out of their (correctly re-PINned) data.
+        val oldPin = "1234".toCharArray()
+        val newPin = "5678".toCharArray()
+        val iter = 1000
+        val dbKey = DbKeyCrypto.newDbKey()
+
+        val oldSalt = DbKeyCrypto.newSalt()
+        DbKeyCrypto.wrap(DbKeyCrypto.deriveKek(oldPin.copyOf(), oldSalt, iter), dbKey)
+
+        // Re-wrap the SAME db key under the new PIN + a fresh salt.
+        val newSalt = DbKeyCrypto.newSalt()
+        val rewrapped = DbKeyCrypto.wrap(DbKeyCrypto.deriveKek(newPin.copyOf(), newSalt, iter), dbKey)
+
+        // New PIN recovers the original key.
+        val viaNew = DbKeyCrypto.unwrap(DbKeyCrypto.deriveKek(newPin.copyOf(), newSalt, iter), rewrapped)
+        assertNotNull(viaNew)
+        assertArrayEquals(dbKey, viaNew)
+
+        // Old PIN can no longer open the rotated wrap.
+        val viaOld = DbKeyCrypto.unwrap(DbKeyCrypto.deriveKek(oldPin.copyOf(), oldSalt, iter), rewrapped)
+        assertNull(viaOld)
+    }
+
+    @Test
     fun wrap_isIvUnique_acrossCalls() {
         // GCM is catastrophically broken if IV is reused under the same key;
         // we generate a fresh IV every wrap call. Two consecutive wraps of the

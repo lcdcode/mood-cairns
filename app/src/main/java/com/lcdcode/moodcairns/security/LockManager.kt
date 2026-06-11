@@ -34,6 +34,13 @@ sealed interface PinUnlockResult {
     data class RateLimited(val retryAfterMs: Long) : PinUnlockResult
 }
 
+sealed interface ChangePinResult {
+    data object Success : ChangePinResult
+    data object WrongPin : ChangePinResult
+    /** No in-memory DB key, i.e. the app is locked. Should be unreachable from Settings. */
+    data object Locked : ChangePinResult
+}
+
 @Singleton
 class LockManager @Inject constructor(
     private val repo: LockRepository,
@@ -125,6 +132,42 @@ class LockManager @Inject constructor(
         if (repo.biometricEnabled) repo.saveBiometricDbKey(key)
         seedNewDatabases()
         _state.value = LockState.Unlocked
+    }
+
+    /**
+     * Change the PIN while unlocked. Re-wraps the existing in-memory DB key
+     * under a KEK derived from [newPin] + a fresh salt, then persists the new
+     * PIN hash and the new wrap together. The random DB key itself is never
+     * rotated, so all encrypted data stays readable and the biometric key blob
+     * (which stores that same DB key) remains valid without being touched.
+     *
+     * Requires the unlocked state: [dbKey] must be in memory to re-wrap it.
+     * Both [currentPin] and [newPin] are zeroed before returning.
+     */
+    fun changePin(currentPin: CharArray, newPin: CharArray): ChangePinResult {
+        val key = dbKey
+        try {
+            if (key == null) return ChangePinResult.Locked
+            if (!repo.verifyPin(currentPin)) return ChangePinResult.WrongPin
+
+            val salt = DbKeyCrypto.newSalt()
+            val kek = DbKeyCrypto.deriveKek(newPin, salt)
+            val wrapped = DbKeyCrypto.wrap(kek, key)
+            kek.fill(0)
+            repo.setPinAndDbKeyWrap(
+                newPin,
+                LockRepository.PinDbKeyWrap(
+                    iv = wrapped.iv,
+                    ciphertext = wrapped.ciphertext,
+                    salt = salt,
+                    iterations = DbKeyCrypto.DEFAULT_ITERATIONS,
+                ),
+            )
+            return ChangePinResult.Success
+        } finally {
+            currentPin.fill('\u0000')
+            newPin.fill('\u0000')
+        }
     }
 
     /**

@@ -1,7 +1,8 @@
 package com.lcdcode.moodcairns.ui.settings
 
 import androidx.lifecycle.ViewModel
-import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.security.ChangePinResult
+import com.lcdcode.moodcairns.security.LockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,7 @@ data class ChangePinUiState(
 
 @HiltViewModel
 class ChangePinViewModel @Inject constructor(
-    private val repo: LockRepository,
+    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChangePinUiState())
@@ -33,9 +34,8 @@ class ChangePinViewModel @Inject constructor(
     fun save() {
         val cur = _state.value
         val err = when {
-            cur.next.length < 4 -> "New PIN must be at least 4 digits"
+            cur.next.length < MIN_PIN_LEN -> "New PIN must be at least $MIN_PIN_LEN digits"
             cur.next != cur.confirm -> "PINs do not match"
-            !repo.verifyPin(cur.current.toCharArray()) -> "Current PIN is incorrect"
             else -> null
         }
         if (err != null) {
@@ -43,11 +43,21 @@ class ChangePinViewModel @Inject constructor(
             return
         }
         _state.update { it.copy(saving = true) }
-        try {
-            repo.setPin(cur.next.toCharArray())
-            _state.update { it.copy(saving = false, saved = true) }
-        } catch (t: Throwable) {
-            _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
+        // Routed through LockManager so the DB-key wrap is re-keyed to the new
+        // PIN alongside the PIN hash. Verifying the current PIN directly here and
+        // calling setPin in isolation would advance the hash while leaving the
+        // wrap openable only by the old PIN, locking the user out of their data.
+        val result = lockManager.changePin(cur.current.toCharArray(), cur.next.toCharArray())
+        when (result) {
+            ChangePinResult.Success -> _state.update { it.copy(saving = false, saved = true) }
+            ChangePinResult.WrongPin ->
+                _state.update { it.copy(saving = false, error = "Current PIN is incorrect") }
+            ChangePinResult.Locked ->
+                _state.update { it.copy(saving = false, error = "App is locked; unlock and try again") }
         }
+    }
+
+    companion object {
+        private const val MIN_PIN_LEN = 4
     }
 }

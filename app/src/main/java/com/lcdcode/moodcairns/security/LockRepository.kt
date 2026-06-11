@@ -82,6 +82,28 @@ class LockRepository @Inject constructor(
         putInt(KEY_DBK_ITER, wrap.iterations)
     }
 
+    /**
+     * Rotate the PIN hash and the PIN-wrapped DB key together in a single
+     * committed write. A PIN change must update both: the hash gates entry and
+     * the wrap is what the new PIN-derived KEK can actually open. Writing them
+     * in separate transactions risks a crash leaving the hash advanced while the
+     * wrap still expects the old PIN, which would lock the user out of their own
+     * data. [commit] is used (not apply) so success is only reported once the
+     * change is durable. Caller owns zeroing [pin].
+     */
+    fun setPinAndDbKeyWrap(pin: CharArray, wrap: PinDbKeyWrap) {
+        val hashed = PinHasher.hash(pin)
+        prefs.edit(commit = true) {
+            putString(KEY_HASH, encode(hashed.hash))
+            putString(KEY_SALT, encode(hashed.salt))
+            putInt(KEY_ITERATIONS, hashed.iterations)
+            putString(KEY_DBK_IV, encode(wrap.iv))
+            putString(KEY_DBK_CT, encode(wrap.ciphertext))
+            putString(KEY_DBK_SALT, encode(wrap.salt))
+            putInt(KEY_DBK_ITER, wrap.iterations)
+        }
+    }
+
     fun loadPinDbKeyWrap(): PinDbKeyWrap? {
         val iv = prefs.getString(KEY_DBK_IV, null)?.let(::decode) ?: return null
         val ct = prefs.getString(KEY_DBK_CT, null)?.let(::decode) ?: return null
