@@ -1,0 +1,6 @@
+v1.0.4
+
+* Fix issue #1 - 'Immediate' auto-lock setting triggering on dialogs causing lock loop.
+* Switch to passphrase for future encrypted backups (8-char minimum).
+* Throttle PIN verification on change and on backup export.
+* Re-wrap DB key on PIN change to prevent database lockout.
