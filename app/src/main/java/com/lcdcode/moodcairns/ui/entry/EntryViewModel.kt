@@ -5,8 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.repo.EntryRepository
+import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +26,11 @@ data class EntryUiState(
     val recordedAt: Instant = Instant.now(),
     val slot: PromptSlot = PromptSlot.MANUAL,
     val promptWindowId: Long? = null,
+    val windows: List<PromptWindow> = emptyList(),
+    // A window referenced by the entry being edited that is no longer in the
+    // enabled set (disabled in settings). Pinned so its chip still renders and
+    // the value round-trips on save instead of being silently dropped.
+    val extraWindow: PromptWindow? = null,
     val saving: Boolean = false,
     val savedId: Long? = null,
     val editingId: Long? = null,
@@ -36,6 +43,7 @@ class EntryViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val scales: ScaleRepository,
     private val entries: EntryRepository,
+    private val promptWindows: PromptWindowRepository,
 ) : ViewModel() {
 
     private val editingId: Long? = savedState.get<Long>(ARG_ENTRY_ID)?.takeIf { it > 0 }
@@ -64,6 +72,8 @@ class EntryViewModel @Inject constructor(
                     // update() against a missing id later.
                     _state.update { it.copy(editingId = null, editLoaded = true) }
                 } else {
+                    val refWindow = existing.entry.promptWindowId
+                        ?.let { promptWindows.byId(it) }
                     _state.update {
                         it.copy(
                             recordedAt = existing.entry.recordedAt,
@@ -71,8 +81,9 @@ class EntryViewModel @Inject constructor(
                             promptWindowId = existing.entry.promptWindowId,
                             note = existing.entry.note.orEmpty(),
                             values = existing.values.associate { v -> v.scaleId to v.value },
+                            extraWindow = refWindow?.takeUnless(PromptWindow::enabled),
                             editLoaded = true,
-                        )
+                        ).normalizedSelection()
                     }
                 }
             }
@@ -91,7 +102,23 @@ class EntryViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            promptWindows.observeAll().collect { all ->
+                _state.update { cur ->
+                    cur.copy(windows = all.filter(PromptWindow::enabled)).normalizedSelection()
+                }
+            }
+        }
     }
+
+    fun selectWindow(window: PromptWindow) =
+        _state.update { it.copy(slot = window.slot, promptWindowId = window.id) }
+
+    fun selectManual() =
+        _state.update { it.copy(slot = PromptSlot.MANUAL, promptWindowId = null) }
+
+    fun selectCustom() =
+        _state.update { it.copy(slot = PromptSlot.CUSTOM, promptWindowId = null) }
 
     fun setValue(scaleId: Long, value: Float) {
         _state.update { it.copy(values = it.values + (scaleId to value)) }
@@ -148,4 +175,27 @@ class EntryViewModel @Inject constructor(
         const val ARG_RECORDED_AT = "recordedAt"
         const val ARG_ENTRY_ID = "entryId"
     }
+}
+
+/**
+ * Resolves the slot picker selection to a value that maps onto an actual chip.
+ *
+ * Idempotent, so it is safe to apply on every windows emission and after the
+ * edit load. Leaves an already-valid selection untouched; otherwise it covers
+ * two outliers:
+ *  - A legacy or orphaned entry (slot set but no live window: missing id, or a
+ *    window that was hard-deleted) falls back to the first enabled window of
+ *    the same slot, or Manual if none exists.
+ *  - A disabled window referenced by the edited entry is kept via [extraWindow]
+ *    above (matched here as a valid selection) so the value is not lost.
+ */
+internal fun EntryUiState.normalizedSelection(): EntryUiState {
+    val matchesLiveWindow = promptWindowId != null &&
+        (windows.any { it.id == promptWindowId } || extraWindow?.id == promptWindowId)
+    if (matchesLiveWindow) return this
+    if (promptWindowId == null && (slot == PromptSlot.MANUAL || slot == PromptSlot.CUSTOM)) return this
+
+    val fallback = windows.firstOrNull { it.slot == slot }
+    return if (fallback != null) copy(slot = fallback.slot, promptWindowId = fallback.id)
+    else copy(slot = PromptSlot.MANUAL, promptWindowId = null)
 }
