@@ -50,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import java.time.LocalDate
 import java.time.ZoneId
@@ -109,6 +110,7 @@ fun HistoryScreen(
                     EntryCard(
                         entry = e,
                         scales = state.scalesById,
+                        windows = state.windowsById,
                         timeFmt = timeFmt,
                         onLongPress = { sheetTarget = e },
                     )
@@ -194,6 +196,7 @@ private fun DayHeader(day: LocalDate, fmt: DateTimeFormatter) {
 private fun EntryCard(
     entry: EntryWithValues,
     scales: Map<Long, Scale>,
+    windows: Map<Long, PromptWindow>,
     timeFmt: DateTimeFormatter,
     onLongPress: () -> Unit,
 ) {
@@ -210,7 +213,7 @@ private fun EntryCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(timeFmt.format(time), fontWeight = FontWeight.Medium)
-                SlotChip(entry.entry.slot)
+                SlotChip(slotLabel(entry.entry.slot, entry.entry.promptWindowId, windows))
             }
             HorizontalDivider()
             entry.values.forEach { v ->
@@ -236,9 +239,22 @@ private fun EntryCard(
 }
 
 @Composable
-private fun SlotChip(slot: PromptSlot) {
-    AssistChip(onClick = {}, label = { Text(slot.name.lowercase().replaceFirstChar { it.uppercase() }) })
+private fun SlotChip(label: String) {
+    AssistChip(onClick = {}, label = { Text(label) })
 }
+
+/**
+ * Prefer the configured window's label so renamed or extra windows read
+ * correctly. Falls back to the slot enum name for Manual/Custom entries and for
+ * entries whose window was since deleted.
+ */
+private fun slotLabel(
+    slot: PromptSlot,
+    promptWindowId: Long?,
+    windows: Map<Long, PromptWindow>,
+): String =
+    promptWindowId?.let { windows[it]?.label }
+        ?: slot.name.lowercase().replaceFirstChar { it.uppercase() }
 
 private fun formatHistoryValue(v: Float): String {
     val rounded = kotlin.math.round(v)
