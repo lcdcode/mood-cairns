@@ -1,13 +1,17 @@
 package com.lcdcode.moodcairns.ui.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.security.ChangePinResult
 import com.lcdcode.moodcairns.security.LockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class ChangePinUiState(
@@ -42,22 +46,34 @@ class ChangePinViewModel @Inject constructor(
             _state.update { it.copy(error = err) }
             return
         }
-        _state.update { it.copy(saving = true) }
+        _state.update { it.copy(saving = true, error = null) }
         // Routed through LockManager so the DB-key wrap is re-keyed to the new
         // PIN alongside the PIN hash. Verifying the current PIN directly here and
         // calling setPin in isolation would advance the hash while leaving the
         // wrap openable only by the old PIN, locking the user out of their data.
-        val result = lockManager.changePin(cur.current.toCharArray(), cur.next.toCharArray())
-        when (result) {
-            ChangePinResult.Success -> _state.update { it.copy(saving = false, saved = true) }
-            ChangePinResult.WrongPin ->
-                _state.update { it.copy(saving = false, error = "Current PIN is incorrect") }
-            is ChangePinResult.RateLimited ->
-                _state.update {
-                    it.copy(saving = false, error = "Too many attempts. Try again in ${ceilSeconds(result.retryAfterMs)}s")
+        // The two PBKDF2 passes (verify + re-wrap) run off the UI thread.
+        viewModelScope.launch {
+            val result = try {
+                withContext(Dispatchers.Default) {
+                    lockManager.changePin(cur.current.toCharArray(), cur.next.toCharArray())
                 }
-            ChangePinResult.Locked ->
-                _state.update { it.copy(saving = false, error = "App is locked; unlock and try again") }
+            } catch (t: Throwable) {
+                _state.update {
+                    it.copy(saving = false, error = "Couldn't change PIN: ${t.message ?: t.javaClass.simpleName}")
+                }
+                return@launch
+            }
+            when (result) {
+                ChangePinResult.Success -> _state.update { it.copy(saving = false, saved = true) }
+                ChangePinResult.WrongPin ->
+                    _state.update { it.copy(saving = false, error = "Current PIN is incorrect") }
+                is ChangePinResult.RateLimited ->
+                    _state.update {
+                        it.copy(saving = false, error = "Too many attempts. Try again in ${ceilSeconds(result.retryAfterMs)}s")
+                    }
+                ChangePinResult.Locked ->
+                    _state.update { it.copy(saving = false, error = "App is locked; unlock and try again") }
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.PinUnlockResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +13,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class LockUiState(
     val pin: String = "",
     val error: String? = null,
     val attempts: Int = 0,
+    /** True while an unlock attempt (PBKDF2 + DB open) is running off the UI thread. */
+    val busy: Boolean = false,
     /** Remaining backoff in ms, or null when PIN entry is allowed. */
     val lockoutRemainingMs: Long? = null,
 )
@@ -44,28 +48,43 @@ class LockViewModel @Inject constructor(
 
     fun submit() {
         val pin = _ui.value.pin
-        if (_ui.value.lockoutRemainingMs != null) return
+        if (_ui.value.busy || _ui.value.lockoutRemainingMs != null) return
         if (pin.length < MIN_PIN_LEN) {
             _ui.update { it.copy(error = "PIN must be at least $MIN_PIN_LEN digits") }
             return
         }
-        when (val result = lockManager.tryUnlockWithPin(pin.toCharArray())) {
-            PinUnlockResult.Success -> {
-                countdownJob?.cancel()
-                _ui.update { LockUiState() }
-            }
-            PinUnlockResult.WrongPin -> _ui.update {
-                it.copy(pin = "", error = "Incorrect PIN", attempts = it.attempts + 1)
-            }
-            is PinUnlockResult.RateLimited -> {
-                _ui.update {
-                    it.copy(
-                        pin = "",
-                        error = "Too many attempts",
-                        attempts = it.attempts + 1,
-                    )
+        _ui.update { it.copy(busy = true, error = null) }
+        viewModelScope.launch {
+            // PIN unlock runs ~1.2M PBKDF2 rounds plus the SQLCipher DB open;
+            // on the UI thread that freezes the app and ANR-crashes slow devices.
+            // Dispatchers.Default keeps it off the main thread.
+            val result = try {
+                withContext(Dispatchers.Default) {
+                    lockManager.tryUnlockWithPin(pin.toCharArray())
                 }
-                startCountdown(result.retryAfterMs)
+            } catch (t: Throwable) {
+                _ui.update { it.copy(busy = false, pin = "", error = unlockErrorMessage(t)) }
+                return@launch
+            }
+            when (result) {
+                PinUnlockResult.Success -> {
+                    countdownJob?.cancel()
+                    _ui.update { LockUiState() }
+                }
+                PinUnlockResult.WrongPin -> _ui.update {
+                    it.copy(busy = false, pin = "", error = "Incorrect PIN", attempts = it.attempts + 1)
+                }
+                is PinUnlockResult.RateLimited -> {
+                    _ui.update {
+                        it.copy(
+                            busy = false,
+                            pin = "",
+                            error = "Too many attempts",
+                            attempts = it.attempts + 1,
+                        )
+                    }
+                    startCountdown(result.retryAfterMs)
+                }
             }
         }
     }
@@ -73,19 +92,32 @@ class LockViewModel @Inject constructor(
     fun canBiometricUnlock(): Boolean = lockManager.canBiometricUnlock()
 
     /**
-     * Returns true if biometric unlock succeeded (DB key was available);
-     * false means the LockScreen should fall through to PIN entry — e.g.
-     * upgrading from a build that pre-dates DB encryption, where the
-     * biometric key blob hasn't been populated yet.
+     * Handle a successful biometric prompt. The DB open still touches disk, so
+     * it runs off the UI thread. If no biometric DB key is stored yet (e.g.
+     * upgrading from a build that pre-dates DB encryption) the LockScreen simply
+     * stays put and the user falls through to PIN entry.
      */
-    fun onBiometricSuccess(): Boolean {
-        val ok = lockManager.unlockViaBiometric()
-        if (ok) {
-            countdownJob?.cancel()
-            _ui.update { LockUiState() }
+    fun onBiometricSuccess() {
+        if (_ui.value.busy) return
+        _ui.update { it.copy(busy = true, error = null) }
+        viewModelScope.launch {
+            val ok = try {
+                withContext(Dispatchers.Default) { lockManager.unlockViaBiometric() }
+            } catch (t: Throwable) {
+                _ui.update { it.copy(busy = false, error = unlockErrorMessage(t)) }
+                return@launch
+            }
+            if (ok) {
+                countdownJob?.cancel()
+                _ui.update { LockUiState() }
+            } else {
+                _ui.update { it.copy(busy = false) }
+            }
         }
-        return ok
     }
+
+    private fun unlockErrorMessage(t: Throwable): String =
+        "Couldn't unlock: ${t.message ?: t.javaClass.simpleName}"
 
     private fun startCountdown(initialMs: Long) {
         countdownJob?.cancel()
