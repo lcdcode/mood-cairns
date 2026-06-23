@@ -3,9 +3,12 @@ package com.lcdcode.moodcairns.ui.charts
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
+import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.repo.EntryRepository
+import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,10 +33,40 @@ data class ScaleSeries(
 
 enum class ChartMode { Raw, RollingAvg }
 
+/**
+ * Identifies one prompt-slot filter chip. Windows are keyed by id (so renamed or
+ * multiple same-slot windows stay distinct); Manual/Custom are the slot-only
+ * entries; Other catches entries that map to no current chip (legacy slots or a
+ * since-deleted window) so they remain filterable rather than silently hidden.
+ */
+sealed interface SlotKey {
+    data class Window(val id: Long) : SlotKey
+    object Manual : SlotKey
+    object Custom : SlotKey
+    object Other : SlotKey
+}
+
+/**
+ * Maps an entry onto its filter chip. A window id is honored only when the
+ * window still exists; otherwise Manual/Custom fall through to their slot, and
+ * everything else (legacy slot, deleted window) buckets into Other.
+ */
+internal fun slotKeyFor(entry: Entry, knownWindowIds: Set<Long>): SlotKey {
+    val windowId = entry.promptWindowId
+    return when {
+        windowId != null && windowId in knownWindowIds -> SlotKey.Window(windowId)
+        windowId == null && entry.slot == PromptSlot.MANUAL -> SlotKey.Manual
+        windowId == null && entry.slot == PromptSlot.CUSTOM -> SlotKey.Custom
+        else -> SlotKey.Other
+    }
+}
+
 data class ChartsUiState(
     val startDate: LocalDate = LocalDate.now().minusDays(29),
     val endDate: LocalDate = LocalDate.now(),
-    val slotFilter: Set<PromptSlot> = PromptSlot.values().toSet(),
+    val windows: List<PromptWindow> = emptyList(),
+    val excludedSlots: Set<SlotKey> = emptySet(),
+    val showOther: Boolean = false,
     val selectedScaleIds: Set<Long> = emptySet(),
     val scales: List<Scale> = emptyList(),
     val series: List<ScaleSeries> = emptyList(),
@@ -49,7 +82,7 @@ data class ChartsUiState(
 private data class Filters(
     val start: LocalDate,
     val end: LocalDate,
-    val slots: Set<PromptSlot>,
+    val excluded: Set<SlotKey>,
     val selected: Set<Long>,
     val mode: ChartMode,
     val absoluteY: Boolean,
@@ -61,13 +94,14 @@ private data class Filters(
 class ChartsViewModel @Inject constructor(
     private val entries: EntryRepository,
     scales: ScaleRepository,
+    windows: PromptWindowRepository,
 ) : ViewModel() {
 
     private val filters = MutableStateFlow(
         Filters(
             start = LocalDate.now().minusDays(29),
             end = LocalDate.now(),
-            slots = PromptSlot.values().toSet(),
+            excluded = emptySet(),
             selected = emptySet(),
             mode = ChartMode.Raw,
             absoluteY = false,
@@ -75,7 +109,13 @@ class ChartsViewModel @Inject constructor(
         ),
     )
 
+    // Slot-filter options visible in the latest render, cached so toggleSlot can
+    // refuse a toggle that would hide every option. Best-effort guard only.
+    @Volatile
+    private var visibleSlotKeys: Set<SlotKey> = emptySet()
+
     private val scalesFlow = scales.observeAll()
+    private val windowsFlow = windows.observeAll()
     private val earliestFlow = entries.observeEarliestRecordedAt()
 
     val state: StateFlow<ChartsUiState> = filters
@@ -90,8 +130,9 @@ class ChartsViewModel @Inject constructor(
                 entries.observeRange(from, toExclusive),
                 scalesFlow,
                 earliestFlow,
-            ) { rows, scaleList, earliest ->
-                buildState(f, rows, scaleList, earliest)
+                windowsFlow,
+            ) { rows, scaleList, earliest, windowList ->
+                buildState(f, rows, scaleList, earliest, windowList)
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChartsUiState())
@@ -101,9 +142,11 @@ class ChartsViewModel @Inject constructor(
         it.copy(start = s, end = e)
     }
 
-    fun toggleSlot(slot: PromptSlot) = filters.update {
-        val next = if (slot in it.slots) it.slots - slot else it.slots + slot
-        it.copy(slots = if (next.isEmpty()) it.slots else next)
+    fun toggleSlot(key: SlotKey) = filters.update {
+        val next = if (key in it.excluded) it.excluded - key else it.excluded + key
+        // Keep at least one visible option active, mirroring the old slot filter.
+        val hidesEverything = visibleSlotKeys.isNotEmpty() && visibleSlotKeys.all { k -> k in next }
+        if (hidesEverything) it else it.copy(excluded = next)
     }
 
     fun toggleScale(id: Long) = filters.update {
@@ -120,6 +163,7 @@ class ChartsViewModel @Inject constructor(
         rows: List<EntryWithValues>,
         scaleList: List<Scale>,
         earliest: java.time.Instant?,
+        windowList: List<PromptWindow>,
     ): ChartsUiState {
         val zone = ZoneId.systemDefault()
         val earliestLocal = earliest?.atZone(zone)?.toLocalDate()
@@ -139,7 +183,15 @@ class ChartsViewModel @Inject constructor(
             scaleList.filter { !it.archived }.map { it.id }.toSet()
         } else f.selected
 
-        val filteredRows = rows.filter { it.entry.slot in f.slots }
+        val knownWindowIds = windowList.mapTo(HashSet()) { it.id }
+        val hasOther = rows.any { slotKeyFor(it.entry, knownWindowIds) == SlotKey.Other }
+        visibleSlotKeys = buildSet {
+            windowList.forEach { add(SlotKey.Window(it.id)) }
+            add(SlotKey.Manual)
+            add(SlotKey.Custom)
+            if (hasOther) add(SlotKey.Other)
+        }
+        val filteredRows = rows.filter { slotKeyFor(it.entry, knownWindowIds) !in f.excluded }
 
         val series = scaleList.map { scale ->
             val perDaySum = FloatArray(days)
@@ -162,7 +214,9 @@ class ChartsViewModel @Inject constructor(
         return ChartsUiState(
             startDate = effectiveStart,
             endDate = f.end,
-            slotFilter = f.slots,
+            windows = windowList,
+            excludedSlots = f.excluded,
+            showOther = hasOther,
             selectedScaleIds = selected,
             scales = scaleList,
             series = series,

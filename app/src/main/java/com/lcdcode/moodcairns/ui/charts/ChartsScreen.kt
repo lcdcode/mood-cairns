@@ -50,7 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
@@ -117,7 +117,9 @@ fun ChartsScreen(
             )
 
             SlotFilterRow(
-                selected = state.slotFilter,
+                windows = state.windows,
+                excluded = state.excludedSlots,
+                showOther = state.showOther,
                 onToggle = viewModel::toggleSlot,
             )
 
@@ -243,19 +245,78 @@ private fun YAxisModeRow(absolute: Boolean, onToggle: (Boolean) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SlotFilterRow(selected: Set<PromptSlot>, onToggle: (PromptSlot) -> Unit) {
+private fun SlotFilterRow(
+    windows: List<PromptWindow>,
+    excluded: Set<SlotKey>,
+    showOther: Boolean,
+    onToggle: (SlotKey) -> Unit,
+) {
+    val scrollState = rememberScrollState()
+    val surface = MaterialTheme.colorScheme.surface
     Column {
         Text("Prompt slots", style = MaterialTheme.typography.labelMedium)
         Spacer(Modifier.height(4.dp))
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            PromptSlot.values().forEach { slot ->
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                windows.forEach { window ->
+                    val key = SlotKey.Window(window.id)
+                    FilterChip(
+                        selected = key !in excluded,
+                        onClick = { onToggle(key) },
+                        label = { Text(window.label) },
+                    )
+                }
                 FilterChip(
-                    selected = slot in selected,
-                    onClick = { onToggle(slot) },
-                    label = { Text(slot.name.lowercase().replaceFirstChar(Char::uppercase)) },
+                    selected = SlotKey.Manual !in excluded,
+                    onClick = { onToggle(SlotKey.Manual) },
+                    label = { Text("Manual") },
+                )
+                FilterChip(
+                    selected = SlotKey.Custom !in excluded,
+                    onClick = { onToggle(SlotKey.Custom) },
+                    label = { Text("Custom") },
+                )
+                if (showOther) {
+                    FilterChip(
+                        selected = SlotKey.Other !in excluded,
+                        onClick = { onToggle(SlotKey.Other) },
+                        label = { Text("Other") },
+                    )
+                }
+            }
+            // Edge fades signal that more chips exist off-screen. These overlays
+            // are purely decorative and do not intercept pointer events.
+            if (scrollState.canScrollBackward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to surface,
+                                    0.08f to Color.Transparent,
+                                    1f to Color.Transparent,
+                                ),
+                            ),
+                        ),
+                )
+            }
+            if (scrollState.canScrollForward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.Transparent,
+                                    0.92f to Color.Transparent,
+                                    1f to surface,
+                                ),
+                            ),
+                        ),
                 )
             }
         }
