@@ -1,6 +1,8 @@
 package com.lcdcode.moodcairns.ui.entry
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -158,33 +161,69 @@ private fun PromptSlotRow(
         if (extraWindow != null && windows.none { it.id == extraWindow.id }) windows + extraWindow
         else windows
     }
+    val scrollState = rememberScrollState()
+    val surface = androidx.compose.material3.MaterialTheme.colorScheme.surface
     Column {
         Text(
             "Prompt slot",
             style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
         )
         Spacer(Modifier.height(4.dp))
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            options.forEach { window ->
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                options.forEach { window ->
+                    FilterChip(
+                        selected = selectedWindowId == window.id,
+                        onClick = { onWindow(window) },
+                        label = { Text(window.label) },
+                    )
+                }
                 FilterChip(
-                    selected = selectedWindowId == window.id,
-                    onClick = { onWindow(window) },
-                    label = { Text(window.label) },
+                    selected = selectedWindowId == null && selectedSlot == PromptSlot.MANUAL,
+                    onClick = onManual,
+                    label = { Text("Manual") },
+                )
+                FilterChip(
+                    selected = selectedWindowId == null && selectedSlot == PromptSlot.CUSTOM,
+                    onClick = onCustom,
+                    label = { Text("Custom") },
                 )
             }
-            FilterChip(
-                selected = selectedWindowId == null && selectedSlot == PromptSlot.MANUAL,
-                onClick = onManual,
-                label = { Text("Manual") },
-            )
-            FilterChip(
-                selected = selectedWindowId == null && selectedSlot == PromptSlot.CUSTOM,
-                onClick = onCustom,
-                label = { Text("Custom") },
-            )
+            // Edge fades signal that more chips exist off-screen. These overlays
+            // are purely decorative and do not intercept pointer events.
+            if (scrollState.canScrollBackward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to surface,
+                                    0.08f to Color.Transparent,
+                                    1f to Color.Transparent,
+                                ),
+                            ),
+                        ),
+                )
+            }
+            if (scrollState.canScrollForward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.Transparent,
+                                    0.92f to Color.Transparent,
+                                    1f to surface,
+                                ),
+                            ),
+                        ),
+                )
+            }
         }
     }
 }
