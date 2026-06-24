@@ -67,6 +67,31 @@ class SetPinViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Set the app up with no PIN. The DB is still encrypted at rest under the
+     * keystore-held key; the caller must have shown the risk warning and gotten
+     * explicit acceptance first.
+     */
+    fun continueWithoutPin() {
+        if (_ui.value.saving) return
+        _ui.update { it.copy(saving = true, error = null) }
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.Default) {
+                    lockManager.completeSetupWithoutPin()
+                }
+                // Success flips LockState to Unlocked, which swaps this screen out.
+            } catch (t: Throwable) {
+                _ui.update {
+                    it.copy(
+                        saving = false,
+                        error = "Couldn't continue without a PIN: ${t.message ?: t.javaClass.simpleName}",
+                    )
+                }
+            }
+        }
+    }
+
     private fun sanitize(value: String) = value.filter(Char::isDigit).take(MAX_PIN_LEN)
 
     companion object {

@@ -21,6 +21,7 @@ data class SettingsUiState(
     val windows: List<PromptWindow> = emptyList(),
     val lockTimeoutMs: Long = LockRepository.DEFAULT_TIMEOUT_MS,
     val biometricEnabled: Boolean = true,
+    val pinSet: Boolean = true,
     val loaded: Boolean = false,
 )
 
@@ -44,9 +45,15 @@ class SettingsViewModel @Inject constructor(
             windows = windows,
             lockTimeoutMs = lock.first,
             biometricEnabled = lock.second,
+            // Re-read on each emission so returning from the Change/Set PIN
+            // screen (which bumps the counter via refresh) reflects the new mode.
+            pinSet = lockRepo.isPinSet(),
             loaded = true,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+
+    /** Re-evaluate lock-derived state, e.g. after returning from Change/Set PIN. */
+    fun refresh() = lockState.update { it.copy(third = it.third + 1) }
 
     fun toggleWindowEnabled(window: PromptWindow) {
         viewModelScope.launch {

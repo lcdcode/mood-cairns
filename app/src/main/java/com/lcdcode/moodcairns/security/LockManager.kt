@@ -19,6 +19,8 @@ import javax.inject.Singleton
 sealed interface LockState {
     data object NeedsSetup : LockState
     data object Locked : LockState
+    /** No-PIN install: the keystore-held DB key is being loaded and the DB opened. */
+    data object Booting : LockState
     /** PIN/biometric just verified; the legacy plaintext DB is being split + encrypted. */
     data object Migrating : LockState
     data object Unlocked : LockState
@@ -70,8 +72,30 @@ class LockManager @Inject constructor(
 
     private val migrationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    init {
+        // A no-PIN install has no lock screen to drive the unlock; load the
+        // keystore-held DB key and open the DB off the main thread before the
+        // UI reaches any state that touches it.
+        if (_state.value is LockState.Booting) bootstrapNoPin()
+    }
+
+    fun isPinSet(): Boolean = repo.isPinSet()
+
     private fun initialState(): LockState =
-        if (!repo.isPinSet()) LockState.NeedsSetup else LockState.Locked
+        resolveInitialState(pinSet = repo.isPinSet(), hasNoPinDbKey = repo.hasNoPinDbKey())
+
+    private fun bootstrapNoPin() {
+        migrationScope.launch {
+            val key = repo.loadNoPinDbKey()
+            if (key == null) {
+                // Flag said no-PIN but the key is gone (tampering / partial wipe);
+                // fall back to first-run setup rather than opening nothing.
+                _state.value = LockState.NeedsSetup
+                return@launch
+            }
+            finishUnlock(key)
+        }
+    }
 
     /**
      * Call when the app stops being visible (Activity onStop, excluding
@@ -155,6 +179,82 @@ class LockManager @Inject constructor(
         if (repo.biometricEnabled) repo.saveBiometricDbKey(key)
         seedNewDatabases()
         _state.value = LockState.Unlocked
+    }
+
+    /**
+     * Fresh-install path when the user declines a PIN. Generates a random DB key
+     * and stores it raw under the keystore-backed prefs (no KEK, no PIN hash),
+     * then opens + seeds the DB. The data is still encrypted at rest; what's
+     * waived is the PIN gate and the user-secret layer over the keystore. The UI
+     * surfaces the risk and requires explicit acceptance before calling this.
+     */
+    fun completeSetupWithoutPin() {
+        val key = DbKeyCrypto.newDbKey()
+        repo.saveNoPinDbKey(key)
+        repo.clearLockoutState()
+        dbKey = key
+        moodHolder.open(key)
+        seedNewDatabases()
+        _state.value = LockState.Unlocked
+    }
+
+    /**
+     * Remove the PIN while unlocked (PIN -> no-PIN). Verifies the current PIN
+     * for authorization, then re-homes the in-memory DB key to the raw keystore
+     * slot and tears down all PIN-derived material (hash, wrap, biometric key,
+     * lockout counters). The DB key itself is unchanged, so no data is rewritten.
+     * Requires the unlocked state. [currentPin] is zeroed before returning.
+     */
+    fun removePin(currentPin: CharArray): ChangePinResult {
+        val key = dbKey
+        try {
+            if (key == null) return ChangePinResult.Locked
+            when (val verify = verifyPinThrottled(currentPin)) {
+                is PinVerifyResult.RateLimited -> return ChangePinResult.RateLimited(verify.retryAfterMs)
+                PinVerifyResult.WrongPin -> return ChangePinResult.WrongPin
+                PinVerifyResult.Success -> Unit
+            }
+            repo.saveNoPinDbKey(key)
+            repo.clearPin()
+            repo.clearPinDbKeyWrap()
+            repo.clearBiometricDbKey()
+            repo.clearLockoutState()
+            return ChangePinResult.Success
+        } finally {
+            currentPin.fill('\u0000')
+        }
+    }
+
+    /**
+     * Set a PIN from no-PIN mode while unlocked (no-PIN -> PIN). Wraps the
+     * in-memory DB key under a KEK derived from [newPin] + a fresh salt, persists
+     * the PIN hash and wrap together, then drops the raw keystore key. The DB key
+     * is unchanged. There is no current PIN to verify. [newPin] is zeroed before
+     * returning.
+     */
+    fun setPinFromNoPin(newPin: CharArray): ChangePinResult {
+        val key = dbKey
+        try {
+            if (key == null) return ChangePinResult.Locked
+            val salt = DbKeyCrypto.newSalt()
+            val kek = DbKeyCrypto.deriveKek(newPin, salt)
+            val wrapped = DbKeyCrypto.wrap(kek, key)
+            kek.fill(0)
+            repo.setPinAndDbKeyWrap(
+                newPin,
+                LockRepository.PinDbKeyWrap(
+                    iv = wrapped.iv,
+                    ciphertext = wrapped.ciphertext,
+                    salt = salt,
+                    iterations = DbKeyCrypto.DEFAULT_ITERATIONS,
+                ),
+            )
+            repo.clearNoPinDbKey()
+            repo.clearLockoutState()
+            return ChangePinResult.Success
+        } finally {
+            newPin.fill('\u0000')
+        }
     }
 
     /**
@@ -305,7 +405,8 @@ class LockManager @Inject constructor(
         moodHolder.open(key)
         // Opportunistically populate the biometric key so the next session can
         // use the fast path; safe because we hold the DB key in memory now.
-        if (repo.biometricEnabled && !repo.hasBiometricDbKey()) {
+        // Skipped in no-PIN mode, where biometric gates nothing.
+        if (repo.isPinSet() && repo.biometricEnabled && !repo.hasBiometricDbKey()) {
             repo.saveBiometricDbKey(key)
         }
         repo.clearLockoutState()
@@ -352,4 +453,19 @@ class LockManager @Inject constructor(
         /** Auto-lock grace while the user is in the system file picker. */
         private const val FILE_PICKER_GRACE_MS = 2L * 60_000L
     }
+}
+
+/**
+ * Decide the launch state from persisted credential markers. A set PIN means
+ * the lock screen gates entry; otherwise a stored no-PIN DB key means the user
+ * opted out of a PIN and we auto-open; with neither, it's a first run.
+ *
+ * Pure so the truth table can be unit-tested without Android dependencies — a
+ * wrong mapping here would either re-prompt setup over real data or auto-open
+ * when a PIN should be required.
+ */
+internal fun resolveInitialState(pinSet: Boolean, hasNoPinDbKey: Boolean): LockState = when {
+    pinSet -> LockState.Locked
+    hasNoPinDbKey -> LockState.Booting
+    else -> LockState.NeedsSetup
 }

@@ -28,11 +28,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 
@@ -46,6 +50,17 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    // Setting or removing a PIN happens on another screen; refresh on return so
+    // the Security section reflects the current mode.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.refresh()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     Scaffold(
         topBar = {
@@ -88,32 +103,49 @@ fun SettingsScreen(
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader("Security") }
-            item {
-                LockTimeoutSection(
-                    selectedMs = state.lockTimeoutMs,
-                    onSelect = viewModel::setLockTimeout,
-                )
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("Biometric unlock", modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = state.biometricEnabled,
-                        onCheckedChange = viewModel::setBiometricEnabled,
+            if (state.pinSet) {
+                item {
+                    LockTimeoutSection(
+                        selectedMs = state.lockTimeoutMs,
+                        onSelect = viewModel::setLockTimeout,
                     )
                 }
-            }
-            item {
-                OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
-                    Text("Change PIN")
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text("Biometric unlock", modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = state.biometricEnabled,
+                            onCheckedChange = viewModel::setBiometricEnabled,
+                        )
+                    }
                 }
-            }
-            item {
-                OutlinedButton(onClick = viewModel::lockNow, modifier = Modifier.fillMaxWidth()) {
-                    Text("Lock now")
+                item {
+                    OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
+                        Text("Change PIN")
+                    }
+                }
+                item {
+                    OutlinedButton(onClick = viewModel::lockNow, modifier = Modifier.fillMaxWidth()) {
+                        Text("Lock now")
+                    }
+                }
+            } else {
+                item {
+                    Text(
+                        "No PIN set. Your data is encrypted on this device but protected only " +
+                            "by your device's keystore, not by a PIN. Auto-lock, biometric unlock, " +
+                            "and lock-now are unavailable without a PIN.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                item {
+                    OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
+                        Text("Set PIN")
+                    }
                 }
             }
 
