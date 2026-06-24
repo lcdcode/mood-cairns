@@ -84,6 +84,7 @@ class MainActivity : FragmentActivity() {
                     when (val s = state) {
                         LockState.NeedsSetup -> SetPinScreen()
                         LockState.Locked -> LockScreen(biometricEnabled = lockRepository.biometricEnabled)
+                        LockState.Booting -> com.lcdcode.moodcairns.ui.lock.BootingScreen()
                         LockState.Migrating -> com.lcdcode.moodcairns.ui.lock.MigratingScreen()
                         is LockState.MigrationFailed -> com.lcdcode.moodcairns.ui.lock.MigrationFailedScreen(
                             message = s.message,

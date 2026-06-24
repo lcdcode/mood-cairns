@@ -114,6 +114,29 @@ class LockRepository @Inject constructor(
 
     fun hasPinDbKeyWrap(): Boolean = prefs.contains(KEY_DBK_IV)
 
+    fun clearPinDbKeyWrap() = prefs.edit {
+        remove(KEY_DBK_IV); remove(KEY_DBK_CT); remove(KEY_DBK_SALT); remove(KEY_DBK_ITER)
+    }
+
+    /**
+     * Database key stored for the no-PIN mode. The user has opted out of a PIN,
+     * so there is no KEK to wrap it under; we keep the raw DB key here, at rest
+     * behind EncryptedSharedPreferences' Keystore master key. This is the same
+     * exposure profile as [saveBiometricDbKey] (an attacker with code execution
+     * in this process can read it), minus the biometric gate. The trade-off is
+     * the explicit, warned-about cost of running without a PIN: there is no user
+     * secret protecting an exfiltrated DB + LockPrefs blob.
+     */
+    fun saveNoPinDbKey(dbKey: ByteArray) =
+        prefs.edit { putString(KEY_NOPIN_DBK, encode(dbKey)) }
+
+    fun loadNoPinDbKey(): ByteArray? =
+        prefs.getString(KEY_NOPIN_DBK, null)?.let(::decode)
+
+    fun hasNoPinDbKey(): Boolean = prefs.contains(KEY_NOPIN_DBK)
+
+    fun clearNoPinDbKey() = prefs.edit { remove(KEY_NOPIN_DBK) }
+
     /**
      * Database key stored for the biometric quick-unlock path. EncryptedSharedPrefs
      * already wraps this under the Android Keystore master key, so it is at rest
@@ -137,6 +160,7 @@ class LockRepository @Inject constructor(
     fun clearAllKeyMaterial() = prefs.edit {
         remove(KEY_DBK_IV); remove(KEY_DBK_CT); remove(KEY_DBK_SALT); remove(KEY_DBK_ITER)
         remove(KEY_BIO_DBK)
+        remove(KEY_NOPIN_DBK)
     }
 
     private fun encode(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
@@ -155,6 +179,7 @@ class LockRepository @Inject constructor(
         private const val KEY_DBK_SALT = "dbk_pin_salt"
         private const val KEY_DBK_ITER = "dbk_pin_iter"
         private const val KEY_BIO_DBK = "dbk_bio"
+        private const val KEY_NOPIN_DBK = "dbk_nopin"
         const val DEFAULT_TIMEOUT_MS: Long = 60_000L
     }
 }

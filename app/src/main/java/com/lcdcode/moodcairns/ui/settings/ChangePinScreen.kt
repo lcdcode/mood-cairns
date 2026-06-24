@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.ui.lock.NoPinWarningDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,10 +37,28 @@ fun ChangePinScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
 
+    // Empty new PIN while a PIN exists is the "remove PIN" gesture.
+    val isRemoving = state.hasExistingPin && state.next.isEmpty() && state.confirm.isEmpty()
+    val title = if (state.hasExistingPin) "Change PIN" else "Set PIN"
+    val actionLabel = when {
+        state.saving -> "Saving…"
+        !state.hasExistingPin -> "Set PIN"
+        isRemoving -> "Remove PIN"
+        else -> "Change PIN"
+    }
+
+    if (state.showRemoveWarning) {
+        NoPinWarningDialog(
+            title = "Remove your PIN?",
+            onAccept = viewModel::confirmRemovePin,
+            onDismiss = viewModel::cancelRemovePin,
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Change PIN") },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -52,9 +71,19 @@ fun ChangePinScreen(
             modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PinField(value = state.current, onValueChange = viewModel::setCurrent, label = "Current PIN")
+            if (state.hasExistingPin) {
+                PinField(value = state.current, onValueChange = viewModel::setCurrent, label = "Current PIN")
+            }
             PinField(value = state.next, onValueChange = viewModel::setNext, label = "New PIN")
             PinField(value = state.confirm, onValueChange = viewModel::setConfirm, label = "Confirm new PIN")
+
+            if (state.hasExistingPin) {
+                Text(
+                    "Leave the new PIN fields empty to remove your PIN.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
 
             state.error?.let {
                 Text(it, color = MaterialTheme.colorScheme.error)
@@ -65,7 +94,7 @@ fun ChangePinScreen(
                 enabled = !state.saving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (state.saving) "Saving…" else "Change PIN")
+                Text(actionLabel)
             }
         }
     }

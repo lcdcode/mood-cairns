@@ -26,6 +26,9 @@ data class ScaleEditUiState(
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
+    val deleting: Boolean = false,
+    val deleted: Boolean = false,
+    val affectedEntryCount: Int? = null,
     val error: String? = null,
 ) {
     companion object {
@@ -118,6 +121,30 @@ class ScaleEditViewModel @Inject constructor(
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
                 _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
+            }
+        }
+    }
+
+    /** Load how many entries have data on this scale, for the delete warning. */
+    fun loadAffectedEntryCount() {
+        val id = _state.value.id
+        if (id == 0L) return
+        viewModelScope.launch {
+            val count = repo.countEntriesUsing(id)
+            _state.update { it.copy(affectedEntryCount = count) }
+        }
+    }
+
+    fun delete() {
+        val id = _state.value.id
+        if (id == 0L || _state.value.deleting) return
+        _state.update { it.copy(deleting = true, error = null) }
+        viewModelScope.launch {
+            try {
+                repo.delete(id)
+                _state.update { it.copy(deleting = false, deleted = true) }
+            } catch (t: Throwable) {
+                _state.update { it.copy(deleting = false, error = t.message ?: "Delete failed") }
             }
         }
     }

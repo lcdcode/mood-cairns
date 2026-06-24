@@ -122,7 +122,9 @@ class PromptWindowEditViewModel @Inject constructor(
                         enabled = cur.enabled,
                     ),
                 )
-                scheduler.scheduleNow()
+                // Drop the window's already-armed alarms; scheduleNow only adds,
+                // so without this the deleted window keeps firing ghost prompts.
+                scheduler.cancelForWindow(cur.id)
             }
             _state.update { it.copy(saved = true) }
         }

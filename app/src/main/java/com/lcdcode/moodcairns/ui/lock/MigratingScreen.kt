@@ -38,6 +38,17 @@ fun MigratingScreen() {
     }
 }
 
+/**
+ * Brief splash shown on a no-PIN launch while the keystore-held DB key is loaded
+ * and the database is opened off the main thread. Usually a fraction of a second.
+ */
+@Composable
+fun BootingScreen() {
+    Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
 @Composable
 fun MigrationFailedScreen(message: String) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {

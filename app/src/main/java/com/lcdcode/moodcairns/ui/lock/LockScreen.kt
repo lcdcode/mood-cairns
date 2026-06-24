@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -81,19 +83,27 @@ fun LockScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 isError = supporting != null,
                 supportingText = supporting?.let { { Text(it) } },
-                enabled = lockoutMs == null,
+                enabled = lockoutMs == null && !state.busy,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             Button(
                 onClick = viewModel::submit,
-                enabled = lockoutMs == null,
+                enabled = lockoutMs == null && !state.busy,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (lockoutText != null) "Locked ($lockoutText)" else "Unlock")
+                if (state.busy) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                } else {
+                    Text(if (lockoutText != null) "Locked ($lockoutText)" else "Unlock")
+                }
             }
 
-            if (canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
+            if (!state.busy && canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
                 TextButton(onClick = {
                     Biometrics.prompt(
                         activity = activity,

@@ -11,11 +11,13 @@ import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
 import com.lcdcode.moodcairns.security.LockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class BackupUiState(
@@ -43,7 +45,8 @@ class BackupViewModel @Inject constructor(
     init { refresh() }
 
     fun refresh() = viewModelScope.launch {
-        val files = store.list()
+        // MediaStore query is disk I/O; keep it off the UI thread.
+        val files = withContext(Dispatchers.IO) { store.list() }
         _ui.update { it.copy(files = files) }
     }
 
@@ -115,10 +118,14 @@ class BackupViewModel @Inject constructor(
 
     private fun runExport(passphrase: CharArray) = viewModelScope.launch {
         val text = try {
-            val json = serializer.exportJson(passphrase)
-            val name = store.suggestName()
-            store.writeBackup(name, json)
-            "Exported $name"
+            // PBKDF2 (600k rounds) + AES + file write; off the UI thread so a
+            // large export can't freeze or ANR-crash the app on slow devices.
+            withContext(Dispatchers.Default) {
+                val json = serializer.exportJson(passphrase)
+                val name = store.suggestName()
+                store.writeBackup(name, json)
+                "Exported $name"
+            }
         } catch (t: Throwable) {
             Log.w(TAG, "Export failed", t)
             "Export failed: ${t.message ?: t.javaClass.simpleName}"
@@ -131,7 +138,8 @@ class BackupViewModel @Inject constructor(
 
     private fun runImport(uri: Uri, secret: CharArray) = viewModelScope.launch {
         val text = try {
-            val result = importer.importReplace(uri, secret)
+            // PBKDF2 + decrypt + bulk DB writes; keep it off the UI thread.
+            val result = withContext(Dispatchers.Default) { importer.importReplace(uri, secret) }
             when (result) {
                 is ImportResult.Success ->
                     "Imported ${result.entries} entries, ${result.scales} scales, ${result.windows} windows"

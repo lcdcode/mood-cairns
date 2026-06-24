@@ -5,13 +5,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -23,6 +29,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
     val state by viewModel.ui.collectAsStateWithLifecycle()
+    var showNoPinWarning by remember { mutableStateOf(false) }
+
+    if (showNoPinWarning) {
+        NoPinWarningDialog(
+            title = "Continue without a PIN?",
+            onAccept = {
+                showNoPinWarning = false
+                viewModel.continueWithoutPin()
+            },
+            onDismiss = { showNoPinWarning = false },
+        )
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -41,6 +59,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             onValueChange = viewModel::onPinChanged,
             label = { Text("PIN (4–10 digits)") },
             singleLine = true,
+            enabled = !state.saving,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             modifier = Modifier.fillMaxWidth(),
@@ -51,6 +70,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             onValueChange = viewModel::onConfirmChanged,
             label = { Text("Confirm PIN") },
             singleLine = true,
+            enabled = !state.saving,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             isError = state.error != null,
@@ -58,8 +78,28 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Button(onClick = viewModel::submit, modifier = Modifier.fillMaxWidth()) {
-            Text("Save PIN")
+        Button(
+            onClick = viewModel::submit,
+            enabled = !state.saving,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            if (state.saving) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            } else {
+                Text("Save PIN")
+            }
+        }
+
+        TextButton(
+            onClick = { showNoPinWarning = true },
+            enabled = !state.saving,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Continue without a PIN")
         }
     }
 }
