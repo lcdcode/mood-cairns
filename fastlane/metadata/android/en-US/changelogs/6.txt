@@ -1,0 +1,6 @@
+- UI performance improvements to help avoid crashes on less powerful devices.
+- Add Tag selection to Entry screen for re-tagging during logging or editing an entry.
+- Fix scale color selection overflow.
+- Allow deletion of user-made scales.
+- Allow option to set up without PIN / remove PIN (with warning!)
+- Fix "ghost" notifications left over after prompt window deletion/deactivation.
