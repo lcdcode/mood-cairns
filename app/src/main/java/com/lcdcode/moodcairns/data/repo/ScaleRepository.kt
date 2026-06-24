@@ -20,6 +20,8 @@ class ScaleRepository @Inject constructor(private val holder: MoodDatabaseHolder
         if (scale.id == 0L) dao().insert(scale) else dao().update(scale)
     }
     suspend fun setArchived(id: Long, archived: Boolean) = dao().setArchived(id, archived)
+    suspend fun countEntriesUsing(id: Long): Int = dao().countEntriesUsing(id)
+    suspend fun delete(id: Long) = dao().deleteScaleCascade(id)
     suspend fun reorder(orderedIds: List<Long>) = dao().applySortOrder(orderedIds)
     suspend fun nextSortOrder(): Int = dao().maxSortOrder() + 1
 }
