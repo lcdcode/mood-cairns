@@ -57,8 +57,12 @@ class SettingsViewModel @Inject constructor(
 
     fun toggleWindowEnabled(window: PromptWindow) {
         viewModelScope.launch {
-            windowsRepo.upsert(window.copy(enabled = !window.enabled))
-            promptScheduler.scheduleNow()
+            val nowEnabled = !window.enabled
+            windowsRepo.upsert(window.copy(enabled = nowEnabled))
+            // Enabling arms the alarms; disabling must drop the already-armed
+            // ones, since scheduleNow only adds and would leave them to fire.
+            if (nowEnabled) promptScheduler.scheduleNow()
+            else promptScheduler.cancelForWindow(window.id)
         }
     }
 

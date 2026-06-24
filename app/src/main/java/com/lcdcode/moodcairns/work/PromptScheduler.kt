@@ -1,7 +1,9 @@
 package com.lcdcode.moodcairns.work
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.content.getSystemService
@@ -11,6 +13,7 @@ import androidx.work.WorkManager
 import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.entity.PromptWindow
+import com.lcdcode.moodcairns.notifications.PromptAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +115,36 @@ class PromptScheduler @Inject constructor(
                     alarmMgr.cancel(DailyScheduleWorker.pendingIntent(context, day, w))
                 }
             }
+        }
+    }
+
+    /**
+     * Cancel any armed alarms for a single window across the scheduling horizon
+     * (today + tomorrow). [scheduleNow] only *adds* alarms for enabled windows;
+     * without this, an alarm armed earlier keeps its own PendingIntent in
+     * AlarmManager and still fires after the window is deleted or disabled,
+     * producing a "ghost" prompt for a window that no longer applies.
+     *
+     * PendingIntent matching ignores extras, keying on the request code plus the
+     * intent's component + action, so a minimal intent rebuilt here matches the
+     * one armed by [DailyScheduleWorker.pendingIntent].
+     */
+    fun cancelForWindow(windowId: Long) {
+        val alarmMgr = context.getSystemService<AlarmManager>() ?: return
+        val today = LocalDate.now()
+        for (day in listOf(today, today.plusDays(1))) {
+            val intent = Intent(context, PromptAlarmReceiver::class.java).apply {
+                action = PromptAlarmReceiver.ACTION_FIRE
+            }
+            val pi = PendingIntent.getBroadcast(
+                context,
+                DailyScheduleWorker.requestCode(day, windowId),
+                intent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+            ) ?: continue
+            alarmMgr.cancel(pi)
+            pi.cancel()
+            if (BuildConfig.DEBUG) Log.i(TAG, "alarm cancelled: window=$windowId day=$day")
         }
     }
 
