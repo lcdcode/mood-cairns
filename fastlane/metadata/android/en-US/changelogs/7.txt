@@ -1,0 +1,2 @@
+- Slightly updated main icon
+- Add monochrome icon
