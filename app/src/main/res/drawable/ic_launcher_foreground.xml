@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Foreground layer. Each lower stone is CLIPPED by the complement of a slightly
-  dilated copy (rx+1.5) of every stone drawn on top of it, then the upper stone
-  is drawn at true size. This leaves a ~1.5u gap along each overlap that reveals
-  the cream background layer, so the mood-stones read as distinct pebbles.
-  The clip is rect-minus-ellipse: rect wound CW, dilated ellipse wound CCW via
-  the arc sweep flag 0. Stones with two stones on top of them nest two clips.
-  The eyes and smile stay as cream shapes painted on top of the head stone.
--->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
