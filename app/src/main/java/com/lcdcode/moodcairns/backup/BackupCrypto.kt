@@ -55,5 +55,12 @@ object BackupCrypto {
         return cipher.doFinal(ciphertext)
     }
 
-    data class Encrypted(val iv: ByteArray, val ciphertext: ByteArray)
+    data class Encrypted(val iv: ByteArray, val ciphertext: ByteArray) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Encrypted) return false
+            return iv.contentEquals(other.iv) && ciphertext.contentEquals(other.ciphertext)
+        }
+        override fun hashCode(): Int = iv.contentHashCode() * 31 + ciphertext.contentHashCode()
+    }
 }
