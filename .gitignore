@@ -26,6 +26,7 @@ out/
 *.iws
 *.ipr
 .claude/
+.hermes/
 
 # Kotlin / KSP / generated sources (keep app/schemas/ tracked for Room migrations)
 .kotlin/
