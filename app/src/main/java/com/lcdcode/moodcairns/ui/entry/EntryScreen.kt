@@ -13,25 +13,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -45,6 +57,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,6 +138,14 @@ fun EntryScreen(
             )
 
             Spacer(Modifier.height(8.dp))
+
+            if (state.showDateTimeControl) {
+                DateTimeControl(
+                    recordedAt = state.recordedAt,
+                    onChange = viewModel::setRecordedAt,
+                )
+                Spacer(Modifier.height(8.dp))
+            }
 
             PromptSlotRow(
                 windows = state.windows,
@@ -227,6 +253,96 @@ private fun PromptSlotRow(
         }
     }
 }
+
+private val dateTimeFmt = DateTimeFormatter.ofPattern("MMM d, h:mm a")
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateTimeControl(
+    recordedAt: Instant,
+    onChange: (Instant) -> Unit,
+) {
+    var userPicked by rememberSaveable { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
+
+    val zoned = recordedAt.atZone(ZoneId.systemDefault())
+    val label = if (userPicked) dateTimeFmt.format(zoned) else "Change date/time..."
+
+    AssistChip(
+        onClick = { showDatePicker = true },
+        label = { Text(label) },
+    )
+
+    if (showDatePicker) {
+        // Entries record something that already happened, so block dates after
+        // today. utcTimeMillis is the picker's UTC-midnight for each candidate day.
+        val todayUtcMillis = LocalDate.now(ZoneId.systemDefault())
+            .atStartOfDay(ZoneOffset.UTC)
+            .toInstant()
+            .toEpochMilli()
+        val noFutureDates = remember(todayUtcMillis) {
+            object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= todayUtcMillis
+                override fun isSelectableYear(year: Int) = year <= LocalDate.now().year
+            }
+        }
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = zoned.toLocalDate()
+                .atStartOfDay(ZoneOffset.UTC)
+                .toInstant()
+                .toEpochMilli(),
+            selectableDates = noFutureDates,
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        pendingDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneOffset.UTC)
+                            .toLocalDate()
+                        showDatePicker = false
+                        showTimePicker = true
+                    }
+                }) { Text("Next") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+            },
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
+    if (showTimePicker) {
+        val time = zoned.toLocalTime()
+        val timePickerState = rememberTimePickerState(
+            initialHour = time.hour,
+            initialMinute = time.minute,
+        )
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val date = pendingDate ?: zoned.toLocalDate()
+                    val picked = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    onChange(combineDateTime(date, picked, ZoneId.systemDefault()))
+                    userPicked = true
+                    showTimePicker = false
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) { Text("Cancel") }
+            },
+            text = { TimePicker(state = timePickerState) },
+        )
+    }
+}
+
+internal fun combineDateTime(date: LocalDate, time: LocalTime, zone: ZoneId): Instant =
+    date.atTime(time).atZone(zone).toInstant()
 
 @Composable
 private fun ScaleSlider(

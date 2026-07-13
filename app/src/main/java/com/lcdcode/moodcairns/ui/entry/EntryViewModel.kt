@@ -35,6 +35,9 @@ data class EntryUiState(
     val savedId: Long? = null,
     val editingId: Long? = null,
     val editLoaded: Boolean = false,
+    // Whether to offer the "Change date/time..." control. Hidden for
+    // notification-initiated entries, which are meant to be logged "now".
+    val showDateTimeControl: Boolean = false,
     val error: String? = null,
 )
 
@@ -47,6 +50,7 @@ class EntryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val editingId: Long? = savedState.get<Long>(ARG_ENTRY_ID)?.takeIf { it > 0 }
+    private val fromNotification: Boolean = savedState.get<Boolean>(ARG_FROM_NOTIFICATION) ?: false
 
     private val _state = MutableStateFlow(
         EntryUiState(
@@ -58,6 +62,7 @@ class EntryViewModel @Inject constructor(
                 ?: Instant.now(),
             editingId = editingId,
             editLoaded = editingId == null,
+            showDateTimeControl = !fromNotification,
         ),
     )
     val state: StateFlow<EntryUiState> = _state.asStateFlow()
@@ -174,6 +179,7 @@ class EntryViewModel @Inject constructor(
         const val ARG_WINDOW_ID = "windowId"
         const val ARG_RECORDED_AT = "recordedAt"
         const val ARG_ENTRY_ID = "entryId"
+        const val ARG_FROM_NOTIFICATION = "fromNotification"
     }
 }
 
