@@ -32,16 +32,12 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 7 
-        versionName = "1.0.6"
+        versionCode = 8
+        versionName = "1.0.7"
         resourceConfigurations.add("en")
         base.archivesName = "mood-cairns-$versionName"
     }
 
-    // Release signing config is wired only when all four MOOD_CAIRNS_* properties
-    // are present (typically in ~/.gradle/gradle.properties, outside the repo).
-    // This lets debug builds work on machines without the keystore, while keeping
-    // secrets out of version control.
     val releaseStoreFile = findProperty("MOOD_CAIRNS_STORE_FILE") as String?
     val releaseStorePassword = findProperty("MOOD_CAIRNS_STORE_PASSWORD") as String?
     val releaseKeyAlias = findProperty("MOOD_CAIRNS_KEY_ALIAS") as String?

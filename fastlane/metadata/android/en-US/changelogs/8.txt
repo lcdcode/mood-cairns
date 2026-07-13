@@ -1,0 +1,3 @@
+- Search notes and filter History by date or prompt slot.
+- Add "Change date/time..." when manually logging or editing an entry, so you can record a mood for a past date and time (for example, one you missed).
+- Minor security patches.

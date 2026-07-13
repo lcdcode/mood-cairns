@@ -41,12 +41,12 @@ object Routes {
         windowId: Long? = null,
         recordedAt: Long? = null,
         entryId: Long? = null,
-    ) = "$ENTRY?slot=${slot.name}&windowId=${windowId ?: -1L}&recordedAt=${recordedAt ?: -1L}&entryId=${entryId ?: -1L}"
+    ) = "$ENTRY?slot=${slot.name}&windowId=${windowId ?: -1L}&recordedAt=${recordedAt ?: -1L}&entryId=${entryId ?: -1L}&fromNotification=false"
 
     fun entryEdit(entryId: Long) = entry(entryId = entryId)
 
     fun entryFromArgs(args: NotificationEntryArgs) =
-        "$ENTRY?slot=${args.slot}&windowId=${args.windowId ?: -1L}&recordedAt=-1&entryId=-1"
+        "$ENTRY?slot=${args.slot}&windowId=${args.windowId ?: -1L}&recordedAt=-1&entryId=-1&fromNotification=true"
 }
 
 @Composable
@@ -133,12 +133,13 @@ fun AppNav(
         }
 
         composable(
-            route = "${Routes.ENTRY}?slot={slot}&windowId={windowId}&recordedAt={recordedAt}&entryId={entryId}",
+            route = "${Routes.ENTRY}?slot={slot}&windowId={windowId}&recordedAt={recordedAt}&entryId={entryId}&fromNotification={fromNotification}",
             arguments = listOf(
                 navArgument("slot") { type = NavType.StringType; defaultValue = PromptSlot.MANUAL.name },
                 navArgument("windowId") { type = NavType.LongType; defaultValue = -1L },
                 navArgument("recordedAt") { type = NavType.LongType; defaultValue = -1L },
                 navArgument("entryId") { type = NavType.LongType; defaultValue = -1L },
+                navArgument("fromNotification") { type = NavType.BoolType; defaultValue = false },
             ),
         ) {
             EntryScreen(
