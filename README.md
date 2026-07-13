@@ -58,6 +58,11 @@ fails if any merged-manifest permission ever names `INTERNET`,
 If you want backups synced off-device, point Syncthing (or any file manager
 that can sync a folder) at `Documents/MoodCairns/`.
 
+## Contact
+
+The best way to get in touch with me for issues, feature requests, etc. is right here on github.
+Just open an issue and I will usually respond within 3 business days.
+
 ## Tech stack
 
 - Kotlin + Jetpack Compose, Material 3
@@ -68,12 +73,12 @@ that can sync a folder) at `Documents/MoodCairns/`.
 - AndroidX Security Crypto (`EncryptedSharedPreferences`) for PIN material
 - `kotlinx.serialization` for the backup JSON envelope
 
-## Building
+## Building for yourself
 
 ### Requirements
 
 - JDK 21
-- Android SDK with platform 34 and build-tools 34
+- Android SDK with platform 34+ and build-tools 34+
 - Gradle 8.10+ (the wrapper handles this)
 
 ### Configure the SDK
@@ -93,18 +98,20 @@ sdk.dir=/path/to/your/android-sdk
 Output lands at:
 
 ```
-app/build/outputs/apk/debug/mood-cairns-1.0.2-debug.apk
+app/build/outputs/apk/debug/mood-cairns-x.x.x-debug.apk
 ```
 
 This is what's used for personal-use installs — it's signed with the standard
 debug keystore but installs under the real `com.lcdcode.moodcairns` application id.
 
+**NOTE:** If using your own build, you will need to uninstall any other version first - YOU WILL LOSE ANY DATA YOU HAVE LOGGED ALREADY.
+
 ### Useful Gradle tasks
 
 ```
 ./gradlew :app:compileDebugKotlin       # type-check only, fast iteration
-./gradlew :app:verifyNoNetworkDebug     # privacy guard
-./gradlew :app:assembleDebug            # APK
+./gradlew :app:verifyNoNetworkDebug     # verify privacy guard
+./gradlew :app:assembleDebug            # build Debug APK
 ```
 
 ## Project layout
@@ -112,11 +119,12 @@ debug keystore but installs under the real `com.lcdcode.moodcairns` application 
 ```
 app/src/main/java/com/moodcairns/
   MainActivity.kt              # Compose host, handles deep-link from notifications
+  MoodApp.kt                   # hilt integration / notif setup
   backup/                      # Encrypted JSON export/import
   data/                        # Room entities, DAOs, repositories
   notifications/               # PromptAlarmReceiver + channels
-  security/                    # PIN hashing, lock state
-  settings/                    # SharedPrefs-backed user settings
+  receivers/                   # boot receiver
+  security/                    # PIN hashing, lock state, db key crypto
   ui/                          # Compose screens (entry, history, charts, settings, backup, lock)
   widget/                      # Home-screen "Log mood" widget
   work/                        # PromptScheduler + DailyScheduleWorker
