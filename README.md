@@ -1,8 +1,10 @@
 # Mood Cairns
 
-![Mood Cairns icon](./media/ic_launcher_round_512.png)
+<img source="https://github.com/lcdcode/mood-cairns/blob/main/media/ic_launcher_round_512.png" alt="Mood Cairns icon: a stacked cairn of colorful round stones topped by a smiling brown stone" height="300" width="300">
 
 A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
+
+[<img source="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.lcdcode.moodcairns)
 
 ## AI Declaration
 
