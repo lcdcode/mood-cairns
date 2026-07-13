@@ -18,6 +18,10 @@ The build enforces this, so a network permission can never be silently introduce
 
 If you want backups synced off-device, point Syncthing (or any file manager that can sync a folder) at Documents/MoodCairns/.
 
+<b>Contact</b>
+
+The best way to get in touch for issues, feature requests, etc. is the Issues page on github.com/lcdcode/mood-cairns. I will usually respond within 3 business days. 
+
 <b>Source</b>
 
 Fully open source under GPL-3.0-only. Built on Kotlin, Jetpack Compose, Room, SQLCipher, and AndroidX.
