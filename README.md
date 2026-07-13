@@ -10,9 +10,7 @@ Written with assistance from Claude Code and Opus 4.7.
 
 **All code is human reviewed and approved.**
 
-Additional agents used:
-   - voltagrnt-qa-sec:code-reviewer
-   - voltagent-qa-sec:security-auditor
+For more information, see [AI-DECLARATION.md](AI-DECLARATION.md)
 
 ## Notes about SDK and Methodology
 
