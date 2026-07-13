@@ -1,10 +1,16 @@
-# Mood Cairns
+<img src="https://github.com/lcdcode/mood-cairns/blob/main/media/ic_launcher_round_512.png" alt="Mood Cairns icon: a stacked cairn of colorful round stones topped by a smiling brown stone" height="300" width="300">
 
-<img source="https://github.com/lcdcode/mood-cairns/blob/main/media/ic_launcher_round_512.png" alt="Mood Cairns icon: a stacked cairn of colorful round stones topped by a smiling brown stone" height="300" width="300">
+# Mood Cairns
 
 A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
 
-[<img source="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.lcdcode.moodcairns)
+[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.lcdcode.moodcairns)
+
+## Notes about SDK and Methodology
+
+This project was built targeting Android SDK 34 as it was developed as a proof of concept to *write, compile, and install all on-device using Termux.* I wanted the challenge of a self-contained mobile development platform.
+
+Termux aapt2 version does not yet support SDK 35 but this is a work in progress.
 
 ## AI Declaration
 
@@ -13,12 +19,6 @@ Written with assistance from Claude Code and Opus 4.7.
 **All code is human reviewed and approved.**
 
 For more information, see [AI-DECLARATION.md](AI-DECLARATION.md)
-
-## Notes about SDK and Methodology
-
-This project was built targeting Android SDK 34 as it was developed as a proof of concept to *write, compile, and install all on-device using Termux.* I wanted the challenge of a self-contained mobile development platform.
-
-Termux aapt2 version does not yet support SDK 35 but this is a work in progress.
 
 ## What it does
 
