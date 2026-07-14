@@ -1,10 +1,17 @@
-<img src="https://github.com/lcdcode/mood-cairns/blob/main/media/ic_launcher_round_512.png" alt="Mood Cairns icon: a stacked cairn of colorful round stones topped by a smiling brown stone" height="300" width="300">
+<div align="center">
+
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/media/ic_launcher_round_512.png" alt="Mood Cairns icon: a stacked cairn of colorful round stones topped by a smiling brown stone" height="300" width="300">
+  <br>
+  <img src="https://img.shields.io/github/downloads/lcdcode/mood-cairns/total?label=Downloads&style=for-the-badge&color=aac7ff&labelColor=0a305f">
+  <br>
+  <a href="https://f-droid.org/packages/com.lcdcode.moodcairns"><img alt="F-Droid" src="https://f-droid.org/badge/get-it-on.png" height="80"/></a>
+  <a href="https://github.com/lcdcode/mood-cairns/releases"><img alt="GitHub" src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png" height="80"/></a>
+
+</div>
 
 # Mood Cairns
 
 A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
-
-[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.lcdcode.moodcairns)
 
 ## Notes about SDK and Methodology
 
