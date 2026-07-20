@@ -121,6 +121,21 @@ fun BackupScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) { Text("Export now") }
 
+            if (state.allowUnsafeExports) {
+                OutlinedButton(
+                    onClick = viewModel::requestCsvExport,
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text("Export unencrypted CSV") }
+                Text(
+                    "The CSV is plain text and NOT encrypted. Anyone or anything that can read " +
+                        "your Documents folder - cloud backup, file managers, other apps - can read " +
+                        "your entries. Disable unsafe exports in Settings to hide this option.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
             OutlinedButton(
                 onClick = {
                     viewModel.noteFilePickerOpening()

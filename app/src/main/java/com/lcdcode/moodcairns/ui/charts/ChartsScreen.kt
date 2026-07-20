@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -47,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,6 +81,7 @@ fun ChartsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showRangePicker by remember { mutableStateOf(false) }
+    var showHelp by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -139,6 +142,13 @@ fun ChartsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
+            TextButton(
+                onClick = { showHelp = true },
+                modifier = Modifier.align(Alignment.End),
+            ) {
+                Text("Help with charts", color = MaterialTheme.colorScheme.primary)
+            }
+
             val visibleSeries = state.series.filter { it.scale.id in state.selectedScaleIds }
             val hasData = visibleSeries.any {
                 when (state.chartMode) {
@@ -165,6 +175,10 @@ fun ChartsScreen(
                     absoluteY = state.absoluteYAxis,
                 )
             }
+        }
+
+        if (showHelp) {
+            ChartsHelpDialog(onDismiss = { showHelp = false })
         }
 
         if (showRangePicker) {
@@ -594,6 +608,78 @@ private fun TappedPointCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ChartsHelpDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Reading the charts") },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    "Two toggles change how your numbers are drawn. Nothing you pick here " +
+                        "changes your data - only how the chart looks.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                HelpSection("Series: Raw vs 7-day avg")
+                HelpEntry(
+                    "Raw",
+                    "Plots each day exactly as you logged it. Use it to see precise " +
+                        "day-to-day changes - though it can look jumpy.",
+                )
+                HelpEntry(
+                    "7-day avg",
+                    "Replaces each day with the average of it and the surrounding week. " +
+                        "This smooths out one-off spikes so the overall trend - whether " +
+                        "your moods are drifting up or down - is easier to see.",
+                )
+
+                HelpSection("Y axis: Auto-fit vs Absolute")
+                HelpEntry(
+                    "Auto-fit",
+                    "Zooms the vertical axis to just the range your data actually covers. " +
+                        "Small movements become easy to see because the chart fills the " +
+                        "space - but the line isn't measured against the scale's full range.",
+                )
+                HelpEntry(
+                    "Absolute",
+                    "Shows each line against its scale's full min-to-max range. Movements " +
+                        "look smaller, but different scales line up fairly, so you can " +
+                        "honestly compare one against another on the same chart.",
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text("Got it") }
+        },
+    )
+}
+
+@Composable
+private fun HelpSection(title: String) {
+    Text(
+        title,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+    )
+}
+
+@Composable
+private fun HelpEntry(term: String, explanation: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            term,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Text(explanation, style = MaterialTheme.typography.bodySmall)
     }
 }
 

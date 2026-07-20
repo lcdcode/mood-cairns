@@ -22,6 +22,7 @@ data class SettingsUiState(
     val lockTimeoutMs: Long = LockRepository.DEFAULT_TIMEOUT_MS,
     val biometricEnabled: Boolean = true,
     val pinSet: Boolean = true,
+    val allowUnsafeExports: Boolean = false,
     val loaded: Boolean = false,
 )
 
@@ -48,6 +49,7 @@ class SettingsViewModel @Inject constructor(
             // Re-read on each emission so returning from the Change/Set PIN
             // screen (which bumps the counter via refresh) reflects the new mode.
             pinSet = lockRepo.isPinSet(),
+            allowUnsafeExports = lockRepo.allowUnsafeExports,
             loaded = true,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
@@ -80,6 +82,11 @@ class SettingsViewModel @Inject constructor(
         // Settings is reachable.
         lockManager.onBiometricEnabledChanged(enabled)
         lockState.update { it.copy(second = enabled, third = it.third + 1) }
+    }
+
+    fun setAllowUnsafeExports(enabled: Boolean) {
+        lockRepo.allowUnsafeExports = enabled
+        lockState.update { it.copy(third = it.third + 1) }
     }
 
     fun lockNow() = lockManager.lockNow()
