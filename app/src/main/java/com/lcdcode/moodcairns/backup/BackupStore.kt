@@ -26,11 +26,15 @@ class BackupStore @Inject constructor(
 ) {
     private val relativePath = "${Environment.DIRECTORY_DOCUMENTS}/${FOLDER_NAME}/"
 
-    suspend fun writeBackup(name: String, content: String): Uri {
+    suspend fun writeBackup(
+        name: String,
+        content: String,
+        mimeType: String = MIME_JSON,
+    ): Uri {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "application/json")
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
             put(MediaStore.MediaColumns.IS_PENDING, 1)
         }
@@ -105,9 +109,15 @@ class BackupStore @Inject constructor(
     fun suggestName(date: LocalDate = LocalDate.now()): String =
         "$FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
 
+    fun suggestCsvName(date: LocalDate = LocalDate.now()): String =
+        "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
+
     companion object {
+        const val MIME_JSON = "application/json"
+        const val MIME_CSV = "text/csv"
         private const val FOLDER_NAME = "MoodCairns"
         private const val FILE_PREFIX = "mood-cairns-backup-"
+        private const val CSV_FILE_PREFIX = "mood-cairns-export-"
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 }

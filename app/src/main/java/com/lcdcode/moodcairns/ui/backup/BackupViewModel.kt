@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.backup.BackupFileInfo
 import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
+import com.lcdcode.moodcairns.backup.CsvExporter
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
 import com.lcdcode.moodcairns.security.LockManager
+import com.lcdcode.moodcairns.security.LockRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,7 @@ data class BackupUiState(
     val busy: Boolean = false,
     val message: String? = null,
     val pinPrompt: PinPrompt? = null,
+    val allowUnsafeExports: Boolean = false,
 )
 
 enum class PinPromptMode { Export, Import }
@@ -34,12 +37,16 @@ data class PinPrompt(val mode: PinPromptMode, val importUri: Uri? = null)
 @HiltViewModel
 class BackupViewModel @Inject constructor(
     private val serializer: BackupSerializer,
+    private val csvExporter: CsvExporter,
     private val store: BackupStore,
     private val importer: ImportService,
     private val lockManager: LockManager,
+    private val lockRepo: LockRepository,
 ) : ViewModel() {
 
-    private val _ui = MutableStateFlow(BackupUiState())
+    private val _ui = MutableStateFlow(
+        BackupUiState(allowUnsafeExports = lockRepo.allowUnsafeExports),
+    )
     val ui: StateFlow<BackupUiState> = _ui.asStateFlow()
 
     init { refresh() }
@@ -47,11 +54,26 @@ class BackupViewModel @Inject constructor(
     fun refresh() = viewModelScope.launch {
         // MediaStore query is disk I/O; keep it off the UI thread.
         val files = withContext(Dispatchers.IO) { store.list() }
-        _ui.update { it.copy(files = files) }
+        // Re-read the toggle in case it changed in Settings since this screen opened.
+        _ui.update { it.copy(files = files, allowUnsafeExports = lockRepo.allowUnsafeExports) }
     }
 
     fun requestExport() {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.Export)) }
+    }
+
+    /**
+     * Export the dataset as plaintext CSV. Only reachable when the user has
+     * enabled unsafe exports; re-checked here so a stale UI state can't bypass
+     * the gate. No passphrase is involved - the file is deliberately unencrypted.
+     */
+    fun requestCsvExport() {
+        if (!lockRepo.allowUnsafeExports) {
+            _ui.update { it.copy(message = "Unsafe exports are disabled") }
+            return
+        }
+        _ui.update { it.copy(busy = true, message = null) }
+        runCsvExport()
     }
 
     /**
@@ -131,6 +153,23 @@ class BackupViewModel @Inject constructor(
             "Export failed: ${t.message ?: t.javaClass.simpleName}"
         } finally {
             passphrase.fill('\u0000')
+        }
+        _ui.update { it.copy(busy = false, message = text) }
+        refresh()
+    }
+
+    private fun runCsvExport() = viewModelScope.launch {
+        val text = try {
+            // DB read + CSV build + file write; off the UI thread to avoid ANRs.
+            withContext(Dispatchers.Default) {
+                val csv = csvExporter.exportCsv()
+                val name = store.suggestCsvName()
+                store.writeBackup(name, csv, BackupStore.MIME_CSV)
+                "Exported $name (unencrypted)"
+            }
+        } catch (t: Throwable) {
+            Log.w(TAG, "CSV export failed", t)
+            "Export failed: ${t.message ?: t.javaClass.simpleName}"
         }
         _ui.update { it.copy(busy = false, message = text) }
         refresh()

@@ -42,6 +42,16 @@ class LockRepository @Inject constructor(
         set(value) = prefs.edit { putBoolean(KEY_BIOMETRIC, value) }
 
     /**
+     * Opt-in gate for plaintext exports (e.g. unencrypted CSV). Off by default:
+     * a plaintext export lands in shared storage where cloud-backup agents and
+     * any app with storage access can read it, so the user must knowingly enable
+     * it before that option appears.
+     */
+    var allowUnsafeExports: Boolean
+        get() = prefs.getBoolean(KEY_ALLOW_UNSAFE_EXPORTS, false)
+        set(value) = prefs.edit { putBoolean(KEY_ALLOW_UNSAFE_EXPORTS, value) }
+
+    /**
      * Number of consecutive failed PIN attempts since the last successful unlock.
      * Persisted so a process restart can't reset the counter.
      */
@@ -172,6 +182,7 @@ class LockRepository @Inject constructor(
         private const val KEY_ITERATIONS = "pin_iterations"
         private const val KEY_TIMEOUT = "lock_timeout_ms"
         private const val KEY_BIOMETRIC = "biometric_enabled"
+        private const val KEY_ALLOW_UNSAFE_EXPORTS = "allow_unsafe_exports"
         private const val KEY_FAILED_ATTEMPTS = "pin_failed_attempts"
         private const val KEY_LOCKOUT_UNTIL = "pin_lockout_until_ms"
         private const val KEY_DBK_IV = "dbk_pin_iv"

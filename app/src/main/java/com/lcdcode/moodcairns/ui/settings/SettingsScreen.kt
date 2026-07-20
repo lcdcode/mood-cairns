@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -30,6 +31,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -50,6 +54,17 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var showUnsafeExportWarning by remember { mutableStateOf(false) }
+
+    if (showUnsafeExportWarning) {
+        UnsafeExportWarningDialog(
+            onConfirm = {
+                viewModel.setAllowUnsafeExports(true)
+                showUnsafeExportWarning = false
+            },
+            onDismiss = { showUnsafeExportWarning = false },
+        )
+    }
 
     // Setting or removing a PIN happens on another screen; refresh on return so
     // the Security section reflects the current mode.
@@ -150,6 +165,33 @@ fun SettingsScreen(
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+            item { SectionHeader("Backup & export") }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Allow unsafe exports", modifier = Modifier.weight(1f))
+                    Switch(
+                        checked = state.allowUnsafeExports,
+                        onCheckedChange = { checked ->
+                            // Enabling exposes plaintext data, so gate it behind a
+                            // warning; disabling is always safe and immediate.
+                            if (checked) showUnsafeExportWarning = true
+                            else viewModel.setAllowUnsafeExports(false)
+                        },
+                    )
+                }
+            }
+            item {
+                Text(
+                    "Enables an unencrypted CSV export under Backup & import. Off by default.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader("Diagnostics") }
             item {
                 OutlinedButton(
@@ -161,6 +203,32 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun UnsafeExportWarningDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Allow unsafe exports?") },
+        text = {
+            Text(
+                "This adds an option to export your data as an unencrypted CSV file to shared " +
+                    "storage. That file is plain text with no passphrase: cloud backup services, " +
+                    "file managers, and any other app that can read shared storage will be able " +
+                    "to read all of your entries.\n\n" +
+                    "Only enable this if you understand and accept that danger.",
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text("Enable") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        },
+    )
 }
 
 @Composable
