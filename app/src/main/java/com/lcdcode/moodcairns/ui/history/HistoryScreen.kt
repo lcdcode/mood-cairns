@@ -370,7 +370,7 @@ private fun FilterBar(
             )
             if (hasActiveFilter) {
                 TextButton(onClick = onClearAll) {
-                    Text("Clear", maxLines = 1)
+                    Text("Clear all", maxLines = 1)
                 }
             }
         }
@@ -383,14 +383,16 @@ private fun FilterBar(
                 modifier = Modifier.horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                val isSelected = selectedSlot == null
+                // Reads "All" when the row is unfiltered (a state indicator) and
+                // flips to "Clear" once a slot or date is active (an action).
+                val rowUnfiltered = selectedSlot == null && selectedDate == null
                 FilterChip(
-                    selected = isSelected,
+                    selected = rowUnfiltered,
                     onClick = {
                         onSlotSelect(null)
                         onDateSelect(null)
                     },
-                    label = { Text("Clear") },
+                    label = { Text(if (rowUnfiltered) "All" else "Clear") },
                 )
                 val isDateSelected = selectedDate != null
                 FilterChip(
@@ -454,10 +456,11 @@ private fun FilterBar(
                     modifier = Modifier.horizontalScroll(tagScrollState),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    val noTagsSelected = selectedTagIds.isEmpty()
                     FilterChip(
-                        selected = selectedTagIds.isEmpty(),
+                        selected = noTagsSelected,
                         onClick = onTagClear,
-                        label = { Text("Clear") },
+                        label = { Text(if (noTagsSelected) "All" else "Clear") },
                     )
                     tags.forEach { tag ->
                         FilterChip(

@@ -433,10 +433,11 @@ private fun TagFilterRow(
                 modifier = Modifier.horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                val noTagsSelected = selected.isEmpty()
                 FilterChip(
-                    selected = selected.isEmpty(),
+                    selected = noTagsSelected,
                     onClick = onClear,
-                    label = { Text("Clear") },
+                    label = { Text(if (noTagsSelected) "All" else "Clear") },
                 )
                 tags.forEach { tag ->
                     FilterChip(
