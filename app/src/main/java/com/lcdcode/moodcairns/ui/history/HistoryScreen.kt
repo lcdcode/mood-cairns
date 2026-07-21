@@ -390,7 +390,7 @@ private fun FilterBar(
                         onSlotSelect(null)
                         onDateSelect(null)
                     },
-                    label = { Text("All") },
+                    label = { Text("Clear") },
                 )
                 val isDateSelected = selectedDate != null
                 FilterChip(
