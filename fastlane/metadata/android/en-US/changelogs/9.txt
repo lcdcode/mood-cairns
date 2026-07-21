@@ -1,0 +1,3 @@
+- New Custom Tags feature: People, Place, and Activity tags can be assigned and filtered on.
+- Help for Charts
+- Allow users to export unsafe (unencrypted) CSV file if enabled in settings
