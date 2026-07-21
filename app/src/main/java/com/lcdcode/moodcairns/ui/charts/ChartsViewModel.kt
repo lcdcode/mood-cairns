@@ -169,6 +169,8 @@ class ChartsViewModel @Inject constructor(
         it.copy(selectedTags = next)
     }
 
+    fun clearTagFilter() = filters.update { it.copy(selectedTags = emptySet()) }
+
     fun setChartMode(mode: ChartMode) = filters.update { it.copy(mode = mode) }
 
     fun setAbsoluteYAxis(value: Boolean) = filters.update { it.copy(absoluteY = value) }

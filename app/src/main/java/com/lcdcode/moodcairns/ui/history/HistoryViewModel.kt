@@ -85,6 +85,10 @@ class HistoryViewModel @Inject constructor(
         )
     }
 
+    fun clearTagFilter() {
+        _state.value = _state.value.copy(tagFilter = emptySet())
+    }
+
     fun clearAllFilters() {
         _state.value = _state.value.copy(
             dateFilter = null,

@@ -136,6 +136,7 @@ fun ChartsScreen(
                 tags = state.tags,
                 selected = state.selectedTagIds,
                 onToggle = viewModel::toggleTagFilter,
+                onClear = viewModel::clearTagFilter,
             )
 
             val modeLabel = when (state.chartMode) {
@@ -419,6 +420,7 @@ private fun TagFilterRow(
     tags: List<com.lcdcode.moodcairns.data.entity.Tag>,
     selected: Set<Long>,
     onToggle: (Long) -> Unit,
+    onClear: () -> Unit,
 ) {
     if (tags.isEmpty()) return
     val scrollState = rememberScrollState()
@@ -431,6 +433,11 @@ private fun TagFilterRow(
                 modifier = Modifier.horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                FilterChip(
+                    selected = selected.isEmpty(),
+                    onClick = onClear,
+                    label = { Text("Clear") },
+                )
                 tags.forEach { tag ->
                     FilterChip(
                         selected = tag.id in selected,

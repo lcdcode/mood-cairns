@@ -125,6 +125,7 @@ fun HistoryScreen(
                 tags = state.tags,
                 selectedTagIds = state.tagFilter,
                 onTagToggle = { viewModel.toggleTagFilter(it) },
+                onTagClear = { viewModel.clearTagFilter() },
                 onClearAll = { viewModel.clearAllFilters() },
             )
 
@@ -324,6 +325,7 @@ private fun FilterBar(
     tags: List<Tag>,
     selectedTagIds: Set<Long>,
     onTagToggle: (Long) -> Unit,
+    onTagClear: () -> Unit,
     onClearAll: () -> Unit,
 ) {
     val dateFmt = DateTimeFormatter.ofPattern("MMM d")
@@ -452,6 +454,11 @@ private fun FilterBar(
                     modifier = Modifier.horizontalScroll(tagScrollState),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    FilterChip(
+                        selected = selectedTagIds.isEmpty(),
+                        onClick = onTagClear,
+                        label = { Text("Clear") },
+                    )
                     tags.forEach { tag ->
                         FilterChip(
                             selected = tag.id in selectedTagIds,
