@@ -63,6 +63,7 @@ import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -98,14 +99,18 @@ fun HistoryScreen(
             }
         },
     ) { padding ->
-        val filteredEntries = remember(state.entries, state.dateFilter, state.slotFilter, state.searchQuery) {
+        val filteredEntries = remember(
+            state.entries, state.dateFilter, state.slotFilter, state.searchQuery, state.tagFilter,
+        ) {
             state.entries.filter { e ->
                 val dateOk = state.dateFilter == null ||
                     e.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalDate() == state.dateFilter
                 val slotOk = state.slotFilter == null || e.entry.slot == state.slotFilter
                 val searchOk = state.searchQuery.isBlank() ||
                     e.entry.note?.contains(state.searchQuery, ignoreCase = true) == true
-                dateOk && slotOk && searchOk
+                val tagOk = state.tagFilter.isEmpty() ||
+                    e.tags.any { it.id in state.tagFilter }
+                dateOk && slotOk && searchOk && tagOk
             }
         }
 
@@ -117,6 +122,9 @@ fun HistoryScreen(
                 onSlotSelect = { viewModel.setSlotFilter(it) },
                 selectedDate = state.dateFilter,
                 onDateSelect = { viewModel.setDateFilter(it) },
+                tags = state.tags,
+                selectedTagIds = state.tagFilter,
+                onTagToggle = { viewModel.toggleTagFilter(it) },
                 onClearAll = { viewModel.clearAllFilters() },
             )
 
@@ -288,6 +296,13 @@ private fun EntryCard(
             entry.entry.note?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall)
             }
+            if (entry.tags.isNotEmpty()) {
+                Text(
+                    entry.tags.joinToString(" · ") { it.name },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -306,11 +321,15 @@ private fun FilterBar(
     onSlotSelect: (PromptSlot?) -> Unit,
     selectedDate: LocalDate?,
     onDateSelect: (LocalDate?) -> Unit,
+    tags: List<Tag>,
+    selectedTagIds: Set<Long>,
+    onTagToggle: (Long) -> Unit,
     onClearAll: () -> Unit,
 ) {
     val dateFmt = DateTimeFormatter.ofPattern("MMM d")
     var showDatePicker by remember { mutableStateOf(false) }
-    val hasActiveFilter = selectedDate != null || selectedSlot != null || searchQuery.isNotBlank()
+    val hasActiveFilter = selectedDate != null || selectedSlot != null ||
+        searchQuery.isNotBlank() || selectedTagIds.isNotEmpty()
 
     Column(
         modifier = Modifier
@@ -423,6 +442,54 @@ private fun FilterBar(
                             ),
                         ),
                 )
+            }
+        }
+
+        if (tags.isNotEmpty()) {
+            val tagScrollState = rememberScrollState()
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.horizontalScroll(tagScrollState),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    tags.forEach { tag ->
+                        FilterChip(
+                            selected = tag.id in selectedTagIds,
+                            onClick = { onTagToggle(tag.id) },
+                            label = { Text(tag.name) },
+                        )
+                    }
+                }
+                if (tagScrollState.canScrollBackward) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colorStops = arrayOf(
+                                        0f to surface,
+                                        0.08f to Color.Transparent,
+                                        1f to Color.Transparent,
+                                    ),
+                                ),
+                            ),
+                    )
+                }
+                if (tagScrollState.canScrollForward) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colorStops = arrayOf(
+                                        0f to Color.Transparent,
+                                        0.92f to Color.Transparent,
+                                        1f to surface,
+                                    ),
+                                ),
+                            ),
+                    )
+                }
             }
         }
     }

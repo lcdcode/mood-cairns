@@ -10,6 +10,8 @@ import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -24,6 +26,7 @@ class BackupSerializer @Inject constructor(
 ) {
     private val scaleDao get() = moodHolder.scaleDao()
     private val entryDao get() = moodHolder.entryDao()
+    private val tagDao get() = moodHolder.tagDao()
 
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
@@ -41,6 +44,7 @@ class BackupSerializer @Inject constructor(
             val scales = scaleDao.observeAll().first().map(::toDto)
             val windows = windowDao.observeAll().first().map(::toDto)
             val entries = entryDao.observeAll().first().map(::toDto)
+            val tags = tagDao.observeAll().first().map(::toDto)
 
             val file = BackupFile(
                 schemaVersion = BackupFile.CURRENT_VERSION,
@@ -49,6 +53,7 @@ class BackupSerializer @Inject constructor(
                 scales = scales,
                 promptWindows = windows,
                 entries = entries,
+                tags = tags,
             )
             val plaintextJson = json.encodeToString(BackupFile.serializer(), file)
             val encrypted = BackupCrypto.encrypt(key, plaintextJson.toByteArray(Charsets.UTF_8))
@@ -102,15 +107,18 @@ class BackupSerializer @Inject constructor(
             BackupFile.serializer(),
             String(plaintext, Charsets.UTF_8),
         )
-        require(parsed.schemaVersion == BackupFile.CURRENT_VERSION) {
-            "Unsupported backup schema version ${parsed.schemaVersion}; expected ${BackupFile.CURRENT_VERSION}"
+        require(parsed.schemaVersion in BackupFile.SUPPORTED_VERSIONS) {
+            "Unsupported backup schema version ${parsed.schemaVersion}; " +
+                "expected ${BackupFile.SUPPORTED_VERSIONS.first}..${BackupFile.SUPPORTED_VERSIONS.last}"
         }
         return parsed
     }
 
     fun toEntities(file: BackupFile): BackupEntities = BackupEntities(
+        schemaVersion = file.schemaVersion,
         scales = file.scales.map(::fromDto),
         windows = file.promptWindows.map(::fromDto),
+        tags = file.tags.mapNotNull(::fromDto),
         entries = file.entries.map { e ->
             val entry = Entry(
                 id = e.id,
@@ -122,7 +130,7 @@ class BackupSerializer @Inject constructor(
             val values = e.values.map { v ->
                 EntryValue(entryId = e.id, scaleId = v.scaleId, value = v.value)
             }
-            entry to values
+            EntryBundle(entry = entry, values = values, tagIds = e.tagIds)
         },
     )
 
@@ -147,6 +155,11 @@ class BackupSerializer @Inject constructor(
         promptWindowId = e.entry.promptWindowId,
         note = e.entry.note,
         values = e.values.map { EntryValueDto(scaleId = it.scaleId, value = it.value) },
+        tagIds = e.tags.map { it.id },
+    )
+
+    private fun toDto(t: Tag) = TagDto(
+        id = t.id, name = t.name, category = t.category.name, sortOrder = t.sortOrder,
     )
 
     private fun fromDto(s: ScaleDto) = Scale(
@@ -160,10 +173,24 @@ class BackupSerializer @Inject constructor(
         startTime = LocalTime.parse(w.startTime), endTime = LocalTime.parse(w.endTime),
         enabled = w.enabled,
     )
+
+    /** Returns null for unknown categories so a hand-edited file cannot abort the import. */
+    private fun fromDto(t: TagDto): Tag? {
+        val category = runCatching { TagCategory.valueOf(t.category) }.getOrNull() ?: return null
+        return Tag(id = t.id, name = t.name, category = category, sortOrder = t.sortOrder)
+    }
 }
 
 data class BackupEntities(
+    val schemaVersion: Int,
     val scales: List<Scale>,
     val windows: List<PromptWindow>,
-    val entries: List<Pair<Entry, List<EntryValue>>>,
+    val tags: List<Tag>,
+    val entries: List<EntryBundle>,
+)
+
+data class EntryBundle(
+    val entry: Entry,
+    val values: List<EntryValue>,
+    val tagIds: List<Long>,
 )

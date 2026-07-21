@@ -15,7 +15,7 @@ import com.lcdcode.moodcairns.data.entity.Scale
  */
 object MoodCsv {
 
-    private val FIXED_HEADERS = listOf("recordedAt", "slot", "window", "note")
+    private val FIXED_HEADERS = listOf("recordedAt", "slot", "window", "note", "tags")
 
     fun build(
         scales: List<Scale>,
@@ -35,6 +35,7 @@ object MoodCsv {
             row += e.entry.slot.name
             row += e.entry.promptWindowId?.let { windowLabels[it] ?: it.toString() } ?: ""
             row += e.entry.note ?: ""
+            row += e.tags.joinToString("; ") { it.name }
             for (scale in scaleColumns) {
                 row += valueByScale[scale.id]?.let(::formatValue) ?: ""
             }

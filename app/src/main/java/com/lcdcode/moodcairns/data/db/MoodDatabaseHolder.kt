@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.lcdcode.moodcairns.data.dao.EntryDao
 import com.lcdcode.moodcairns.data.dao.ScaleDao
+import com.lcdcode.moodcairns.data.dao.TagDao
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class MoodDatabaseHolder @Inject constructor(
         val factory = SupportOpenHelperFactory(toRawKeyPassphrase(dbKey))
         db = Room.databaseBuilder(context, MoodDatabase::class.java, MoodDatabase.NAME)
             .openHelperFactory(factory)
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
@@ -51,6 +53,7 @@ class MoodDatabaseHolder @Inject constructor(
 
     fun scaleDao(): ScaleDao = requireDb().scaleDao()
     fun entryDao(): EntryDao = requireDb().entryDao()
+    fun tagDao(): TagDao = requireDb().tagDao()
     fun database(): MoodDatabase = requireDb()
 
     private fun requireDb(): MoodDatabase = db

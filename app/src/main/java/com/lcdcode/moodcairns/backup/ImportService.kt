@@ -5,6 +5,8 @@ import android.net.Uri
 import androidx.room.withTransaction
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
 import com.lcdcode.moodcairns.data.db.ScheduleDatabase
+import com.lcdcode.moodcairns.data.db.SeedTags
+import com.lcdcode.moodcairns.data.entity.EntryTag
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -67,11 +69,23 @@ class ImportService @Inject constructor(
                 moodDb.clearAllTables()
                 val scaleDao = moodDb.scaleDao()
                 val entryDao = moodDb.entryDao()
+                val tagDao = moodDb.tagDao()
                 for (s in entities.scales) scaleDao.insert(s)
-                for ((entry, values) in entities.entries) {
+                // Tags keep their original ids (like scales) so entry_tag links
+                // need no remapping. v1 backups predate tags entirely; seed the
+                // defaults so those users are not left with an empty tag list.
+                for (t in entities.tags) tagDao.insert(t)
+                if (entities.schemaVersion < 2) tagDao.insertAllIgnore(SeedTags.tags)
+                val knownTagIds = entities.tags.map { it.id }.toSet()
+                for ((entry, values, tagIds) in entities.entries) {
                     val newId = entryDao.insertEntry(entry.copy(id = 0))
                     entryDao.insertValues(
                         values.map { EntryValue(entryId = newId, scaleId = it.scaleId, value = it.value) },
+                    )
+                    // Drop links to tags absent from the file (hand-edited or
+                    // truncated backups) instead of aborting the whole import.
+                    entryDao.insertEntryTags(
+                        tagIds.filter { it in knownTagIds }.map { EntryTag(entryId = newId, tagId = it) },
                     )
                 }
             }
@@ -84,6 +98,7 @@ class ImportService @Inject constructor(
                 scales = entities.scales.size,
                 windows = entities.windows.size,
                 entries = entities.entries.size,
+                tags = entities.tags.size,
             )
         } catch (t: Throwable) {
             ImportResult.Failure("Import aborted: ${t.message ?: "database error"}")
@@ -92,7 +107,12 @@ class ImportService @Inject constructor(
 }
 
 sealed interface ImportResult {
-    data class Success(val scales: Int, val windows: Int, val entries: Int) : ImportResult
+    data class Success(
+        val scales: Int,
+        val windows: Int,
+        val entries: Int,
+        val tags: Int = 0,
+    ) : ImportResult
     data class Failure(val message: String) : ImportResult
 }
 

@@ -132,6 +132,12 @@ fun ChartsScreen(
                 onToggle = viewModel::toggleScale,
             )
 
+            TagFilterRow(
+                tags = state.tags,
+                selected = state.selectedTagIds,
+                onToggle = viewModel::toggleTagFilter,
+            )
+
             val modeLabel = when (state.chartMode) {
                 ChartMode.Raw -> "raw daily values"
                 ChartMode.RollingAvg -> "7-day rolling average"
@@ -368,6 +374,68 @@ private fun ScaleToggleRow(
                             ) {}
                         },
                         colors = FilterChipDefaults.filterChipColors(),
+                    )
+                }
+            }
+            // Edge fades signal that more chips exist off-screen. These overlays
+            // are purely decorative and do not intercept pointer events.
+            if (scrollState.canScrollBackward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to surface,
+                                    0.08f to Color.Transparent,
+                                    1f to Color.Transparent,
+                                ),
+                            ),
+                        ),
+                )
+            }
+            if (scrollState.canScrollForward) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                colorStops = arrayOf(
+                                    0f to Color.Transparent,
+                                    0.92f to Color.Transparent,
+                                    1f to surface,
+                                ),
+                            ),
+                        ),
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TagFilterRow(
+    tags: List<com.lcdcode.moodcairns.data.entity.Tag>,
+    selected: Set<Long>,
+    onToggle: (Long) -> Unit,
+) {
+    if (tags.isEmpty()) return
+    val scrollState = rememberScrollState()
+    val surface = MaterialTheme.colorScheme.surface
+    Column {
+        Text("Tags", style = MaterialTheme.typography.labelMedium)
+        Spacer(Modifier.height(4.dp))
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                tags.forEach { tag ->
+                    FilterChip(
+                        selected = tag.id in selected,
+                        onClick = { onToggle(tag.id) },
+                        label = { Text(tag.name) },
                     )
                 }
             }

@@ -23,6 +23,7 @@ fun HomeScreen(
     onHistory: () -> Unit,
     onBackup: () -> Unit,
     onScales: () -> Unit,
+    onTags: () -> Unit,
     onCharts: () -> Unit,
     onSettings: () -> Unit,
 ) {
@@ -52,6 +53,9 @@ fun HomeScreen(
             }
             OutlinedButton(onClick = onScales, modifier = Modifier.fillMaxWidth()) {
                 Text("Manage scales")
+            }
+            OutlinedButton(onClick = onTags, modifier = Modifier.fillMaxWidth()) {
+                Text("Manage tags")
             }
             OutlinedButton(onClick = onSettings, modifier = Modifier.fillMaxWidth()) {
                 Text("Settings")

@@ -181,7 +181,8 @@ class BackupViewModel @Inject constructor(
             val result = withContext(Dispatchers.Default) { importer.importReplace(uri, secret) }
             when (result) {
                 is ImportResult.Success ->
-                    "Imported ${result.entries} entries, ${result.scales} scales, ${result.windows} windows"
+                    "Imported ${result.entries} entries, ${result.scales} scales, " +
+                        "${result.tags} tags, ${result.windows} windows"
                 is ImportResult.Failure -> "Import failed: ${result.message}"
             }
         } finally {
