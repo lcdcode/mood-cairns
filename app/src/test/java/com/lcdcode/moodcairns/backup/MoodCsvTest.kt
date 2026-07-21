@@ -6,6 +6,8 @@ import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,6 +29,7 @@ class MoodCsvTest {
         windowId: Long? = null,
         note: String? = null,
         values: List<EntryValue> = emptyList(),
+        tags: List<Tag> = emptyList(),
     ) = EntryWithValues(
         entry = Entry(
             id = id,
@@ -36,6 +39,7 @@ class MoodCsvTest {
             note = note,
         ),
         values = values,
+        tags = tags,
     )
 
     private fun rows(csv: String) = csv.split("\r\n").filter { it.isNotEmpty() }
@@ -48,7 +52,7 @@ class MoodCsvTest {
         )
         val csv = MoodCsv.build(scales, emptyList(), emptyList())
 
-        assertEquals("recordedAt,slot,window,note,Mood,Energy", rows(csv).first())
+        assertEquals("recordedAt,slot,window,note,tags,Mood,Energy", rows(csv).first())
     }
 
     @Test
@@ -62,8 +66,8 @@ class MoodCsvTest {
         )
         val csv = MoodCsv.build(scales, emptyList(), entries)
 
-        // Mood=4, Energy blank.
-        assertEquals("2026-01-01T08:00:00Z,MORNING,,,4,", rows(csv)[1])
+        // Mood=4, Energy blank; window/note/tags empty.
+        assertEquals("2026-01-01T08:00:00Z,MORNING,,,,4,", rows(csv)[1])
     }
 
     @Test
@@ -113,8 +117,37 @@ class MoodCsvTest {
         )
         val csv = MoodCsv.build(emptyList(), emptyList(), entries)
 
-        assertEquals("recordedAt,slot,window,note,scale_99", rows(csv).first())
+        assertEquals("recordedAt,slot,window,note,tags,scale_99", rows(csv).first())
         assertTrue(rows(csv)[1].endsWith(",3"))
+    }
+
+    @Test
+    fun tags_joinedWithSemicolonSpace() {
+        val entries = listOf(
+            entry(
+                1, "2026-01-01T08:00:00Z",
+                tags = listOf(
+                    Tag(id = 1, name = "Home", category = TagCategory.PLACE),
+                    Tag(id = 2, name = "Family", category = TagCategory.PERSON),
+                ),
+            ),
+        )
+        val csv = MoodCsv.build(emptyList(), emptyList(), entries)
+
+        assertEquals("2026-01-01T08:00:00Z,MANUAL,,,Home; Family", rows(csv)[1])
+    }
+
+    @Test
+    fun tagNameWithComma_isRfc4180Quoted() {
+        val entries = listOf(
+            entry(
+                1, "2026-01-01T08:00:00Z",
+                tags = listOf(Tag(id = 1, name = "work, late shift", category = TagCategory.ACTIVITY)),
+            ),
+        )
+        val csv = MoodCsv.build(emptyList(), emptyList(), entries)
+
+        assertTrue(rows(csv)[1].endsWith(",\"work, late shift\""))
     }
 
     @Test
