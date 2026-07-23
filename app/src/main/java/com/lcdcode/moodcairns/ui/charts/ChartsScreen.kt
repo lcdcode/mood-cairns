@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptWindow
+import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
@@ -439,7 +440,7 @@ private fun TagFilterRow(
                     onClick = onClear,
                     label = { Text(if (noTagsSelected) "All" else "Clear") },
                 )
-                tags.forEach { tag ->
+                tags.orderedByCategory().forEach { tag ->
                     FilterChip(
                         selected = tag.id in selected,
                         onClick = { onToggle(tag.id) },

@@ -63,6 +63,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.tags.displayName
 import java.time.Instant
 import java.time.LocalDate
@@ -202,10 +203,12 @@ private fun TagPicker(
     selectedTagIds: Set<Long>,
     onToggle: (Long) -> Unit,
 ) {
-    // observeAll() orders by category then sortOrder, so grouping preserves order.
+    // observeAll() sorts category alphabetically; iterate TagCategory.entries
+    // (Place, Person, Activity) instead so the display order is fixed here.
     val byCategory = remember(tags) { tags.groupBy { it.category } }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        byCategory.forEach { (category, categoryTags) ->
+        TagCategory.entries.forEach { category ->
+            val categoryTags = byCategory[category] ?: return@forEach
             Text(
                 category.displayName,
                 style = androidx.compose.material3.MaterialTheme.typography.labelMedium,

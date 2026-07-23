@@ -64,6 +64,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -462,7 +463,7 @@ private fun FilterBar(
                         onClick = onTagClear,
                         label = { Text(if (noTagsSelected) "All" else "Clear") },
                     )
-                    tags.forEach { tag ->
+                    tags.orderedByCategory().forEach { tag ->
                         FilterChip(
                             selected = tag.id in selectedTagIds,
                             onClick = { onTagToggle(tag.id) },
