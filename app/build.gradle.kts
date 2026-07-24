@@ -151,7 +151,7 @@ dependencies {
 }
 
 // Privacy guard: fail the build if the merged manifest ever declares a network
-// permission. The app is designed to be fully offline; Syncthing handles sync.
+// permission. The app is designed to be fully offline; User responsible for backup.
 val forbiddenPermissions = listOf(
     "android.permission.INTERNET",
     "android.permission.ACCESS_NETWORK_STATE",
