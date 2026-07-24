@@ -25,7 +25,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -64,6 +63,8 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
 import java.time.LocalDate
@@ -309,11 +310,6 @@ private fun EntryCard(
     }
 }
 
-@Composable
-private fun SlotChip(label: String) {
-    AssistChip(onClick = {}, label = { Text(label) })
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilterBar(
@@ -536,19 +532,6 @@ private fun FilterBar(
         }
     }
 }
-
-/**
- * Prefer the configured window's label so renamed or extra windows read
- * correctly. Falls back to the slot enum name for Manual/Custom entries and for
- * entries whose window was since deleted.
- */
-private fun slotLabel(
-    slot: PromptSlot,
-    promptWindowId: Long?,
-    windows: Map<Long, PromptWindow>,
-): String =
-    promptWindowId?.let { windows[it]?.label }
-        ?: slot.name.lowercase().replaceFirstChar { it.uppercase() }
 
 private fun formatHistoryValue(v: Float): String {
     val rounded = kotlin.math.round(v)

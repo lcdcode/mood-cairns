@@ -75,6 +75,8 @@ data class ChartsUiState(
     // OR semantics: entries carrying any selected tag pass; empty = no tag filter.
     val selectedTagIds: Set<Long> = emptySet(),
     val series: List<ScaleSeries> = emptyList(),
+    // Raw entries per day index (relative to startDate), for the tapped-point card.
+    val entriesByDay: Map<Int, List<EntryWithValues>> = emptyMap(),
     val entryCount: Int = 0,
     val chartMode: ChartMode = ChartMode.Raw,
     val absoluteYAxis: Boolean = false,
@@ -216,12 +218,22 @@ class ChartsViewModel @Inject constructor(
             slotFilteredRows.filter { row -> row.tags.any { it.id in f.selectedTags } }
         }
 
+        fun dayIndexOf(row: EntryWithValues) =
+            (row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay).toInt()
+
+        // Preserve the raw entries (note + tags) behind each plotted day so the
+        // tapped-point card can show a per-entry breakdown. Ordered by recordedAt
+        // ASC from the query, which groupBy preserves.
+        val entriesByDay = filteredRows
+            .filter { dayIndexOf(it) in 0 until days }
+            .groupBy { dayIndexOf(it) }
+
         val series = scaleList.map { scale ->
             val perDaySum = FloatArray(days)
             val perDayCount = IntArray(days)
             for (row in filteredRows) {
                 val v = row.values.firstOrNull { it.scaleId == scale.id } ?: continue
-                val dayIdx = (row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay).toInt()
+                val dayIdx = dayIndexOf(row)
                 if (dayIdx in 0 until days) {
                     perDaySum[dayIdx] += v.value
                     perDayCount[dayIdx] += 1
@@ -245,6 +257,7 @@ class ChartsViewModel @Inject constructor(
             tags = tagList,
             selectedTagIds = f.selectedTags,
             series = series,
+            entriesByDay = entriesByDay,
             entryCount = filteredRows.size,
             chartMode = f.mode,
             absoluteYAxis = f.absoluteY,

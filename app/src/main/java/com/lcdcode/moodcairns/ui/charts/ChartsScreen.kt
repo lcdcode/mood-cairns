@@ -24,6 +24,7 @@ import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +53,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptWindow
+import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
@@ -71,6 +76,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -181,6 +187,9 @@ fun ChartsScreen(
                     totalDays = state.days,
                     startDate = state.startDate,
                     absoluteY = state.absoluteYAxis,
+                    scales = state.scales,
+                    windows = state.windows,
+                    entriesByDay = state.entriesByDay,
                 )
             }
         }
@@ -491,6 +500,9 @@ private fun ChartArea(
     totalDays: Int,
     startDate: LocalDate,
     absoluteY: Boolean,
+    scales: List<Scale>,
+    windows: List<PromptWindow>,
+    entriesByDay: Map<Int, List<EntryWithValues>>,
 ) {
     val pointsForMode: (ScaleSeries) -> List<DayPoint> = { s ->
         when (mode) {
@@ -600,11 +612,13 @@ private fun ChartArea(
         Spacer(Modifier.height(8.dp))
 
         tappedDay?.let { day ->
+            val scalesById = remember(scales) { scales.associateBy { it.id } }
+            val windowsById = remember(windows) { windows.associateBy { it.id } }
             TappedPointCard(
                 date = startDate.plusDays(day.toLong()),
-                series = series,
-                dayIndex = day,
-                mode = mode,
+                entries = entriesByDay[day].orEmpty(),
+                scales = scalesById,
+                windows = windowsById,
                 onDismiss = { tappedDay = null },
             )
             Spacer(Modifier.height(8.dp))
@@ -634,56 +648,85 @@ private fun ChartArea(
 @Composable
 private fun TappedPointCard(
     date: LocalDate,
-    series: List<ScaleSeries>,
-    dayIndex: Int,
-    mode: ChartMode,
+    entries: List<EntryWithValues>,
+    scales: Map<Long, Scale>,
+    windows: Map<Long, PromptWindow>,
     onDismiss: () -> Unit,
 ) {
-    val fmt = remember { DateTimeFormatter.ofPattern("EEE, d MMM yyyy") }
+    val dateFmt = remember { DateTimeFormatter.ofPattern("EEE, d MMM yyyy") }
+    val timeFmt = remember { DateTimeFormatter.ofPattern("HH:mm") }
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    date.format(fmt),
+                    date.format(dateFmt),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )
                 TextButton(onClick = onDismiss) { Text("Close") }
             }
-            val rows = series.mapNotNull { s ->
-                val pts = when (mode) {
-                    ChartMode.Raw -> s.daily
-                    ChartMode.RollingAvg -> s.rolling
-                }
-                pts.firstOrNull { it.dayIndex == dayIndex }?.let { s to it.value }
-            }
-            if (rows.isEmpty()) {
+            if (entries.isEmpty()) {
                 Text(
                     "No entries on this day.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                rows.forEach { (s, v) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        Surface(
-                            shape = CircleShape,
-                            color = Color(s.scale.colorArgb),
-                            modifier = Modifier.size(10.dp),
-                        ) {}
-                        Text(
-                            "${s.scale.name}: ${formatValue(v)}",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
+                entries.forEachIndexed { index, entry ->
+                    if (index > 0) HorizontalDivider()
+                    TappedEntry(entry, scales, windows, timeFmt)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TappedEntry(
+    entry: EntryWithValues,
+    scales: Map<Long, Scale>,
+    windows: Map<Long, PromptWindow>,
+    timeFmt: DateTimeFormatter,
+) {
+    val time = entry.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalTime()
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(timeFmt.format(time), fontWeight = FontWeight.Medium)
+            SlotChip(slotLabel(entry.entry.slot, entry.entry.promptWindowId, windows))
+        }
+        entry.values.forEach { v ->
+            val scale = scales[v.scaleId] ?: return@forEach
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color(scale.colorArgb),
+                    modifier = Modifier.size(10.dp),
+                ) {}
+                Text(
+                    "${scale.name}: ${formatValue(v.value)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+        entry.entry.note?.takeIf { it.isNotBlank() }?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall)
+        }
+        if (entry.tags.isNotEmpty()) {
+            Text(
+                entry.tags.orderedByCategory().joinToString(" · ") { it.name },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
