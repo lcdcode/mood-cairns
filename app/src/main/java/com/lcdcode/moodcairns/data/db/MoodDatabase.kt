@@ -5,9 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.lcdcode.moodcairns.data.dao.EntryDao
 import com.lcdcode.moodcairns.data.dao.ScaleDao
+import com.lcdcode.moodcairns.data.dao.TagDao
 import com.lcdcode.moodcairns.data.entity.Entry
+import com.lcdcode.moodcairns.data.entity.EntryTag
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
 
 /**
  * SQLCipher-encrypted Room database for personal mood data: rating scales and
@@ -16,14 +19,15 @@ import com.lcdcode.moodcairns.data.entity.Scale
  * memory; closed on lock so the page cache is dropped.
  */
 @Database(
-    entities = [Scale::class, Entry::class, EntryValue::class],
-    version = 1,
+    entities = [Scale::class, Entry::class, EntryValue::class, Tag::class, EntryTag::class],
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
 abstract class MoodDatabase : RoomDatabase() {
     abstract fun scaleDao(): ScaleDao
     abstract fun entryDao(): EntryDao
+    abstract fun tagDao(): TagDao
 
     companion object {
         const val NAME = "mood.db"

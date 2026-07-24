@@ -25,7 +25,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -63,6 +62,10 @@ import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.slotLabel
+import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -98,14 +101,18 @@ fun HistoryScreen(
             }
         },
     ) { padding ->
-        val filteredEntries = remember(state.entries, state.dateFilter, state.slotFilter, state.searchQuery) {
+        val filteredEntries = remember(
+            state.entries, state.dateFilter, state.slotFilter, state.searchQuery, state.tagFilter,
+        ) {
             state.entries.filter { e ->
                 val dateOk = state.dateFilter == null ||
                     e.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalDate() == state.dateFilter
                 val slotOk = state.slotFilter == null || e.entry.slot == state.slotFilter
                 val searchOk = state.searchQuery.isBlank() ||
                     e.entry.note?.contains(state.searchQuery, ignoreCase = true) == true
-                dateOk && slotOk && searchOk
+                val tagOk = state.tagFilter.isEmpty() ||
+                    e.tags.any { it.id in state.tagFilter }
+                dateOk && slotOk && searchOk && tagOk
             }
         }
 
@@ -117,6 +124,10 @@ fun HistoryScreen(
                 onSlotSelect = { viewModel.setSlotFilter(it) },
                 selectedDate = state.dateFilter,
                 onDateSelect = { viewModel.setDateFilter(it) },
+                tags = state.tags,
+                selectedTagIds = state.tagFilter,
+                onTagToggle = { viewModel.toggleTagFilter(it) },
+                onTagClear = { viewModel.clearTagFilter() },
                 onClearAll = { viewModel.clearAllFilters() },
             )
 
@@ -288,13 +299,15 @@ private fun EntryCard(
             entry.entry.note?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall)
             }
+            if (entry.tags.isNotEmpty()) {
+                Text(
+                    entry.tags.joinToString(" · ") { it.name },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
-}
-
-@Composable
-private fun SlotChip(label: String) {
-    AssistChip(onClick = {}, label = { Text(label) })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,11 +319,16 @@ private fun FilterBar(
     onSlotSelect: (PromptSlot?) -> Unit,
     selectedDate: LocalDate?,
     onDateSelect: (LocalDate?) -> Unit,
+    tags: List<Tag>,
+    selectedTagIds: Set<Long>,
+    onTagToggle: (Long) -> Unit,
+    onTagClear: () -> Unit,
     onClearAll: () -> Unit,
 ) {
     val dateFmt = DateTimeFormatter.ofPattern("MMM d")
     var showDatePicker by remember { mutableStateOf(false) }
-    val hasActiveFilter = selectedDate != null || selectedSlot != null || searchQuery.isNotBlank()
+    val hasActiveFilter = selectedDate != null || selectedSlot != null ||
+        searchQuery.isNotBlank() || selectedTagIds.isNotEmpty()
 
     Column(
         modifier = Modifier
@@ -349,7 +367,7 @@ private fun FilterBar(
             )
             if (hasActiveFilter) {
                 TextButton(onClick = onClearAll) {
-                    Text("Clear", maxLines = 1)
+                    Text("Clear all", maxLines = 1)
                 }
             }
         }
@@ -362,14 +380,16 @@ private fun FilterBar(
                 modifier = Modifier.horizontalScroll(scrollState),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                val isSelected = selectedSlot == null
+                // Reads "All" when the row is unfiltered (a state indicator) and
+                // flips to "Clear" once a slot or date is active (an action).
+                val rowUnfiltered = selectedSlot == null && selectedDate == null
                 FilterChip(
-                    selected = isSelected,
+                    selected = rowUnfiltered,
                     onClick = {
                         onSlotSelect(null)
                         onDateSelect(null)
                     },
-                    label = { Text("All") },
+                    label = { Text(if (rowUnfiltered) "All" else "Clear") },
                 )
                 val isDateSelected = selectedDate != null
                 FilterChip(
@@ -425,6 +445,60 @@ private fun FilterBar(
                 )
             }
         }
+
+        if (tags.isNotEmpty()) {
+            val tagScrollState = rememberScrollState()
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.horizontalScroll(tagScrollState),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    val noTagsSelected = selectedTagIds.isEmpty()
+                    FilterChip(
+                        selected = noTagsSelected,
+                        onClick = onTagClear,
+                        label = { Text(if (noTagsSelected) "All" else "Clear") },
+                    )
+                    tags.orderedByCategory().forEach { tag ->
+                        FilterChip(
+                            selected = tag.id in selectedTagIds,
+                            onClick = { onTagToggle(tag.id) },
+                            label = { Text(tag.name) },
+                        )
+                    }
+                }
+                if (tagScrollState.canScrollBackward) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colorStops = arrayOf(
+                                        0f to surface,
+                                        0.08f to Color.Transparent,
+                                        1f to Color.Transparent,
+                                    ),
+                                ),
+                            ),
+                    )
+                }
+                if (tagScrollState.canScrollForward) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.horizontalGradient(
+                                    colorStops = arrayOf(
+                                        0f to Color.Transparent,
+                                        0.92f to Color.Transparent,
+                                        1f to surface,
+                                    ),
+                                ),
+                            ),
+                    )
+                }
+            }
+        }
     }
 
     if (showDatePicker) {
@@ -458,19 +532,6 @@ private fun FilterBar(
         }
     }
 }
-
-/**
- * Prefer the configured window's label so renamed or extra windows read
- * correctly. Falls back to the slot enum name for Manual/Custom entries and for
- * entries whose window was since deleted.
- */
-private fun slotLabel(
-    slot: PromptSlot,
-    promptWindowId: Long?,
-    windows: Map<Long, PromptWindow>,
-): String =
-    promptWindowId?.let { windows[it]?.label }
-        ?: slot.name.lowercase().replaceFirstChar { it.uppercase() }
 
 private fun formatHistoryValue(v: Float): String {
     val rounded = kotlin.math.round(v)

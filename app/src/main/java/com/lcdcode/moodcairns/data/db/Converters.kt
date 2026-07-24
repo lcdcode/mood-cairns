@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.data.db
 
 import androidx.room.TypeConverter
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import java.time.Instant
 import java.time.LocalTime
 
@@ -14,4 +15,7 @@ class Converters {
 
     @TypeConverter fun slotToName(s: PromptSlot?): String? = s?.name
     @TypeConverter fun nameToSlot(n: String?): PromptSlot? = n?.let(PromptSlot::valueOf)
+
+    @TypeConverter fun tagCategoryToName(c: TagCategory?): String? = c?.name
+    @TypeConverter fun nameToTagCategory(n: String?): TagCategory? = n?.let(TagCategory::valueOf)
 }

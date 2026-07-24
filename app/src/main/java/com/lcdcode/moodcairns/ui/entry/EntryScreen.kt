@@ -4,11 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -29,6 +33,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -57,6 +62,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.tags.displayName
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -96,6 +104,23 @@ fun EntryScreen(
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            // Save lives in a fixed bottom bar so it stays reachable however
+            // long the form gets; imePadding keeps it above the keyboard.
+            Surface(tonalElevation = 3.dp) {
+                Button(
+                    onClick = viewModel::save,
+                    enabled = !state.saving && state.scales.isNotEmpty(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .imePadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                ) {
+                    Text(if (state.saving) "Saving…" else "Save")
+                }
+            }
+        },
     ) { padding ->
         if (state.scales.isEmpty() && !state.saving) {
             androidx.compose.foundation.layout.Box(
@@ -139,6 +164,15 @@ fun EntryScreen(
 
             Spacer(Modifier.height(8.dp))
 
+            if (state.tags.isNotEmpty()) {
+                TagPicker(
+                    tags = state.tags,
+                    selectedTagIds = state.selectedTagIds,
+                    onToggle = viewModel::toggleTag,
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+
             if (state.showDateTimeControl) {
                 DateTimeControl(
                     recordedAt = state.recordedAt,
@@ -157,14 +191,36 @@ fun EntryScreen(
                 onCustom = viewModel::selectCustom,
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
+        }
+    }
+}
 
-            Button(
-                onClick = viewModel::save,
-                enabled = !state.saving && state.scales.isNotEmpty(),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(if (state.saving) "Saving…" else "Save")
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun TagPicker(
+    tags: List<Tag>,
+    selectedTagIds: Set<Long>,
+    onToggle: (Long) -> Unit,
+) {
+    // observeAll() sorts category alphabetically; iterate TagCategory.entries
+    // (Place, Person, Activity) instead so the display order is fixed here.
+    val byCategory = remember(tags) { tags.groupBy { it.category } }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        TagCategory.entries.forEach { category ->
+            val categoryTags = byCategory[category] ?: return@forEach
+            Text(
+                category.displayName,
+                style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
+            )
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                categoryTags.forEach { tag ->
+                    FilterChip(
+                        selected = tag.id in selectedTagIds,
+                        onClick = { onToggle(tag.id) },
+                        label = { Text(tag.name) },
+                    )
+                }
             }
         }
     }

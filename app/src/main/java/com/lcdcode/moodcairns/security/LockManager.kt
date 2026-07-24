@@ -6,6 +6,7 @@ import com.lcdcode.moodcairns.data.db.LegacyMigrator
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
 import com.lcdcode.moodcairns.data.db.ScheduleDatabase
 import com.lcdcode.moodcairns.data.db.Seed
+import com.lcdcode.moodcairns.data.db.SeedTags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -437,6 +438,7 @@ class LockManager @Inject constructor(
         migrationScope.launch {
             scheduleDb.promptWindowDao().insertAllIgnore(Seed.windows)
             moodHolder.scaleDao().insertAllIgnore(Seed.scales)
+            moodHolder.tagDao().insertAllIgnore(SeedTags.tags)
         }
     }
 

@@ -32,8 +32,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.0.7"
+        versionCode = 9
+        versionName = "1.1.0"
         resourceConfigurations.add("en")
         base.archivesName = "mood-cairns-$versionName"
     }
@@ -151,7 +151,7 @@ dependencies {
 }
 
 // Privacy guard: fail the build if the merged manifest ever declares a network
-// permission. The app is designed to be fully offline; Syncthing handles sync.
+// permission. The app is designed to be fully offline; User responsible for backup.
 val forbiddenPermissions = listOf(
     "android.permission.INTERNET",
     "android.permission.ACCESS_NETWORK_STATE",

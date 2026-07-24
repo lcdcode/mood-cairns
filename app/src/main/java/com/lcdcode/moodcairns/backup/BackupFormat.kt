@@ -3,8 +3,10 @@ package com.lcdcode.moodcairns.backup
 import kotlinx.serialization.Serializable
 
 /**
- * On-disk schema for a full export. Bump [CURRENT_VERSION] and add a migration
- * branch in [BackupSerializer] whenever the shape changes.
+ * On-disk schema for a full export. Bump [CURRENT_VERSION] and widen
+ * [SUPPORTED_VERSIONS] whenever the shape changes; older versions must keep
+ * parsing via serialization defaults (v1 files simply have no [tags] and no
+ * [EntryDto.tagIds]).
  */
 @Serializable
 data class BackupFile(
@@ -14,9 +16,11 @@ data class BackupFile(
     val scales: List<ScaleDto>,
     val promptWindows: List<PromptWindowDto>,
     val entries: List<EntryDto>,
+    val tags: List<TagDto> = emptyList(),
 ) {
     companion object {
-        const val CURRENT_VERSION = 1
+        const val CURRENT_VERSION = 2
+        val SUPPORTED_VERSIONS = 1..CURRENT_VERSION
     }
 }
 
@@ -51,6 +55,15 @@ data class EntryDto(
     val promptWindowId: Long?,
     val note: String?,
     val values: List<EntryValueDto>,
+    val tagIds: List<Long> = emptyList(),
+)
+
+@Serializable
+data class TagDto(
+    val id: Long,
+    val name: String,
+    val category: String,
+    val sortOrder: Int,
 )
 
 @Serializable

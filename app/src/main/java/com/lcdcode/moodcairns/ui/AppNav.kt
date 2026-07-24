@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.backup.BackupScreen
 import com.lcdcode.moodcairns.ui.charts.ChartsScreen
 import com.lcdcode.moodcairns.ui.entry.EntryScreen
@@ -19,6 +20,8 @@ import com.lcdcode.moodcairns.ui.scales.ScaleListScreen
 import com.lcdcode.moodcairns.ui.settings.ChangePinScreen
 import com.lcdcode.moodcairns.ui.settings.PromptWindowEditScreen
 import com.lcdcode.moodcairns.ui.settings.SettingsScreen
+import com.lcdcode.moodcairns.ui.tags.TagEditScreen
+import com.lcdcode.moodcairns.ui.tags.TagListScreen
 
 data class NotificationEntryArgs(val slot: String, val windowId: Long?)
 
@@ -33,7 +36,11 @@ object Routes {
     const val SETTINGS = "settings"
     const val WINDOW_EDIT = "window_edit"
     const val CHANGE_PIN = "change_pin"
+    const val TAGS = "tags"
+    const val TAG_EDIT = "tag_edit"
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
+    fun tagEdit(id: Long? = null, category: TagCategory? = null) =
+        "$TAG_EDIT?tagId=${id ?: 0L}&category=${category?.name ?: ""}"
     fun windowEdit(id: Long? = null) = "$WINDOW_EDIT?windowId=${id ?: 0L}"
 
     fun entry(
@@ -72,6 +79,7 @@ fun AppNav(
                 onHistory = { nav.navigate(Routes.HISTORY) },
                 onBackup = { nav.navigate(Routes.BACKUP) },
                 onScales = { nav.navigate(Routes.SCALES) },
+                onTags = { nav.navigate(Routes.TAGS) },
                 onCharts = { nav.navigate(Routes.CHARTS) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
             )
@@ -122,6 +130,24 @@ fun AppNav(
             ),
         ) {
             ScaleEditScreen(onBack = { nav.popBackStack() })
+        }
+
+        composable(Routes.TAGS) {
+            TagListScreen(
+                onBack = { nav.popBackStack() },
+                onAdd = { category -> nav.navigate(Routes.tagEdit(category = category)) },
+                onEdit = { id -> nav.navigate(Routes.tagEdit(id)) },
+            )
+        }
+
+        composable(
+            route = "${Routes.TAG_EDIT}?tagId={tagId}&category={category}",
+            arguments = listOf(
+                navArgument("tagId") { type = NavType.LongType; defaultValue = 0L },
+                navArgument("category") { type = NavType.StringType; defaultValue = "" },
+            ),
+        ) {
+            TagEditScreen(onBack = { nav.popBackStack() })
         }
 
         composable(Routes.HISTORY) {

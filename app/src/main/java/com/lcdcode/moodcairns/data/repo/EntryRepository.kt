@@ -31,6 +31,7 @@ class EntryRepository @Inject constructor(private val holder: MoodDatabaseHolder
         promptWindowId: Long?,
         note: String?,
         values: Map<Long, Float>,
+        tagIds: Set<Long> = emptySet(),
     ): Long {
         val entry = Entry(
             recordedAt = recordedAt,
@@ -38,9 +39,13 @@ class EntryRepository @Inject constructor(private val holder: MoodDatabaseHolder
             promptWindowId = promptWindowId,
             note = note?.takeIf { it.isNotBlank() },
         )
-        return dao().insertEntryWithValues(entry) { id ->
-            values.map { (scaleId, value) -> EntryValue(entryId = id, scaleId = scaleId, value = value) }
-        }
+        return dao().insertEntryWithValues(
+            entry,
+            values = { id ->
+                values.map { (scaleId, value) -> EntryValue(entryId = id, scaleId = scaleId, value = value) }
+            },
+            tagIds = tagIds,
+        )
     }
 
     suspend fun delete(id: Long) = dao().delete(id)
@@ -54,6 +59,7 @@ class EntryRepository @Inject constructor(private val holder: MoodDatabaseHolder
         promptWindowId: Long?,
         note: String?,
         values: Map<Long, Float>,
+        tagIds: Set<Long> = emptySet(),
     ) {
         val entry = Entry(
             id = id,
@@ -65,6 +71,7 @@ class EntryRepository @Inject constructor(private val holder: MoodDatabaseHolder
         dao().updateEntryWithValues(
             entry,
             values.map { (scaleId, value) -> EntryValue(entryId = id, scaleId = scaleId, value = value) },
+            tagIds = tagIds,
         )
     }
 }

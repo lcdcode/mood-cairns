@@ -1,0 +1,4 @@
+- New Custom Tags feature: People, Places, and Activity tags can be assigned and filtered on (thanks github.com/carliitooss)
+- Help text for Charts
+- Allow users to export unsafe (unencrypted) CSV file if enabled in settings to perform further analysis if desired.
+- Show Notes and Tags on your entries when you tap on a date in the Chart

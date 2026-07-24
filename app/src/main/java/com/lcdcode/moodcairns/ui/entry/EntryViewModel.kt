@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
+import com.lcdcode.moodcairns.data.repo.TagRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +29,8 @@ data class EntryUiState(
     val slot: PromptSlot = PromptSlot.MANUAL,
     val promptWindowId: Long? = null,
     val windows: List<PromptWindow> = emptyList(),
+    val tags: List<Tag> = emptyList(),
+    val selectedTagIds: Set<Long> = emptySet(),
     // A window referenced by the entry being edited that is no longer in the
     // enabled set (disabled in settings). Pinned so its chip still renders and
     // the value round-trips on save instead of being silently dropped.
@@ -47,6 +51,7 @@ class EntryViewModel @Inject constructor(
     private val scales: ScaleRepository,
     private val entries: EntryRepository,
     private val promptWindows: PromptWindowRepository,
+    private val tags: TagRepository,
 ) : ViewModel() {
 
     private val editingId: Long? = savedState.get<Long>(ARG_ENTRY_ID)?.takeIf { it > 0 }
@@ -86,6 +91,7 @@ class EntryViewModel @Inject constructor(
                             promptWindowId = existing.entry.promptWindowId,
                             note = existing.entry.note.orEmpty(),
                             values = existing.values.associate { v -> v.scaleId to v.value },
+                            selectedTagIds = existing.tags.map { t -> t.id }.toSet(),
                             extraWindow = refWindow?.takeUnless(PromptWindow::enabled),
                             editLoaded = true,
                         ).normalizedSelection()
@@ -114,6 +120,11 @@ class EntryViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            tags.observeAll().collect { list ->
+                _state.update { it.copy(tags = list) }
+            }
+        }
     }
 
     fun selectWindow(window: PromptWindow) =
@@ -131,6 +142,11 @@ class EntryViewModel @Inject constructor(
 
     fun setNote(note: String) = _state.update { it.copy(note = note) }
 
+    fun toggleTag(tagId: Long) = _state.update {
+        val selected = it.selectedTagIds
+        it.copy(selectedTagIds = if (tagId in selected) selected - tagId else selected + tagId)
+    }
+
     fun setRecordedAt(instant: Instant) = _state.update { it.copy(recordedAt = instant) }
 
     fun save() {
@@ -147,6 +163,7 @@ class EntryViewModel @Inject constructor(
                         promptWindowId = cur.promptWindowId,
                         note = cur.note,
                         values = cur.values,
+                        tagIds = cur.selectedTagIds,
                     )
                     cur.editingId
                 } else {
@@ -156,6 +173,7 @@ class EntryViewModel @Inject constructor(
                         promptWindowId = cur.promptWindowId,
                         note = cur.note,
                         values = cur.values,
+                        tagIds = cur.selectedTagIds,
                     )
                 }
                 _state.update { it.copy(saving = false, savedId = id) }

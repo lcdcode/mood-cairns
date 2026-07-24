@@ -7,9 +7,11 @@ import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
+import com.lcdcode.moodcairns.data.repo.TagRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,7 +71,12 @@ data class ChartsUiState(
     val showOther: Boolean = false,
     val selectedScaleIds: Set<Long> = emptySet(),
     val scales: List<Scale> = emptyList(),
+    val tags: List<Tag> = emptyList(),
+    // OR semantics: entries carrying any selected tag pass; empty = no tag filter.
+    val selectedTagIds: Set<Long> = emptySet(),
     val series: List<ScaleSeries> = emptyList(),
+    // Raw entries per day index (relative to startDate), for the tapped-point card.
+    val entriesByDay: Map<Int, List<EntryWithValues>> = emptyMap(),
     val entryCount: Int = 0,
     val chartMode: ChartMode = ChartMode.Raw,
     val absoluteYAxis: Boolean = false,
@@ -84,6 +91,7 @@ private data class Filters(
     val end: LocalDate,
     val excluded: Set<SlotKey>,
     val selected: Set<Long>,
+    val selectedTags: Set<Long>,
     val mode: ChartMode,
     val absoluteY: Boolean,
     val initialized: Boolean,
@@ -95,6 +103,7 @@ class ChartsViewModel @Inject constructor(
     private val entries: EntryRepository,
     scales: ScaleRepository,
     windows: PromptWindowRepository,
+    tags: TagRepository,
 ) : ViewModel() {
 
     private val filters = MutableStateFlow(
@@ -103,6 +112,7 @@ class ChartsViewModel @Inject constructor(
             end = LocalDate.now(),
             excluded = emptySet(),
             selected = emptySet(),
+            selectedTags = emptySet(),
             mode = ChartMode.Raw,
             absoluteY = false,
             initialized = false,
@@ -117,6 +127,7 @@ class ChartsViewModel @Inject constructor(
     private val scalesFlow = scales.observeAll()
     private val windowsFlow = windows.observeAll()
     private val earliestFlow = entries.observeEarliestRecordedAt()
+    private val tagsFlow = tags.observeAll()
 
     val state: StateFlow<ChartsUiState> = filters
         .flatMapLatest { f ->
@@ -131,8 +142,9 @@ class ChartsViewModel @Inject constructor(
                 scalesFlow,
                 earliestFlow,
                 windowsFlow,
-            ) { rows, scaleList, earliest, windowList ->
-                buildState(f, rows, scaleList, earliest, windowList)
+                tagsFlow,
+            ) { rows, scaleList, earliest, windowList, tagList ->
+                buildState(f, rows, scaleList, earliest, windowList, tagList)
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChartsUiState())
@@ -154,6 +166,13 @@ class ChartsViewModel @Inject constructor(
         it.copy(selected = next)
     }
 
+    fun toggleTagFilter(id: Long) = filters.update {
+        val next = if (id in it.selectedTags) it.selectedTags - id else it.selectedTags + id
+        it.copy(selectedTags = next)
+    }
+
+    fun clearTagFilter() = filters.update { it.copy(selectedTags = emptySet()) }
+
     fun setChartMode(mode: ChartMode) = filters.update { it.copy(mode = mode) }
 
     fun setAbsoluteYAxis(value: Boolean) = filters.update { it.copy(absoluteY = value) }
@@ -164,6 +183,7 @@ class ChartsViewModel @Inject constructor(
         scaleList: List<Scale>,
         earliest: java.time.Instant?,
         windowList: List<PromptWindow>,
+        tagList: List<Tag>,
     ): ChartsUiState {
         val zone = ZoneId.systemDefault()
         val earliestLocal = earliest?.atZone(zone)?.toLocalDate()
@@ -191,14 +211,29 @@ class ChartsViewModel @Inject constructor(
             add(SlotKey.Custom)
             if (hasOther) add(SlotKey.Other)
         }
-        val filteredRows = rows.filter { slotKeyFor(it.entry, knownWindowIds) !in f.excluded }
+        val slotFilteredRows = rows.filter { slotKeyFor(it.entry, knownWindowIds) !in f.excluded }
+        val filteredRows = if (f.selectedTags.isEmpty()) {
+            slotFilteredRows
+        } else {
+            slotFilteredRows.filter { row -> row.tags.any { it.id in f.selectedTags } }
+        }
+
+        fun dayIndexOf(row: EntryWithValues) =
+            (row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay).toInt()
+
+        // Preserve the raw entries (note + tags) behind each plotted day so the
+        // tapped-point card can show a per-entry breakdown. Ordered by recordedAt
+        // ASC from the query, which groupBy preserves.
+        val entriesByDay = filteredRows
+            .filter { dayIndexOf(it) in 0 until days }
+            .groupBy { dayIndexOf(it) }
 
         val series = scaleList.map { scale ->
             val perDaySum = FloatArray(days)
             val perDayCount = IntArray(days)
             for (row in filteredRows) {
                 val v = row.values.firstOrNull { it.scaleId == scale.id } ?: continue
-                val dayIdx = (row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay).toInt()
+                val dayIdx = dayIndexOf(row)
                 if (dayIdx in 0 until days) {
                     perDaySum[dayIdx] += v.value
                     perDayCount[dayIdx] += 1
@@ -219,7 +254,10 @@ class ChartsViewModel @Inject constructor(
             showOther = hasOther,
             selectedScaleIds = selected,
             scales = scaleList,
+            tags = tagList,
+            selectedTagIds = f.selectedTags,
             series = series,
+            entriesByDay = entriesByDay,
             entryCount = filteredRows.size,
             chartMode = f.mode,
             absoluteYAxis = f.absoluteY,
