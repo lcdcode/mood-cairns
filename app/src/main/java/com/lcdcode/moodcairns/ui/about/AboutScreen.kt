@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,12 +54,37 @@ fun AboutScreen(onBack: () -> Unit) {
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text("Mood Cairns", style = MaterialTheme.typography.headlineSmall)
             Text(
                 "Version ${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Text("Why this app exists", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "I built Mood Cairns because I wanted a mood tracker with all the features " +
+                    "I liked and none of the things I didn't: no creepy tracking, no " +
+                    "analytics, no account, and no Google Play Store required for " +
+                    "purchases. Your entries live only on your device - the app declares " +
+                    "no network permissions, and it always will be that way.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                "Made by lcdcode. Free and open source. Thank you!",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text("Updates", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "F-Droid users should get updates automatically, but if not, or " +
+                    "if you downloaded Mood Cairns from GitHub, use the below " +
+                    "button to check for updates and download the latest .apk file " +
+                    "under Assets.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -87,6 +114,12 @@ fun AboutScreen(onBack: () -> Unit) {
                     color = MaterialTheme.colorScheme.error,
                 )
             }
+
+            Text("Contact", style = MaterialTheme.typography.titleSmall)
+            Text(
+                "The best way to contact me for app changes is to open an issue on GitHub.",
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
