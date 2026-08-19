@@ -26,17 +26,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.lcdcode.moodcairns.BuildConfig
 
 private const val RELEASES_URL = "https://github.com/lcdcode/mood-cairns/releases/latest"
+private const val ISSUES_URL = "https://github.com/lcdcode/mood-cairns/issues"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
     val ctx = LocalContext.current
     var noBrowserMessage by remember { mutableStateOf<String?>(null) }
+
+    fun openInBrowser(url: String) {
+        try {
+            ctx.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        } catch (_: ActivityNotFoundException) {
+            noBrowserMessage = "No browser found to open the page."
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -81,25 +98,28 @@ fun AboutScreen(onBack: () -> Unit) {
             )
             Text("Updates", style = MaterialTheme.typography.titleSmall)
             Text(
-                "F-Droid users should get updates automatically, but if not, or " +
-                    "if you downloaded Mood Cairns from GitHub, use the below " +
-                    "button to check for updates and download the latest .apk file " +
-                    "under Assets.",
+                buildAnnotatedString {
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("F-Droid users should get updates automatically")
+                    }
+                    append(
+                        ", but if not, or if you downloaded Mood Cairns from GitHub, " +
+                            "use the below button to check for updates and ",
+                    )
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("download the latest .apk file")
+                    }
+                    append(" under Assets.")
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             OutlinedButton(
-                onClick = {
-                    try {
-                        ctx.startActivity(Intent(Intent.ACTION_VIEW, RELEASES_URL.toUri()))
-                    } catch (_: ActivityNotFoundException) {
-                        noBrowserMessage = "No browser found to open the releases page."
-                    }
-                },
+                onClick = { openInBrowser(RELEASES_URL) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Check for updates")
+                Text("Get latest version")
             }
             Text(
                 "Opens the latest release on GitHub in your browser. The app itself " +
@@ -117,7 +137,24 @@ fun AboutScreen(onBack: () -> Unit) {
 
             Text("Contact", style = MaterialTheme.typography.titleSmall)
             Text(
-                "The best way to contact me for app changes is to open an issue on GitHub.",
+                buildAnnotatedString {
+                    append("The best way to contact me for changes or feature requests is to ")
+                    withLink(
+                        LinkAnnotation.Url(
+                            url = ISSUES_URL,
+                            styles = TextLinkStyles(
+                                style = SpanStyle(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                ),
+                            ),
+                            linkInteractionListener = { openInBrowser(ISSUES_URL) },
+                        ),
+                    ) {
+                        append("open a new issue on GitHub")
+                    }
+                    append(".")
+                },
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
