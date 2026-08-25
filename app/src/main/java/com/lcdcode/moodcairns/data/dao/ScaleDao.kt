@@ -65,6 +65,21 @@ interface ScaleDao {
         deleteScaleRow(id)
     }
 
+    @Query("UPDATE entry_value SET value = :rangeSum - value WHERE scaleId = :scaleId")
+    suspend fun reflectValuesForScale(scaleId: Long, rangeSum: Float)
+
+    /**
+     * Save an edited scale and reflect every value logged on it across the
+     * range midpoint (v -> rangeSum - v, where rangeSum = oldMin + oldMax), so
+     * past entries keep their meaning when the scale's direction flips. The
+     * reflection is its own inverse and preserves step-grid alignment.
+     */
+    @Transaction
+    suspend fun updateScaleReflectingValues(scale: Scale, rangeSum: Float) {
+        update(scale)
+        reflectValuesForScale(scale.id, rangeSum)
+    }
+
     @Query("UPDATE scale SET sortOrder = :sortOrder WHERE id = :id")
     suspend fun setSortOrder(id: Long, sortOrder: Int)
 

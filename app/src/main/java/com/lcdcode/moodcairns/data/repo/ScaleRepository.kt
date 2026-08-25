@@ -19,6 +19,8 @@ class ScaleRepository @Inject constructor(private val holder: MoodDatabaseHolder
     suspend fun upsert(scale: Scale) {
         if (scale.id == 0L) dao().insert(scale) else dao().update(scale)
     }
+    suspend fun updateInvertingData(scale: Scale, rangeSum: Float) =
+        dao().updateScaleReflectingValues(scale, rangeSum)
     suspend fun setArchived(id: Long, archived: Boolean) = dao().setArchived(id, archived)
     suspend fun countEntriesUsing(id: Long): Int = dao().countEntriesUsing(id)
     suspend fun delete(id: Long) = dao().deleteScaleCascade(id)

@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -109,6 +110,23 @@ fun ScaleEditScreen(
                 )
             }
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Lower is better", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "Inverse scale: the slider runs high to low, and charts draw it " +
+                            "so improvement points up.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(checked = state.inverted, onCheckedChange = viewModel::setInverted)
+            }
+
             Text("Color", style = MaterialTheme.typography.labelLarge)
             ColorPalette(
                 selected = state.colorArgb,
@@ -153,6 +171,24 @@ fun ScaleEditScreen(
         }
     }
 
+    state.invertDataPrompt?.let { prompt ->
+        AlertDialog(
+            onDismissRequest = viewModel::dismissInvertDataPrompt,
+            title = { Text("Remap logged values?") },
+            text = { Text(remapWarning(state.name, prompt.entryCount)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.confirmSave(remapData = true) }) {
+                    Text("Remap")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.confirmSave(remapData = false) }) {
+                    Text("Keep values")
+                }
+            },
+        )
+    }
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -169,6 +205,14 @@ fun ScaleEditScreen(
             },
         )
     }
+}
+
+private fun remapWarning(name: String, entryCount: Int): String {
+    val label = name.ifBlank { "this scale" }
+    val entries = if (entryCount == 1) "1 entry has" else "$entryCount entries have"
+    return "$entries data on \"$label\". Remapping replaces each value v with (min + max) - v " +
+        "so past entries keep their meaning under the new direction. " +
+        "Choose Keep values if you only meant to change how the scale is displayed."
 }
 
 private fun deleteWarning(name: String, affectedEntryCount: Int?): String {
