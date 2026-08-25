@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.backup
 
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -47,6 +48,36 @@ class BackupFormatCompatTest {
         assertTrue(parsed.tags.isEmpty())
         assertEquals(1, parsed.entries.size)
         assertTrue(parsed.entries.single().tagIds.isEmpty())
+        assertFalse(parsed.scales.single().inverted)
+    }
+
+    @Test
+    fun scaleWithoutInvertedKey_defaultsToFalse() {
+        val preInverseScale = """
+            {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
+             "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4}
+        """.trimIndent()
+
+        val parsed = json.decodeFromString(ScaleDto.serializer(), preInverseScale)
+
+        assertFalse(parsed.inverted)
+    }
+
+    @Test
+    fun invertedScale_roundTrips() {
+        val original = ScaleDto(
+            id = 7, name = "Calm", minValue = -5, maxValue = 5, step = 1.0f,
+            colorArgb = 0x6BAA75, isBuiltIn = false, archived = false, sortOrder = 5,
+            inverted = true,
+        )
+
+        val decoded = json.decodeFromString(
+            ScaleDto.serializer(),
+            json.encodeToString(ScaleDto.serializer(), original),
+        )
+
+        assertEquals(original, decoded)
+        assertTrue(decoded.inverted)
     }
 
     @Test

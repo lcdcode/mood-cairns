@@ -4,9 +4,12 @@ import kotlinx.serialization.Serializable
 
 /**
  * On-disk schema for a full export. Bump [CURRENT_VERSION] and widen
- * [SUPPORTED_VERSIONS] whenever the shape changes; older versions must keep
- * parsing via serialization defaults (v1 files simply have no [tags] and no
- * [EntryDto.tagIds]).
+ * [SUPPORTED_VERSIONS] only when old readers would misinterpret the data or an
+ * import-time backfill must be version-gated; older versions must keep parsing
+ * via serialization defaults (v1 files simply have no [tags] and no
+ * [EntryDto.tagIds]). Purely additive defaulted fields (e.g. [ScaleDto.inverted])
+ * do NOT bump the version: a bump would make older app builds reject newer
+ * files outright, while an unknown key is merely dropped on import.
  */
 @Serializable
 data class BackupFile(
@@ -35,6 +38,7 @@ data class ScaleDto(
     val isBuiltIn: Boolean,
     val archived: Boolean,
     val sortOrder: Int,
+    val inverted: Boolean = false,
 )
 
 @Serializable
