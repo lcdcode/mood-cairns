@@ -20,7 +20,7 @@ import com.lcdcode.moodcairns.data.entity.Tag
  */
 @Database(
     entities = [Scale::class, Entry::class, EntryValue::class, Tag::class, EntryTag::class],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

@@ -227,7 +227,8 @@ class LegacyMigrationTest {
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 name TEXT NOT NULL, minValue INTEGER NOT NULL, maxValue INTEGER NOT NULL,
                 step REAL NOT NULL, colorArgb INTEGER NOT NULL, isBuiltIn INTEGER NOT NULL,
-                archived INTEGER NOT NULL, sortOrder INTEGER NOT NULL
+                archived INTEGER NOT NULL, sortOrder INTEGER NOT NULL,
+                inverted INTEGER NOT NULL DEFAULT 0
             )""".trimIndent(),
         )
         st.execute("CREATE UNIQUE INDEX index_scale_name ON scale (name)")

@@ -5,12 +5,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.lcdcode.moodcairns.data.entity.Tag
 
 /**
- * SQL for the v1 -> v2 migration, kept as plain strings (no Android deps) so
+ * SQL for the versioned migrations, kept as plain strings (no Android deps) so
  * JVM tests can execute them against sqlite-jdbc and diff them against the
- * exported Room schema (schemas/.../2.json).
+ * exported Room schemas (schemas/.../N.json).
  *
- * The CREATE statements are copied verbatim from 2.json's createSql with
- * `${TABLE_NAME}` substituted. Any change to the Tag/EntryTag entities
+ * The CREATE statements are copied verbatim from the exported schema's
+ * createSql with `${TABLE_NAME}` substituted. Any change to the entities
  * regenerates the schema identity hash and MUST be mirrored here or Room will
  * reject the migrated database at open.
  */
@@ -24,6 +24,10 @@ internal object MoodDbMigrationSql {
             "FOREIGN KEY(`entryId`) REFERENCES `entry`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , " +
             "FOREIGN KEY(`tagId`) REFERENCES `tag`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "CREATE INDEX IF NOT EXISTS `index_entry_tag_tagId` ON `entry_tag` (`tagId`)",
+    )
+
+    val V2_TO_V3: List<String> = listOf(
+        "ALTER TABLE `scale` ADD COLUMN `inverted` INTEGER NOT NULL DEFAULT 0",
     )
 
     /**
@@ -46,5 +50,15 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         MoodDbMigrationSql.V1_TO_V2.forEach(db::execSQL)
         MoodDbMigrationSql.seedTagInserts(SeedTags.tags).forEach(db::execSQL)
+    }
+}
+
+/**
+ * Adds the scale.inverted flag ("lower is better"). Existing scales default to
+ * the normal direction; users opt in per scale from the edit screen.
+ */
+val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        MoodDbMigrationSql.V2_TO_V3.forEach(db::execSQL)
     }
 }
