@@ -43,6 +43,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,9 +54,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,6 +67,8 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.formatScaleValue
+import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.tags.displayName
 import java.time.Instant
 import java.time.LocalDate
@@ -407,7 +412,7 @@ private fun ScaleSlider(
     onValueChange: (Float) -> Unit,
 ) {
     val accent = Color(scale.colorArgb)
-    val display = formatEntryValue(value)
+    val display = formatScaleValue(value)
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -415,33 +420,43 @@ private fun ScaleSlider(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(scale.name, fontWeight = FontWeight.Medium)
-            Text("$display / ${scale.maxValue}")
+            Text(formatValueWithRange(value, scale))
         }
-        Slider(
-            value = value,
-            onValueChange = { onValueChange(snapToStep(it, scale)) },
-            valueRange = scale.minValue.toFloat()..scale.maxValue.toFloat(),
-            steps = (((scale.maxValue - scale.minValue) / scale.step).toInt() - 1).coerceAtLeast(0),
-            colors = SliderDefaults.colors(
-                thumbColor = accent,
-                activeTrackColor = accent,
-            ),
-            modifier = Modifier.semantics {
-                contentDescription = "${scale.name}, value $display out of ${scale.maxValue}"
-            },
-        )
+        // An inverse scale runs high-to-low, so "better" is the same gesture
+        // direction as on normal scales. Flipping the layout direction (rather
+        // than mapping values) keeps range, steps, and snapping untouched.
+        val baseDirection = LocalLayoutDirection.current
+        val sliderDirection = if (!scale.inverted) baseDirection else when (baseDirection) {
+            LayoutDirection.Ltr -> LayoutDirection.Rtl
+            LayoutDirection.Rtl -> LayoutDirection.Ltr
+        }
+        val spokenRange = if (scale.minValue < 0) {
+            "in range ${scale.minValue} to ${scale.maxValue}"
+        } else {
+            "out of ${scale.maxValue}"
+        }
+        CompositionLocalProvider(LocalLayoutDirection provides sliderDirection) {
+            Slider(
+                value = value,
+                onValueChange = { onValueChange(snapToStep(it, scale)) },
+                valueRange = scale.minValue.toFloat()..scale.maxValue.toFloat(),
+                steps = (((scale.maxValue - scale.minValue) / scale.step).toInt() - 1).coerceAtLeast(0),
+                colors = SliderDefaults.colors(
+                    thumbColor = accent,
+                    activeTrackColor = accent,
+                ),
+                modifier = Modifier.semantics {
+                    contentDescription = "${scale.name}, value $display $spokenRange" +
+                        if (scale.inverted) ", lower is better" else ""
+                },
+            )
+        }
     }
 }
 
-private fun snapToStep(raw: Float, scale: Scale): Float {
+internal fun snapToStep(raw: Float, scale: Scale): Float {
     if (scale.step <= 0f) return raw
     val offset = raw - scale.minValue
     val snapped = scale.minValue + kotlin.math.round(offset / scale.step) * scale.step
     return snapped.coerceIn(scale.minValue.toFloat(), scale.maxValue.toFloat())
-}
-
-private fun formatEntryValue(v: Float): String {
-    val rounded = kotlin.math.round(v)
-    return if (kotlin.math.abs(v - rounded) < 1e-3f) rounded.toInt().toString()
-    else "%.2f".format(v).trimEnd('0').trimEnd('.')
 }
