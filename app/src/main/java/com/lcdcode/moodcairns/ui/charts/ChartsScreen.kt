@@ -57,6 +57,7 @@ import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.rangeLabel
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -636,7 +637,8 @@ private fun ChartArea(
                         modifier = Modifier.size(12.dp),
                     ) {}
                     Text(
-                        "${s.scale.name}  (${s.scale.minValue}–${s.scale.maxValue})",
+                        "${s.scale.name}  (${rangeLabel(s.scale.minValue, s.scale.maxValue)}" +
+                            (if (s.scale.inverted) ", lower is better" else "") + ")",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -772,7 +774,9 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                     "Absolute",
                     "Shows each line against its scale's full min-to-max range. Movements " +
                         "look smaller, but different scales line up fairly, so you can " +
-                        "honestly compare one against another on the same chart.",
+                        "honestly compare one against another on the same chart. Scales " +
+                        "marked \"lower is better\" are drawn flipped here, so improvement " +
+                        "always points up.",
                 )
             }
         },
@@ -801,12 +805,6 @@ private fun HelpEntry(term: String, explanation: String) {
         )
         Text(explanation, style = MaterialTheme.typography.bodySmall)
     }
-}
-
-private fun normalize(value: Float, scale: com.lcdcode.moodcairns.data.entity.Scale): Float {
-    val span = (scale.maxValue - scale.minValue).toFloat()
-    if (span <= 0f) return 0.5f
-    return ((value - scale.minValue) / span).coerceIn(0f, 1f)
 }
 
 private fun formatValue(v: Float): String {
