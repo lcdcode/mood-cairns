@@ -1,0 +1,4 @@
+- add About page and manual update check
+- add ability to create inverse scales
+- add ability to have scales with negative numbers
+- various bug fixes
