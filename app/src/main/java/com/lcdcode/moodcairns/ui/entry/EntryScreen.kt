@@ -440,7 +440,7 @@ private fun ScaleSlider(
                 value = value,
                 onValueChange = { onValueChange(snapToStep(it, scale)) },
                 valueRange = scale.minValue.toFloat()..scale.maxValue.toFloat(),
-                steps = (((scale.maxValue - scale.minValue) / scale.step).toInt() - 1).coerceAtLeast(0),
+                steps = sliderSteps(scale),
                 colors = SliderDefaults.colors(
                     thumbColor = accent,
                     activeTrackColor = accent,
@@ -452,6 +452,13 @@ private fun ScaleSlider(
             )
         }
     }
+}
+
+/** Intermediate tick count; rounds so inexact float steps (e.g. 0.3) don't drop a tick. */
+internal fun sliderSteps(scale: Scale): Int {
+    if (scale.step <= 0f) return 0
+    val intervals = kotlin.math.round((scale.maxValue - scale.minValue) / scale.step).toInt()
+    return (intervals - 1).coerceAtLeast(0)
 }
 
 internal fun snapToStep(raw: Float, scale: Scale): Float {

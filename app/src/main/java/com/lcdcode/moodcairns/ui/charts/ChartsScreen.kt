@@ -57,6 +57,7 @@ import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
@@ -715,7 +716,7 @@ private fun TappedEntry(
                     modifier = Modifier.size(10.dp),
                 ) {}
                 Text(
-                    "${scale.name}: ${formatValue(v.value)}",
+                    "${scale.name}: ${formatScaleValue(v.value)}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -805,12 +806,6 @@ private fun HelpEntry(term: String, explanation: String) {
         )
         Text(explanation, style = MaterialTheme.typography.bodySmall)
     }
-}
-
-private fun formatValue(v: Float): String {
-    val rounded = v.roundToInt()
-    return if (kotlin.math.abs(v - rounded) < 0.05f) rounded.toString()
-    else "%.1f".format(v)
 }
 
 @Composable

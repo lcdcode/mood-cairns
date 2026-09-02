@@ -41,6 +41,28 @@ class SnapToStepTest {
         assertEquals(0.5f, snapToStep(0.6f, s))
     }
 
+    @Test
+    fun sliderSteps_countsIntermediateTicks() {
+        assertEquals(8, sliderSteps(scale(1, 10)))
+        assertEquals(9, sliderSteps(scale(-5, 5)))
+        assertEquals(3, sliderSteps(scale(0, 10, step = 2.5f)))
+    }
+
+    @Test
+    fun sliderSteps_roundsInexactFloatQuotients() {
+        // 3 / 0.3f is 9.9999996; truncation used to drop a tick (8 instead of 9).
+        assertEquals(9, sliderSteps(scale(0, 3, step = 0.3f)))
+    }
+
+    @Test
+    fun sliderSteps_degenerateInputs_yieldContinuousSlider() {
+        assertEquals(0, sliderSteps(scale(1, 2)))
+        assertEquals(0, sliderSteps(scale(1, 10, step = 0f)))
+    }
+
+    private fun assertEquals(expected: Int, actual: Int) =
+        org.junit.Assert.assertEquals(expected.toLong(), actual.toLong())
+
     private fun assertEquals(expected: Float, actual: Float) =
         assertEquals(expected, actual, 1e-6f)
 }
