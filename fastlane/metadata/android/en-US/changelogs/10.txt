@@ -1,4 +1,5 @@
 - add About page and manual update check
+- improve chart size and add y axis scale
 - add ability to create inverse scales
 - add ability to have scales with negative numbers
 - various bug fixes

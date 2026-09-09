@@ -63,6 +63,7 @@ import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -70,6 +71,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
@@ -174,7 +176,7 @@ fun ChartsScreen(
             }
             if (!hasData) {
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(240.dp),
+                    modifier = Modifier.fillMaxWidth().height(CHART_HEIGHT_BASE),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -561,6 +563,10 @@ private fun ChartArea(
         }
     }
 
+    val valueLabelFormatter = remember(absoluteY) {
+        CartesianValueFormatter { _, y, _ -> yAxisLabel(y, absoluteY) }
+    }
+
     // Vico's marker pipeline handles touch in chart-data coordinates, so the
     // reported `x` already accounts for the current zoom/scroll state. A no-op
     // marker (no visible decoration on the chart itself) is enough — the
@@ -581,11 +587,13 @@ private fun ChartArea(
         }
     }
 
+    val plotHeight = chartHeight(nonEmpty.map { it.scale }, absoluteY)
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp),
+                .height(plotHeight),
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(
@@ -593,6 +601,7 @@ private fun ChartArea(
                         lineProvider = LineCartesianLayer.LineProvider.series(lines),
                         rangeProvider = rangeProvider,
                     ),
+                    startAxis = VerticalAxis.rememberStart(valueFormatter = valueLabelFormatter),
                     bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateLabelFormatter),
                     marker = invisibleMarker,
                     markerVisibilityListener = markerListener,
@@ -610,6 +619,14 @@ private fun ChartArea(
                 zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
             )
         }
+
+        Spacer(Modifier.height(4.dp))
+
+        Text(
+            yAxisCaption(nonEmpty.map { it.scale }, absoluteY),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
         Spacer(Modifier.height(8.dp))
 
@@ -769,7 +786,9 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                     "Auto-fit",
                     "Zooms the vertical axis to just the range your data actually covers. " +
                         "Small movements become easy to see because the chart fills the " +
-                        "space - but the line isn't measured against the scale's full range.",
+                        "space - but the line isn't measured against the scale's full range. " +
+                        "The labels down the left are your logged values; when more than one " +
+                        "scale is plotted they all share that one axis.",
                 )
                 HelpEntry(
                     "Absolute",
@@ -777,7 +796,9 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                         "look smaller, but different scales line up fairly, so you can " +
                         "honestly compare one against another on the same chart. Scales " +
                         "marked \"lower is better\" are drawn flipped here, so improvement " +
-                        "always points up.",
+                        "always points up. The labels down the left read as percentages " +
+                        "because each line is measured against its own range: 100% is the " +
+                        "best end of that scale, whatever number that is.",
                 )
             }
         },
