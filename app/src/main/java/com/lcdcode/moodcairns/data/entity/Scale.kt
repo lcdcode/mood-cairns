@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -18,4 +19,6 @@ data class Scale(
     val isBuiltIn: Boolean = false,
     val archived: Boolean = false,
     val sortOrder: Int = 0,
+    /** Lower values are better; flips the entry slider and Absolute chart mode. */
+    @ColumnInfo(defaultValue = "0") val inverted: Boolean = false,
 )

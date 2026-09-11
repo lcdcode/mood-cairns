@@ -23,6 +23,8 @@ data class ScaleEditUiState(
     val colorArgb: Int = PALETTE.first(),
     val isBuiltIn: Boolean = false,
     val sortOrder: Int = 0,
+    val inverted: Boolean = false,
+    val invertDataPrompt: InvertDataPrompt? = null,
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
@@ -39,6 +41,9 @@ data class ScaleEditUiState(
     }
 }
 
+/** Asks whether flipping a scale's direction should also remap its logged values. */
+data class InvertDataPrompt(val entryCount: Int)
+
 @HiltViewModel
 class ScaleEditViewModel @Inject constructor(
     savedState: SavedStateHandle,
@@ -48,6 +53,12 @@ class ScaleEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(ScaleEditUiState())
     val state: StateFlow<ScaleEditUiState> = _state.asStateFlow()
 
+    /** The scale as loaded from the DB, for detecting a direction flip. */
+    private var persisted: Scale? = null
+
+    /** Validated snapshot awaiting the remap dialog's answer. */
+    private var pendingSave: Scale? = null
+
     init {
         val id = savedState.get<Long>(ARG_SCALE_ID)?.takeIf { it > 0L }
         if (id == null) {
@@ -56,6 +67,7 @@ class ScaleEditViewModel @Inject constructor(
             viewModelScope.launch {
                 val existing = repo.byId(id)
                 if (existing != null) {
+                    persisted = existing
                     _state.update {
                         it.copy(
                             id = existing.id,
@@ -66,6 +78,7 @@ class ScaleEditViewModel @Inject constructor(
                             colorArgb = existing.colorArgb,
                             isBuiltIn = existing.isBuiltIn,
                             sortOrder = existing.sortOrder,
+                            inverted = existing.inverted,
                             loaded = true,
                         )
                     }
@@ -77,10 +90,11 @@ class ScaleEditViewModel @Inject constructor(
     }
 
     fun setName(v: String) = _state.update { it.copy(name = v, error = null) }
-    fun setMin(v: String) = _state.update { it.copy(minValue = v.filter(Char::isDigit).take(4), error = null) }
-    fun setMax(v: String) = _state.update { it.copy(maxValue = v.filter(Char::isDigit).take(4), error = null) }
+    fun setMin(v: String) = _state.update { it.copy(minValue = sanitizeSignedInt(v, maxDigits = 4), error = null) }
+    fun setMax(v: String) = _state.update { it.copy(maxValue = sanitizeSignedInt(v, maxDigits = 4), error = null) }
     fun setStep(v: String) = _state.update { it.copy(step = sanitizeDecimal(v, maxLen = 5), error = null) }
     fun setColor(argb: Int) = _state.update { it.copy(colorArgb = argb) }
+    fun setInverted(v: Boolean) = _state.update { it.copy(inverted = v, error = null) }
 
     fun save() {
         val cur = _state.value
@@ -102,22 +116,62 @@ class ScaleEditViewModel @Inject constructor(
             return
         }
 
+        // Snapshot the validated scale now; later field edits (e.g. during the
+        // entry-count query or while the remap dialog is up) cannot reach the DB.
+        val scale = Scale(
+            id = cur.id,
+            name = name,
+            minValue = min!!,
+            maxValue = max!!,
+            step = step!!,
+            colorArgb = cur.colorArgb,
+            isBuiltIn = cur.isBuiltIn,
+            archived = false,
+            sortOrder = cur.sortOrder,
+            inverted = cur.inverted,
+        )
+
+        if (invertsDirection(persisted, scale)) {
+            viewModelScope.launch {
+                val count = repo.countEntriesUsing(scale.id)
+                if (count > 0) {
+                    pendingSave = scale
+                    _state.update { it.copy(invertDataPrompt = InvertDataPrompt(count)) }
+                } else {
+                    persist(scale, remapData = false)
+                }
+            }
+            return
+        }
+        persist(scale, remapData = false)
+    }
+
+    /** Confirms the invert-data prompt: save the snapshot, remapping logged values if asked. */
+    fun confirmSave(remapData: Boolean) {
+        val scale = pendingSave ?: return
+        pendingSave = null
+        _state.update { it.copy(invertDataPrompt = null) }
+        persist(scale, remapData)
+    }
+
+    /** Cancels the invert-data prompt without saving anything. */
+    fun dismissInvertDataPrompt() {
+        pendingSave = null
+        _state.update { it.copy(invertDataPrompt = null) }
+    }
+
+    private fun persist(scale: Scale, remapData: Boolean) {
+        if (_state.value.saving) return
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
-            val sortOrder = if (cur.id == 0L) repo.nextSortOrder() else cur.sortOrder
-            val scale = Scale(
-                id = cur.id,
-                name = name,
-                minValue = min!!,
-                maxValue = max!!,
-                step = step!!,
-                colorArgb = cur.colorArgb,
-                isBuiltIn = cur.isBuiltIn,
-                archived = false,
-                sortOrder = sortOrder,
-            )
             try {
-                repo.upsert(scale)
+                val toSave =
+                    if (scale.id == 0L) scale.copy(sortOrder = repo.nextSortOrder()) else scale
+                if (remapData) {
+                    repo.updateInvertingData(toSave)
+                } else {
+                    repo.upsert(toSave)
+                }
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
                 _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
@@ -150,6 +204,16 @@ class ScaleEditViewModel @Inject constructor(
     }
 
     companion object { const val ARG_SCALE_ID = "scaleId" }
+}
+
+/** True when saving [edited] over [base] flips the scale's direction, so logged data may need remapping. */
+internal fun invertsDirection(base: Scale?, edited: Scale): Boolean =
+    base != null && base.inverted != edited.inverted
+
+/** Keeps an optional leading minus and up to [maxDigits] digits: "5-6" -> "56", "--5" -> "-5". */
+internal fun sanitizeSignedInt(raw: String, maxDigits: Int): String {
+    val sign = if (raw.startsWith("-")) "-" else ""
+    return sign + raw.filter(Char::isDigit).take(maxDigits)
 }
 
 /** Keeps only digits and at most one decimal point; caps total length. */

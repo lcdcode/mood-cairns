@@ -92,6 +92,8 @@ class LegacyMigrator @Inject constructor(
         )
     }
 
+    // Columns added after the legacy split (e.g. inverted) are intentionally
+    // omitted; legacy DBs never had them and the SQL defaults fill them in.
     private fun insertScaleWithId(db: MoodDatabase, s: com.lcdcode.moodcairns.data.entity.Scale) {
         db.openHelper.writableDatabase.execSQL(
             """

@@ -57,10 +57,13 @@ import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.formatScaleValue
+import com.lcdcode.moodcairns.ui.common.rangeLabel
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -68,6 +71,7 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
@@ -172,7 +176,7 @@ fun ChartsScreen(
             }
             if (!hasData) {
                 Box(
-                    modifier = Modifier.fillMaxWidth().height(240.dp),
+                    modifier = Modifier.fillMaxWidth().height(CHART_HEIGHT_BASE),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -559,6 +563,10 @@ private fun ChartArea(
         }
     }
 
+    val valueLabelFormatter = remember(absoluteY) {
+        CartesianValueFormatter { _, y, _ -> yAxisLabel(y, absoluteY) }
+    }
+
     // Vico's marker pipeline handles touch in chart-data coordinates, so the
     // reported `x` already accounts for the current zoom/scroll state. A no-op
     // marker (no visible decoration on the chart itself) is enough — the
@@ -579,11 +587,13 @@ private fun ChartArea(
         }
     }
 
+    val plotHeight = chartHeight(nonEmpty.map { it.scale }, absoluteY)
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(240.dp),
+                .height(plotHeight),
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(
@@ -591,6 +601,7 @@ private fun ChartArea(
                         lineProvider = LineCartesianLayer.LineProvider.series(lines),
                         rangeProvider = rangeProvider,
                     ),
+                    startAxis = VerticalAxis.rememberStart(valueFormatter = valueLabelFormatter),
                     bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateLabelFormatter),
                     marker = invisibleMarker,
                     markerVisibilityListener = markerListener,
@@ -608,6 +619,14 @@ private fun ChartArea(
                 zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
             )
         }
+
+        Spacer(Modifier.height(4.dp))
+
+        Text(
+            yAxisCaption(nonEmpty.map { it.scale }, absoluteY),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
         Spacer(Modifier.height(8.dp))
 
@@ -636,7 +655,8 @@ private fun ChartArea(
                         modifier = Modifier.size(12.dp),
                     ) {}
                     Text(
-                        "${s.scale.name}  (${s.scale.minValue}–${s.scale.maxValue})",
+                        "${s.scale.name}  (${rangeLabel(s.scale.minValue, s.scale.maxValue)}" +
+                            (if (s.scale.inverted) ", lower is better" else "") + ")",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -713,7 +733,7 @@ private fun TappedEntry(
                     modifier = Modifier.size(10.dp),
                 ) {}
                 Text(
-                    "${scale.name}: ${formatValue(v.value)}",
+                    "${scale.name}: ${formatScaleValue(v.value)}",
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -766,13 +786,19 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                     "Auto-fit",
                     "Zooms the vertical axis to just the range your data actually covers. " +
                         "Small movements become easy to see because the chart fills the " +
-                        "space - but the line isn't measured against the scale's full range.",
+                        "space - but the line isn't measured against the scale's full range. " +
+                        "The labels down the left are your logged values; when more than one " +
+                        "scale is plotted they all share that one axis.",
                 )
                 HelpEntry(
                     "Absolute",
                     "Shows each line against its scale's full min-to-max range. Movements " +
                         "look smaller, but different scales line up fairly, so you can " +
-                        "honestly compare one against another on the same chart.",
+                        "honestly compare one against another on the same chart. Scales " +
+                        "marked \"lower is better\" are drawn flipped here, so improvement " +
+                        "always points up. The labels down the left read as percentages " +
+                        "because each line is measured against its own range: 100% is the " +
+                        "best end of that scale, whatever number that is.",
                 )
             }
         },
@@ -801,18 +827,6 @@ private fun HelpEntry(term: String, explanation: String) {
         )
         Text(explanation, style = MaterialTheme.typography.bodySmall)
     }
-}
-
-private fun normalize(value: Float, scale: com.lcdcode.moodcairns.data.entity.Scale): Float {
-    val span = (scale.maxValue - scale.minValue).toFloat()
-    if (span <= 0f) return 0.5f
-    return ((value - scale.minValue) / span).coerceIn(0f, 1f)
-}
-
-private fun formatValue(v: Float): String {
-    val rounded = v.roundToInt()
-    return if (kotlin.math.abs(v - rounded) < 0.05f) rounded.toString()
-    else "%.1f".format(v)
 }
 
 @Composable

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.ui.common.rangeLabel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -181,7 +182,8 @@ private fun ScaleRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(scale.name, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "${scale.minValue}–${scale.maxValue} · step ${formatStep(scale.step)}" +
+                    "${rangeLabel(scale.minValue, scale.maxValue)} · step ${formatStep(scale.step)}" +
+                        (if (scale.inverted) " · lower is better" else "") +
                         if (scale.isBuiltIn) " · built-in" else "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

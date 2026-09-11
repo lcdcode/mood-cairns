@@ -64,6 +64,7 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
@@ -293,7 +294,7 @@ private fun EntryCard(
                         "  ${scale.name}",
                         modifier = Modifier.weight(1f),
                     )
-                    Text("${formatHistoryValue(v.value)} / ${scale.maxValue}")
+                    Text(formatValueWithRange(v.value, scale))
                 }
             }
             entry.entry.note?.let {
@@ -531,10 +532,4 @@ private fun FilterBar(
             DatePicker(state = datePickerState)
         }
     }
-}
-
-private fun formatHistoryValue(v: Float): String {
-    val rounded = kotlin.math.round(v)
-    return if (kotlin.math.abs(v - rounded) < 1e-3f) rounded.toInt().toString()
-    else "%.2f".format(v).trimEnd('0').trimEnd('.')
 }
