@@ -793,8 +793,8 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                 HelpEntry(
                     "Absolute",
                     "Shows each line against its scale's full min-to-max range. Movements " +
-                        "look smaller, but different scales line up fairly, so you can " +
-                        "honestly compare one against another on the same chart. Scales " +
+                        "look smaller, but different scales line up, so you can " +
+                        "compare one against another on the same chart. Scales " +
                         "marked \"lower is better\" are drawn flipped here, so improvement " +
                         "always points up. The labels down the left read as percentages " +
                         "because each line is measured against its own range: 100% is the " +
