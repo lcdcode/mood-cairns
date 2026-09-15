@@ -32,8 +32,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.1.1"
+        versionCode = 11
+        versionName = "1.2.0"
         resourceConfigurations.add("en")
         base.archivesName = "mood-cairns-$versionName"
     }

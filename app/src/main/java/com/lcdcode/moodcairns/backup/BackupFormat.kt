@@ -39,6 +39,7 @@ data class ScaleDto(
     val archived: Boolean,
     val sortOrder: Int,
     val inverted: Boolean = false,
+    val defaultValue: Float? = null,
 )
 
 @Serializable

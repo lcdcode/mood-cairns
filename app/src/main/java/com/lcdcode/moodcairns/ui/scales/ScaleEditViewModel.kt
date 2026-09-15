@@ -20,6 +20,8 @@ data class ScaleEditUiState(
     val minValue: String = "1",
     val maxValue: String = "10",
     val step: String = "1",
+    /** Blank means "no default", which starts the entry slider at the midpoint. */
+    val defaultValue: String = "",
     val colorArgb: Int = PALETTE.first(),
     val isBuiltIn: Boolean = false,
     val sortOrder: Int = 0,
@@ -75,6 +77,7 @@ class ScaleEditViewModel @Inject constructor(
                             minValue = existing.minValue.toString(),
                             maxValue = existing.maxValue.toString(),
                             step = formatStep(existing.step),
+                            defaultValue = existing.defaultValue?.let(::formatStep) ?: "",
                             colorArgb = existing.colorArgb,
                             isBuiltIn = existing.isBuiltIn,
                             sortOrder = existing.sortOrder,
@@ -93,6 +96,8 @@ class ScaleEditViewModel @Inject constructor(
     fun setMin(v: String) = _state.update { it.copy(minValue = sanitizeSignedInt(v, maxDigits = 4), error = null) }
     fun setMax(v: String) = _state.update { it.copy(maxValue = sanitizeSignedInt(v, maxDigits = 4), error = null) }
     fun setStep(v: String) = _state.update { it.copy(step = sanitizeDecimal(v, maxLen = 5), error = null) }
+    fun setDefault(v: String) =
+        _state.update { it.copy(defaultValue = sanitizeSignedDecimal(v, maxLen = 7), error = null) }
     fun setColor(argb: Int) = _state.update { it.copy(colorArgb = argb) }
     fun setInverted(v: Boolean) = _state.update { it.copy(inverted = v, error = null) }
 
@@ -109,7 +114,7 @@ class ScaleEditViewModel @Inject constructor(
             min >= max -> "Min must be less than max"
             step <= 0f -> "Step must be greater than zero"
             !isMultipleOfStep(max - min, step) -> "Range (${max - min}) must be a multiple of step (${formatStep(step)})"
-            else -> null
+            else -> defaultValueError(cur.defaultValue, min, max, step)
         }
         if (err != null) {
             _state.update { it.copy(error = err) }
@@ -124,6 +129,7 @@ class ScaleEditViewModel @Inject constructor(
             minValue = min!!,
             maxValue = max!!,
             step = step!!,
+            defaultValue = parseDefaultValue(cur.defaultValue),
             colorArgb = cur.colorArgb,
             isBuiltIn = cur.isBuiltIn,
             archived = false,
@@ -146,7 +152,11 @@ class ScaleEditViewModel @Inject constructor(
         persist(scale, remapData = false)
     }
 
-    /** Confirms the invert-data prompt: save the snapshot, remapping logged values if asked. */
+    /**
+     * Confirms the invert-data prompt: save the snapshot, remapping logged
+     * values if asked. The default slider value is saved as entered and is
+     * never remapped, since the user is looking at that field on this screen.
+     */
     fun confirmSave(remapData: Boolean) {
         val scale = pendingSave ?: return
         pendingSave = null
@@ -216,6 +226,12 @@ internal fun sanitizeSignedInt(raw: String, maxDigits: Int): String {
     return sign + raw.filter(Char::isDigit).take(maxDigits)
 }
 
+/** Keeps an optional leading minus, digits, and at most one decimal point. */
+internal fun sanitizeSignedDecimal(raw: String, maxLen: Int): String {
+    val sign = if (raw.startsWith("-")) "-" else ""
+    return sign + sanitizeDecimal(raw, maxLen - sign.length)
+}
+
 /** Keeps only digits and at most one decimal point; caps total length. */
 internal fun sanitizeDecimal(raw: String, maxLen: Int): String {
     val sb = StringBuilder()
@@ -232,11 +248,36 @@ internal fun sanitizeDecimal(raw: String, maxLen: Int): String {
 }
 
 /** True when [range] is an integer multiple of [step], within float tolerance. */
-internal fun isMultipleOfStep(range: Int, step: Float): Boolean {
+internal fun isMultipleOfStep(range: Int, step: Float): Boolean =
+    isOnStepGrid(range.toFloat(), step)
+
+/** True when [offset] from a scale's min lands on a step tick, within float tolerance. */
+internal fun isOnStepGrid(offset: Float, step: Float): Boolean {
     if (step <= 0f) return false
-    val quotient = range / step
+    val quotient = offset / step
     val rounded = kotlin.math.round(quotient)
     return kotlin.math.abs(quotient - rounded) < 1e-4f
+}
+
+/** The entered default, or null when blank. Blank means "start at the midpoint". */
+internal fun parseDefaultValue(raw: String): Float? =
+    raw.trim().takeIf(String::isNotEmpty)?.toFloatOrNull()
+
+/**
+ * Validates an optional default slider value against the scale's range and step
+ * grid. Returns null when the field is blank or valid. Assumes min/max/step
+ * have already been validated.
+ */
+internal fun defaultValueError(raw: String, min: Int, max: Int, step: Float): String? {
+    val trimmed = raw.trim()
+    if (trimmed.isEmpty()) return null
+    val value = trimmed.toFloatOrNull() ?: return "Default must be a number"
+    return when {
+        value < min || value > max -> "Default must be between $min and $max"
+        !isOnStepGrid(value - min, step) ->
+            "Default must land on a step of ${formatStep(step)} from $min"
+        else -> null
+    }
 }
 
 /** Renders step without a trailing ".0" when it's whole. */

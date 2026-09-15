@@ -110,6 +110,18 @@ fun ScaleEditScreen(
                 )
             }
 
+            OutlinedTextField(
+                value = state.defaultValue,
+                onValueChange = viewModel::setDefault,
+                label = { Text("Default") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                supportingText = {
+                    Text("Where the slider starts for a new entry. Blank uses the midpoint.")
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,

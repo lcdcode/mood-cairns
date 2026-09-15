@@ -1,0 +1,3 @@
+- add Moods and Other tag categories, with common moods included by default
+- add an optional default value per scale for where its slider starts
+- start untouched sliders on a tick instead of an off-step midpoint

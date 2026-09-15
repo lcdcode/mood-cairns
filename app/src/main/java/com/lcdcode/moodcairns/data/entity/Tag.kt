@@ -4,7 +4,11 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-enum class TagCategory { PLACE, PERSON, ACTIVITY }
+/**
+ * Declaration order drives the display order of tag sections; the enum name is
+ * what gets persisted, so new categories must be appended, never reordered.
+ */
+enum class TagCategory { PLACE, PERSON, ACTIVITY, MOOD, OTHER }
 
 @Entity(
     tableName = "tag",

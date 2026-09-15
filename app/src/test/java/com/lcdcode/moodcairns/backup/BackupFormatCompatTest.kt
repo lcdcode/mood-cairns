@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.backup
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -64,6 +65,36 @@ class BackupFormatCompatTest {
     }
 
     @Test
+    fun scaleWithoutDefaultValueKey_parsesAsNoDefault() {
+        val preDefaultScale = """
+            {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
+             "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4,
+             "inverted": true}
+        """.trimIndent()
+
+        val parsed = json.decodeFromString(ScaleDto.serializer(), preDefaultScale)
+
+        assertNull(parsed.defaultValue)
+    }
+
+    @Test
+    fun scaleDefaultValue_roundTrips() {
+        val original = ScaleDto(
+            id = 7, name = "Focus", minValue = 1, maxValue = 10, step = 1.0f,
+            colorArgb = 0x6BAA75, isBuiltIn = false, archived = false, sortOrder = 5,
+            defaultValue = 7.0f,
+        )
+
+        val decoded = json.decodeFromString(
+            ScaleDto.serializer(),
+            json.encodeToString(ScaleDto.serializer(), original),
+        )
+
+        assertEquals(original, decoded)
+        assertEquals(7.0f, decoded.defaultValue!!, 1e-6f)
+    }
+
+    @Test
     fun invertedScale_roundTrips() {
         val original = ScaleDto(
             id = 7, name = "Calm", minValue = -5, maxValue = 5, step = 1.0f,
@@ -99,6 +130,8 @@ class BackupFormatCompatTest {
             tags = listOf(
                 TagDto(id = 1, name = "Home", category = "PLACE", sortOrder = 0),
                 TagDto(id = 3, name = "Alone", category = "PERSON", sortOrder = 4),
+                TagDto(id = 4, name = "Joy", category = "MOOD", sortOrder = 0),
+                TagDto(id = 5, name = "Misc", category = "OTHER", sortOrder = 0),
             ),
         )
 
