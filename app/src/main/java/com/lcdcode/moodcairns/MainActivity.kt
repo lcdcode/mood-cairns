@@ -49,10 +49,15 @@ class MainActivity : FragmentActivity() {
         // screen (history, notes, charts, PIN entry), and block screen recording
         // and casting. Sensitive content is rendered everywhere in this app, so
         // applying app-wide is simpler than per-screen.
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE,
-        )
+        //
+        // Debug builds skip the flag so store/metadata screenshots can be
+        // captured; release builds are always protected.
+        if (!BuildConfig.DEBUG) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE,
+            )
+        }
         enableEdgeToEdge()
         pendingEntryArgs.value = readNotificationArgs(intent)
         scheduler.ensureDailyRolloverScheduled()
