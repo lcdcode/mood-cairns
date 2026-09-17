@@ -798,7 +798,8 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                         "marked \"lower is better\" are drawn flipped here, so better " +
                         "always points up. The labels down the left read as percentages " +
                         "because each line is measured against its own range: 100% is the " +
-                        "best end of that scale, whatever number that is.",
+                        "top of that range, or the bottom for a scale marked \"lower is " +
+                        "better\".",
                 )
             }
         },

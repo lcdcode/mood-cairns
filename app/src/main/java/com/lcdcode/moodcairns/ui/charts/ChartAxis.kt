@@ -17,9 +17,14 @@ internal fun yAxisLabel(value: Double, absoluteY: Boolean): String =
 /**
  * One line under the chart saying what the axis ticks mean, since a bare number
  * is ambiguous once several scales share one axis.
+ *
+ * The absolute caption says "top of range" rather than "best": only scales
+ * flagged "lower is better" are flipped, so on a scale where high is bad but
+ * the flag is unset (the built-ins, for one) 100% is the worst end.
  */
 internal fun yAxisCaption(scales: List<Scale>, absoluteY: Boolean): String = when {
-    absoluteY -> "Vertical axis: position within each scale's own range (100% = best)"
+    absoluteY -> "Vertical axis: position within each scale's own range " +
+        "(100% = top of range; \"lower is better\" scales are flipped)"
     scales.isEmpty() -> "Vertical axis: logged values"
     scales.size == 1 -> {
         val s = scales.first()

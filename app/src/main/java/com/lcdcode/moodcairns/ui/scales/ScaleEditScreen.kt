@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -71,7 +73,11 @@ fun ScaleEditScreen(
         if (!state.loaded) return@Scaffold
 
         Column(
-            modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedTextField(
@@ -83,13 +89,17 @@ fun ScaleEditScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
+            // Min, Max, and Default accept negatives, but KeyboardType.Number
+            // and .Decimal map to an unsigned input type, so soft keyboards show
+            // no minus key. Phone gives a dialpad that has one; the sanitizers
+            // strip the other dialpad characters.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = state.minValue,
                     onValueChange = viewModel::setMin,
                     label = { Text("Min") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.weight(1f),
                 )
                 OutlinedTextField(
@@ -97,7 +107,7 @@ fun ScaleEditScreen(
                     onValueChange = viewModel::setMax,
                     label = { Text("Max") },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.weight(1f),
                 )
                 OutlinedTextField(
@@ -115,7 +125,7 @@ fun ScaleEditScreen(
                 onValueChange = viewModel::setDefault,
                 label = { Text("Default") },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 supportingText = {
                     Text("Where the slider starts for a new entry. Blank uses the midpoint.")
                 },
