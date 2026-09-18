@@ -11,7 +11,7 @@
 
 # Mood Cairns
 
-A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
+A private, fully offline Android mood tracker. Log how you're feeling against your own scales, with your own tags, in your own time windows, on your own device. View charts to track your feelings over time. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
 
 ## Notes about SDK and Methodology
 
