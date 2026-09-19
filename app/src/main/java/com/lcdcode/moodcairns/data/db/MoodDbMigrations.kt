@@ -30,6 +30,10 @@ internal object MoodDbMigrationSql {
         "ALTER TABLE `scale` ADD COLUMN `inverted` INTEGER NOT NULL DEFAULT 0",
     )
 
+    val V3_TO_V4: List<String> = listOf(
+        "ALTER TABLE `scale` ADD COLUMN `defaultValue` REAL",
+    )
+
     /**
      * INSERT OR IGNORE keeps the seeding idempotent: reruns and collisions with
      * user-created tags of the same name are silently skipped thanks to the
@@ -60,5 +64,20 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
 val MIGRATION_2_3: Migration = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
         MoodDbMigrationSql.V2_TO_V3.forEach(db::execSQL)
+    }
+}
+
+/**
+ * Adds the optional scale.defaultValue (slider start for new entries; NULL
+ * means the range midpoint) and seeds the new MOOD tag category.
+ *
+ * Fresh installs and v1 upgrades already get the mood tags from SeedTags.tags,
+ * so this only backfills v2/v3 installs. Reseeding is harmless either way:
+ * INSERT OR IGNORE plus the unique (name, category) index makes it a no-op.
+ */
+val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        MoodDbMigrationSql.V3_TO_V4.forEach(db::execSQL)
+        MoodDbMigrationSql.seedTagInserts(SeedTags.moodTags).forEach(db::execSQL)
     }
 }

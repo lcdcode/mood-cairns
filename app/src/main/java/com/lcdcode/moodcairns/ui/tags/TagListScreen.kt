@@ -104,7 +104,7 @@ fun TagListScreen(
                 if (tags.isEmpty()) {
                     item(key = "empty/${category.name}") {
                         Text(
-                            "No ${category.displayName.lowercase()} yet.",
+                            "No tags yet.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

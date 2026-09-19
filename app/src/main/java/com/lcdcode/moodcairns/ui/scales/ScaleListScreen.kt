@@ -183,6 +183,7 @@ private fun ScaleRow(
                 Text(scale.name, style = MaterialTheme.typography.bodyLarge)
                 Text(
                     "${rangeLabel(scale.minValue, scale.maxValue)} · step ${formatStep(scale.step)}" +
+                        (scale.defaultValue?.let { " · default ${formatStep(it)}" } ?: "") +
                         (if (scale.inverted) " · lower is better" else "") +
                         if (scale.isBuiltIn) " · built-in" else "",
                     style = MaterialTheme.typography.bodySmall,

@@ -140,6 +140,7 @@ class BackupSerializer @Inject constructor(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
         step = s.step, colorArgb = s.colorArgb, isBuiltIn = s.isBuiltIn,
         archived = s.archived, sortOrder = s.sortOrder, inverted = s.inverted,
+        defaultValue = s.defaultValue,
     )
 
     private fun toDto(w: PromptWindow) = PromptWindowDto(
@@ -166,6 +167,7 @@ class BackupSerializer @Inject constructor(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
         step = s.step, colorArgb = s.colorArgb, isBuiltIn = s.isBuiltIn,
         archived = s.archived, sortOrder = s.sortOrder, inverted = s.inverted,
+        defaultValue = s.defaultValue,
     )
 
     private fun fromDto(w: PromptWindowDto) = PromptWindow(

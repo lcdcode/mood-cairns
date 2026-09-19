@@ -7,8 +7,11 @@ import org.junit.Test
 /** Pins slider snapping over negative and fully-negative ranges. */
 class SnapToStepTest {
 
-    private fun scale(min: Int, max: Int, step: Float = 1f) =
-        Scale(name = "test", minValue = min, maxValue = max, step = step, colorArgb = 0)
+    private fun scale(min: Int, max: Int, step: Float = 1f, default: Float? = null) =
+        Scale(
+            name = "test", minValue = min, maxValue = max, step = step, colorArgb = 0,
+            defaultValue = default,
+        )
 
     @Test
     fun snapsToNearestStep_acrossZero() {
@@ -58,6 +61,31 @@ class SnapToStepTest {
     fun sliderSteps_degenerateInputs_yieldContinuousSlider() {
         assertEquals(0, sliderSteps(scale(1, 2)))
         assertEquals(0, sliderSteps(scale(1, 10, step = 0f)))
+    }
+
+    @Test
+    fun initialSliderValue_withoutDefault_snapsTheMidpoint() {
+        // The raw midpoint of 1..10 is 5.5, which is not a slider tick. Ties
+        // land on the lower tick because snapToStep rounds half to even.
+        assertEquals(5f, scale(1, 10).initialSliderValue())
+        assertEquals(6f, scale(2, 11).initialSliderValue())
+        assertEquals(5f, scale(0, 10).initialSliderValue())
+        assertEquals(0f, scale(-5, 5).initialSliderValue())
+    }
+
+    @Test
+    fun initialSliderValue_usesConfiguredDefault() {
+        assertEquals(3f, scale(1, 10, default = 3f).initialSliderValue())
+        assertEquals(-2.5f, scale(-5, 5, step = 0.5f, default = -2.5f).initialSliderValue())
+    }
+
+    @Test
+    fun initialSliderValue_snapsAndClampsAStaleDefault() {
+        // A default can fall off the grid or out of range after a range edit or
+        // a hand-edited backup.
+        assertEquals(3f, scale(1, 10, default = 3.4f).initialSliderValue())
+        assertEquals(10f, scale(1, 10, default = 99f).initialSliderValue())
+        assertEquals(1f, scale(1, 10, default = -99f).initialSliderValue())
     }
 
     private fun assertEquals(expected: Int, actual: Int) =

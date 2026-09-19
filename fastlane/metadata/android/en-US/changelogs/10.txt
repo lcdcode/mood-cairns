@@ -1,5 +1,9 @@
-- add About page and manual update check
+New Features:
+- New "Moods" and "Other" Tag categories
+- About page and manual update check
+- ability to create inverse scales
+- ability to have scales with negative numbers
+- ability to set default values for scales
+Fixes:
 - improve chart size and add y axis scale
-- add ability to create inverse scales
-- add ability to have scales with negative numbers
 - various bug fixes

@@ -1,5 +1,5 @@
 ---
-version: "1.0.7"
+version: "1.2.0"
 level: pair
 processes:
   design: none
@@ -19,6 +19,8 @@ This format is based on [AI-DECLARATION.md](https://ai-declaration.md/en/0.1.1).
 - Models used (in order of highest use):
   - anthropic/claude-opus-4.7
   - anthropic/claude-opus-4.8
+  - anthropic/claude-opus-5
+  - anthropic/claude-fable-5
 - Additional Claude Code subagents used during review:
   - voltagrnt-qa-sec:code-reviewer
   - voltagent-qa-sec:security-auditor

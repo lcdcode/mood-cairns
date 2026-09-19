@@ -102,10 +102,10 @@ class EntryViewModel @Inject constructor(
         viewModelScope.launch {
             scales.observeActive().collect { list ->
                 _state.update { cur ->
-                    // Default each slider to the midpoint of its scale, but
-                    // preserve any value already set (either from the user or,
-                    // when editing, from the persisted entry).
-                    val defaults = list.associate { s -> s.id to ((s.minValue + s.maxValue) / 2f) }
+                    // Start each slider at its scale's default, but preserve any
+                    // value already set (either from the user or, when editing,
+                    // from the persisted entry).
+                    val defaults = list.associate { s -> s.id to s.initialSliderValue() }
                     cur.copy(
                         scales = list,
                         values = defaults + cur.values.filterKeys { id -> list.any { it.id == id } },

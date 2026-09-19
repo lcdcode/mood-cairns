@@ -11,7 +11,7 @@
 
 # Mood Cairns
 
-A private, fully offline Android mood tracker. Log how you're feeling against your own scales, in your own time windows, on your own device. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
+A private, fully offline Android mood tracker. Log how you're feeling against your own scales, with your own tags, in your own time windows, on your own device. View charts to track your feelings over time. Nothing is ever uploaded to any cloud service and there is no tracking. Backup sync, if you want to, is your responsibility (Syncthing works well - encrypted exported backups can be found in `Documents/MoodCairns/`).
 
 ## Notes about SDK and Methodology
 
@@ -136,6 +136,27 @@ app/src/main/java/com/moodcairns/
   widget/                      # Home-screen "Log mood" widget
   work/                        # PromptScheduler + DailyScheduleWorker
 ```
+
+## Screenshots
+
+<div align="center">
+
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Mood Cairns screenshot 1 - Entry screen with Mood scales" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Mood Cairns screenshot 2 - Top of Charts screen with chart type selectors" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="Mood Cairns screenshot 3 - Scrolled-down Charts screen showing chart key" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Mood Cairns screenshot 4 - Bottom of Entry screen showing Tags" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" alt="Mood Cairns screenshot 5 - History screen showing latest entries" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" alt="Mood Cairns screenshot 6 - Tags edit screen with reordering handles" width="400">
+  <br>
+  <img src="https://github.com/lcdcode/mood-cairns/blob/main/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" alt="Mood Cairns screenshot 7 - Main menu screen" width="400">
+  <br>
+
+</div>
 
 ## License
 

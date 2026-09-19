@@ -152,7 +152,7 @@ fun EntryScreen(
             state.scales.forEach { scale ->
                 ScaleSlider(
                     scale = scale,
-                    value = state.values[scale.id] ?: ((scale.minValue + scale.maxValue) / 2f),
+                    value = state.values[scale.id] ?: scale.initialSliderValue(),
                     onValueChange = { viewModel.setValue(scale.id, it) },
                 )
             }
@@ -209,7 +209,7 @@ private fun TagPicker(
     onToggle: (Long) -> Unit,
 ) {
     // observeAll() sorts category alphabetically; iterate TagCategory.entries
-    // (Place, Person, Activity) instead so the display order is fixed here.
+    // instead so the display order follows the enum's declaration order.
     val byCategory = remember(tags) { tags.groupBy { it.category } }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         TagCategory.entries.forEach { category ->
@@ -460,6 +460,15 @@ internal fun sliderSteps(scale: Scale): Int {
     val intervals = kotlin.math.round((scale.maxValue - scale.minValue) / scale.step).toInt()
     return (intervals - 1).coerceAtLeast(0)
 }
+
+/**
+ * Slider start value for a fresh entry: the scale's configured default, or the
+ * range midpoint when it has none. Snapping keeps the start on a slider tick,
+ * which the raw midpoint is not for odd ranges (1..10 step 1 starts at 5, not
+ * 5.5), and clamps a default left out of range by a later range edit.
+ */
+internal fun Scale.initialSliderValue(): Float =
+    snapToStep(defaultValue ?: ((minValue + maxValue) / 2f), this)
 
 internal fun snapToStep(raw: Float, scale: Scale): Float {
     if (scale.step <= 0f) return raw

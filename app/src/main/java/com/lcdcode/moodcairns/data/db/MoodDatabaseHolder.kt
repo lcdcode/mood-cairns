@@ -39,7 +39,7 @@ class MoodDatabaseHolder @Inject constructor(
         val factory = SupportOpenHelperFactory(toRawKeyPassphrase(dbKey))
         db = Room.databaseBuilder(context, MoodDatabase::class.java, MoodDatabase.NAME)
             .openHelperFactory(factory)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .build()
     }
 

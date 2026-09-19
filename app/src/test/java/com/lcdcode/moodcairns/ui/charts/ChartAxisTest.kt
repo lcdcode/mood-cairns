@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.ui.charts
 
 import com.lcdcode.moodcairns.data.entity.Scale
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -51,7 +52,10 @@ class ChartAxisTest {
             yAxisCaption(scales, absoluteY = true),
             yAxisCaption(listOf(scale("Mood", 1, 10)), absoluteY = true),
         )
-        assertTrue(yAxisCaption(scales, absoluteY = true).contains("100% = best"))
+        val caption = yAxisCaption(scales, absoluteY = true)
+        assertTrue(caption, caption.contains("100% = top of range"))
+        // "best" would be wrong for a high-is-bad scale left unflagged.
+        assertFalse(caption, caption.contains("best"))
     }
 
     @Test

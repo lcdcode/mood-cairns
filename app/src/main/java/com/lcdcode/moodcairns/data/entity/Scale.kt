@@ -21,4 +21,6 @@ data class Scale(
     val sortOrder: Int = 0,
     /** Lower values are better; flips the entry slider and Absolute chart mode. */
     @ColumnInfo(defaultValue = "0") val inverted: Boolean = false,
+    /** Slider start value for new entries; null falls back to the range midpoint. */
+    val defaultValue: Float? = null,
 )
