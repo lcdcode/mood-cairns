@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Languages the app ships. Drives the Android 13+ system per-app language list and,
+    via app/build.gradle.kts, which resource locales are packaged. Must match
+    SupportedLocales.tags (enforced by SupportedLocalesTest).
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+</locale-config>

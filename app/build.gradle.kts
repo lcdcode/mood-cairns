@@ -18,6 +18,31 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+val androidNamespace = "http://schemas.android.com/apk/res/android"
+val PSEUDO_LOCALE_ACCENTED = "en-rXA"
+
+val simpleLocaleTag = Regex("^[a-z]{2,3}(-[A-Z]{2})?$")
+
+// Converts a BCP-47 tag to a resource qualifier: "pt-BR" -> "pt-rBR",
+// "zh-Hans" -> "b+zh+Hans".
+fun toResourceQualifier(tag: String): String =
+    if (simpleLocaleTag.matches(tag)) tag.replace("-", "-r") else "b+" + tag.replace("-", "+")
+
+// res/xml/locale_config.xml is the single source of truth for shipped languages.
+fun supportedResourceLocales(): List<String> {
+    val doc = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
+        .newDocumentBuilder()
+        .parse(file("src/main/res/xml/locale_config.xml"))
+    val nodes = doc.getElementsByTagName("locale")
+    val tags = (0 until nodes.length).map {
+        (nodes.item(it) as Element).getAttributeNS(androidNamespace, "name")
+    }
+    if (tags.isEmpty() || tags.any(String::isBlank)) {
+        throw GradleException("locale_config.xml must list at least one non-blank locale: $tags")
+    }
+    return tags.map(::toResourceQualifier)
+}
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
@@ -34,7 +59,13 @@ android {
         targetSdk = 34
         versionCode = 10
         versionName = "1.2.0"
-        resourceConfigurations.add("en")
+        // Package only the languages the app ships. Library resources for other locales
+        // are stripped.
+        resourceConfigurations.addAll(supportedResourceLocales())
+        // en-XA pseudolocale (debug only, see isPseudoLocalesEnabled). Not ar-XB: listing
+        // it also keeps every library's plain "ar" resources in release builds. Use the
+        // "Force RTL layout direction" developer option for RTL checks instead.
+        resourceConfigurations.add(PSEUDO_LOCALE_ACCENTED)
         base.archivesName = "mood-cairns-$versionName"
     }
 
@@ -76,6 +107,10 @@ android {
         }
         debug {
             // No applicationIdSuffix — personal-use builds install under the real id.
+
+            // en-XA renders every resource string accented and lengthened, so hardcoded
+            // (unextracted) text stands out. Select "English (XA)" in device languages.
+            isPseudoLocalesEnabled = true
         }
     }
 
@@ -112,6 +147,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

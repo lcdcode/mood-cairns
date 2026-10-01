@@ -17,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
@@ -35,7 +35,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+// AppCompatActivity (a FragmentActivity subclass, as BiometricPrompt requires) is what
+// applies AppCompatDelegate per-app locales on API 29-32.
+class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var lockManager: LockManager
     @Inject lateinit var lockRepository: LockRepository
