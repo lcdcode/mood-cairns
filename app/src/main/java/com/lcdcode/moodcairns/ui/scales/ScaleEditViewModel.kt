@@ -4,8 +4,10 @@ import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +35,7 @@ data class ScaleEditUiState(
     val deleting: Boolean = false,
     val deleted: Boolean = false,
     val affectedEntryCount: Int? = null,
-    val error: String? = null,
+    val error: UiText? = null,
 ) {
     companion object {
         val PALETTE: List<Int> = listOf(
@@ -86,7 +88,12 @@ class ScaleEditViewModel @Inject constructor(
                         )
                     }
                 } else {
-                    _state.update { it.copy(loaded = true, error = "Scale not found") }
+                    _state.update {
+                        it.copy(
+                            loaded = true,
+                            error = UiText.Res(R.string.scale_edit_error_not_found),
+                        )
+                    }
                 }
             }
         }
@@ -109,11 +116,15 @@ class ScaleEditViewModel @Inject constructor(
         val step = cur.step.toFloatOrNull()
 
         val err = when {
-            name.isEmpty() -> "Name required"
-            min == null || max == null || step == null -> "Enter numeric min, max, and step"
-            min >= max -> "Min must be less than max"
-            step <= 0f -> "Step must be greater than zero"
-            !isMultipleOfStep(max - min, step) -> "Range (${max - min}) must be a multiple of step (${formatStep(step)})"
+            name.isEmpty() -> UiText.Res(R.string.error_name_required)
+            min == null || max == null || step == null ->
+                UiText.Res(R.string.scale_edit_error_numbers_required)
+            min >= max -> UiText.Res(R.string.scale_edit_error_min_not_below_max)
+            step <= 0f -> UiText.Res(R.string.scale_edit_error_step_not_positive)
+            !isMultipleOfStep(max - min, step) -> UiText.Res(
+                R.string.scale_edit_error_range_not_step_multiple,
+                listOf(max - min, formatStep(step)),
+            )
             else -> defaultValueError(cur.defaultValue, min, max, step)
         }
         if (err != null) {
@@ -184,7 +195,12 @@ class ScaleEditViewModel @Inject constructor(
                 }
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
-                _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
+                _state.update {
+                    it.copy(
+                        saving = false,
+                        error = UiText.withDetail(R.string.error_save_failed, t),
+                    )
+                }
             }
         }
     }
@@ -208,7 +224,12 @@ class ScaleEditViewModel @Inject constructor(
                 repo.delete(id)
                 _state.update { it.copy(deleting = false, deleted = true) }
             } catch (t: Throwable) {
-                _state.update { it.copy(deleting = false, error = t.message ?: "Delete failed") }
+                _state.update {
+                    it.copy(
+                        deleting = false,
+                        error = UiText.withDetail(R.string.error_delete_failed, t),
+                    )
+                }
             }
         }
     }
@@ -268,14 +289,16 @@ internal fun parseDefaultValue(raw: String): Float? =
  * grid. Returns null when the field is blank or valid. Assumes min/max/step
  * have already been validated.
  */
-internal fun defaultValueError(raw: String, min: Int, max: Int, step: Float): String? {
+internal fun defaultValueError(raw: String, min: Int, max: Int, step: Float): UiText? {
     val trimmed = raw.trim()
     if (trimmed.isEmpty()) return null
-    val value = trimmed.toFloatOrNull() ?: return "Default must be a number"
+    val value = trimmed.toFloatOrNull()
+        ?: return UiText.Res(R.string.scale_edit_error_default_not_number)
     return when {
-        value < min || value > max -> "Default must be between $min and $max"
+        value < min || value > max ->
+            UiText.Res(R.string.scale_edit_error_default_out_of_range, listOf(min, max))
         !isOnStepGrid(value - min, step) ->
-            "Default must land on a step of ${formatStep(step)} from $min"
+            UiText.Res(R.string.scale_edit_error_default_off_step, listOf(formatStep(step), min))
         else -> null
     }
 }

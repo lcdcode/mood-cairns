@@ -37,9 +37,7 @@ class ImportService @Inject constructor(
             context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length }
         }.getOrNull() ?: -1L
         if (knownSize > MAX_BACKUP_BYTES) {
-            return ImportResult.Failure(
-                "Backup file too large (${knownSize / 1024 / 1024} MB; max ${MAX_BACKUP_BYTES / 1024 / 1024} MB)",
-            )
+            return ImportResult.Failure(tooLarge())
         }
 
         val raw = try {
@@ -48,19 +46,22 @@ class ImportService @Inject constructor(
                 // provider didn't report a length (knownSize == -1).
                 val bytes = input.readNBytesCapped(MAX_BACKUP_BYTES + 1)
                 if (bytes.size > MAX_BACKUP_BYTES) {
-                    return ImportResult.Failure("Backup file too large")
+                    return ImportResult.Failure(tooLarge())
                 }
                 String(bytes, Charsets.UTF_8)
-            } ?: return ImportResult.Failure("Could not read file")
+            } ?: return ImportResult.Failure(ImportError.Unreadable(detail = null))
         } catch (t: Throwable) {
-            return ImportResult.Failure("Could not read file: ${t.message ?: "IO error"}")
+            return ImportResult.Failure(ImportError.Unreadable(t.message ?: t.javaClass.simpleName))
         }
 
         val entities = try {
             val file = serializer.parse(raw, secret)
             serializer.toEntities(file)
+        } catch (e: BackupImportException) {
+            return ImportResult.Failure(e.error)
         } catch (t: Throwable) {
-            return ImportResult.Failure(t.message ?: "Invalid backup file")
+            // toEntities rejects bad timestamps, slots, etc. in a decrypted file.
+            return ImportResult.Failure(ImportError.Malformed(t.message ?: t.javaClass.simpleName))
         }
 
         return try {
@@ -101,7 +102,7 @@ class ImportService @Inject constructor(
                 tags = entities.tags.size,
             )
         } catch (t: Throwable) {
-            ImportResult.Failure("Import aborted: ${t.message ?: "database error"}")
+            ImportResult.Failure(ImportError.WriteFailed(t.message ?: t.javaClass.simpleName))
         }
     }
 }
@@ -113,10 +114,13 @@ sealed interface ImportResult {
         val entries: Int,
         val tags: Int = 0,
     ) : ImportResult
-    data class Failure(val message: String) : ImportResult
+    data class Failure(val error: ImportError) : ImportResult
 }
 
-private const val MAX_BACKUP_BYTES: Long = 50L * 1024 * 1024
+private const val BYTES_PER_MEGABYTE: Long = 1024 * 1024
+private const val MAX_BACKUP_BYTES: Long = 50L * BYTES_PER_MEGABYTE
+
+private fun tooLarge() = ImportError.TooLarge(maxMegabytes = MAX_BACKUP_BYTES / BYTES_PER_MEGABYTE)
 
 private fun java.io.InputStream.readNBytesCapped(max: Long): ByteArray {
     val out = java.io.ByteArrayOutputStream()

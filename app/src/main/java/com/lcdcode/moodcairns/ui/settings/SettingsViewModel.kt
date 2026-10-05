@@ -92,6 +92,10 @@ class SettingsViewModel @Inject constructor(
     fun lockNow() = lockManager.lockNow()
 
     fun fireTestNotification() {
-        promptScheduler.scheduleTestIn(seconds = 15)
+        promptScheduler.scheduleTestIn(seconds = TEST_NOTIFICATION_DELAY_SECONDS.toLong())
+    }
+
+    companion object {
+        const val TEST_NOTIFICATION_DELAY_SECONDS = 15
     }
 }

@@ -3,10 +3,12 @@ package com.lcdcode.moodcairns.ui.settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.work.PromptScheduler
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,7 @@ data class PromptWindowEditUiState(
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 @HiltViewModel
@@ -61,7 +63,9 @@ class PromptWindowEditViewModel @Inject constructor(
                             loaded = true,
                         )
                     }
-                } ?: _state.update { it.copy(loaded = true, error = "Window not found") }
+                } ?: _state.update {
+                    it.copy(loaded = true, error = UiText.Res(R.string.window_edit_error_not_found))
+                }
             }
         }
     }
@@ -78,8 +82,8 @@ class PromptWindowEditViewModel @Inject constructor(
         val start = LocalTime.of(cur.startHour, cur.startMinute)
         val end = LocalTime.of(cur.endHour, cur.endMinute)
         val err = when {
-            label.isEmpty() -> "Label required"
-            !start.isBefore(end) -> "Start must be before end"
+            label.isEmpty() -> UiText.Res(R.string.window_edit_error_label_required)
+            !start.isBefore(end) -> UiText.Res(R.string.window_edit_error_start_not_before_end)
             else -> null
         }
         if (err != null) {
@@ -102,7 +106,12 @@ class PromptWindowEditViewModel @Inject constructor(
                 scheduler.scheduleNow()
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
-                _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
+                _state.update {
+                    it.copy(
+                        saving = false,
+                        error = UiText.withDetail(R.string.error_save_failed, t),
+                    )
+                }
             }
         }
     }

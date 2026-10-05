@@ -70,6 +70,7 @@ import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.tags.displayName
+import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -91,8 +92,9 @@ fun EntryScreen(
         if (state.savedId != null) onSaved()
     }
 
-    LaunchedEffect(state.error) {
-        val err = state.error ?: return@LaunchedEffect
+    val errorText = state.error?.asString()
+    LaunchedEffect(errorText) {
+        val err = errorText ?: return@LaunchedEffect
         snackbarHostState.showSnackbar(err)
         viewModel.dismissError()
     }

@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -36,13 +39,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptWindow
+import com.lcdcode.moodcairns.ui.common.UiText
+import com.lcdcode.moodcairns.ui.common.asString
+import com.lcdcode.moodcairns.ui.common.displayNameRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,10 +89,13 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -91,7 +103,7 @@ fun SettingsScreen(
     ) { padding ->
         if (!state.loaded) {
             Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Loading…")
+                Text(stringResource(R.string.common_loading))
             }
             return@Scaffold
         }
@@ -101,7 +113,7 @@ fun SettingsScreen(
             contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item { SectionHeader("Prompt windows") }
+            item { SectionHeader(stringResource(R.string.settings_section_prompt_windows)) }
             items(state.windows, key = { "w-${it.id}" }) { w ->
                 PromptWindowRow(
                     window = w,
@@ -112,12 +124,13 @@ fun SettingsScreen(
             item {
                 OutlinedButton(onClick = onAddWindow, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.Add, contentDescription = null)
-                    Text("  Add window")
+                    Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                    Text(stringResource(R.string.settings_add_window))
                 }
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
-            item { SectionHeader("Security") }
+            item { SectionHeader(stringResource(R.string.settings_section_security)) }
             if (state.pinSet) {
                 item {
                     LockTimeoutSection(
@@ -130,7 +143,10 @@ fun SettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Biometric unlock", modifier = Modifier.weight(1f))
+                        Text(
+                            stringResource(R.string.settings_biometric_unlock),
+                            modifier = Modifier.weight(1f),
+                        )
                         Switch(
                             checked = state.biometricEnabled,
                             onCheckedChange = viewModel::setBiometricEnabled,
@@ -139,39 +155,40 @@ fun SettingsScreen(
                 }
                 item {
                     OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
-                        Text("Change PIN")
+                        Text(stringResource(R.string.settings_change_pin))
                     }
                 }
                 item {
                     OutlinedButton(onClick = viewModel::lockNow, modifier = Modifier.fillMaxWidth()) {
-                        Text("Lock now")
+                        Text(stringResource(R.string.settings_lock_now))
                     }
                 }
             } else {
                 item {
                     Text(
-                        "No PIN set. Your data is encrypted on this device but protected only " +
-                            "by your device's keystore, not by a PIN. Auto-lock, biometric unlock, " +
-                            "and lock-now are unavailable without a PIN.",
+                        stringResource(R.string.settings_no_pin_explanation),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 item {
                     OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
-                        Text("Set PIN")
+                        Text(stringResource(R.string.settings_set_pin))
                     }
                 }
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
-            item { SectionHeader("Backup & export") }
+            item { SectionHeader(stringResource(R.string.settings_section_backup)) }
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Allow unsafe exports", modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.settings_allow_unsafe_exports),
+                        modifier = Modifier.weight(1f),
+                    )
                     Switch(
                         checked = state.allowUnsafeExports,
                         onCheckedChange = { checked ->
@@ -185,20 +202,26 @@ fun SettingsScreen(
             }
             item {
                 Text(
-                    "Enables an unencrypted CSV export under Backup & import. Off by default.",
+                    stringResource(R.string.settings_allow_unsafe_exports_summary),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
-            item { SectionHeader("Diagnostics") }
+            item { SectionHeader(stringResource(R.string.settings_section_diagnostics)) }
             item {
                 OutlinedButton(
                     onClick = viewModel::fireTestNotification,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Test notification (fires in 15 s)")
+                    Text(
+                        pluralStringResource(
+                            R.plurals.settings_test_notification,
+                            SettingsViewModel.TEST_NOTIFICATION_DELAY_SECONDS,
+                            SettingsViewModel.TEST_NOTIFICATION_DELAY_SECONDS,
+                        ),
+                    )
                 }
             }
         }
@@ -212,21 +235,13 @@ private fun UnsafeExportWarningDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Allow unsafe exports?") },
-        text = {
-            Text(
-                "This adds an option to export your data as an unencrypted CSV file to shared " +
-                    "storage. That file is plain text with no passphrase: cloud backup services, " +
-                    "file managers, and any other app that can read shared storage will be able " +
-                    "to read all of your entries.\n\n" +
-                    "Only enable this if you understand and accept that danger.",
-            )
-        },
+        title = { Text(stringResource(R.string.settings_unsafe_exports_dialog_title)) },
+        text = { Text(stringResource(R.string.settings_unsafe_exports_dialog_body)) },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Enable") }
+            TextButton(onClick = onConfirm) { Text(stringResource(R.string.common_enable)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }
@@ -255,14 +270,19 @@ private fun PromptWindowRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(window.label, style = MaterialTheme.typography.bodyLarge)
                 Text(
-                    "${window.startTime} – ${window.endTime} · ${window.slot.name.lowercase()}",
+                    stringResource(
+                        R.string.settings_window_summary,
+                        window.startTime.toString(),
+                        window.endTime.toString(),
+                        stringResource(window.slot.displayNameRes()),
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Switch(checked = window.enabled, onCheckedChange = { onToggle() })
             IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit")
+                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.common_edit))
             }
         }
     }
@@ -271,23 +291,32 @@ private fun PromptWindowRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LockTimeoutSection(selectedMs: Long, onSelect: (Long) -> Unit) {
-    val options = listOf(
-        0L to "Immediate",
-        30_000L to "30 s",
-        60_000L to "1 min",
-        300_000L to "5 min",
-        900_000L to "15 min",
-    )
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Auto-lock after background", style = MaterialTheme.typography.labelMedium)
+        Text(
+            stringResource(R.string.settings_auto_lock_label),
+            style = MaterialTheme.typography.labelMedium,
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            options.forEach { (ms, label) ->
+            LOCK_TIMEOUT_OPTIONS_MS.forEach { ms ->
                 FilterChip(
                     selected = ms == selectedMs,
                     onClick = { onSelect(ms) },
-                    label = { Text(label) },
+                    label = { Text(lockTimeoutLabel(ms).asString()) },
                 )
             }
         }
     }
+}
+
+private val LOCK_TIMEOUT_OPTIONS_MS = listOf(0L, 30_000L, 60_000L, 300_000L, 900_000L)
+private const val MS_PER_SECOND = 1_000L
+private const val MS_PER_MINUTE = 60_000L
+
+/** Chip label for an auto-lock timeout: "Immediate", whole minutes, or seconds. */
+internal fun lockTimeoutLabel(timeoutMs: Long): UiText = when {
+    timeoutMs == 0L -> UiText.Res(R.string.settings_auto_lock_immediate)
+    timeoutMs % MS_PER_MINUTE == 0L ->
+        UiText.Plural(R.plurals.common_duration_minutes_short, (timeoutMs / MS_PER_MINUTE).toInt())
+    else ->
+        UiText.Plural(R.plurals.common_duration_seconds_short, (timeoutMs / MS_PER_SECOND).toInt())
 }

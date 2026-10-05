@@ -15,8 +15,17 @@ class SupportedLocalesTest {
     fun tags_matchLocaleConfigXml() {
         assertEquals(
             "SupportedLocales.tags and res/xml/locale_config.xml must list the same languages",
-            localeConfigTags().toSet(),
+            localeConfigTags("main").toSet(),
             SupportedLocales.tags.toSet(),
+        )
+    }
+
+    @Test
+    fun debugLocaleConfig_isMainPlusPseudolocale() {
+        assertEquals(
+            "debug locale_config.xml must list the main languages plus $PSEUDO_LOCALE",
+            localeConfigTags("main").toSet() + PSEUDO_LOCALE,
+            localeConfigTags("debug").toSet(),
         )
     }
 
@@ -49,11 +58,12 @@ class SupportedLocalesTest {
         assertNull(SupportedLocales.sanitize(null))
     }
 
-    private fun localeConfigTags(): List<String> {
-        val file = sequenceOf("src/main/res/xml", "app/src/main/res/xml")
+    /** Tags listed in the locale_config.xml of [sourceSet] ("main" or "debug"). */
+    private fun localeConfigTags(sourceSet: String): List<String> {
+        val file = sequenceOf("src/$sourceSet/res/xml", "app/src/$sourceSet/res/xml")
             .map { File(it, "locale_config.xml") }
             .firstOrNull(File::exists)
-            ?: error("res/xml/locale_config.xml not found from ${File(".").absolutePath}")
+            ?: error("$sourceSet locale_config.xml not found from ${File(".").absolutePath}")
         val doc = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
             .newDocumentBuilder()
             .parse(file)
@@ -65,5 +75,6 @@ class SupportedLocalesTest {
 
     private companion object {
         const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
+        const val PSEUDO_LOCALE = "en-XA"
     }
 }

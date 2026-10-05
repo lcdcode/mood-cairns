@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.ui.common.asString
 
 @Composable
 fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
@@ -74,7 +75,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             isError = state.error != null,
-            supportingText = state.error?.let { { Text(it) } },
+            supportingText = state.error?.let { { Text(it.asString()) } },
             modifier = Modifier.fillMaxWidth(),
         )
 

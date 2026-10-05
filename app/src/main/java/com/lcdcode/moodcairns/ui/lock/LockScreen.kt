@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.ui.common.asString
 
 @Composable
 fun LockScreen(
@@ -72,7 +73,7 @@ fun LockScreen(
 
             val lockoutMs = state.lockoutRemainingMs
             val lockoutText = lockoutMs?.let { formatLockoutDuration(it) }
-            val supporting = lockoutText?.let { "Try again in $it" } ?: state.error
+            val supporting = lockoutText?.let { "Try again in $it" } ?: state.error?.asString()
 
             OutlinedTextField(
                 value = state.pin,

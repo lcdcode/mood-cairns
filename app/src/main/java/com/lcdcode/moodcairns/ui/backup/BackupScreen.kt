@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.backup.BackupFileInfo
+import com.lcdcode.moodcairns.ui.common.asString
 import java.text.DateFormat
 import java.util.Date
 
@@ -57,8 +58,9 @@ fun BackupScreen(
         ActivityResultContracts.OpenDocument(),
     ) { uri -> uri?.let(viewModel::requestImport) }
 
-    LaunchedEffect(state.message) {
-        state.message?.let {
+    val messageText = state.message?.asString()
+    LaunchedEffect(messageText) {
+        messageText?.let {
             snackbar.showSnackbar(it)
             viewModel.dismissMessage()
         }

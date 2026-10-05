@@ -1,7 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Mood Cairns</string>
+<!--
+    English source strings. Translations live in values-<lang>/strings.xml.
+
+    Naming:
+      common_*         shared words and labels (buttons, content descriptions)
+      error_*          error messages shared by several screens
+      enum_*           display names of stored enum values
+      <screen>_*       text owned by one screen, e.g. settings_*, backup_*
+      <screen>_error_* errors owned by one screen
+      import_error_*   reasons a backup import failed
+
+    Rules:
+      - Always use positional args (%1$s, %2$d) so translators can reorder them.
+      - Never build sentences by concatenating strings in code; give translators
+        the whole sentence.
+      - Anything with a count is a <plurals>, even when English looks the same.
+      - Text marked translatable="false" must not be translated.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Mood Cairns</string>
     <string name="widget_title">Log mood</string>
     <string name="widget_subtitle">Tap to open Mood Cairns</string>
     <string name="widget_description">Quick-log your mood</string>
+
+    <!-- Common -->
+    <string name="common_back">Back</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_enable">Enable</string>
+    <string name="common_loading">Loading…</string>
+    <!-- Abbreviated durations, e.g. on auto-lock timeout chips. -->
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d s</item>
+        <item quantity="other">%1$d s</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+
+    <!-- Shared errors. %1$s in *_failed strings is a technical detail, shown as-is. -->
+    <string name="error_save_failed">Couldn\'t save: %1$s</string>
+    <string name="error_delete_failed">Couldn\'t delete: %1$s</string>
+    <string name="error_name_required">Name required</string>
+    <string name="error_pins_mismatch">PINs don\'t match</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">PIN must be at least %1$d digit</item>
+        <item quantity="other">PIN must be at least %1$d digits</item>
+    </plurals>
+
+    <!-- Prompt slot names. Morning/Evening are the built-in check-in times; Manual is an
+         entry logged outside any prompt; Custom is a user-defined prompt window. -->
+    <string name="enum_prompt_slot_morning">Morning</string>
+    <string name="enum_prompt_slot_evening">Evening</string>
+    <string name="enum_prompt_slot_manual">Manual</string>
+    <string name="enum_prompt_slot_custom">Custom</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_prompt_windows">Prompt windows</string>
+    <string name="settings_add_window">Add window</string>
+    <!-- Prompt window row. %1$s start time, %2$s end time, %3$s slot name. -->
+    <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
+    <string name="settings_section_security">Security</string>
+    <string name="settings_auto_lock_label">Auto-lock after background</string>
+    <string name="settings_auto_lock_immediate">Immediate</string>
+    <string name="settings_biometric_unlock">Biometric unlock</string>
+    <string name="settings_change_pin">Change PIN</string>
+    <string name="settings_lock_now">Lock now</string>
+    <string name="settings_set_pin">Set PIN</string>
+    <string name="settings_no_pin_explanation">No PIN set. Your data is encrypted on this device but protected only by your device\'s keystore, not by a PIN. Auto-lock, biometric unlock, and lock-now are unavailable without a PIN.</string>
+    <string name="settings_section_backup">Backup &amp; export</string>
+    <string name="settings_allow_unsafe_exports">Allow unsafe exports</string>
+    <string name="settings_allow_unsafe_exports_summary">Enables an unencrypted CSV export under Backup &amp; import. Off by default.</string>
+    <string name="settings_unsafe_exports_dialog_title">Allow unsafe exports?</string>
+    <string name="settings_unsafe_exports_dialog_body">This adds an option to export your data as an unencrypted CSV file to shared storage. That file is plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries.\n\nOnly enable this if you understand and accept that danger.</string>
+    <string name="settings_section_diagnostics">Diagnostics</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">Test notification (fires in %1$d second)</item>
+        <item quantity="other">Test notification (fires in %1$d seconds)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_error_wrong_pin">Incorrect PIN</string>
+    <string name="lock_error_too_many_attempts">Too many attempts</string>
+    <string name="lock_error_unlock_failed">Couldn\'t unlock: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_error_failed">Couldn\'t set PIN: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">Couldn\'t continue without a PIN: %1$s</string>
+
+    <!-- Change PIN screen -->
+    <string name="change_pin_error_current_required">Enter your current PIN to remove it</string>
+    <string name="change_pin_error_wrong_current">Current PIN is incorrect</string>
+    <string name="change_pin_error_locked">App is locked; unlock and try again</string>
+    <string name="change_pin_error_failed">Couldn\'t update PIN: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">New PIN must be at least %1$d digit</item>
+        <item quantity="other">New PIN must be at least %1$d digits</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">Too many attempts. Try again in %1$d second.</item>
+        <item quantity="other">Too many attempts. Try again in %1$d seconds.</item>
+    </plurals>
+
+    <!-- Scale editor. Numbers like %1$s step values may be decimals. -->
+    <string name="scale_edit_error_not_found">Scale not found</string>
+    <string name="scale_edit_error_numbers_required">Enter numeric min, max, and step</string>
+    <string name="scale_edit_error_min_not_below_max">Min must be less than max</string>
+    <string name="scale_edit_error_step_not_positive">Step must be greater than zero</string>
+    <!-- %1$d the range (max - min), %2$s the step. -->
+    <string name="scale_edit_error_range_not_step_multiple">Range (%1$d) must be a multiple of step (%2$s)</string>
+    <string name="scale_edit_error_default_not_number">Default must be a number</string>
+    <!-- %1$d and %2$d are the scale minimum and maximum: a range, not a count. -->
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Default must be between %1$d and %2$d</string>
+    <!-- %1$s the step, %2$d the scale minimum. -->
+    <string name="scale_edit_error_default_off_step">Default must land on a step of %1$s from %2$d</string>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_error_not_found">Tag not found</string>
+    <string name="tag_edit_error_name_taken">A tag named \"%1$s\" already exists in this category</string>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_error_not_found">Window not found</string>
+    <string name="window_edit_error_label_required">Label required</string>
+    <string name="window_edit_error_start_not_before_end">Start must be before end</string>
+
+    <!-- Backup screen. %1$s in export messages is a file name. -->
+    <string name="backup_error_unsafe_exports_disabled">Unsafe exports are disabled</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">Passphrase must be at least %1$d character</item>
+        <item quantity="other">Passphrase must be at least %1$d characters</item>
+    </plurals>
+    <string name="backup_export_success">Exported %1$s</string>
+    <string name="backup_export_csv_success">Exported %1$s (unencrypted)</string>
+    <string name="backup_export_failed">Export failed: %1$s</string>
+    <!-- Label: count pairs avoid needing a plural form for each noun. -->
+    <string name="backup_import_success">Import complete. Entries: %1$d, scales: %2$d, tags: %3$d, prompt windows: %4$d</string>
+    <!-- %1$s is one of the import_error_* sentences. -->
+    <string name="backup_import_failed">Import failed: %1$s</string>
+
+    <!-- Reasons a backup import failed. %1$s detail strings are technical, shown as-is. -->
+    <string name="import_error_too_large">The file is larger than the %1$d MB limit.</string>
+    <string name="import_error_unreadable">Couldn\'t read the file.</string>
+    <string name="import_error_unreadable_detail">Couldn\'t read the file (%1$s).</string>
+    <string name="import_error_not_a_backup">This file isn\'t a Mood Cairns backup.</string>
+    <string name="import_error_wrong_secret">Couldn\'t decrypt the backup. The passphrase is wrong, or the file is damaged.</string>
+    <string name="import_error_unsupported_version">This backup uses format version %1$d, which this version of the app can\'t read. Updating the app may help.</string>
+    <string name="import_error_malformed">The backup file is damaged (%1$s).</string>
+    <string name="import_error_write_failed">Import stopped while saving data (%1$s).</string>
 </resources>

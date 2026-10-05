@@ -1,5 +1,7 @@
 package com.lcdcode.moodcairns.ui.scales
 
+import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.ui.common.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -79,20 +81,30 @@ class ScaleDefaultValueTest {
 
     @Test
     fun validate_rejectsOutOfRange() {
-        assertNotNull(defaultValueError("0", min = 1, max = 10, step = 1f))
-        assertNotNull(defaultValueError("11", min = 1, max = 10, step = 1f))
+        val expected = UiText.Res(R.string.scale_edit_error_default_out_of_range, listOf(1, 10))
+        assertEquals(expected, defaultValueError("0", min = 1, max = 10, step = 1f))
+        assertEquals(expected, defaultValueError("11", min = 1, max = 10, step = 1f))
     }
 
     @Test
     fun validate_rejectsOffGrid() {
-        assertNotNull(defaultValueError("5.5", min = 1, max = 10, step = 1f))
-        assertNotNull(defaultValueError("2.3", min = 0, max = 10, step = 0.5f))
+        assertEquals(
+            UiText.Res(R.string.scale_edit_error_default_off_step, listOf("1", 1)),
+            defaultValueError("5.5", min = 1, max = 10, step = 1f),
+        )
+        assertEquals(
+            UiText.Res(R.string.scale_edit_error_default_off_step, listOf("0.5", 0)),
+            defaultValueError("2.3", min = 0, max = 10, step = 0.5f),
+        )
     }
 
     @Test
     fun validate_rejectsNonNumeric() {
         // The sanitizer keeps a lone "-", which is not yet a number.
-        assertNotNull(defaultValueError("-", min = -5, max = 5, step = 1f))
+        assertEquals(
+            UiText.Res(R.string.scale_edit_error_default_not_number),
+            defaultValueError("-", min = -5, max = 5, step = 1f),
+        )
     }
 
     private fun assertEquals(expected: Float, actual: Float?) {

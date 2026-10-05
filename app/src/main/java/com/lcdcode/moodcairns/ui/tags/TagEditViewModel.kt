@@ -3,9 +3,11 @@ package com.lcdcode.moodcairns.ui.tags
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.data.repo.TagRepository
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +27,7 @@ data class TagEditUiState(
     val deleting: Boolean = false,
     val deleted: Boolean = false,
     val affectedEntryCount: Int? = null,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 @HiltViewModel
@@ -58,7 +60,12 @@ class TagEditViewModel @Inject constructor(
                         )
                     }
                 } else {
-                    _state.update { it.copy(loaded = true, error = "Tag not found") }
+                    _state.update {
+                        it.copy(
+                            loaded = true,
+                            error = UiText.Res(R.string.tag_edit_error_not_found),
+                        )
+                    }
                 }
             }
         }
@@ -71,7 +78,7 @@ class TagEditViewModel @Inject constructor(
         val cur = _state.value
         val name = cur.name.trim()
         if (name.isEmpty()) {
-            _state.update { it.copy(error = "Name required") }
+            _state.update { it.copy(error = UiText.Res(R.string.error_name_required)) }
             return
         }
 
@@ -89,9 +96,9 @@ class TagEditViewModel @Inject constructor(
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
                 val message = if (t.message?.contains("UNIQUE", ignoreCase = true) == true) {
-                    "A tag named \"$name\" already exists in ${cur.category.displayName}"
+                    UiText.Res(R.string.tag_edit_error_name_taken, listOf(name))
                 } else {
-                    t.message ?: "Save failed"
+                    UiText.withDetail(R.string.error_save_failed, t)
                 }
                 _state.update { it.copy(saving = false, error = message) }
             }
@@ -117,7 +124,12 @@ class TagEditViewModel @Inject constructor(
                 repo.delete(id)
                 _state.update { it.copy(deleting = false, deleted = true) }
             } catch (t: Throwable) {
-                _state.update { it.copy(deleting = false, error = t.message ?: "Delete failed") }
+                _state.update {
+                    it.copy(
+                        deleting = false,
+                        error = UiText.withDetail(R.string.error_delete_failed, t),
+                    )
+                }
             }
         }
     }
