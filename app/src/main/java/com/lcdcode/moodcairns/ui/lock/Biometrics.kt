@@ -4,6 +4,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.lcdcode.moodcairns.R
 
 object Biometrics {
 
@@ -23,9 +24,9 @@ object Biometrics {
         onUsePin: () -> Unit,
     ) {
         val info = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Unlock Mood Cairns")
-            .setSubtitle("Authenticate to continue")
-            .setNegativeButtonText("Use PIN")
+            .setTitle(activity.getString(R.string.biometric_prompt_title))
+            .setSubtitle(activity.getString(R.string.biometric_prompt_subtitle))
+            .setNegativeButtonText(activity.getString(R.string.biometric_prompt_use_pin))
             .setAllowedAuthenticators(AUTHENTICATORS)
             .build()
 

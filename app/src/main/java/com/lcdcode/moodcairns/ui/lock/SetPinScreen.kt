@@ -20,11 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.ui.common.asString
 
 @Composable
@@ -34,7 +37,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
 
     if (showNoPinWarning) {
         NoPinWarningDialog(
-            title = "Continue without a PIN?",
+            title = stringResource(R.string.no_pin_warning_title_setup),
             onAccept = {
                 showNoPinWarning = false
                 viewModel.continueWithoutPin()
@@ -48,9 +51,9 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Set a PIN", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.set_pin_title), style = MaterialTheme.typography.headlineSmall)
         Text(
-            "Your entries never leave the device. A PIN plus biometric unlock keeps them yours.",
+            stringResource(R.string.set_pin_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -58,7 +61,16 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
         OutlinedTextField(
             value = state.pin,
             onValueChange = viewModel::onPinChanged,
-            label = { Text("PIN (4–10 digits)") },
+            label = {
+                Text(
+                    pluralStringResource(
+                        R.plurals.set_pin_pin_label,
+                        SetPinViewModel.MAX_PIN_LEN,
+                        SetPinViewModel.MIN_PIN_LEN,
+                        SetPinViewModel.MAX_PIN_LEN,
+                    ),
+                )
+            },
             singleLine = true,
             enabled = !state.saving,
             visualTransformation = PasswordVisualTransformation(),
@@ -69,7 +81,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
         OutlinedTextField(
             value = state.confirm,
             onValueChange = viewModel::onConfirmChanged,
-            label = { Text("Confirm PIN") },
+            label = { Text(stringResource(R.string.set_pin_confirm_label)) },
             singleLine = true,
             enabled = !state.saving,
             visualTransformation = PasswordVisualTransformation(),
@@ -91,7 +103,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
             } else {
-                Text("Save PIN")
+                Text(stringResource(R.string.set_pin_save))
             }
         }
 
@@ -100,7 +112,7 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             enabled = !state.saving,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Continue without a PIN")
+            Text(stringResource(R.string.set_pin_continue_without))
         }
     }
 }

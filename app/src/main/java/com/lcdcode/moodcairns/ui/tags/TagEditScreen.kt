@@ -31,9 +31,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.asString
 
@@ -75,7 +77,7 @@ fun TagEditScreen(
                 onExpandedChange = { categoryExpanded = it },
             ) {
                 OutlinedTextField(
-                    value = state.category.displayName,
+                    value = stringResource(state.category.displayNameRes()),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Category") },
@@ -92,7 +94,7 @@ fun TagEditScreen(
                 ) {
                     TagCategory.entries.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category.displayName) },
+                            text = { Text(stringResource(category.displayNameRes())) },
                             onClick = {
                                 viewModel.setCategory(category)
                                 categoryExpanded = false

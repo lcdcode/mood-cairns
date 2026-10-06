@@ -29,6 +29,10 @@
     <string name="common_edit">Edit</string>
     <string name="common_enable">Enable</string>
     <string name="common_loading">Loading…</string>
+    <string name="common_next">Next</string>
+    <string name="common_ok">OK</string>
+    <string name="common_save">Save</string>
+    <string name="common_saving">Saving…</string>
     <!-- Abbreviated durations, e.g. on auto-lock timeout chips. -->
     <plurals name="common_duration_seconds_short">
         <item quantity="one">%1$d s</item>
@@ -56,6 +60,65 @@
     <string name="enum_prompt_slot_manual">Manual</string>
     <string name="enum_prompt_slot_custom">Custom</string>
 
+    <!-- Tag category names, shown as section headings over groups of tags. -->
+    <string name="enum_tag_category_place">Places</string>
+    <string name="enum_tag_category_person">People</string>
+    <string name="enum_tag_category_activity">Activities</string>
+    <string name="enum_tag_category_mood">Moods</string>
+    <string name="enum_tag_category_other">Other</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">Mood prompts</string>
+    <string name="notif_channel_prompts_description">Gentle reminders to log how you\'re feeling.</string>
+    <string name="notif_prompt_default_title">Time to check in</string>
+    <string name="notif_prompt_text">Log how you\'re feeling</string>
+    <string name="notif_test_title">Test notification</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Log how you\'re feeling, privately.</string>
+    <string name="home_log_entry">Log entry</string>
+    <string name="home_history">View history</string>
+    <string name="home_charts">Charts</string>
+    <string name="home_backup">Backup &amp; import</string>
+    <string name="home_scales">Manage scales</string>
+    <string name="home_tags">Manage tags</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_about">About</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">How are you?</string>
+    <string name="entry_title_edit">Edit entry</string>
+    <string name="entry_no_scales">No scales configured. Add one from Manage scales.</string>
+    <string name="entry_note_label">Note (optional)</string>
+    <string name="entry_prompt_slot_label">Prompt slot</string>
+    <string name="entry_change_date_time">Change date/time…</string>
+    <!-- Screen-reader description of a scale slider. %1$s scale name, %2$s current value,
+         %3$d maximum. -->
+    <string name="entry_slider_description_out_of">%1$s, value %2$s out of %3$d</string>
+    <!-- For scales with negative values. %1$s scale name, %2$s current value, %3$d minimum,
+         %4$d maximum: a range, not a count. -->
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, value %2$s in range %3$d to %4$d</string>
+    <!-- For scales where a lower value is the better outcome. %1$s is one of the
+         descriptions above. -->
+    <string name="entry_slider_description_lower_better">%1$s, lower is better</string>
+
+    <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
+    <string name="migrating_title">Upgrading data store…</string>
+    <string name="migrating_body">Your existing entries are being moved to the encrypted database. Don\'t close the app.</string>
+    <string name="migration_failed_title">Upgrade failed</string>
+    <string name="migration_failed_body">Your original data is still on disk. Reopen the app to retry, or uninstall and restore from a backup if the issue persists.</string>
+
+    <!-- Biometric unlock prompt -->
+    <string name="biometric_prompt_title">Unlock Mood Cairns</string>
+    <string name="biometric_prompt_subtitle">Authenticate to continue</string>
+    <string name="biometric_prompt_use_pin">Use PIN</string>
+
+    <!-- Warning before running without a PIN, at first-run setup or when removing a PIN -->
+    <string name="no_pin_warning_title_setup">Continue without a PIN?</string>
+    <string name="no_pin_warning_title_remove">Remove your PIN?</string>
+    <string name="no_pin_warning_body">Without a PIN, anyone who can use this unlocked device can open Mood Cairns and read all of your entries. Your data is still encrypted on disk, but only by your device\'s secure keystore - the extra protection a PIN provides will be removed, and biometric unlock will be turned off. You can set a PIN again any time in Settings.</string>
+    <string name="no_pin_warning_accept">Accept and continue</string>
+
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_section_prompt_windows">Prompt windows</string>
@@ -82,15 +145,43 @@
     </plurals>
 
     <!-- Lock screen -->
+    <string name="lock_title">Locked</string>
+    <string name="lock_subtitle">Enter PIN to continue</string>
+    <string name="lock_pin_label">PIN</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_use_biometric">Use biometric</string>
+    <!-- %1$s is a remaining duration such as "1m 30s", already localized. -->
+    <string name="lock_try_again_in">Try again in %1$s</string>
+    <!-- Unlock button while locked out. %1$s is a remaining duration such as "1m 30s". -->
+    <string name="lock_locked_for">Locked (%1$s)</string>
     <string name="lock_error_wrong_pin">Incorrect PIN</string>
     <string name="lock_error_too_many_attempts">Too many attempts</string>
     <string name="lock_error_unlock_failed">Couldn\'t unlock: %1$s</string>
 
     <!-- First-run PIN setup -->
+    <string name="set_pin_title">Set a PIN</string>
+    <string name="set_pin_intro">Your entries never leave the device. A PIN plus biometric unlock keeps them yours.</string>
+    <!-- PIN field label. %1$d minimum, %2$d maximum length; the quantity is the maximum. -->
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">PIN (%1$d–%2$d digit)</item>
+        <item quantity="other">PIN (%1$d–%2$d digits)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">Confirm PIN</string>
+    <string name="set_pin_save">Save PIN</string>
+    <string name="set_pin_continue_without">Continue without a PIN</string>
     <string name="set_pin_error_failed">Couldn\'t set PIN: %1$s</string>
     <string name="set_pin_error_no_pin_failed">Couldn\'t continue without a PIN: %1$s</string>
 
     <!-- Change PIN screen -->
+    <string name="change_pin_title_change">Change PIN</string>
+    <string name="change_pin_title_set">Set PIN</string>
+    <string name="change_pin_action_change">Change PIN</string>
+    <string name="change_pin_action_set">Set PIN</string>
+    <string name="change_pin_action_remove">Remove PIN</string>
+    <string name="change_pin_current_label">Current PIN</string>
+    <string name="change_pin_new_label">New PIN</string>
+    <string name="change_pin_confirm_label">Confirm new PIN</string>
+    <string name="change_pin_remove_hint">Leave the new PIN fields empty to remove your PIN.</string>
     <string name="change_pin_error_current_required">Enter your current PIN to remove it</string>
     <string name="change_pin_error_wrong_current">Current PIN is incorrect</string>
     <string name="change_pin_error_locked">App is locked; unlock and try again</string>

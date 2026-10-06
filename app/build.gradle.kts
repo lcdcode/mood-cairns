@@ -125,6 +125,12 @@ android {
         buildConfig = true
     }
 
+    // In-app language switching needs every language installed. Without this, an App
+    // Bundle install would only get the device's languages. No effect on APK builds.
+    bundle {
+        language { enableSplit = false }
+    }
+
     packaging {
         resources.excludes += setOf(
             "/META-INF/{AL2.0,LGPL2.1}",

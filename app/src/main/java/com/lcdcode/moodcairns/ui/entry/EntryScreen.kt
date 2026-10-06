@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -62,14 +63,16 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
-import com.lcdcode.moodcairns.ui.tags.displayName
+import com.lcdcode.moodcairns.ui.tags.displayNameRes
 import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
 import java.time.LocalDate
@@ -102,10 +105,20 @@ fun EntryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.editingId != null) "Edit entry" else "How are you?") },
+                title = {
+                    val titleRes = if (state.editingId != null) {
+                        R.string.entry_title_edit
+                    } else {
+                        R.string.entry_title_new
+                    }
+                    Text(stringResource(titleRes))
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -124,7 +137,11 @@ fun EntryScreen(
                         .imePadding()
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
-                    Text(if (state.saving) "Saving…" else "Save")
+                    Text(
+                        stringResource(
+                            if (state.saving) R.string.common_saving else R.string.common_save,
+                        ),
+                    )
                 }
             }
         },
@@ -135,7 +152,7 @@ fun EntryScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    "No scales configured. Add one from Manage scales.",
+                    stringResource(R.string.entry_no_scales),
                     style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
                     color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -164,7 +181,7 @@ fun EntryScreen(
             OutlinedTextField(
                 value = state.note,
                 onValueChange = viewModel::setNote,
-                label = { Text("Note (optional)") },
+                label = { Text(stringResource(R.string.entry_note_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
             )
@@ -217,7 +234,7 @@ private fun TagPicker(
         TagCategory.entries.forEach { category ->
             val categoryTags = byCategory[category] ?: return@forEach
             Text(
-                category.displayName,
+                stringResource(category.displayNameRes()),
                 style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -254,7 +271,7 @@ private fun PromptSlotRow(
     val surface = androidx.compose.material3.MaterialTheme.colorScheme.surface
     Column {
         Text(
-            "Prompt slot",
+            stringResource(R.string.entry_prompt_slot_label),
             style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
         )
         Spacer(Modifier.height(4.dp))
@@ -273,12 +290,12 @@ private fun PromptSlotRow(
                 FilterChip(
                     selected = selectedWindowId == null && selectedSlot == PromptSlot.MANUAL,
                     onClick = onManual,
-                    label = { Text("Manual") },
+                    label = { Text(stringResource(PromptSlot.MANUAL.displayNameRes())) },
                 )
                 FilterChip(
                     selected = selectedWindowId == null && selectedSlot == PromptSlot.CUSTOM,
                     onClick = onCustom,
-                    label = { Text("Custom") },
+                    label = { Text(stringResource(PromptSlot.CUSTOM.displayNameRes())) },
                 )
             }
             // Edge fades signal that more chips exist off-screen. These overlays
@@ -331,7 +348,11 @@ private fun DateTimeControl(
     var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val zoned = recordedAt.atZone(ZoneId.systemDefault())
-    val label = if (userPicked) dateTimeFmt.format(zoned) else "Change date/time..."
+    val label = if (userPicked) {
+        dateTimeFmt.format(zoned)
+    } else {
+        stringResource(R.string.entry_change_date_time)
+    }
 
     AssistChip(
         onClick = { showDatePicker = true },
@@ -369,10 +390,12 @@ private fun DateTimeControl(
                         showDatePicker = false
                         showTimePicker = true
                     }
-                }) { Text("Next") }
+                }) { Text(stringResource(R.string.common_next)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         ) {
             DatePicker(state = datePickerState)
@@ -394,10 +417,12 @@ private fun DateTimeControl(
                     onChange(combineDateTime(date, picked, ZoneId.systemDefault()))
                     userPicked = true
                     showTimePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.common_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showTimePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showTimePicker = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
             text = { TimePicker(state = timePickerState) },
         )
@@ -432,10 +457,26 @@ private fun ScaleSlider(
             LayoutDirection.Ltr -> LayoutDirection.Rtl
             LayoutDirection.Rtl -> LayoutDirection.Ltr
         }
-        val spokenRange = if (scale.minValue < 0) {
-            "in range ${scale.minValue} to ${scale.maxValue}"
+        val baseDescription = if (scale.minValue < 0) {
+            stringResource(
+                R.string.entry_slider_description_range,
+                scale.name,
+                display,
+                scale.minValue,
+                scale.maxValue,
+            )
         } else {
-            "out of ${scale.maxValue}"
+            stringResource(
+                R.string.entry_slider_description_out_of,
+                scale.name,
+                display,
+                scale.maxValue,
+            )
+        }
+        val sliderDescription = if (scale.inverted) {
+            stringResource(R.string.entry_slider_description_lower_better, baseDescription)
+        } else {
+            baseDescription
         }
         CompositionLocalProvider(LocalLayoutDirection provides sliderDirection) {
             Slider(
@@ -448,8 +489,7 @@ private fun ScaleSlider(
                     activeTrackColor = accent,
                 ),
                 modifier = Modifier.semantics {
-                    contentDescription = "${scale.name}, value $display $spokenRange" +
-                        if (scale.inverted) ", lower is better" else ""
+                    contentDescription = sliderDescription
                 },
             )
         }

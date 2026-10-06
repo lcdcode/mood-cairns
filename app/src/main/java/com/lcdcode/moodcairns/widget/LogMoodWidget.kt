@@ -11,6 +11,7 @@ import com.lcdcode.moodcairns.MainActivity
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.notifications.PromptAlarmReceiver
+import com.lcdcode.moodcairns.settings.withAppLocale
 
 class LogMoodWidget : AppWidgetProvider() {
 
@@ -26,6 +27,11 @@ class LogMoodWidget : AppWidgetProvider() {
 
     private fun buildViews(context: Context): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_log_mood)
+        // The launcher inflates the layout with its own (system) language, so set the
+        // text here, where the app language applies.
+        val localized = context.withAppLocale()
+        views.setTextViewText(R.id.widget_title, localized.getString(R.string.widget_title))
+        views.setTextViewText(R.id.widget_subtitle, localized.getString(R.string.widget_subtitle))
         val intent = Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP

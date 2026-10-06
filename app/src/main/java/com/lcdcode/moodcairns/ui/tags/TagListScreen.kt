@@ -31,11 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import sh.calvin.reorderable.ReorderableItem
@@ -97,7 +99,7 @@ fun TagListScreen(
                 val tags = lists[category].orEmpty()
                 item(key = "hdr/${category.name}") {
                     SectionHeader(
-                        text = category.displayName,
+                        text = stringResource(category.displayNameRes()),
                         onAdd = { onAdd(category) },
                     )
                 }
