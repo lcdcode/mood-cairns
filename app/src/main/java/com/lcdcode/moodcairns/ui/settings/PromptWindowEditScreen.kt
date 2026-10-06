@@ -39,6 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.ui.common.asString
 import androidx.compose.material3.Surface
+import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +53,7 @@ fun PromptWindowEditScreen(
 
     var showStartPicker by remember { mutableStateOf(false) }
     var showEndPicker by remember { mutableStateOf(false) }
+    val timeFmt = rememberSkeletonDateFormat("jm")
 
     Scaffold(
         topBar = {
@@ -100,10 +103,11 @@ fun PromptWindowEditScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedButton(onClick = { showStartPicker = true }, modifier = Modifier.weight(1f)) {
-                    Text("Start: ${fmt(state.startHour, state.startMinute)}")
+                    val start = timeFmt.format(LocalTime.of(state.startHour, state.startMinute))
+                    Text("Start: $start")
                 }
                 OutlinedButton(onClick = { showEndPicker = true }, modifier = Modifier.weight(1f)) {
-                    Text("End: ${fmt(state.endHour, state.endMinute)}")
+                    Text("End: ${timeFmt.format(LocalTime.of(state.endHour, state.endMinute))}")
                 }
             }
 
@@ -150,8 +154,6 @@ fun PromptWindowEditScreen(
         )
     }
 }
-
-private fun fmt(h: Int, m: Int) = "%02d:%02d".format(h, m)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

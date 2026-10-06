@@ -33,6 +33,23 @@
     <string name="common_ok">OK</string>
     <string name="common_save">Save</string>
     <string name="common_saving">Saving…</string>
+    <string name="common_all">All</string>
+    <string name="common_clear">Clear</string>
+    <string name="common_close">Close</string>
+    <string name="common_delete">Delete</string>
+    <!-- Joins short items such as tag names into one line. The quotes keep the spaces. -->
+    <string name="common_list_separator">" · "</string>
+    <!-- From-to dates, e.g. "Mar 1, 2026 – Mar 31, 2026". -->
+    <string name="common_date_range">%1$s – %2$s</string>
+    <!-- Scale ranges. The dash form is used when both bounds are non-negative ("1–10");
+         the "to" form when the minimum is negative, where a dash would read as a minus
+         sign ("-5 to 5"). -->
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">%1$s to %2$s</string>
+    <!-- A logged value out of the scale maximum, e.g. "7 / 10". -->
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <!-- A logged value with its scale range, e.g. "-3 (-5 to 5)". -->
+    <string name="common_value_in_range">%1$s (%2$s)</string>
     <!-- Abbreviated durations, e.g. on auto-lock timeout chips. -->
     <plurals name="common_duration_seconds_short">
         <item quantity="one">%1$d s</item>
@@ -101,6 +118,82 @@
     <!-- For scales where a lower value is the better outcome. %1$s is one of the
          descriptions above. -->
     <string name="entry_slider_description_lower_better">%1$s, lower is better</string>
+
+    <!-- History screen -->
+    <string name="history_title">History</string>
+    <string name="history_add_past">Add past entry</string>
+    <string name="history_empty">No entries yet.</string>
+    <string name="history_no_matches">No entries match the current filters.</string>
+    <string name="history_delete_title">Delete entry?</string>
+    <string name="history_delete_body">This entry will be permanently removed.</string>
+    <string name="history_search_placeholder">Search notes…</string>
+    <string name="history_search">Search</string>
+    <string name="history_clear_search">Clear search</string>
+    <string name="history_clear_all">Clear all</string>
+    <string name="history_pick_date">Pick date</string>
+
+    <!-- Charts screen -->
+    <string name="charts_title">Charts</string>
+    <string name="charts_help_button">Help with charts</string>
+    <string name="charts_no_data">No data in this range.</string>
+    <string name="charts_date_range_label">Date range</string>
+    <string name="charts_change_range">Change</string>
+    <string name="charts_select_range">Select range</string>
+    <string name="charts_series_label">Series</string>
+    <string name="charts_mode_raw">Raw</string>
+    <!-- Short label for the rolling-average series. %1$d is the number of days. -->
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">%1$d-day avg</item>
+        <item quantity="other">%1$d-day avg</item>
+    </plurals>
+    <!-- Line under the filters. %1$d entry count; %2$d days in the rolling average. -->
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d entry · raw daily values</item>
+        <item quantity="other">%1$d entries · raw daily values</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d entry · %2$d-day rolling average</item>
+        <item quantity="other">%1$d entries · %2$d-day rolling average</item>
+    </plurals>
+    <string name="charts_y_axis_label">Y axis</string>
+    <string name="charts_axis_autofit">Auto-fit</string>
+    <string name="charts_axis_absolute">Absolute</string>
+    <string name="charts_prompt_slots_label">Prompt slots</string>
+    <!-- Filter chip for entries whose prompt window no longer exists. -->
+    <string name="charts_slot_other">Other</string>
+    <string name="charts_scales_label">Scales</string>
+    <string name="charts_tags_label">Tags</string>
+    <!-- Caption under the chart explaining the vertical axis. Keep "top of range"
+         rather than "best": on a scale where high is bad, 100% is the worst end. -->
+    <string name="charts_axis_caption_absolute">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>
+    <string name="charts_axis_caption_values">Vertical axis: logged values</string>
+    <!-- %1$s scale name, %2$s its range. -->
+    <string name="charts_axis_caption_single">Vertical axis: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">Vertical axis: logged values - %1$d scale shares one axis</item>
+        <item quantity="other">Vertical axis: logged values - %1$d scales share one axis</item>
+    </plurals>
+    <!-- Chart legend entry. %1$s scale name, %2$s its range. -->
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, lower is better)</string>
+    <string name="charts_no_entries_day">No entries on this day.</string>
+    <!-- A scale value in the tapped-day card, e.g. "Happiness: 7". -->
+    <string name="charts_point_value">%1$s: %2$s</string>
+
+    <!-- Charts help dialog. Mode names (%1$s, %2$s) come from charts_mode_* and
+         charts_axis_* so the help always matches the buttons. -->
+    <string name="charts_help_title">Reading the charts</string>
+    <string name="charts_help_dismiss">Got it</string>
+    <string name="charts_help_intro">Two toggles change how your numbers are drawn. Nothing you pick here changes your data - only how the chart looks.</string>
+    <string name="charts_help_series_title">Series: %1$s vs %2$s</string>
+    <string name="charts_help_raw_body">Plots each day exactly as you logged it. Use it to see precise day-to-day changes - though it can look jumpy.</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">Replaces each day with the average over the %1$d day ending on it. This smooths out one-off spikes so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
+        <item quantity="other">Replaces each day with the average over the %1$d days ending on it. This smooths out one-off spikes so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
+    </plurals>
+    <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
+    <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
+    <string name="charts_help_absolute_body">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
 
     <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
     <string name="migrating_title">Upgrading data store…</string>

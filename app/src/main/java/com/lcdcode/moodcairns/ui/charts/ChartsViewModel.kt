@@ -35,6 +35,9 @@ data class ScaleSeries(
 
 enum class ChartMode { Raw, RollingAvg }
 
+/** Days averaged by [ChartMode.RollingAvg]; also shown in its labels. */
+const val ROLLING_AVERAGE_DAYS = 7
+
 /**
  * Identifies one prompt-slot filter chip. Windows are keyed by id (so renamed or
  * multiple same-slot windows stay distinct); Manual/Custom are the slot-only
@@ -242,7 +245,7 @@ class ChartsViewModel @Inject constructor(
             val daily = (0 until days).mapNotNull { i ->
                 if (perDayCount[i] == 0) null else DayPoint(i, perDaySum[i] / perDayCount[i])
             }
-            val rolling = rollingAverage(perDaySum, perDayCount, window = 7)
+            val rolling = rollingAverage(perDaySum, perDayCount, window = ROLLING_AVERAGE_DAYS)
             ScaleSeries(scale = scale, rolling = rolling, daily = daily)
         }
 

@@ -31,7 +31,11 @@ sealed interface UiText {
     fun resolve(context: Context): String = resolve(context.resources)
 
     fun resolve(resources: Resources): String = when (this) {
-        is Res -> resources.getString(id, *resolveArgs(args, resources))
+        // getString(id, ...) always runs String.format, which would choke on a literal
+        // "%" in an argument-free string, so only format when there are args.
+        is Res ->
+            if (args.isEmpty()) resources.getString(id)
+            else resources.getString(id, *resolveArgs(args, resources))
         is Plural -> resources.getQuantityString(id, count, *resolveArgs(args, resources))
     }
 

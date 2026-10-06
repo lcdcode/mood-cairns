@@ -69,9 +69,11 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.currentLocale
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
+import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.tags.displayNameRes
 import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
@@ -79,7 +81,6 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -334,8 +335,6 @@ private fun PromptSlotRow(
     }
 }
 
-private val dateTimeFmt = DateTimeFormatter.ofPattern("MMM d, h:mm a")
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DateTimeControl(
@@ -348,8 +347,9 @@ private fun DateTimeControl(
     var pendingDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val zoned = recordedAt.atZone(ZoneId.systemDefault())
+    val dateTimeFmt = rememberSkeletonDateFormat("MMMdjm")
     val label = if (userPicked) {
-        dateTimeFmt.format(zoned)
+        dateTimeFmt.format(zoned.toLocalDateTime())
     } else {
         stringResource(R.string.entry_change_date_time)
     }
@@ -439,7 +439,8 @@ private fun ScaleSlider(
     onValueChange: (Float) -> Unit,
 ) {
     val accent = Color(scale.colorArgb)
-    val display = formatScaleValue(value)
+    val locale = currentLocale()
+    val display = formatScaleValue(value, locale)
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -447,7 +448,7 @@ private fun ScaleSlider(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(scale.name, fontWeight = FontWeight.Medium)
-            Text(formatValueWithRange(value, scale))
+            Text(formatValueWithRange(value, scale, locale).asString())
         }
         // An inverse scale runs high-to-low, so "better" is the same gesture
         // direction as on normal scales. Flipping the layout direction (rather

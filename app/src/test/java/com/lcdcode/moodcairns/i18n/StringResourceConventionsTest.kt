@@ -14,10 +14,7 @@ import org.w3c.dom.Element
  */
 class StringResourceConventionsTest {
 
-    private val resDir: File = sequenceOf("src/main/res", "app/src/main/res")
-        .map(::File)
-        .firstOrNull(File::isDirectory)
-        ?: error("src/main/res not found from ${File(".").absolutePath}")
+    private val resDir: File = TestResources.resDir
 
     private val english: Map<String, StringEntry> =
         parseStrings(File(resDir, "values/strings.xml"))
@@ -48,7 +45,7 @@ class StringResourceConventionsTest {
     @Test
     fun translations_keepEnglishPlaceholders() {
         val mismatches = translationFiles().flatMap { file ->
-            val locale = file.parentFile.name
+            val locale = file.parentFile?.name ?: file.path
             parseStrings(file).mapNotNull { (name, entry) ->
                 val source = english[name] ?: return@mapNotNull "$locale/$name is not in values/"
                 val expected = placeholders(source.texts.first())
@@ -96,7 +93,8 @@ class StringResourceConventionsTest {
     private data class StringEntry(val isPlural: Boolean, val texts: List<String>)
 
     private companion object {
-        // A java.util.Formatter specifier, excluding the literal "%%".
-        val FORMAT_SPECIFIER = Regex("""%(?!%)(\d+\$)?[-#+ 0,(]*\d*(\.\d+)?[a-zA-Z]""")
+        // A java.util.Formatter specifier, excluding the literal "%%". The space flag is
+        // deliberately not matched, so prose like "100% is" isn't taken for one.
+        val FORMAT_SPECIFIER = Regex("""%(?!%)(\d+\$)?[-#+0,(]*\d*(\.\d+)?[a-zA-Z]""")
     }
 }

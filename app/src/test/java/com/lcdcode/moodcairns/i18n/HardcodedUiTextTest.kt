@@ -33,7 +33,12 @@ class HardcodedUiTextTest {
         val EXTRACTED_FILES = listOf(
             "notifications/NotificationChannels.kt",
             "notifications/PromptAlarmReceiver.kt",
+            "ui/charts/ChartAxis.kt",
+            "ui/charts/ChartsScreen.kt",
+            "ui/common/EntrySlotUi.kt",
+            "ui/common/ScaleFormat.kt",
             "ui/entry/EntryScreen.kt",
+            "ui/history/HistoryScreen.kt",
             "ui/home/HomeScreen.kt",
             "ui/lock/Biometrics.kt",
             "ui/lock/LockScreen.kt",

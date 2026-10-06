@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -54,24 +56,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.ui.common.SkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.allOrClearLabel
+import com.lcdcode.moodcairns.ui.common.asString
+import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
+import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,17 +97,23 @@ fun HistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("History") },
+                title = { Text(stringResource(R.string.history_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddPast) {
-                Icon(Icons.Default.Add, contentDescription = "Add past entry")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.history_add_past),
+                )
             }
         },
     ) { padding ->
@@ -134,11 +149,13 @@ fun HistoryScreen(
 
             if (filteredEntries.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    val message = if (state.entries.isEmpty()) {
-                        "No entries yet."
-                    } else {
-                        "No entries match the current filters."
-                    }
+                    val message = stringResource(
+                        if (state.entries.isEmpty()) {
+                            R.string.history_empty
+                        } else {
+                            R.string.history_no_matches
+                        },
+                    )
                     Text(message, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 return@Scaffold
@@ -148,8 +165,8 @@ fun HistoryScreen(
                 it.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalDate()
             }.toSortedMap(compareByDescending { it })
 
-            val dayFmt = DateTimeFormatter.ofPattern("EEEE, MMM d")
-            val timeFmt = DateTimeFormatter.ofPattern("h:mm a")
+            val dayFmt = rememberSkeletonDateFormat("MMMEEEEd")
+            val timeFmt = rememberSkeletonDateFormat("jm")
 
             LazyColumn(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
@@ -194,16 +211,18 @@ fun HistoryScreen(
     deleteTarget?.let { target ->
         AlertDialog(
             onDismissRequest = { deleteTarget = null },
-            title = { Text("Delete entry?") },
-            text = { Text("This entry will be permanently removed.") },
+            title = { Text(stringResource(R.string.history_delete_title)) },
+            text = { Text(stringResource(R.string.history_delete_body)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.delete(target.entry.id)
                     deleteTarget = null
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { deleteTarget = null }) { Text("Cancel") }
+                TextButton(onClick = { deleteTarget = null }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         )
     }
@@ -220,12 +239,12 @@ private fun EntryActionSheet(
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(modifier = Modifier.padding(bottom = 8.dp)) {
             ListItem(
-                headlineContent = { Text("Edit") },
+                headlineContent = { Text(stringResource(R.string.common_edit)) },
                 leadingContent = { Icon(Icons.Default.Edit, contentDescription = null) },
                 modifier = Modifier.clickable(onClick = onEdit),
             )
             ListItem(
-                headlineContent = { Text("Delete") },
+                headlineContent = { Text(stringResource(R.string.common_delete)) },
                 leadingContent = {
                     Icon(
                         Icons.Default.Delete,
@@ -242,7 +261,7 @@ private fun EntryActionSheet(
 @Composable
 private fun DayHeader(
     day: LocalDate,
-    fmt: DateTimeFormatter,
+    fmt: SkeletonDateFormat,
     onClick: (() -> Unit)? = null,
 ) {
     Text(
@@ -263,9 +282,11 @@ private fun EntryCard(
     entry: EntryWithValues,
     scales: Map<Long, Scale>,
     windows: Map<Long, PromptWindow>,
-    timeFmt: DateTimeFormatter,
+    timeFmt: SkeletonDateFormat,
     onLongPress: () -> Unit,
 ) {
+    val locale = currentLocale()
+    val listSeparator = stringResource(R.string.common_list_separator)
     val time = entry.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalTime()
     Card(
         modifier = Modifier
@@ -290,11 +311,9 @@ private fun EntryCard(
                         color = Color(scale.colorArgb),
                         modifier = Modifier.size(10.dp),
                     ) {}
-                    Text(
-                        "  ${scale.name}",
-                        modifier = Modifier.weight(1f),
-                    )
-                    Text(formatValueWithRange(v.value, scale))
+                    Spacer(Modifier.width(8.dp))
+                    Text(scale.name, modifier = Modifier.weight(1f))
+                    Text(formatValueWithRange(v.value, scale, locale).asString())
                 }
             }
             entry.entry.note?.let {
@@ -302,7 +321,7 @@ private fun EntryCard(
             }
             if (entry.tags.isNotEmpty()) {
                 Text(
-                    entry.tags.joinToString(" · ") { it.name },
+                    entry.tags.joinToString(listSeparator) { it.name },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -326,7 +345,7 @@ private fun FilterBar(
     onTagClear: () -> Unit,
     onClearAll: () -> Unit,
 ) {
-    val dateFmt = DateTimeFormatter.ofPattern("MMM d")
+    val dateFmt = rememberSkeletonDateFormat("MMMd")
     var showDatePicker by remember { mutableStateOf(false) }
     val hasActiveFilter = selectedDate != null || selectedSlot != null ||
         searchQuery.isNotBlank() || selectedTagIds.isNotEmpty()
@@ -345,12 +364,12 @@ private fun FilterBar(
                 value = searchQuery,
                 onValueChange = onSearchChange,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Search notes...") },
+                placeholder = { Text(stringResource(R.string.history_search_placeholder)) },
                 singleLine = true,
                 leadingIcon = {
                     Icon(
                         Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.history_search),
                         modifier = Modifier.size(20.dp),
                     )
                 },
@@ -359,7 +378,7 @@ private fun FilterBar(
                         IconButton(onClick = { onSearchChange("") }) {
                             Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Clear search",
+                                contentDescription = stringResource(R.string.history_clear_search),
                                 modifier = Modifier.size(20.dp),
                             )
                         }
@@ -368,7 +387,7 @@ private fun FilterBar(
             )
             if (hasActiveFilter) {
                 TextButton(onClick = onClearAll) {
-                    Text("Clear all", maxLines = 1)
+                    Text(stringResource(R.string.history_clear_all), maxLines = 1)
                 }
             }
         }
@@ -390,7 +409,7 @@ private fun FilterBar(
                         onSlotSelect(null)
                         onDateSelect(null)
                     },
-                    label = { Text(if (rowUnfiltered) "All" else "Clear") },
+                    label = { Text(allOrClearLabel(rowUnfiltered)) },
                 )
                 val isDateSelected = selectedDate != null
                 FilterChip(
@@ -398,14 +417,17 @@ private fun FilterBar(
                     onClick = { showDatePicker = true },
                     label = {
                         Text(
-                            if (selectedDate != null) dateFmt.format(selectedDate)
-                            else "Pick date"
+                            if (selectedDate != null) {
+                                dateFmt.format(selectedDate)
+                            } else {
+                                stringResource(R.string.history_pick_date)
+                            },
                         )
                     },
                 )
                 PromptSlot.entries.forEach { slot ->
                     val isSelected = selectedSlot == slot
-                    val label = slot.name.lowercase().replaceFirstChar { it.uppercase() }
+                    val label = stringResource(slot.displayNameRes())
                     FilterChip(
                         selected = isSelected,
                         onClick = {
@@ -458,7 +480,7 @@ private fun FilterBar(
                     FilterChip(
                         selected = noTagsSelected,
                         onClick = onTagClear,
-                        label = { Text(if (noTagsSelected) "All" else "Clear") },
+                        label = { Text(allOrClearLabel(noTagsSelected)) },
                     )
                     tags.orderedByCategory().forEach { tag ->
                         FilterChip(
@@ -520,13 +542,13 @@ private fun FilterBar(
                         onDateSelect(picked)
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.common_ok)) }
             },
             dismissButton = {
                 TextButton(onClick = {
                     onDateSelect(null)
                     showDatePicker = false
-                }) { Text("Clear") }
+                }) { Text(stringResource(R.string.common_clear)) }
             },
         ) {
             DatePicker(state = datePickerState)

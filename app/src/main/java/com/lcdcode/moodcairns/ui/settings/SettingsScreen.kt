@@ -54,6 +54,7 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.ui.common.UiText
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.displayNameRes
+import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,6 +264,7 @@ private fun PromptWindowRow(
     onEdit: () -> Unit,
     onToggle: () -> Unit,
 ) {
+    val timeFmt = rememberSkeletonDateFormat("jm")
     Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onEdit)) {
         Row(
             modifier = Modifier.padding(12.dp).fillMaxWidth(),
@@ -274,8 +276,8 @@ private fun PromptWindowRow(
                 Text(
                     stringResource(
                         R.string.settings_window_summary,
-                        window.startTime.toString(),
-                        window.endTime.toString(),
+                        timeFmt.format(window.startTime),
+                        timeFmt.format(window.endTime),
                         stringResource(window.slot.displayNameRes()),
                     ),
                     style = MaterialTheme.typography.bodySmall,
