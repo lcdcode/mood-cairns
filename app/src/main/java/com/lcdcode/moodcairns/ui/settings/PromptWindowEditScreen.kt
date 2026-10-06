@@ -32,13 +32,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.ui.common.asString
 import androidx.compose.material3.Surface
+import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import java.time.LocalTime
 
@@ -58,16 +61,32 @@ fun PromptWindowEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.id == 0L) "New window" else "Edit window") },
+                title = {
+                    Text(
+                        stringResource(
+                            if (state.id == 0L) {
+                                R.string.window_edit_title_new
+                            } else {
+                                R.string.window_edit_title_edit
+                            },
+                        ),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
                 actions = {
                     if (state.id != 0L) {
                         IconButton(onClick = viewModel::delete) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.common_delete),
+                            )
                         }
                     }
                 },
@@ -82,18 +101,21 @@ fun PromptWindowEditScreen(
             OutlinedTextField(
                 value = state.label,
                 onValueChange = viewModel::setLabel,
-                label = { Text("Label") },
+                label = { Text(stringResource(R.string.window_edit_label_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Text("Slot", style = MaterialTheme.typography.labelMedium)
+            Text(
+                stringResource(R.string.window_edit_slot_label),
+                style = MaterialTheme.typography.labelMedium,
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 PromptSlot.values().filter { it != PromptSlot.MANUAL }.forEach { slot ->
                     FilterChip(
                         selected = slot == state.slot,
                         onClick = { viewModel.setSlot(slot) },
-                        label = { Text(slot.name.lowercase().replaceFirstChar(Char::uppercase)) },
+                        label = { Text(stringResource(slot.displayNameRes())) },
                     )
                 }
             }
@@ -104,10 +126,11 @@ fun PromptWindowEditScreen(
             ) {
                 OutlinedButton(onClick = { showStartPicker = true }, modifier = Modifier.weight(1f)) {
                     val start = timeFmt.format(LocalTime.of(state.startHour, state.startMinute))
-                    Text("Start: $start")
+                    Text(stringResource(R.string.window_edit_start, start))
                 }
                 OutlinedButton(onClick = { showEndPicker = true }, modifier = Modifier.weight(1f)) {
-                    Text("End: ${timeFmt.format(LocalTime.of(state.endHour, state.endMinute))}")
+                    val end = timeFmt.format(LocalTime.of(state.endHour, state.endMinute))
+                    Text(stringResource(R.string.window_edit_end, end))
                 }
             }
 
@@ -115,7 +138,7 @@ fun PromptWindowEditScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                Text("Enabled", modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.window_edit_enabled), modifier = Modifier.weight(1f))
                 Switch(checked = state.enabled, onCheckedChange = viewModel::setEnabled)
             }
 
@@ -128,7 +151,11 @@ fun PromptWindowEditScreen(
                 enabled = !state.saving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (state.saving) "Saving…" else "Save")
+                Text(
+                    stringResource(
+                        if (state.saving) R.string.common_saving else R.string.common_save,
+                    ),
+                )
             }
         }
     }
@@ -163,21 +190,27 @@ private fun TimePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int, Int) -> Unit,
 ) {
-    val state = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute, is24Hour = true)
+    // is24Hour defaults to the device's 12/24-hour setting.
+    val state = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute)
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = 6.dp,
         ) {
             Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("Select time", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.window_edit_select_time),
+                    style = MaterialTheme.typography.titleMedium,
+                )
                 TimePicker(state = state)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Cancel") }
-                    TextButton(onClick = { onConfirm(state.hour, state.minute) }) { Text("OK") }
+                    TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+                    TextButton(onClick = { onConfirm(state.hour, state.minute) }) {
+                        Text(stringResource(R.string.common_ok))
+                    }
                 }
             }
         }

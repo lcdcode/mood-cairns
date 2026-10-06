@@ -253,14 +253,17 @@ internal fun sanitizeSignedDecimal(raw: String, maxLen: Int): String {
     return sign + sanitizeDecimal(raw, maxLen - sign.length)
 }
 
-/** Keeps only digits and at most one decimal point; caps total length. */
+/**
+ * Keeps only digits and at most one decimal point; caps total length. A comma counts
+ * as the decimal point, since that is what the decimal key types in many locales.
+ */
 internal fun sanitizeDecimal(raw: String, maxLen: Int): String {
     val sb = StringBuilder()
     var seenDot = false
     for (c in raw) {
         when {
             c.isDigit() -> sb.append(c)
-            c == '.' && !seenDot -> { sb.append(c); seenDot = true }
+            (c == '.' || c == ',') && !seenDot -> { sb.append('.'); seenDot = true }
             else -> { /* drop */ }
         }
         if (sb.length >= maxLen) break

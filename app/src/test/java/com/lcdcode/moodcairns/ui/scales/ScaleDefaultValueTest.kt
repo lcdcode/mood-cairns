@@ -32,6 +32,15 @@ class ScaleDefaultValueTest {
     }
 
     @Test
+    fun sanitize_acceptsCommaAsDecimalPoint() {
+        assertEquals("2.5", sanitizeSignedDecimal("2,5", maxLen = 7))
+        assertEquals("-0.25", sanitizeSignedDecimal("-0,25", maxLen = 7))
+        // Only the first separator, comma or point, is kept.
+        assertEquals("1.50", sanitizeDecimal("1,5,0", maxLen = 5))
+        assertEquals("1.50", sanitizeDecimal("1.5,0", maxLen = 5))
+    }
+
+    @Test
     fun sanitize_capsLength_countingTheSign() {
         assertEquals("1234", sanitizeSignedDecimal("12345", maxLen = 4))
         assertEquals("-123", sanitizeSignedDecimal("-12345", maxLen = 4))

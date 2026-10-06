@@ -37,6 +37,12 @@
     <string name="common_clear">Clear</string>
     <string name="common_close">Close</string>
     <string name="common_delete">Delete</string>
+    <string name="common_add">Add</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_deleting">Deleting…</string>
+    <string name="common_name_label">Name</string>
+    <!-- Content description of a drag handle used to reorder list items. -->
+    <string name="common_reorder">Reorder</string>
     <!-- Joins short items such as tag names into one line. The quotes keep the spaces. -->
     <string name="common_list_separator">" · "</string>
     <!-- From-to dates, e.g. "Mar 1, 2026 – Mar 31, 2026". -->
@@ -131,6 +137,128 @@
     <string name="history_clear_search">Clear search</string>
     <string name="history_clear_all">Clear all</string>
     <string name="history_pick_date">Pick date</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">Scales</string>
+    <string name="scale_list_add">Add scale</string>
+    <string name="scale_list_empty">No scales yet.</string>
+    <string name="scale_list_section_active">Active</string>
+    <string name="scale_list_section_archived">Archived</string>
+    <string name="scale_list_archive">Archive</string>
+    <string name="scale_list_unarchive">Unarchive</string>
+    <!-- Items in the summary line under a scale's name, joined by common_list_separator,
+         e.g. "1–10 · step 1 · default 5 · lower is better · built-in". -->
+    <string name="scale_list_step">step %1$s</string>
+    <string name="scale_list_default">default %1$s</string>
+    <string name="scale_list_lower_better">lower is better</string>
+    <string name="scale_list_built_in">built-in</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">New scale</string>
+    <string name="scale_edit_title_edit">Edit scale</string>
+    <string name="scale_edit_min_label">Min</string>
+    <string name="scale_edit_max_label">Max</string>
+    <string name="scale_edit_step_label">Step</string>
+    <string name="scale_edit_default_label">Default</string>
+    <string name="scale_edit_default_hint">Where the slider starts for a new entry. Blank uses the midpoint.</string>
+    <string name="scale_edit_lower_better">Lower is better</string>
+    <string name="scale_edit_lower_better_hint">Inverse scale: the slider runs high to low, and charts draw it so improvement points up.</string>
+    <string name="scale_edit_color_label">Color</string>
+    <string name="scale_edit_built_in_hint">Built-in scales can\'t be renamed; you can still adjust the range, step, and color.</string>
+    <string name="scale_edit_delete">Delete scale</string>
+    <!-- Stands in for a scale's name inside the dialogs below when it has none. -->
+    <string name="scale_edit_this_scale">this scale</string>
+    <string name="scale_edit_remap_title">Remap logged values?</string>
+    <string name="scale_edit_remap_confirm">Remap</string>
+    <string name="scale_edit_remap_keep">Keep values</string>
+    <!-- %1$d entry count, %2$s scale name, %3$s the scale_edit_remap_keep button label.
+         "(min + max) - v" is a formula; keep it as is. -->
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d entry has data on \"%2$s\". Remapping replaces each value v with (min + max) - v so past entries keep their meaning under the new direction. Choose %3$s if you only meant to change how the scale is displayed.</item>
+        <item quantity="other">%1$d entries have data on \"%2$s\". Remapping replaces each value v with (min + max) - v so past entries keep their meaning under the new direction. Choose %3$s if you only meant to change how the scale is displayed.</item>
+    </plurals>
+    <string name="scale_edit_delete_title">Delete scale?</string>
+    <!-- %1$s scale name. Shown while the number of affected entries is loading. -->
+    <string name="scale_edit_delete_body">\"%1$s\" and all data logged on it will be permanently deleted. This cannot be undone.</string>
+    <string name="scale_edit_delete_body_unused">No entries use \"%1$s\" yet. \"%1$s\" and all data logged on it will be permanently deleted. This cannot be undone.</string>
+    <!-- %1$d entry count, %2$s scale name. -->
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d entry has data on \"%2$s\". \"%2$s\" and all data logged on it will be permanently deleted. This cannot be undone.</item>
+        <item quantity="other">%1$d entries have data on \"%2$s\". \"%2$s\" and all data logged on it will be permanently deleted. This cannot be undone.</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">Tags</string>
+    <string name="tag_list_empty">No tags yet.</string>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">New tag</string>
+    <string name="tag_edit_title_edit">Edit tag</string>
+    <string name="tag_edit_category_label">Category</string>
+    <string name="tag_edit_delete">Delete tag</string>
+    <!-- Stands in for a tag's name inside the dialogs below when it has none. -->
+    <string name="tag_edit_this_tag">this tag</string>
+    <string name="tag_edit_delete_title">Delete tag?</string>
+    <!-- %1$s tag name. Shown while the number of affected entries is loading. -->
+    <string name="tag_edit_delete_body">\"%1$s\" will be deleted. Entries keep their data; the tag is just removed from them.</string>
+    <string name="tag_edit_delete_body_unused">No entries use \"%1$s\" yet.</string>
+    <!-- %1$d entry count, %2$s tag name. -->
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">%1$d entry is tagged \"%2$s\". Entries keep their data; the tag is just removed from them.</item>
+        <item quantity="other">%1$d entries are tagged \"%2$s\". Entries keep their data; the tag is just removed from them.</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">New window</string>
+    <string name="window_edit_title_edit">Edit window</string>
+    <!-- Label of the text field holding the window's name. -->
+    <string name="window_edit_label_label">Label</string>
+    <string name="window_edit_slot_label">Slot</string>
+    <!-- %1$s is a time of day. -->
+    <string name="window_edit_start">Start: %1$s</string>
+    <string name="window_edit_end">End: %1$s</string>
+    <string name="window_edit_enabled">Enabled</string>
+    <string name="window_edit_select_time">Select time</string>
+
+    <!-- Backup screen -->
+    <string name="backup_title">Backup &amp; import</string>
+    <string name="backup_intro">Backups are AES-GCM encrypted with a key derived from a passphrase you choose and written to Documents/MoodCairns. Syncthing or any file manager can sync them off-device - the app never uploads anything.</string>
+    <string name="backup_export">Export now</string>
+    <string name="backup_export_csv">Export unencrypted CSV</string>
+    <string name="backup_export_csv_warning">The CSV is plain text and NOT encrypted. Anyone or anything that can read your Documents folder - cloud backup, file managers, other apps - can read your entries. Disable unsafe exports in Settings to hide this option.</string>
+    <string name="backup_import">Import from file (replaces all data)</string>
+    <string name="backup_existing_label">Existing backups</string>
+    <string name="backup_none">None yet.</string>
+    <string name="backup_encrypt_title">Encrypt backup</string>
+    <string name="backup_encrypt_body">Choose a passphrase to encrypt this backup. You\'ll need this exact passphrase to restore it - even on a fresh install. It is not your app PIN and cannot be recovered if you forget it.</string>
+    <string name="backup_passphrase_label">Passphrase</string>
+    <string name="backup_passphrase_confirm_label">Confirm passphrase</string>
+    <string name="backup_passphrase_mismatch">Passphrases do not match</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">At least %1$d character</item>
+        <item quantity="other">At least %1$d characters</item>
+    </plurals>
+    <string name="backup_decrypt_title">Decrypt backup</string>
+    <string name="backup_decrypt_body">Enter the passphrase used to encrypt this backup. For older backups, this is the PIN that was set when they were created.</string>
+    <string name="backup_passphrase_or_pin_label">Passphrase or PIN</string>
+
+    <!-- About screen. Text in &lt;b&gt;...&lt;/b&gt; is shown bold and
+         &lt;a href=...&gt;...&lt;/a&gt; is a link: keep the tags, translate the text
+         between them. -->
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_why_title">Why this app exists</string>
+    <string name="about_why_body">I built Mood Cairns because I wanted a mood tracker with all the features I liked and none of the things I didn\'t: no creepy tracking, no analytics, no account, and no Google Play Store required for purchases. Your entries live only on your device - the app declares no network permissions, and it always will be that way.</string>
+    <!-- %1$s is the author's name. -->
+    <string name="about_made_by">Made by %1$s. Free and open source. Thank you!</string>
+    <string name="about_updates_title">Updates</string>
+    <string name="about_updates_body">&lt;b&gt;F-Droid users should get updates automatically&lt;/b&gt;, but if not, or if you downloaded Mood Cairns from GitHub, use the below button to check for updates and &lt;b&gt;download the latest .apk file&lt;/b&gt; under Assets.</string>
+    <string name="about_get_latest">Get latest version</string>
+    <string name="about_get_latest_hint">Opens the latest release on GitHub in your browser. The app itself never touches the network.</string>
+    <string name="about_no_browser">No browser found to open the page.</string>
+    <string name="about_contact_title">Contact</string>
+    <!-- %1$s is the issue tracker URL; keep it inside href. -->
+    <string name="about_contact_body">The best way to contact me for changes or feature requests is to &lt;a href=\"%1$s\"&gt;open a new issue on GitHub&lt;/a&gt;.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Charts</string>

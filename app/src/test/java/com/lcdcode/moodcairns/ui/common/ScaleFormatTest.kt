@@ -50,6 +50,13 @@ class ScaleFormatTest {
     }
 
     @Test
+    fun formatScaleSetting_keepsUpToFourDecimals() {
+        assertEquals("0.125", formatScaleSetting(0.125f, en))
+        assertEquals("0,125", formatScaleSetting(0.125f, de))
+        assertEquals("1", formatScaleSetting(1f, en))
+    }
+
+    @Test
     fun formatScaleValue_neverGroupsDigits() {
         assertEquals("1000", formatScaleValue(1000f, en))
     }

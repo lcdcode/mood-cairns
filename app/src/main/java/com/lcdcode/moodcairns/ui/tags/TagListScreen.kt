@@ -80,10 +80,13 @@ fun TagListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tags") },
+                title = { Text(stringResource(R.string.tag_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -106,7 +109,7 @@ fun TagListScreen(
                 if (tags.isEmpty()) {
                     item(key = "empty/${category.name}") {
                         Text(
-                            "No tags yet.",
+                            stringResource(R.string.tag_list_empty),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -148,7 +151,7 @@ private fun SectionHeader(text: String, onAdd: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
-        TextButton(onClick = onAdd) { Text("Add") }
+        TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
 }
 
@@ -172,7 +175,7 @@ private fun TagRow(
             IconButton(modifier = dragHandleModifier, onClick = {}) {
                 Icon(
                     Icons.Default.DragHandle,
-                    contentDescription = "Reorder",
+                    contentDescription = stringResource(R.string.common_reorder),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

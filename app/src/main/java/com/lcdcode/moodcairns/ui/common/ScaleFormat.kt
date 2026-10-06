@@ -7,15 +7,25 @@ import java.text.NumberFormat
 import java.util.Locale
 
 private const val MAX_VALUE_FRACTION_DIGITS = 2
+private const val MAX_SETTING_FRACTION_DIGITS = 4
 
 /**
  * A logged value in [locale]'s number style, without trailing zeros: "7", "2.5" (or
  * "2,5" in German). No digit grouping: scale values are small.
  */
-fun formatScaleValue(v: Float, locale: Locale): String = valueFormat(locale).format(v.toDouble())
+fun formatScaleValue(v: Float, locale: Locale): String =
+    valueFormat(locale, MAX_VALUE_FRACTION_DIGITS).format(v.toDouble())
+
+/**
+ * A scale's step or default value as configured. These are typed with up to four
+ * decimals (e.g. a step of 0.125), so they are not rounded like logged values.
+ */
+fun formatScaleSetting(v: Float, locale: Locale): String =
+    valueFormat(locale, MAX_SETTING_FRACTION_DIGITS).format(v.toDouble())
 
 /** A scale bound (always whole) in [locale]'s number style. */
-fun formatScaleBound(v: Int, locale: Locale): String = valueFormat(locale).format(v.toLong())
+fun formatScaleBound(v: Int, locale: Locale): String =
+    valueFormat(locale, MAX_VALUE_FRACTION_DIGITS).format(v.toLong())
 
 /** Range text that stays unambiguous with negative bounds: "1–10" but "-5 to 5". */
 fun rangeLabel(min: Int, max: Int, locale: Locale): UiText = UiText.Res(
@@ -42,10 +52,10 @@ fun formatValueWithRange(value: Float, scale: Scale, locale: Locale): UiText {
     }
 }
 
-private fun valueFormat(locale: Locale): NumberFormat =
+private fun valueFormat(locale: Locale, maxFractionDigits: Int): NumberFormat =
     NumberFormat.getNumberInstance(locale).apply {
         isGroupingUsed = false
         minimumFractionDigits = 0
-        maximumFractionDigits = MAX_VALUE_FRACTION_DIGITS
+        maximumFractionDigits = maxFractionDigits
         roundingMode = RoundingMode.HALF_UP
     }

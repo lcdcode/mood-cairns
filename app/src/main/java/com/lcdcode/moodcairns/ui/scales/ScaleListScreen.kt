@@ -40,12 +40,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.formatScaleSetting
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -86,23 +89,29 @@ fun ScaleListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Scales") },
+                title = { Text(stringResource(R.string.scale_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAdd) {
-                Icon(Icons.Default.Add, contentDescription = "Add scale")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.scale_list_add),
+                )
             }
         },
     ) { padding ->
         if (activeList.isEmpty() && state.archived.isEmpty()) {
             Box(Modifier.padding(padding).fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No scales yet.")
+                Text(stringResource(R.string.scale_list_empty))
             }
             return@Scaffold
         }
@@ -115,7 +124,7 @@ fun ScaleListScreen(
         ) {
             if (activeList.isNotEmpty()) {
                 item(key = "hdr-active") {
-                    SectionHeader("Active")
+                    SectionHeader(stringResource(R.string.scale_list_section_active))
                 }
                 items(activeList, key = { "a-${it.id}" }) { scale ->
                     ReorderableItem(reorderableState, key = "a-${scale.id}") { _ ->
@@ -137,7 +146,7 @@ fun ScaleListScreen(
             }
             if (state.archived.isNotEmpty()) {
                 item(key = "hdr-archived") {
-                    SectionHeader("Archived")
+                    SectionHeader(stringResource(R.string.scale_list_section_archived))
                 }
                 items(state.archived, key = { "z-${it.id}" }) { scale ->
                     ScaleRow(
@@ -150,6 +159,22 @@ fun ScaleListScreen(
             }
         }
     }
+}
+
+/** One-line summary under a scale's name: "1–10 · step 1 · built-in". */
+@Composable
+private fun scaleDetails(scale: Scale): String {
+    val locale = currentLocale()
+    val parts = buildList {
+        add(rangeLabel(scale.minValue, scale.maxValue, locale).asString())
+        add(stringResource(R.string.scale_list_step, formatScaleSetting(scale.step, locale)))
+        scale.defaultValue?.let {
+            add(stringResource(R.string.scale_list_default, formatScaleSetting(it, locale)))
+        }
+        if (scale.inverted) add(stringResource(R.string.scale_list_lower_better))
+        if (scale.isBuiltIn) add(stringResource(R.string.scale_list_built_in))
+    }
+    return parts.joinToString(stringResource(R.string.common_list_separator))
 }
 
 @Composable
@@ -183,24 +208,28 @@ private fun ScaleRow(
             ) {}
             Column(modifier = Modifier.weight(1f)) {
                 Text(scale.name, style = MaterialTheme.typography.bodyLarge)
-                val range = rangeLabel(scale.minValue, scale.maxValue, currentLocale()).asString()
                 Text(
-                    "$range · step ${formatStep(scale.step)}" +
-                        (scale.defaultValue?.let { " · default ${formatStep(it)}" } ?: "") +
-                        (if (scale.inverted) " · lower is better" else "") +
-                        if (scale.isBuiltIn) " · built-in" else "",
+                    scaleDetails(scale),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             TextButton(onClick = onToggleArchive) {
-                Text(if (archived) "Unarchive" else "Archive")
+                Text(
+                    stringResource(
+                        if (archived) {
+                            R.string.scale_list_unarchive
+                        } else {
+                            R.string.scale_list_archive
+                        },
+                    ),
+                )
             }
             if (dragHandleModifier != null) {
                 IconButton(modifier = dragHandleModifier, onClick = {}) {
                     Icon(
                         Icons.Default.DragHandle,
-                        contentDescription = "Reorder",
+                        contentDescription = stringResource(R.string.common_reorder),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

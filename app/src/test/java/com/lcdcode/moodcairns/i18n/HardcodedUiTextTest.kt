@@ -33,6 +33,8 @@ class HardcodedUiTextTest {
         val EXTRACTED_FILES = listOf(
             "notifications/NotificationChannels.kt",
             "notifications/PromptAlarmReceiver.kt",
+            "ui/about/AboutScreen.kt",
+            "ui/backup/BackupScreen.kt",
             "ui/charts/ChartAxis.kt",
             "ui/charts/ChartsScreen.kt",
             "ui/common/EntrySlotUi.kt",
@@ -45,8 +47,16 @@ class HardcodedUiTextTest {
             "ui/lock/MigratingScreen.kt",
             "ui/lock/NoPinWarningDialog.kt",
             "ui/lock/SetPinScreen.kt",
+            "ui/scales/ScaleEditScreen.kt",
+            "ui/scales/ScaleListScreen.kt",
+            "ui/scales/ScaleWarnings.kt",
             "ui/settings/ChangePinScreen.kt",
+            "ui/settings/PromptWindowEditScreen.kt",
             "ui/settings/SettingsScreen.kt",
+            "ui/tags/TagCategoryUi.kt",
+            "ui/tags/TagEditScreen.kt",
+            "ui/tags/TagListScreen.kt",
+            "ui/tags/TagWarnings.kt",
             "widget/LogMoodWidget.kt",
         )
 
