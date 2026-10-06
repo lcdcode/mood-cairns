@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -288,7 +290,7 @@ private fun PromptWindowRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun LockTimeoutSection(selectedMs: Long, onSelect: (Long) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -296,7 +298,7 @@ private fun LockTimeoutSection(selectedMs: Long, onSelect: (Long) -> Unit) {
             stringResource(R.string.settings_auto_lock_label),
             style = MaterialTheme.typography.labelMedium,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             LOCK_TIMEOUT_OPTIONS_MS.forEach { ms ->
                 FilterChip(
                     selected = ms == selectedMs,
