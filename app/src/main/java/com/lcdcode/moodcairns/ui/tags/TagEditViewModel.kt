@@ -7,6 +7,7 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.data.repo.TagRepository
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,11 @@ import javax.inject.Inject
 data class TagEditUiState(
     val id: Long = 0,
     val name: String = "",
+    /**
+     * True while a built-in tag's name is untouched: the screen shows its translation
+     * but [name] keeps the stored English name, so the tag stays recognized as built-in.
+     */
+    val nameIsDefault: Boolean = false,
     val category: TagCategory = TagCategory.PLACE,
     val sortOrder: Int = 0,
     val loaded: Boolean = false,
@@ -54,6 +60,7 @@ class TagEditViewModel @Inject constructor(
                         it.copy(
                             id = existing.id,
                             name = existing.name,
+                            nameIsDefault = SeedNames.tagRes(existing.name) != null,
                             category = existing.category,
                             sortOrder = existing.sortOrder,
                             loaded = true,
@@ -71,7 +78,8 @@ class TagEditViewModel @Inject constructor(
         }
     }
 
-    fun setName(v: String) = _state.update { it.copy(name = v, error = null) }
+    fun setName(v: String) =
+        _state.update { it.copy(name = v, nameIsDefault = false, error = null) }
     fun setCategory(c: TagCategory) = _state.update { it.copy(category = c, error = null) }
 
     fun save() {

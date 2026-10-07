@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.asString
 import androidx.compose.material3.Surface
 import com.lcdcode.moodcairns.ui.common.displayNameRes
@@ -57,6 +58,9 @@ fun PromptWindowEditScreen(
     var showStartPicker by remember { mutableStateOf(false) }
     var showEndPicker by remember { mutableStateOf(false) }
     val timeFmt = rememberSkeletonDateFormat("jm")
+    val shownLabel = state.label.takeIf { !state.labelIsDefault }
+        ?: SeedNames.windowRes(state.label)?.let { stringResource(it) }
+        ?: state.label
 
     Scaffold(
         topBar = {
@@ -99,7 +103,7 @@ fun PromptWindowEditScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedTextField(
-                value = state.label,
+                value = shownLabel,
                 onValueChange = viewModel::setLabel,
                 label = { Text(stringResource(R.string.window_edit_label_label)) },
                 singleLine = true,

@@ -53,6 +53,7 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.ui.common.UiText
 import com.lcdcode.moodcairns.ui.common.asString
+import com.lcdcode.moodcairns.ui.common.displayLabel
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 
@@ -281,7 +282,7 @@ private fun PromptWindowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(window.label, style = MaterialTheme.typography.bodyLarge)
+                Text(window.displayLabel(), style = MaterialTheme.typography.bodyLarge)
                 Text(
                     stringResource(
                         R.string.settings_window_summary,

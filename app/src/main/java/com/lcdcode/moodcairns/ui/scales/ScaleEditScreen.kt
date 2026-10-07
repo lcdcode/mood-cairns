@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.asString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +60,9 @@ fun ScaleEditScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
+    // Built-in names cannot be edited, so showing the translation is display only.
+    val shownName = SeedNames.scaleRes(state.name, state.isBuiltIn)?.let { stringResource(it) }
+        ?: state.name
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
 
     Scaffold(
@@ -97,7 +101,7 @@ fun ScaleEditScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedTextField(
-                value = state.name,
+                value = shownName,
                 onValueChange = viewModel::setName,
                 label = { Text(stringResource(R.string.common_name_label)) },
                 singleLine = true,
@@ -230,7 +234,7 @@ fun ScaleEditScreen(
         AlertDialog(
             onDismissRequest = viewModel::dismissInvertDataPrompt,
             title = { Text(stringResource(R.string.scale_edit_remap_title)) },
-            text = { Text(remapWarning(state.name, prompt.entryCount).asString()) },
+            text = { Text(remapWarning(shownName, prompt.entryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = { viewModel.confirmSave(remapData = true) }) {
                     Text(stringResource(R.string.scale_edit_remap_confirm))
@@ -248,7 +252,7 @@ fun ScaleEditScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text(stringResource(R.string.scale_edit_delete_title)) },
-            text = { Text(deleteWarning(state.name, state.affectedEntryCount).asString()) },
+            text = { Text(deleteWarning(shownName, state.affectedEntryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false

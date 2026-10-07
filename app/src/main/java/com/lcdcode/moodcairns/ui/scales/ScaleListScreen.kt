@@ -48,6 +48,7 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayName
 import com.lcdcode.moodcairns.ui.common.formatScaleSetting
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import sh.calvin.reorderable.ReorderableItem
@@ -207,7 +208,7 @@ private fun ScaleRow(
                 modifier = Modifier.size(16.dp),
             ) {}
             Column(modifier = Modifier.weight(1f)) {
-                Text(scale.name, style = MaterialTheme.typography.bodyLarge)
+                Text(scale.displayName(), style = MaterialTheme.typography.bodyLarge)
                 Text(
                     scaleDetails(scale),
                     style = MaterialTheme.typography.bodySmall,

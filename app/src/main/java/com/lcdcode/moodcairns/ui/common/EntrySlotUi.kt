@@ -17,7 +17,7 @@ fun slotLabel(
     promptWindowId: Long?,
     windows: Map<Long, PromptWindow>,
 ): String =
-    promptWindowId?.let { windows[it]?.label } ?: stringResource(slot.displayNameRes())
+    promptWindowId?.let { windows[it]?.displayLabel() } ?: stringResource(slot.displayNameRes())
 
 @Composable
 fun SlotChip(label: String) {

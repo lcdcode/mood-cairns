@@ -60,6 +60,19 @@ class ChartAxisTest {
     }
 
     @Test
+    fun builtInScale_captionUsesItsTranslatedName() {
+        val happiness =
+            Scale(name = "Happiness", minValue = 1, maxValue = 10, colorArgb = 0, isBuiltIn = true)
+        assertEquals(
+            UiText.Res(
+                R.string.charts_axis_caption_single,
+                listOf(UiText.Res(R.string.seed_scale_happiness), rangeLabel(1, 10, en)),
+            ),
+            yAxisCaption(listOf(happiness), absoluteY = false, en),
+        )
+    }
+
+    @Test
     fun multipleScales_captionWarnsTheAxisIsShared() {
         val scales = listOf(scale("Mood", 1, 10), scale("Energy", -5, 5))
         assertEquals(

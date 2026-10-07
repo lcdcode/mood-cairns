@@ -83,6 +83,55 @@
     <string name="enum_prompt_slot_manual">Manual</string>
     <string name="enum_prompt_slot_custom">Custom</string>
 
+    <!-- Names of the built-in scales, tags, and prompt windows. Users can rename tags and
+         windows; these strings are only shown while they keep the default name. Keep
+         them short: they appear on chips and chart legends. -->
+    <string name="seed_scale_happiness">Happiness</string>
+    <string name="seed_scale_anxiety">Anxiety</string>
+    <string name="seed_scale_stress">Stress</string>
+    <string name="seed_scale_boredom">Boredom</string>
+    <string name="seed_scale_pain">Pain</string>
+    <!-- Tags, category Places -->
+    <string name="seed_tag_home">Home</string>
+    <string name="seed_tag_work">Work</string>
+    <string name="seed_tag_school">School</string>
+    <string name="seed_tag_commute">Commute</string>
+    <string name="seed_tag_outdoors">Outdoors</string>
+    <string name="seed_tag_travel">Travel</string>
+    <!-- Tags, category People -->
+    <string name="seed_tag_family">Family</string>
+    <string name="seed_tag_friends">Friends</string>
+    <!-- A romantic partner. -->
+    <string name="seed_tag_partner">Partner</string>
+    <string name="seed_tag_coworkers">Coworkers</string>
+    <string name="seed_tag_alone">Alone</string>
+    <!-- Tags, category Activities -->
+    <string name="seed_tag_exercise">Exercise</string>
+    <string name="seed_tag_socializing">Socializing</string>
+    <string name="seed_tag_reading">Reading</string>
+    <string name="seed_tag_gaming">Gaming</string>
+    <string name="seed_tag_chores">Chores</string>
+    <!-- Resting or relaxing, as an activity. -->
+    <string name="seed_tag_rest">Rest</string>
+    <!-- Tags, category Moods: feelings, ordered from most positive to most negative -->
+    <string name="seed_tag_joy">Joy</string>
+    <string name="seed_tag_excited">Excited</string>
+    <string name="seed_tag_grateful">Grateful</string>
+    <!-- The feeling of being contented or satisfied (adjective), not "contents". -->
+    <string name="seed_tag_content">Content</string>
+    <string name="seed_tag_calm">Calm</string>
+    <!-- The feeling of being surprised. -->
+    <string name="seed_tag_surprise">Surprise</string>
+    <string name="seed_tag_frustrated">Frustrated</string>
+    <string name="seed_tag_lonely">Lonely</string>
+    <string name="seed_tag_sadness">Sadness</string>
+    <string name="seed_tag_fear">Fear</string>
+    <string name="seed_tag_anger">Anger</string>
+    <string name="seed_tag_disgust">Disgust</string>
+    <!-- Default prompt window names; also the title of their reminder notification. -->
+    <string name="seed_window_morning">Morning</string>
+    <string name="seed_window_evening">Evening</string>
+
     <!-- Tag category names, shown as section headings over groups of tags. -->
     <string name="enum_tag_category_place">Places</string>
     <string name="enum_tag_category_person">People</string>

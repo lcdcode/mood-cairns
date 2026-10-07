@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.ui.charts
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.UiText
+import com.lcdcode.moodcairns.ui.common.displayNameArg
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import java.text.NumberFormat
@@ -36,7 +37,7 @@ internal fun yAxisCaption(scales: List<Scale>, absoluteY: Boolean, locale: Local
         val s = scales.first()
         UiText.Res(
             R.string.charts_axis_caption_single,
-            listOf(s.name, rangeLabel(s.minValue, s.maxValue, locale)),
+            listOf(s.displayNameArg(), rangeLabel(s.minValue, s.maxValue, locale)),
         )
     }
     else -> UiText.Plural(R.plurals.charts_axis_caption_shared, scales.size)

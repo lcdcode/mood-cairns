@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.asString
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +52,9 @@ fun TagEditScreen(
 
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
+    val shownName = state.name.takeIf { !state.nameIsDefault }
+        ?: SeedNames.tagRes(state.name)?.let { stringResource(it) }
+        ?: state.name
 
     Scaffold(
         topBar = {
@@ -118,7 +122,7 @@ fun TagEditScreen(
             }
 
             OutlinedTextField(
-                value = state.name,
+                value = shownName,
                 onValueChange = viewModel::setName,
                 label = { Text(stringResource(R.string.common_name_label)) },
                 singleLine = true,
@@ -171,7 +175,7 @@ fun TagEditScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text(stringResource(R.string.tag_edit_delete_title)) },
-            text = { Text(tagDeleteWarning(state.name, state.affectedEntryCount).asString()) },
+            text = { Text(tagDeleteWarning(shownName, state.affectedEntryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false

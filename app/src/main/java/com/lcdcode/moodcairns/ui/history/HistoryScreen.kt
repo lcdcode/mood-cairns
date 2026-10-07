@@ -72,6 +72,7 @@ import com.lcdcode.moodcairns.ui.common.SlotChip
 import com.lcdcode.moodcairns.ui.common.allOrClearLabel
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayName
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
@@ -312,7 +313,7 @@ private fun EntryCard(
                         modifier = Modifier.size(10.dp),
                     ) {}
                     Spacer(Modifier.width(8.dp))
-                    Text(scale.name, modifier = Modifier.weight(1f))
+                    Text(scale.displayName(), modifier = Modifier.weight(1f))
                     Text(formatValueWithRange(v.value, scale, locale).asString())
                 }
             }
@@ -321,7 +322,7 @@ private fun EntryCard(
             }
             if (entry.tags.isNotEmpty()) {
                 Text(
-                    entry.tags.joinToString(listSeparator) { it.name },
+                    entry.tags.map { it.displayName() }.joinToString(listSeparator),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -486,7 +487,7 @@ private fun FilterBar(
                         FilterChip(
                             selected = tag.id in selectedTagIds,
                             onClick = { onTagToggle(tag.id) },
-                            label = { Text(tag.name) },
+                            label = { Text(tag.displayName()) },
                         )
                     }
                 }

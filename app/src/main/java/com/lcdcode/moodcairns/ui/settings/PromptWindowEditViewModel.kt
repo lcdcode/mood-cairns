@@ -7,6 +7,7 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.work.PromptScheduler
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,11 @@ import javax.inject.Inject
 data class PromptWindowEditUiState(
     val id: Long = 0,
     val label: String = "",
+    /**
+     * True while a built-in window's label is untouched: the screen shows its translation
+     * but [label] keeps the stored English label, so the window stays recognized.
+     */
+    val labelIsDefault: Boolean = false,
     val slot: PromptSlot = PromptSlot.CUSTOM,
     val startHour: Int = 8,
     val startMinute: Int = 0,
@@ -54,6 +60,7 @@ class PromptWindowEditViewModel @Inject constructor(
                         it.copy(
                             id = w.id,
                             label = w.label,
+                            labelIsDefault = SeedNames.windowRes(w.label) != null,
                             slot = w.slot,
                             startHour = w.startTime.hour,
                             startMinute = w.startTime.minute,
@@ -70,7 +77,8 @@ class PromptWindowEditViewModel @Inject constructor(
         }
     }
 
-    fun setLabel(v: String) = _state.update { it.copy(label = v, error = null) }
+    fun setLabel(v: String) =
+        _state.update { it.copy(label = v, labelIsDefault = false, error = null) }
     fun setSlot(v: PromptSlot) = _state.update { it.copy(slot = v) }
     fun setStart(h: Int, m: Int) = _state.update { it.copy(startHour = h, startMinute = m, error = null) }
     fun setEnd(h: Int, m: Int) = _state.update { it.copy(endHour = h, endMinute = m, error = null) }

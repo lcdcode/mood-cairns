@@ -70,6 +70,8 @@ import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayLabel
+import com.lcdcode.moodcairns.ui.common.displayName
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
@@ -243,7 +245,7 @@ private fun TagPicker(
                     FilterChip(
                         selected = tag.id in selectedTagIds,
                         onClick = { onToggle(tag.id) },
-                        label = { Text(tag.name) },
+                        label = { Text(tag.displayName()) },
                     )
                 }
             }
@@ -285,7 +287,7 @@ private fun PromptSlotRow(
                     FilterChip(
                         selected = selectedWindowId == window.id,
                         onClick = { onWindow(window) },
-                        label = { Text(window.label) },
+                        label = { Text(window.displayLabel()) },
                     )
                 }
                 FilterChip(
@@ -447,7 +449,7 @@ private fun ScaleSlider(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(scale.name, fontWeight = FontWeight.Medium)
+            Text(scale.displayName(), fontWeight = FontWeight.Medium)
             Text(formatValueWithRange(value, scale, locale).asString())
         }
         // An inverse scale runs high-to-low, so "better" is the same gesture
@@ -458,10 +460,11 @@ private fun ScaleSlider(
             LayoutDirection.Ltr -> LayoutDirection.Rtl
             LayoutDirection.Rtl -> LayoutDirection.Ltr
         }
+        val scaleName = scale.displayName()
         val baseDescription = if (scale.minValue < 0) {
             stringResource(
                 R.string.entry_slider_description_range,
-                scale.name,
+                scaleName,
                 display,
                 scale.minValue,
                 scale.maxValue,
@@ -469,7 +472,7 @@ private fun ScaleSlider(
         } else {
             stringResource(
                 R.string.entry_slider_description_out_of,
-                scale.name,
+                scaleName,
                 display,
                 scale.maxValue,
             )

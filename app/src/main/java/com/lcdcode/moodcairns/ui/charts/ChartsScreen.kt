@@ -66,6 +66,8 @@ import com.lcdcode.moodcairns.ui.common.SlotChip
 import com.lcdcode.moodcairns.ui.common.allOrClearLabel
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayLabel
+import com.lcdcode.moodcairns.ui.common.displayName
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
@@ -325,7 +327,7 @@ private fun SlotFilterRow(
                     FilterChip(
                         selected = key !in excluded,
                         onClick = { onToggle(key) },
-                        label = { Text(window.label) },
+                        label = { Text(window.displayLabel()) },
                     )
                 }
                 FilterChip(
@@ -404,7 +406,7 @@ private fun ScaleToggleRow(
                     FilterChip(
                         selected = scale.id in selected,
                         onClick = { onToggle(scale.id) },
-                        label = { Text(scale.name) },
+                        label = { Text(scale.displayName()) },
                         leadingIcon = {
                             Surface(
                                 shape = CircleShape,
@@ -481,7 +483,7 @@ private fun TagFilterRow(
                     FilterChip(
                         selected = tag.id in selected,
                         onClick = { onToggle(tag.id) },
-                        label = { Text(tag.name) },
+                        label = { Text(tag.displayName()) },
                     )
                 }
             }
@@ -686,7 +688,7 @@ private fun ChartArea(
                             } else {
                                 R.string.charts_legend
                             },
-                            s.scale.name,
+                            s.scale.displayName(),
                             rangeLabel(s.scale.minValue, s.scale.maxValue, locale).asString(),
                         ),
                         style = MaterialTheme.typography.bodySmall,
@@ -769,7 +771,7 @@ private fun TappedEntry(
                 Text(
                     stringResource(
                         R.string.charts_point_value,
-                        scale.name,
+                        scale.displayName(),
                         formatScaleValue(v.value, locale),
                     ),
                     style = MaterialTheme.typography.bodyMedium,
@@ -781,7 +783,7 @@ private fun TappedEntry(
         }
         if (entry.tags.isNotEmpty()) {
             Text(
-                entry.tags.orderedByCategory().joinToString(listSeparator) { it.name },
+                entry.tags.orderedByCategory().map { it.displayName() }.joinToString(listSeparator),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

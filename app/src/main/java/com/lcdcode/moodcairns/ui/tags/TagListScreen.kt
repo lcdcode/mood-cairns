@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.displayName
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -168,7 +169,7 @@ private fun TagRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                tag.name,
+                tag.displayName(),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
