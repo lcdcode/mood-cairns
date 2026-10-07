@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.settings
 
+import com.lcdcode.moodcairns.i18n.TestResources
 import java.io.File
 import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
@@ -27,6 +28,35 @@ class SupportedLocalesTest {
             localeConfigTags("main").toSet() + PSEUDO_LOCALE,
             localeConfigTags("debug").toSet(),
         )
+    }
+
+    /**
+     * A strings file whose language is missing from locale_config.xml is silently
+     * stripped from the APK by the build's resource filter, so it must fail here.
+     */
+    @Test
+    fun translationFolders_matchShippedLanguages() {
+        val folders = TestResources.resDir
+            .listFiles { f -> f.isDirectory && f.name.startsWith("values-") }.orEmpty()
+            .filter { File(it, "strings.xml").exists() }
+            .map { it.name.removePrefix("values-") }
+            .toSet()
+        val expected = SupportedLocales.tags
+            .filter { it != SOURCE_LANGUAGE }
+            .map(::toResourceQualifier)
+            .toSet()
+        assertEquals(
+            "values-*/strings.xml folders must match the non-English SupportedLocales.tags",
+            expected,
+            folders,
+        )
+    }
+
+    @Test
+    fun resourceQualifiers_followAndroidNaming() {
+        assertEquals("de", toResourceQualifier("de"))
+        assertEquals("pt-rBR", toResourceQualifier("pt-BR"))
+        assertEquals("b+zh+Hans", toResourceQualifier("zh-Hans"))
     }
 
     @Test
@@ -90,8 +120,16 @@ class SupportedLocalesTest {
         }
     }
 
+    /** Same conversion as toResourceQualifier in app/build.gradle.kts. */
+    private fun toResourceQualifier(tag: String): String =
+        if (SIMPLE_TAG.matches(tag)) tag.replace("-", "-r") else "b+" + tag.replace("-", "+")
+
     private companion object {
         const val ANDROID_NS = "http://schemas.android.com/apk/res/android"
         const val PSEUDO_LOCALE = "en-XA"
+
+        /** English lives in plain values/, with no qualifier. */
+        const val SOURCE_LANGUAGE = "en"
+        val SIMPLE_TAG = Regex("^[a-z]{2,3}(-[A-Z]{2})?$")
     }
 }

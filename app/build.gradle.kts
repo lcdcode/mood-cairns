@@ -4,6 +4,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.register
 import org.w3c.dom.Element
@@ -125,6 +126,12 @@ android {
         buildConfig = true
     }
 
+    lint {
+        // Partial translations are expected: untranslated strings fall back to
+        // English one at a time (see TRANSLATING.md). ExtraTranslation stays an error.
+        warning += "MissingTranslation"
+    }
+
     // In-app language switching needs every language installed. Without this, an App
     // Bundle install would only get the device's languages. No effect on APK builds.
     bundle {
@@ -136,6 +143,15 @@ android {
             "/META-INF/{AL2.0,LGPL2.1}",
             "/META-INF/DEPENDENCIES",
         )
+    }
+}
+
+// Several unit tests read these files from disk (string resources, locale configs,
+// exported Room schemas). Declare them as inputs, or Gradle reuses a cached result
+// after, say, a new translation is added.
+tasks.withType<Test>().configureEach {
+    listOf("src/main/res", "src/debug/res", "schemas").forEach { dir ->
+        inputs.dir(dir).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName(dir)
     }
 }
 
