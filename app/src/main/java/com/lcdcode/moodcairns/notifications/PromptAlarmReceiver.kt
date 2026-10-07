@@ -7,13 +7,20 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.lcdcode.moodcairns.MainActivity
+import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.settings.withAppLocale
+import com.lcdcode.moodcairns.ui.common.windowDisplayLabel
 
 class PromptAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val slot = intent.getStringExtra(EXTRA_SLOT) ?: return
         val windowId = intent.getLongExtra(EXTRA_WINDOW_ID, -1L)
-        val label = intent.getStringExtra(EXTRA_LABEL) ?: "Time to check in"
+        val localized = context.withAppLocale()
+        // Resolved here, not when scheduled, so a built-in window's title follows the
+        // language at the time the notification is shown.
+        val label = intent.getStringExtra(EXTRA_LABEL)?.let { windowDisplayLabel(localized, it) }
+            ?: localized.getString(R.string.notif_prompt_default_title)
 
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -31,7 +38,7 @@ class PromptAlarmReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, NotificationChannels.PROMPTS)
             .setSmallIcon(android.R.drawable.ic_menu_edit)
             .setContentTitle(label)
-            .setContentText("Log how you're feeling")
+            .setContentText(localized.getString(R.string.notif_prompt_text))
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

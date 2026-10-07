@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
 import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
@@ -12,6 +13,7 @@ import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +27,7 @@ import javax.inject.Inject
 data class BackupUiState(
     val files: List<BackupFileInfo> = emptyList(),
     val busy: Boolean = false,
-    val message: String? = null,
+    val message: UiText? = null,
     val pinPrompt: PinPrompt? = null,
     val allowUnsafeExports: Boolean = false,
 )
@@ -69,7 +71,9 @@ class BackupViewModel @Inject constructor(
      */
     fun requestCsvExport() {
         if (!lockRepo.allowUnsafeExports) {
-            _ui.update { it.copy(message = "Unsafe exports are disabled") }
+            _ui.update {
+                it.copy(message = UiText.Res(R.string.backup_error_unsafe_exports_disabled))
+            }
             return
         }
         _ui.update { it.copy(busy = true, message = null) }
@@ -113,7 +117,10 @@ class BackupViewModel @Inject constructor(
                     _ui.update {
                         it.copy(
                             pinPrompt = null,
-                            message = "Passphrase must be at least $MIN_PASSPHRASE_LEN characters",
+                            message = UiText.Plural(
+                                R.plurals.backup_error_passphrase_too_short,
+                                MIN_PASSPHRASE_LEN,
+                            ),
                         )
                     }
                     return
@@ -146,11 +153,11 @@ class BackupViewModel @Inject constructor(
                 val json = serializer.exportJson(passphrase)
                 val name = store.suggestName()
                 store.writeBackup(name, json)
-                "Exported $name"
+                UiText.Res(R.string.backup_export_success, listOf(name))
             }
         } catch (t: Throwable) {
             Log.w(TAG, "Export failed", t)
-            "Export failed: ${t.message ?: t.javaClass.simpleName}"
+            UiText.withDetail(R.string.backup_export_failed, t)
         } finally {
             passphrase.fill('\u0000')
         }
@@ -165,11 +172,11 @@ class BackupViewModel @Inject constructor(
                 val csv = csvExporter.exportCsv()
                 val name = store.suggestCsvName()
                 store.writeBackup(name, csv, BackupStore.MIME_CSV)
-                "Exported $name (unencrypted)"
+                UiText.Res(R.string.backup_export_csv_success, listOf(name))
             }
         } catch (t: Throwable) {
             Log.w(TAG, "CSV export failed", t)
-            "Export failed: ${t.message ?: t.javaClass.simpleName}"
+            UiText.withDetail(R.string.backup_export_failed, t)
         }
         _ui.update { it.copy(busy = false, message = text) }
         refresh()
@@ -180,10 +187,14 @@ class BackupViewModel @Inject constructor(
             // PBKDF2 + decrypt + bulk DB writes; keep it off the UI thread.
             val result = withContext(Dispatchers.Default) { importer.importReplace(uri, secret) }
             when (result) {
-                is ImportResult.Success ->
-                    "Imported ${result.entries} entries, ${result.scales} scales, " +
-                        "${result.tags} tags, ${result.windows} windows"
-                is ImportResult.Failure -> "Import failed: ${result.message}"
+                is ImportResult.Success -> UiText.Res(
+                    R.string.backup_import_success,
+                    listOf(result.entries, result.scales, result.tags, result.windows),
+                )
+                is ImportResult.Failure -> {
+                    Log.w(TAG, "Import failed: ${result.error}")
+                    UiText.Res(R.string.backup_import_failed, listOf(result.error.toUiText()))
+                }
             }
         } finally {
             secret.fill('\u0000')

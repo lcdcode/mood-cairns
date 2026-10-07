@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.ui.common
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 
@@ -10,13 +11,13 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
  * Human-readable label for an entry's slot: the prompt window's label when the
  * entry belongs to a still-existing window, otherwise the slot name.
  */
+@Composable
 fun slotLabel(
     slot: PromptSlot,
     promptWindowId: Long?,
     windows: Map<Long, PromptWindow>,
 ): String =
-    promptWindowId?.let { windows[it]?.label }
-        ?: slot.name.lowercase().replaceFirstChar { it.uppercase() }
+    promptWindowId?.let { windows[it]?.displayLabel() } ?: stringResource(slot.displayNameRes())
 
 @Composable
 fun SlotChip(label: String) {

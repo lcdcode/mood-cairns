@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lcdcode.moodcairns.R
 
 /**
  * Shown while [com.lcdcode.moodcairns.data.db.LegacyMigrator] is copying the
@@ -27,10 +29,12 @@ fun MigratingScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             CircularProgressIndicator()
-            Text("Upgrading data store…", style = MaterialTheme.typography.titleMedium)
             Text(
-                "Your existing entries are being moved to the encrypted database. " +
-                    "Don't close the app.",
+                stringResource(R.string.migrating_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                stringResource(R.string.migrating_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -49,6 +53,7 @@ fun BootingScreen() {
     }
 }
 
+/** [message] is a technical diagnostic and is shown untranslated. */
 @Composable
 fun MigrationFailedScreen(message: String) {
     Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
@@ -57,14 +62,13 @@ fun MigrationFailedScreen(message: String) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                "Upgrade failed",
+                stringResource(R.string.migration_failed_title),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.error,
             )
             Text(message, style = MaterialTheme.typography.bodyMedium)
             Text(
-                "Your original data is still on disk. Reopen the app to retry, or " +
-                    "uninstall and restore from a backup if the issue persists.",
+                stringResource(R.string.migration_failed_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -31,13 +31,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.displayName
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -78,10 +81,13 @@ fun TagListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Tags") },
+                title = { Text(stringResource(R.string.tag_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -97,14 +103,14 @@ fun TagListScreen(
                 val tags = lists[category].orEmpty()
                 item(key = "hdr/${category.name}") {
                     SectionHeader(
-                        text = category.displayName,
+                        text = stringResource(category.displayNameRes()),
                         onAdd = { onAdd(category) },
                     )
                 }
                 if (tags.isEmpty()) {
                     item(key = "empty/${category.name}") {
                         Text(
-                            "No tags yet.",
+                            stringResource(R.string.tag_list_empty),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -146,7 +152,7 @@ private fun SectionHeader(text: String, onAdd: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
-        TextButton(onClick = onAdd) { Text("Add") }
+        TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
 }
 
@@ -163,14 +169,14 @@ private fun TagRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                tag.name,
+                tag.displayName(),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
             IconButton(modifier = dragHandleModifier, onClick = {}) {
                 Icon(
                     Icons.Default.DragHandle,
-                    contentDescription = "Reorder",
+                    contentDescription = stringResource(R.string.common_reorder),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }

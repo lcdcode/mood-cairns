@@ -1,5 +1,8 @@
 package com.lcdcode.moodcairns.ui.lock
 
+import android.icu.text.MeasureFormat
+import android.icu.util.Measure
+import android.icu.util.MeasureUnit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +27,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.ui.common.asString
+import java.util.Locale
 
 @Composable
 fun LockScreen(
@@ -61,9 +69,12 @@ fun LockScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Locked", style = MaterialTheme.typography.headlineSmall)
             Text(
-                "Enter PIN to continue",
+                stringResource(R.string.lock_title),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Text(
+                stringResource(R.string.lock_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -71,13 +82,15 @@ fun LockScreen(
             Spacer(Modifier.height(8.dp))
 
             val lockoutMs = state.lockoutRemainingMs
-            val lockoutText = lockoutMs?.let { formatLockoutDuration(it) }
-            val supporting = lockoutText?.let { "Try again in $it" } ?: state.error
+            val locale = LocalConfiguration.current.locales[0]
+            val lockoutText = lockoutMs?.let { formatLockoutDuration(it, locale) }
+            val supporting = lockoutText?.let { stringResource(R.string.lock_try_again_in, it) }
+                ?: state.error?.asString()
 
             OutlinedTextField(
                 value = state.pin,
                 onValueChange = viewModel::onPinChanged,
-                label = { Text("PIN") },
+                label = { Text(stringResource(R.string.lock_pin_label)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
@@ -99,7 +112,13 @@ fun LockScreen(
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
-                    Text(if (lockoutText != null) "Locked ($lockoutText)" else "Unlock")
+                    Text(
+                        if (lockoutText != null) {
+                            stringResource(R.string.lock_locked_for, lockoutText)
+                        } else {
+                            stringResource(R.string.lock_unlock)
+                        },
+                    )
                 }
             }
 
@@ -111,19 +130,28 @@ fun LockScreen(
                         onFailure = {},
                         onUsePin = {},
                     )
-                }) { Text("Use biometric") }
+                }) { Text(stringResource(R.string.lock_use_biometric)) }
             }
         }
     }
 }
 
-private fun formatLockoutDuration(ms: Long): String {
-    val totalSec = ((ms + 999) / 1000).coerceAtLeast(1)
-    val minutes = totalSec / 60
-    val seconds = totalSec % 60
-    return when {
-        minutes <= 0L -> "${seconds}s"
-        seconds == 0L -> "${minutes}m"
-        else -> "${minutes}m ${seconds}s"
+/** E.g. "1m 30s" in English; ICU supplies the unit names and order for [locale]. */
+private fun formatLockoutDuration(ms: Long, locale: Locale): String {
+    val (minutes, seconds) = lockoutMinutesSeconds(ms)
+    val measures = buildList {
+        if (minutes > 0L) add(Measure(minutes, MeasureUnit.MINUTE))
+        if (seconds > 0L || minutes == 0L) add(Measure(seconds, MeasureUnit.SECOND))
     }
+    return MeasureFormat.getInstance(locale, MeasureFormat.FormatWidth.NARROW)
+        .formatMeasures(*measures.toTypedArray())
 }
+
+/** Remaining lockout as (minutes, seconds), rounded up to at least one second. */
+internal fun lockoutMinutesSeconds(ms: Long): Pair<Long, Long> {
+    val totalSec = ((ms + MS_PER_SECOND - 1) / MS_PER_SECOND).coerceAtLeast(1)
+    return totalSec / SECONDS_PER_MINUTE to totalSec % SECONDS_PER_MINUTE
+}
+
+private const val MS_PER_SECOND = 1_000L
+private const val SECONDS_PER_MINUTE = 60L

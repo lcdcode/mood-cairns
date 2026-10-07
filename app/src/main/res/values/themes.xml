@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.MoodCairns" parent="android:Theme.Material.NoActionBar" />
+    <!--
+        AppCompat parent is required because MainActivity extends AppCompatActivity
+        (for per-app language support on API 29-32). The dark, non-DayNight variant
+        matches the previous android:Theme.Material base so the pre-Compose launch
+        frame stays dark.
+    -->
+    <style name="Theme.MoodCairns" parent="Theme.AppCompat.NoActionBar" />
 </resources>

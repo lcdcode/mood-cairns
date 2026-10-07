@@ -17,7 +17,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lcdcode.moodcairns.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +33,9 @@ fun HomeScreen(
     onSettings: () -> Unit,
     onAbout: () -> Unit,
 ) {
-    Scaffold(topBar = { TopAppBar(title = { Text("Mood Cairns") }) }) { padding ->
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
+    ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -40,33 +44,33 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                "Log how you're feeling, privately.",
+                stringResource(R.string.home_tagline),
                 style = MaterialTheme.typography.bodyLarge,
             )
             Button(onClick = onLogNow, modifier = Modifier.fillMaxWidth()) {
-                Text("Log entry")
+                Text(stringResource(R.string.home_log_entry))
             }
             OutlinedButton(onClick = onHistory, modifier = Modifier.fillMaxWidth()) {
-                Text("View history")
+                Text(stringResource(R.string.home_history))
             }
             OutlinedButton(onClick = onCharts, modifier = Modifier.fillMaxWidth()) {
-                Text("Charts")
+                Text(stringResource(R.string.home_charts))
             }
             OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) {
-                Text("Backup & import")
+                Text(stringResource(R.string.home_backup))
             }
             OutlinedButton(onClick = onScales, modifier = Modifier.fillMaxWidth()) {
-                Text("Manage scales")
+                Text(stringResource(R.string.home_scales))
             }
             OutlinedButton(onClick = onTags, modifier = Modifier.fillMaxWidth()) {
-                Text("Manage tags")
+                Text(stringResource(R.string.home_tags))
             }
             OutlinedButton(onClick = onSettings, modifier = Modifier.fillMaxWidth()) {
-                Text("Settings")
+                Text(stringResource(R.string.home_settings))
             }
             Spacer(modifier = Modifier.weight(1f))
             TextButton(onClick = onAbout, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text("About")
+                Text(stringResource(R.string.home_about))
             }
         }
     }

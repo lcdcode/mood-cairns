@@ -41,10 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.ui.common.SeedNames
+import com.lcdcode.moodcairns.ui.common.asString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,15 +60,31 @@ fun ScaleEditScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
+    // Built-in names cannot be edited, so showing the translation is display only.
+    val shownName = SeedNames.scaleRes(state.name, state.isBuiltIn)?.let { stringResource(it) }
+        ?: state.name
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.id == 0L) "New scale" else "Edit scale") },
+                title = {
+                    Text(
+                        stringResource(
+                            if (state.id == 0L) {
+                                R.string.scale_edit_title_new
+                            } else {
+                                R.string.scale_edit_title_edit
+                            },
+                        ),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -81,9 +101,9 @@ fun ScaleEditScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             OutlinedTextField(
-                value = state.name,
+                value = shownName,
                 onValueChange = viewModel::setName,
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.common_name_label)) },
                 singleLine = true,
                 enabled = !state.isBuiltIn,
                 modifier = Modifier.fillMaxWidth(),
@@ -97,7 +117,7 @@ fun ScaleEditScreen(
                 OutlinedTextField(
                     value = state.minValue,
                     onValueChange = viewModel::setMin,
-                    label = { Text("Min") },
+                    label = { Text(stringResource(R.string.scale_edit_min_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.weight(1f),
@@ -105,7 +125,7 @@ fun ScaleEditScreen(
                 OutlinedTextField(
                     value = state.maxValue,
                     onValueChange = viewModel::setMax,
-                    label = { Text("Max") },
+                    label = { Text(stringResource(R.string.scale_edit_max_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.weight(1f),
@@ -113,7 +133,7 @@ fun ScaleEditScreen(
                 OutlinedTextField(
                     value = state.step,
                     onValueChange = viewModel::setStep,
-                    label = { Text("Step") },
+                    label = { Text(stringResource(R.string.scale_edit_step_label)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.weight(1f),
@@ -123,11 +143,11 @@ fun ScaleEditScreen(
             OutlinedTextField(
                 value = state.defaultValue,
                 onValueChange = viewModel::setDefault,
-                label = { Text("Default") },
+                label = { Text(stringResource(R.string.scale_edit_default_label)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 supportingText = {
-                    Text("Where the slider starts for a new entry. Blank uses the midpoint.")
+                    Text(stringResource(R.string.scale_edit_default_hint))
                 },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -138,10 +158,12 @@ fun ScaleEditScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("Lower is better", style = MaterialTheme.typography.bodyLarge)
                     Text(
-                        "Inverse scale: the slider runs high to low, and charts draw it " +
-                            "so improvement points up.",
+                        stringResource(R.string.scale_edit_lower_better),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        stringResource(R.string.scale_edit_lower_better_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -149,14 +171,17 @@ fun ScaleEditScreen(
                 Switch(checked = state.inverted, onCheckedChange = viewModel::setInverted)
             }
 
-            Text("Color", style = MaterialTheme.typography.labelLarge)
+            Text(
+                stringResource(R.string.scale_edit_color_label),
+                style = MaterialTheme.typography.labelLarge,
+            )
             ColorPalette(
                 selected = state.colorArgb,
                 onSelect = viewModel::setColor,
             )
 
             state.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error)
+                Text(it.asString(), color = MaterialTheme.colorScheme.error)
             }
 
             Button(
@@ -164,12 +189,16 @@ fun ScaleEditScreen(
                 enabled = !state.saving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (state.saving) "Saving…" else "Save")
+                Text(
+                    stringResource(
+                        if (state.saving) R.string.common_saving else R.string.common_save,
+                    ),
+                )
             }
 
             if (state.isBuiltIn) {
                 Text(
-                    "Built-in scales can't be renamed; you can still adjust the range, step, and color.",
+                    stringResource(R.string.scale_edit_built_in_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -187,7 +216,15 @@ fun ScaleEditScreen(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(if (state.deleting) "Deleting…" else "Delete scale")
+                    Text(
+                        stringResource(
+                            if (state.deleting) {
+                                R.string.common_deleting
+                            } else {
+                                R.string.scale_edit_delete
+                            },
+                        ),
+                    )
                 }
             }
         }
@@ -196,16 +233,16 @@ fun ScaleEditScreen(
     state.invertDataPrompt?.let { prompt ->
         AlertDialog(
             onDismissRequest = viewModel::dismissInvertDataPrompt,
-            title = { Text("Remap logged values?") },
-            text = { Text(remapWarning(state.name, prompt.entryCount)) },
+            title = { Text(stringResource(R.string.scale_edit_remap_title)) },
+            text = { Text(remapWarning(shownName, prompt.entryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = { viewModel.confirmSave(remapData = true) }) {
-                    Text("Remap")
+                    Text(stringResource(R.string.scale_edit_remap_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.confirmSave(remapData = false) }) {
-                    Text("Keep values")
+                    Text(stringResource(R.string.scale_edit_remap_keep))
                 }
             },
         )
@@ -214,38 +251,20 @@ fun ScaleEditScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete scale?") },
-            text = { Text(deleteWarning(state.name, state.affectedEntryCount)) },
+            title = { Text(stringResource(R.string.scale_edit_delete_title)) },
+            text = { Text(deleteWarning(shownName, state.affectedEntryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.delete()
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         )
-    }
-}
-
-private fun remapWarning(name: String, entryCount: Int): String {
-    val label = name.ifBlank { "this scale" }
-    val entries = if (entryCount == 1) "1 entry has" else "$entryCount entries have"
-    return "$entries data on \"$label\". Remapping replaces each value v with (min + max) - v " +
-        "so past entries keep their meaning under the new direction. " +
-        "Choose Keep values if you only meant to change how the scale is displayed."
-}
-
-private fun deleteWarning(name: String, affectedEntryCount: Int?): String {
-    val label = name.ifBlank { "this scale" }
-    val base = "\"$label\" and all data logged on it will be permanently deleted. " +
-        "This cannot be undone."
-    return when {
-        affectedEntryCount == null -> base
-        affectedEntryCount == 0 -> "No entries use \"$label\" yet. $base"
-        affectedEntryCount == 1 -> "1 entry has data on \"$label\". $base"
-        else -> "$affectedEntryCount entries have data on \"$label\". $base"
     }
 }
 

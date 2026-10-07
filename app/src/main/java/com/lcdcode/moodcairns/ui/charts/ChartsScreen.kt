@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui.charts
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -49,16 +50,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
+import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.ui.common.SkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.SlotChip
+import com.lcdcode.moodcairns.ui.common.allOrClearLabel
+import com.lcdcode.moodcairns.ui.common.asString
+import com.lcdcode.moodcairns.ui.common.currentLocale
+import com.lcdcode.moodcairns.ui.common.displayLabel
+import com.lcdcode.moodcairns.ui.common.displayName
+import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
+import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
 import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -81,7 +94,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,10 +109,13 @@ fun ChartsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Charts") },
+                title = { Text(stringResource(R.string.charts_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -150,12 +165,21 @@ fun ChartsScreen(
                 onClear = viewModel::clearTagFilter,
             )
 
-            val modeLabel = when (state.chartMode) {
-                ChartMode.Raw -> "raw daily values"
-                ChartMode.RollingAvg -> "7-day rolling average"
+            val summary = when (state.chartMode) {
+                ChartMode.Raw -> pluralStringResource(
+                    R.plurals.charts_summary_raw,
+                    state.entryCount,
+                    state.entryCount,
+                )
+                ChartMode.RollingAvg -> pluralStringResource(
+                    R.plurals.charts_summary_rolling,
+                    state.entryCount,
+                    state.entryCount,
+                    ROLLING_AVERAGE_DAYS,
+                )
             }
             Text(
-                "${state.entryCount} entries · $modeLabel",
+                summary,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -164,7 +188,10 @@ fun ChartsScreen(
                 onClick = { showHelp = true },
                 modifier = Modifier.align(Alignment.End),
             ) {
-                Text("Help with charts", color = MaterialTheme.colorScheme.primary)
+                Text(
+                    stringResource(R.string.charts_help_button),
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
 
             val visibleSeries = state.series.filter { it.scale.id in state.selectedScaleIds }
@@ -180,7 +207,9 @@ fun ChartsScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        if (!state.loaded) "Loading…" else "No data in this range.",
+                        stringResource(
+                            if (!state.loaded) R.string.common_loading else R.string.charts_no_data,
+                        ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -219,17 +248,17 @@ fun ChartsScreen(
 
 @Composable
 private fun RangeRow(start: LocalDate, end: LocalDate, onClick: () -> Unit) {
-    val fmt = remember { DateTimeFormatter.ofPattern("d MMM yyyy") }
+    val fmt = rememberSkeletonDateFormat("yMMMd")
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text("Date range", style = MaterialTheme.typography.labelMedium)
-            Text("${start.format(fmt)} – ${end.format(fmt)}")
+            SectionLabel(R.string.charts_date_range_label)
+            Text(stringResource(R.string.common_date_range, fmt.format(start), fmt.format(end)))
         }
-        OutlinedButton(onClick = onClick) { Text("Change") }
+        OutlinedButton(onClick = onClick) { Text(stringResource(R.string.charts_change_range)) }
     }
 }
 
@@ -237,7 +266,7 @@ private fun RangeRow(start: LocalDate, end: LocalDate, onClick: () -> Unit) {
 @Composable
 private fun ChartModeRow(mode: ChartMode, onSelect: (ChartMode) -> Unit) {
     Column {
-        Text("Series", style = MaterialTheme.typography.labelMedium)
+        SectionLabel(R.string.charts_series_label)
         Spacer(Modifier.height(4.dp))
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             val options = ChartMode.values()
@@ -247,10 +276,7 @@ private fun ChartModeRow(mode: ChartMode, onSelect: (ChartMode) -> Unit) {
                     onClick = { onSelect(m) },
                     shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 ) {
-                    Text(when (m) {
-                        ChartMode.Raw -> "Raw"
-                        ChartMode.RollingAvg -> "7-day avg"
-                    })
+                    Text(chartModeLabel(m))
                 }
             }
         }
@@ -261,7 +287,7 @@ private fun ChartModeRow(mode: ChartMode, onSelect: (ChartMode) -> Unit) {
 @Composable
 private fun YAxisModeRow(absolute: Boolean, onToggle: (Boolean) -> Unit) {
     Column {
-        Text("Y axis", style = MaterialTheme.typography.labelMedium)
+        SectionLabel(R.string.charts_y_axis_label)
         Spacer(Modifier.height(4.dp))
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             val options = listOf(false, true)
@@ -271,7 +297,7 @@ private fun YAxisModeRow(absolute: Boolean, onToggle: (Boolean) -> Unit) {
                     onClick = { onToggle(isAbs) },
                     shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 ) {
-                    Text(if (isAbs) "Absolute" else "Auto-fit")
+                    Text(yAxisModeLabel(isAbs))
                 }
             }
         }
@@ -289,7 +315,7 @@ private fun SlotFilterRow(
     val scrollState = rememberScrollState()
     val surface = MaterialTheme.colorScheme.surface
     Column {
-        Text("Prompt slots", style = MaterialTheme.typography.labelMedium)
+        SectionLabel(R.string.charts_prompt_slots_label)
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -301,24 +327,24 @@ private fun SlotFilterRow(
                     FilterChip(
                         selected = key !in excluded,
                         onClick = { onToggle(key) },
-                        label = { Text(window.label) },
+                        label = { Text(window.displayLabel()) },
                     )
                 }
                 FilterChip(
                     selected = SlotKey.Manual !in excluded,
                     onClick = { onToggle(SlotKey.Manual) },
-                    label = { Text("Manual") },
+                    label = { Text(stringResource(PromptSlot.MANUAL.displayNameRes())) },
                 )
                 FilterChip(
                     selected = SlotKey.Custom !in excluded,
                     onClick = { onToggle(SlotKey.Custom) },
-                    label = { Text("Custom") },
+                    label = { Text(stringResource(PromptSlot.CUSTOM.displayNameRes())) },
                 )
                 if (showOther) {
                     FilterChip(
                         selected = SlotKey.Other !in excluded,
                         onClick = { onToggle(SlotKey.Other) },
-                        label = { Text("Other") },
+                        label = { Text(stringResource(R.string.charts_slot_other)) },
                     )
                 }
             }
@@ -369,7 +395,7 @@ private fun ScaleToggleRow(
     val scrollState = rememberScrollState()
     val surface = MaterialTheme.colorScheme.surface
     Column {
-        Text("Scales", style = MaterialTheme.typography.labelMedium)
+        SectionLabel(R.string.charts_scales_label)
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -380,7 +406,7 @@ private fun ScaleToggleRow(
                     FilterChip(
                         selected = scale.id in selected,
                         onClick = { onToggle(scale.id) },
-                        label = { Text(scale.name) },
+                        label = { Text(scale.displayName()) },
                         leadingIcon = {
                             Surface(
                                 shape = CircleShape,
@@ -440,7 +466,7 @@ private fun TagFilterRow(
     val scrollState = rememberScrollState()
     val surface = MaterialTheme.colorScheme.surface
     Column {
-        Text("Tags", style = MaterialTheme.typography.labelMedium)
+        SectionLabel(R.string.charts_tags_label)
         Spacer(Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -451,13 +477,13 @@ private fun TagFilterRow(
                 FilterChip(
                     selected = noTagsSelected,
                     onClick = onClear,
-                    label = { Text(if (noTagsSelected) "All" else "Clear") },
+                    label = { Text(allOrClearLabel(noTagsSelected)) },
                 )
                 tags.orderedByCategory().forEach { tag ->
                     FilterChip(
                         selected = tag.id in selected,
                         onClick = { onToggle(tag.id) },
-                        label = { Text(tag.name) },
+                        label = { Text(tag.displayName()) },
                     )
                 }
             }
@@ -556,15 +582,16 @@ private fun ChartArea(
 
     var tappedDay by remember { mutableStateOf<Int?>(null) }
 
-    val dateLabelFormatter = remember(startDate) {
-        val fmt = DateTimeFormatter.ofPattern("d MMM")
+    val locale = currentLocale()
+    val axisDateFormat = rememberSkeletonDateFormat("MMMd")
+    val dateLabelFormatter = remember(startDate, axisDateFormat) {
         CartesianValueFormatter { _, x, _ ->
-            startDate.plusDays(x.toLong().coerceAtLeast(0)).format(fmt)
+            axisDateFormat.format(startDate.plusDays(x.toLong().coerceAtLeast(0)))
         }
     }
 
-    val valueLabelFormatter = remember(absoluteY) {
-        CartesianValueFormatter { _, y, _ -> yAxisLabel(y, absoluteY) }
+    val valueLabelFormatter = remember(absoluteY, locale) {
+        CartesianValueFormatter { _, y, _ -> yAxisLabel(y, absoluteY, locale) }
     }
 
     // Vico's marker pipeline handles touch in chart-data coordinates, so the
@@ -623,7 +650,7 @@ private fun ChartArea(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            yAxisCaption(nonEmpty.map { it.scale }, absoluteY),
+            yAxisCaption(nonEmpty.map { it.scale }, absoluteY, locale).asString(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -655,8 +682,15 @@ private fun ChartArea(
                         modifier = Modifier.size(12.dp),
                     ) {}
                     Text(
-                        "${s.scale.name}  (${rangeLabel(s.scale.minValue, s.scale.maxValue)}" +
-                            (if (s.scale.inverted) ", lower is better" else "") + ")",
+                        stringResource(
+                            if (s.scale.inverted) {
+                                R.string.charts_legend_lower_better
+                            } else {
+                                R.string.charts_legend
+                            },
+                            s.scale.displayName(),
+                            rangeLabel(s.scale.minValue, s.scale.maxValue, locale).asString(),
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -673,8 +707,8 @@ private fun TappedPointCard(
     windows: Map<Long, PromptWindow>,
     onDismiss: () -> Unit,
 ) {
-    val dateFmt = remember { DateTimeFormatter.ofPattern("EEE, d MMM yyyy") }
-    val timeFmt = remember { DateTimeFormatter.ofPattern("HH:mm") }
+    val dateFmt = rememberSkeletonDateFormat("yMMMEd")
+    val timeFmt = rememberSkeletonDateFormat("jm")
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
@@ -682,15 +716,15 @@ private fun TappedPointCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    date.format(dateFmt),
+                    dateFmt.format(date),
                     style = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = onDismiss) { Text("Close") }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
             }
             if (entries.isEmpty()) {
                 Text(
-                    "No entries on this day.",
+                    stringResource(R.string.charts_no_entries_day),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -709,9 +743,11 @@ private fun TappedEntry(
     entry: EntryWithValues,
     scales: Map<Long, Scale>,
     windows: Map<Long, PromptWindow>,
-    timeFmt: DateTimeFormatter,
+    timeFmt: SkeletonDateFormat,
 ) {
+    val locale = currentLocale()
     val time = entry.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalTime()
+    val listSeparator = stringResource(R.string.common_list_separator)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -733,7 +769,11 @@ private fun TappedEntry(
                     modifier = Modifier.size(10.dp),
                 ) {}
                 Text(
-                    "${scale.name}: ${formatScaleValue(v.value)}",
+                    stringResource(
+                        R.string.charts_point_value,
+                        scale.displayName(),
+                        formatScaleValue(v.value, locale),
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -743,7 +783,7 @@ private fun TappedEntry(
         }
         if (entry.tags.isNotEmpty()) {
             Text(
-                entry.tags.orderedByCategory().joinToString(" · ") { it.name },
+                entry.tags.orderedByCategory().map { it.displayName() }.joinToString(listSeparator),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -755,58 +795,62 @@ private fun TappedEntry(
 private fun ChartsHelpDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Reading the charts") },
+        title = { Text(stringResource(R.string.charts_help_title)) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    "Two toggles change how your numbers are drawn. Nothing you pick here " +
-                        "changes your data - only how the chart looks.",
+                    stringResource(R.string.charts_help_intro),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
-                HelpSection("Series: Raw vs 7-day avg")
+                val raw = chartModeLabel(ChartMode.Raw)
+                val rolling = chartModeLabel(ChartMode.RollingAvg)
+                HelpSection(stringResource(R.string.charts_help_series_title, raw, rolling))
+                HelpEntry(raw, stringResource(R.string.charts_help_raw_body))
                 HelpEntry(
-                    "Raw",
-                    "Plots each day exactly as you logged it. Use it to see precise " +
-                        "day-to-day changes - though it can look jumpy.",
-                )
-                HelpEntry(
-                    "7-day avg",
-                    "Replaces each day with the average of it and the surrounding week. " +
-                        "This smooths out one-off spikes so the overall trend - whether " +
-                        "your moods are drifting up or down - is easier to see.",
+                    rolling,
+                    pluralStringResource(
+                        R.plurals.charts_help_rolling_body,
+                        ROLLING_AVERAGE_DAYS,
+                        ROLLING_AVERAGE_DAYS,
+                    ),
                 )
 
-                HelpSection("Y axis: Auto-fit vs Absolute")
-                HelpEntry(
-                    "Auto-fit",
-                    "Zooms the vertical axis to just the range your data actually covers. " +
-                        "Small movements become easy to see because the chart fills the " +
-                        "space - but the line isn't measured against the scale's full range. " +
-                        "The labels down the left are your logged values; when more than one " +
-                        "scale is plotted they all share that one axis.",
-                )
-                HelpEntry(
-                    "Absolute",
-                    "Shows each line against its scale's full min-to-max range. Movements " +
-                        "look smaller, but different scales line up, so you can " +
-                        "compare one against another on the same chart. Scales " +
-                        "marked \"lower is better\" are drawn flipped here, so better " +
-                        "always points up. The labels down the left read as percentages " +
-                        "because each line is measured against its own range: 100% is the " +
-                        "top of that range, or the bottom for a scale marked \"lower is " +
-                        "better\".",
-                )
+                val autoFit = yAxisModeLabel(absolute = false)
+                val absolute = yAxisModeLabel(absolute = true)
+                HelpSection(stringResource(R.string.charts_help_axis_title, autoFit, absolute))
+                HelpEntry(autoFit, stringResource(R.string.charts_help_autofit_body))
+                HelpEntry(absolute, stringResource(R.string.charts_help_absolute_body))
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Got it") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.charts_help_dismiss)) }
         },
     )
+}
+
+@Composable
+private fun chartModeLabel(mode: ChartMode): String = when (mode) {
+    ChartMode.Raw -> stringResource(R.string.charts_mode_raw)
+    ChartMode.RollingAvg ->
+        pluralStringResource(
+            R.plurals.charts_mode_rolling,
+            ROLLING_AVERAGE_DAYS,
+            ROLLING_AVERAGE_DAYS,
+        )
+}
+
+@Composable
+private fun yAxisModeLabel(absolute: Boolean): String =
+    stringResource(if (absolute) R.string.charts_axis_absolute else R.string.charts_axis_autofit)
+
+@Composable
+private fun SectionLabel(@StringRes textRes: Int) {
+    Text(stringResource(textRes), style = MaterialTheme.typography.labelMedium)
 }
 
 @Composable
@@ -876,13 +920,20 @@ private fun DateRangeDialog(
                     val ld2 = LocalDate.ofEpochDay(e / 86_400_000L)
                     onConfirm(ld1, ld2)
                 },
-            ) { Text("OK") }
+            ) { Text(stringResource(R.string.common_ok)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+        },
     ) {
         DateRangePicker(
             state = state,
-            title = { Text("Select range", modifier = Modifier.padding(16.dp)) },
+            title = {
+                Text(
+                    stringResource(R.string.charts_select_range),
+                    modifier = Modifier.padding(16.dp),
+                )
+            },
         )
     }
 }

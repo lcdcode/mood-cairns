@@ -4,6 +4,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.register
 import org.w3c.dom.Element
@@ -16,6 +17,31 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+}
+
+val androidNamespace = "http://schemas.android.com/apk/res/android"
+val PSEUDO_LOCALE_ACCENTED = "en-rXA"
+
+val simpleLocaleTag = Regex("^[a-z]{2,3}(-[A-Z]{2})?$")
+
+// Converts a BCP-47 tag to a resource qualifier: "pt-BR" -> "pt-rBR",
+// "zh-Hans" -> "b+zh+Hans".
+fun toResourceQualifier(tag: String): String =
+    if (simpleLocaleTag.matches(tag)) tag.replace("-", "-r") else "b+" + tag.replace("-", "+")
+
+// res/xml/locale_config.xml is the single source of truth for shipped languages.
+fun supportedResourceLocales(): List<String> {
+    val doc = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
+        .newDocumentBuilder()
+        .parse(file("src/main/res/xml/locale_config.xml"))
+    val nodes = doc.getElementsByTagName("locale")
+    val tags = (0 until nodes.length).map {
+        (nodes.item(it) as Element).getAttributeNS(androidNamespace, "name")
+    }
+    if (tags.isEmpty() || tags.any(String::isBlank)) {
+        throw GradleException("locale_config.xml must list at least one non-blank locale: $tags")
+    }
+    return tags.map(::toResourceQualifier)
 }
 
 ksp {
@@ -34,7 +60,13 @@ android {
         targetSdk = 34
         versionCode = 10
         versionName = "1.2.0"
-        resourceConfigurations.add("en")
+        // Package only the languages the app ships. Library resources for other locales
+        // are stripped.
+        resourceConfigurations.addAll(supportedResourceLocales())
+        // en-XA pseudolocale (debug only, see isPseudoLocalesEnabled). Not ar-XB: listing
+        // it also keeps every library's plain "ar" resources in release builds. Use the
+        // "Force RTL layout direction" developer option for RTL checks instead.
+        resourceConfigurations.add(PSEUDO_LOCALE_ACCENTED)
         base.archivesName = "mood-cairns-$versionName"
     }
 
@@ -76,6 +108,10 @@ android {
         }
         debug {
             // No applicationIdSuffix — personal-use builds install under the real id.
+
+            // en-XA renders every resource string accented and lengthened, so hardcoded
+            // (unextracted) text stands out. Select "English (XA)" in device languages.
+            isPseudoLocalesEnabled = true
         }
     }
 
@@ -90,11 +126,32 @@ android {
         buildConfig = true
     }
 
+    lint {
+        // Partial translations are expected: untranslated strings fall back to
+        // English one at a time (see TRANSLATING.md). ExtraTranslation stays an error.
+        warning += "MissingTranslation"
+    }
+
+    // In-app language switching needs every language installed. Without this, an App
+    // Bundle install would only get the device's languages. No effect on APK builds.
+    bundle {
+        language { enableSplit = false }
+    }
+
     packaging {
         resources.excludes += setOf(
             "/META-INF/{AL2.0,LGPL2.1}",
             "/META-INF/DEPENDENCIES",
         )
+    }
+}
+
+// Several unit tests read these files from disk (string resources, locale configs,
+// exported Room schemas). Declare them as inputs, or Gradle reuses a cached result
+// after, say, a new translation is added.
+tasks.withType<Test>().configureEach {
+    listOf("src/main/res", "src/debug/res", "schemas").forEach { dir ->
+        inputs.dir(dir).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName(dir)
     }
 }
 
@@ -112,6 +169,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

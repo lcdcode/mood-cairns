@@ -2,8 +2,10 @@ package com.lcdcode.moodcairns.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.security.ChangePinResult
 import com.lcdcode.moodcairns.security.LockManager
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +27,7 @@ data class ChangePinUiState(
     val saved: Boolean = false,
     /** Drives the PIN-removal risk dialog (empty new PIN while a PIN exists). */
     val showRemoveWarning: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 @HiltViewModel
@@ -63,7 +65,9 @@ class ChangePinViewModel @Inject constructor(
             // Empty new PIN means "remove PIN". Require the current PIN up front
             // so the destructive dialog isn't shown for an entry we can't honor.
             if (cur.current.isEmpty()) {
-                _state.update { it.copy(error = "Enter your current PIN to remove it") }
+                _state.update {
+                    it.copy(error = UiText.Res(R.string.change_pin_error_current_required))
+                }
                 return
             }
             _state.update { it.copy(showRemoveWarning = true, error = null) }
@@ -97,29 +101,49 @@ class ChangePinViewModel @Inject constructor(
                 withContext(Dispatchers.Default) { block() }
             } catch (t: Throwable) {
                 _state.update {
-                    it.copy(saving = false, error = "Couldn't update PIN: ${t.message ?: t.javaClass.simpleName}")
+                    it.copy(
+                        saving = false,
+                        error = UiText.withDetail(R.string.change_pin_error_failed, t),
+                    )
                 }
                 return@launch
             }
             when (result) {
                 ChangePinResult.Success -> _state.update { it.copy(saving = false, saved = true) }
                 ChangePinResult.WrongPin ->
-                    _state.update { it.copy(saving = false, error = "Current PIN is incorrect") }
+                    _state.update {
+                        it.copy(
+                            saving = false,
+                            error = UiText.Res(R.string.change_pin_error_wrong_current),
+                        )
+                    }
                 is ChangePinResult.RateLimited ->
                     _state.update {
-                        it.copy(saving = false, error = "Too many attempts. Try again in ${ceilSeconds(result.retryAfterMs)}s")
+                        it.copy(
+                            saving = false,
+                            error = UiText.Plural(
+                                R.plurals.change_pin_error_rate_limited,
+                                ceilSeconds(result.retryAfterMs),
+                            ),
+                        )
                     }
                 ChangePinResult.Locked ->
-                    _state.update { it.copy(saving = false, error = "App is locked; unlock and try again") }
+                    _state.update {
+                        it.copy(
+                            saving = false,
+                            error = UiText.Res(R.string.change_pin_error_locked),
+                        )
+                    }
             }
         }
     }
 
     private fun digits(v: String) = v.filter(Char::isDigit).take(MAX_PIN_LEN)
 
-    private fun validateNewPin(next: String, confirm: String): String? = when {
-        next.length < MIN_PIN_LEN -> "New PIN must be at least $MIN_PIN_LEN digits"
-        next != confirm -> "PINs do not match"
+    private fun validateNewPin(next: String, confirm: String): UiText? = when {
+        next.length < MIN_PIN_LEN ->
+            UiText.Plural(R.plurals.change_pin_error_new_pin_too_short, MIN_PIN_LEN)
+        next != confirm -> UiText.Res(R.string.error_pins_mismatch)
         else -> null
     }
 
@@ -127,6 +151,6 @@ class ChangePinViewModel @Inject constructor(
         private const val MIN_PIN_LEN = 4
         private const val MAX_PIN_LEN = 10
 
-        private fun ceilSeconds(ms: Long): Long = ((ms + 999) / 1000).coerceAtLeast(1)
+        private fun ceilSeconds(ms: Long): Int = ((ms + 999) / 1000).coerceAtLeast(1).toInt()
     }
 }

@@ -2,8 +2,10 @@ package com.lcdcode.moodcairns.ui.lock
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.PinUnlockResult
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +20,7 @@ import javax.inject.Inject
 
 data class LockUiState(
     val pin: String = "",
-    val error: String? = null,
+    val error: UiText? = null,
     val attempts: Int = 0,
     /** True while an unlock attempt (PBKDF2 + DB open) is running off the UI thread. */
     val busy: Boolean = false,
@@ -50,7 +52,9 @@ class LockViewModel @Inject constructor(
         val pin = _ui.value.pin
         if (_ui.value.busy || _ui.value.lockoutRemainingMs != null) return
         if (pin.length < MIN_PIN_LEN) {
-            _ui.update { it.copy(error = "PIN must be at least $MIN_PIN_LEN digits") }
+            _ui.update {
+                it.copy(error = UiText.Plural(R.plurals.error_pin_too_short, MIN_PIN_LEN))
+            }
             return
         }
         _ui.update { it.copy(busy = true, error = null) }
@@ -72,14 +76,19 @@ class LockViewModel @Inject constructor(
                     _ui.update { LockUiState() }
                 }
                 PinUnlockResult.WrongPin -> _ui.update {
-                    it.copy(busy = false, pin = "", error = "Incorrect PIN", attempts = it.attempts + 1)
+                    it.copy(
+                        busy = false,
+                        pin = "",
+                        error = UiText.Res(R.string.lock_error_wrong_pin),
+                        attempts = it.attempts + 1,
+                    )
                 }
                 is PinUnlockResult.RateLimited -> {
                     _ui.update {
                         it.copy(
                             busy = false,
                             pin = "",
-                            error = "Too many attempts",
+                            error = UiText.Res(R.string.lock_error_too_many_attempts),
                             attempts = it.attempts + 1,
                         )
                     }
@@ -116,8 +125,8 @@ class LockViewModel @Inject constructor(
         }
     }
 
-    private fun unlockErrorMessage(t: Throwable): String =
-        "Couldn't unlock: ${t.message ?: t.javaClass.simpleName}"
+    private fun unlockErrorMessage(t: Throwable): UiText =
+        UiText.withDetail(R.string.lock_error_unlock_failed, t)
 
     private fun startCountdown(initialMs: Long) {
         countdownJob?.cancel()

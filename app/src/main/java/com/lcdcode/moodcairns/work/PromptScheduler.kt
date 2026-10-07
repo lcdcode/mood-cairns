@@ -11,9 +11,11 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.lcdcode.moodcairns.BuildConfig
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.notifications.PromptAlarmReceiver
+import com.lcdcode.moodcairns.settings.withAppLocale
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +89,8 @@ class PromptScheduler @Inject constructor(
         val fireMs = System.currentTimeMillis() + seconds * 1000
         val testWindow = PromptWindow(
             id = -999L,
-            label = "Test notification",
+            // Resolved when scheduled, seconds before it fires.
+            label = context.withAppLocale().getString(R.string.notif_test_title),
             slot = com.lcdcode.moodcairns.data.entity.PromptSlot.MANUAL,
             startTime = java.time.LocalTime.NOON,
             endTime = java.time.LocalTime.NOON.plusMinutes(1),

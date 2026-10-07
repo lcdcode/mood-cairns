@@ -3,10 +3,13 @@ package com.lcdcode.moodcairns.ui.settings
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
+import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.work.PromptScheduler
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +22,11 @@ import javax.inject.Inject
 data class PromptWindowEditUiState(
     val id: Long = 0,
     val label: String = "",
+    /**
+     * True while a built-in window's label is untouched: the screen shows its translation
+     * but [label] keeps the stored English label, so the window stays recognized.
+     */
+    val labelIsDefault: Boolean = false,
     val slot: PromptSlot = PromptSlot.CUSTOM,
     val startHour: Int = 8,
     val startMinute: Int = 0,
@@ -28,7 +36,7 @@ data class PromptWindowEditUiState(
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 @HiltViewModel
@@ -52,6 +60,7 @@ class PromptWindowEditViewModel @Inject constructor(
                         it.copy(
                             id = w.id,
                             label = w.label,
+                            labelIsDefault = SeedNames.windowRes(w.label) != null,
                             slot = w.slot,
                             startHour = w.startTime.hour,
                             startMinute = w.startTime.minute,
@@ -61,12 +70,15 @@ class PromptWindowEditViewModel @Inject constructor(
                             loaded = true,
                         )
                     }
-                } ?: _state.update { it.copy(loaded = true, error = "Window not found") }
+                } ?: _state.update {
+                    it.copy(loaded = true, error = UiText.Res(R.string.window_edit_error_not_found))
+                }
             }
         }
     }
 
-    fun setLabel(v: String) = _state.update { it.copy(label = v, error = null) }
+    fun setLabel(v: String) =
+        _state.update { it.copy(label = v, labelIsDefault = false, error = null) }
     fun setSlot(v: PromptSlot) = _state.update { it.copy(slot = v) }
     fun setStart(h: Int, m: Int) = _state.update { it.copy(startHour = h, startMinute = m, error = null) }
     fun setEnd(h: Int, m: Int) = _state.update { it.copy(endHour = h, endMinute = m, error = null) }
@@ -78,8 +90,8 @@ class PromptWindowEditViewModel @Inject constructor(
         val start = LocalTime.of(cur.startHour, cur.startMinute)
         val end = LocalTime.of(cur.endHour, cur.endMinute)
         val err = when {
-            label.isEmpty() -> "Label required"
-            !start.isBefore(end) -> "Start must be before end"
+            label.isEmpty() -> UiText.Res(R.string.window_edit_error_label_required)
+            !start.isBefore(end) -> UiText.Res(R.string.window_edit_error_start_not_before_end)
             else -> null
         }
         if (err != null) {
@@ -102,7 +114,12 @@ class PromptWindowEditViewModel @Inject constructor(
                 scheduler.scheduleNow()
                 _state.update { it.copy(saving = false, saved = true) }
             } catch (t: Throwable) {
-                _state.update { it.copy(saving = false, error = t.message ?: "Save failed") }
+                _state.update {
+                    it.copy(
+                        saving = false,
+                        error = UiText.withDetail(R.string.error_save_failed, t),
+                    )
+                }
             }
         }
     }

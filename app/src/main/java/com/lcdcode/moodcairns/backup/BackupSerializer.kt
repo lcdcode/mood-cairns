@@ -75,44 +75,47 @@ class BackupSerializer @Inject constructor(
      * Parse and decrypt [raw] using [secret] and the salt/iter carried inside the
      * envelope itself. [secret] is the backup passphrase, or - for backups made
      * before passphrases existed - the device PIN used at export time. Throws
-     * with a user-readable message on corrupt data or a wrong secret.
+     * [BackupImportException] on corrupt data or a wrong secret.
      */
     fun parse(raw: String, secret: CharArray): BackupFile {
         val envelope = runCatching {
             json.decodeFromString(EncryptedBackup.serializer(), raw)
-        }.getOrNull() ?: error("Unrecognized backup file format")
+        }.getOrNull() ?: fail(ImportError.NotABackup)
 
-        require(envelope.kdf == BackupCrypto.KDF_ALGORITHM) {
-            "Unsupported backup KDF ${envelope.kdf}"
+        if (envelope.kdf != BackupCrypto.KDF_ALGORITHM) {
+            fail(ImportError.Malformed("Unsupported backup KDF ${envelope.kdf}"))
         }
-        require(envelope.iter > 0) { "Backup envelope is missing KDF iterations" }
+        if (envelope.iter <= 0) {
+            fail(ImportError.Malformed("Backup envelope is missing KDF iterations"))
+        }
 
-        val salt = runCatching { Base64.decode(envelope.salt, Base64.NO_WRAP) }
-            .getOrNull() ?: error("Backup envelope salt is malformed")
-        val iv = runCatching { Base64.decode(envelope.iv, Base64.NO_WRAP) }
-            .getOrNull() ?: error("Backup envelope IV is malformed")
-        val ct = runCatching { Base64.decode(envelope.ciphertext, Base64.NO_WRAP) }
-            .getOrNull() ?: error("Backup ciphertext is malformed")
+        val salt = decodeField(envelope.salt, "salt")
+        val iv = decodeField(envelope.iv, "IV")
+        val ct = decodeField(envelope.ciphertext, "ciphertext")
 
         val key = BackupCrypto.deriveKey(secret, salt, envelope.iter)
         val plaintext = try {
             BackupCrypto.decrypt(key, iv, ct)
         } catch (_: Throwable) {
-            error("Could not decrypt backup — wrong passphrase, or file is corrupt")
+            fail(ImportError.WrongSecretOrCorrupt)
         } finally {
             key.fill(0)
         }
 
-        val parsed = json.decodeFromString(
-            BackupFile.serializer(),
-            String(plaintext, Charsets.UTF_8),
-        )
-        require(parsed.schemaVersion in BackupFile.SUPPORTED_VERSIONS) {
-            "Unsupported backup schema version ${parsed.schemaVersion}; " +
-                "expected ${BackupFile.SUPPORTED_VERSIONS.first}..${BackupFile.SUPPORTED_VERSIONS.last}"
+        val parsed = runCatching {
+            json.decodeFromString(BackupFile.serializer(), String(plaintext, Charsets.UTF_8))
+        }.getOrElse { fail(ImportError.Malformed(it.message ?: "Unreadable backup contents")) }
+        if (parsed.schemaVersion !in BackupFile.SUPPORTED_VERSIONS) {
+            fail(ImportError.UnsupportedVersion(parsed.schemaVersion))
         }
         return parsed
     }
+
+    private fun decodeField(value: String, fieldName: String): ByteArray =
+        runCatching { Base64.decode(value, Base64.NO_WRAP) }.getOrNull()
+            ?: fail(ImportError.Malformed("Backup envelope $fieldName is malformed"))
+
+    private fun fail(error: ImportError): Nothing = throw BackupImportException(error)
 
     fun toEntities(file: BackupFile): BackupEntities = BackupEntities(
         schemaVersion = file.schemaVersion,

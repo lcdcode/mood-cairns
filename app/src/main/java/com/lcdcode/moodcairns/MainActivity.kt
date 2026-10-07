@@ -17,11 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.LockState
+import com.lcdcode.moodcairns.settings.LocalizedSurfaces
 import com.lcdcode.moodcairns.ui.AppNav
 import com.lcdcode.moodcairns.ui.NotificationEntryArgs
 import com.lcdcode.moodcairns.ui.lock.LockScreen
@@ -35,11 +36,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
-class MainActivity : FragmentActivity() {
+// AppCompatActivity (a FragmentActivity subclass, as BiometricPrompt requires) is what
+// applies AppCompatDelegate per-app locales on API 29-32.
+class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var lockManager: LockManager
     @Inject lateinit var lockRepository: LockRepository
     @Inject lateinit var scheduler: PromptScheduler
+    @Inject lateinit var localizedSurfaces: LocalizedSurfaces
 
     private val pendingEntryArgs = MutableStateFlow<NotificationEntryArgs?>(null)
 
@@ -59,6 +63,8 @@ class MainActivity : FragmentActivity() {
             )
         }
         enableEdgeToEdge()
+        // A language change recreates this activity; re-render text cached by the system.
+        localizedSurfaces.refreshIfLanguageChanged()
         pendingEntryArgs.value = readNotificationArgs(intent)
         scheduler.ensureDailyRolloverScheduled()
 

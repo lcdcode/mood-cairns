@@ -65,6 +65,16 @@ fails if any merged-manifest permission ever names `INTERNET`,
 If you want backups synced off-device, point Syncthing (or any file manager
 that can sync a folder) at `Documents/MoodCairns/`.
 
+## Translations
+
+Mood Cairns is ready for translation: every on-screen string, including the names
+of the built-in scales and tags, comes from Android string resources, and dates,
+times, and numbers follow each language's conventions. The language can be set in
+Settings → Language, or on first launch, independently of the phone's language.
+
+The app currently ships in English. Translations are welcome as pull requests;
+[TRANSLATING.md](TRANSLATING.md) explains how, and partial translations are fine.
+
 ## Contact
 
 The best way to get in touch with me for issues, feature requests, etc. is right here on github.

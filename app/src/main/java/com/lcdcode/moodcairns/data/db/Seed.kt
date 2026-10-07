@@ -1,6 +1,5 @@
 package com.lcdcode.moodcairns.data.db
 
-import android.graphics.Color
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
@@ -8,11 +7,15 @@ import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import java.time.LocalTime
 
-/**
- * Seed tags live outside [Seed] because that object's scale palette calls
- * android.graphics.Color at init, which throws in JVM unit tests. This object
- * is pure so migration tests can assert against the canonical list.
+/*
+ * The names and labels below are stored in the database as written, in English, and
+ * double as the identity of the built-in rows: SeedNames maps them to translated
+ * string resources for display. NEVER change one here, or existing installs and
+ * backups stop being recognized as built-in. To change the wording users see, edit
+ * the seed_* string resource instead.
  */
+
+/** Seed tags, kept separate so migrations can seed just the [moodTags] subset. */
 internal object SeedTags {
     /**
      * Moods a user might tag without tracking them as a scale; the built-in
@@ -59,13 +62,14 @@ internal object SeedTags {
     ) + moodTags
 }
 
+/** Plain ARGB literals rather than android.graphics.Color, so JVM tests can load this. */
 internal object Seed {
     val scales: List<Scale> = listOf(
-        Scale(name = "Happiness", minValue = 1, maxValue = 10, colorArgb = Color.parseColor("#F6C453"), isBuiltIn = true, sortOrder = 0),
-        Scale(name = "Anxiety",   minValue = 1, maxValue = 10, colorArgb = Color.parseColor("#7D99D1"), isBuiltIn = true, sortOrder = 1),
-        Scale(name = "Stress",    minValue = 1, maxValue = 10, colorArgb = Color.parseColor("#D17D7D"), isBuiltIn = true, sortOrder = 2),
-        Scale(name = "Boredom",   minValue = 1, maxValue = 10, colorArgb = Color.parseColor("#9AA39A"), isBuiltIn = true, sortOrder = 3),
-        Scale(name = "Pain",      minValue = 1, maxValue = 10, colorArgb = Color.parseColor("#B5651D"), isBuiltIn = true, sortOrder = 4),
+        Scale(name = "Happiness", minValue = 1, maxValue = 10, colorArgb = 0xFFF6C453.toInt(), isBuiltIn = true, sortOrder = 0),
+        Scale(name = "Anxiety",   minValue = 1, maxValue = 10, colorArgb = 0xFF7D99D1.toInt(), isBuiltIn = true, sortOrder = 1),
+        Scale(name = "Stress",    minValue = 1, maxValue = 10, colorArgb = 0xFFD17D7D.toInt(), isBuiltIn = true, sortOrder = 2),
+        Scale(name = "Boredom",   minValue = 1, maxValue = 10, colorArgb = 0xFF9AA39A.toInt(), isBuiltIn = true, sortOrder = 3),
+        Scale(name = "Pain",      minValue = 1, maxValue = 10, colorArgb = 0xFFB5651D.toInt(), isBuiltIn = true, sortOrder = 4),
     )
 
     val windows: List<PromptWindow> = listOf(

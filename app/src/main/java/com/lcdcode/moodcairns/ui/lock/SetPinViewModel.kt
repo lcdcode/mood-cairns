@@ -2,7 +2,9 @@ package com.lcdcode.moodcairns.ui.lock
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.security.LockManager
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,7 @@ import javax.inject.Inject
 data class SetPinUiState(
     val pin: String = "",
     val confirm: String = "",
-    val error: String? = null,
+    val error: UiText? = null,
     /** True while setup (PBKDF2 + DB create) is running off the UI thread. */
     val saving: Boolean = false,
 )
@@ -40,9 +42,11 @@ class SetPinViewModel @Inject constructor(
         if (cur.saving) return
         when {
             cur.pin.length < MIN_PIN_LEN ->
-                _ui.update { it.copy(error = "PIN must be at least $MIN_PIN_LEN digits") }
+                _ui.update {
+                    it.copy(error = UiText.Plural(R.plurals.error_pin_too_short, MIN_PIN_LEN))
+                }
             cur.pin != cur.confirm ->
-                _ui.update { it.copy(error = "PINs don't match") }
+                _ui.update { it.copy(error = UiText.Res(R.string.error_pins_mismatch)) }
             else -> {
                 _ui.update { it.copy(saving = true, error = null) }
                 viewModelScope.launch {
@@ -58,7 +62,7 @@ class SetPinViewModel @Inject constructor(
                         _ui.update {
                             it.copy(
                                 saving = false,
-                                error = "Couldn't set PIN: ${t.message ?: t.javaClass.simpleName}",
+                                error = UiText.withDetail(R.string.set_pin_error_failed, t),
                             )
                         }
                     }
@@ -85,7 +89,7 @@ class SetPinViewModel @Inject constructor(
                 _ui.update {
                     it.copy(
                         saving = false,
-                        error = "Couldn't continue without a PIN: ${t.message ?: t.javaClass.simpleName}",
+                        error = UiText.withDetail(R.string.set_pin_error_no_pin_failed, t),
                     )
                 }
             }

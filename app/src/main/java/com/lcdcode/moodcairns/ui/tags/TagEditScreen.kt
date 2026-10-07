@@ -31,10 +31,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.ui.common.SeedNames
+import com.lcdcode.moodcairns.ui.common.asString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,14 +52,30 @@ fun TagEditScreen(
 
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
     LaunchedEffect(state.deleted) { if (state.deleted) onBack() }
+    val shownName = state.name.takeIf { !state.nameIsDefault }
+        ?: SeedNames.tagRes(state.name)?.let { stringResource(it) }
+        ?: state.name
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.id == 0L) "New tag" else "Edit tag") },
+                title = {
+                    Text(
+                        stringResource(
+                            if (state.id == 0L) {
+                                R.string.tag_edit_title_new
+                            } else {
+                                R.string.tag_edit_title_edit
+                            },
+                        ),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back),
+                        )
                     }
                 },
             )
@@ -74,10 +94,10 @@ fun TagEditScreen(
                 onExpandedChange = { categoryExpanded = it },
             ) {
                 OutlinedTextField(
-                    value = state.category.displayName,
+                    value = stringResource(state.category.displayNameRes()),
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Category") },
+                    label = { Text(stringResource(R.string.tag_edit_category_label)) },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded)
                     },
@@ -91,7 +111,7 @@ fun TagEditScreen(
                 ) {
                     TagCategory.entries.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category.displayName) },
+                            text = { Text(stringResource(category.displayNameRes())) },
                             onClick = {
                                 viewModel.setCategory(category)
                                 categoryExpanded = false
@@ -102,15 +122,15 @@ fun TagEditScreen(
             }
 
             OutlinedTextField(
-                value = state.name,
+                value = shownName,
                 onValueChange = viewModel::setName,
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.common_name_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             state.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error)
+                Text(it.asString(), color = MaterialTheme.colorScheme.error)
             }
 
             Button(
@@ -118,7 +138,11 @@ fun TagEditScreen(
                 enabled = !state.saving,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (state.saving) "Saving…" else "Save")
+                Text(
+                    stringResource(
+                        if (state.saving) R.string.common_saving else R.string.common_save,
+                    ),
+                )
             }
 
             if (state.id != 0L) {
@@ -133,7 +157,15 @@ fun TagEditScreen(
                     ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(if (state.deleting) "Deleting…" else "Delete tag")
+                    Text(
+                        stringResource(
+                            if (state.deleting) {
+                                R.string.common_deleting
+                            } else {
+                                R.string.tag_edit_delete
+                            },
+                        ),
+                    )
                 }
             }
         }
@@ -142,28 +174,19 @@ fun TagEditScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete tag?") },
-            text = { Text(deleteWarning(state.name, state.affectedEntryCount)) },
+            title = { Text(stringResource(R.string.tag_edit_delete_title)) },
+            text = { Text(tagDeleteWarning(shownName, state.affectedEntryCount).asString()) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.delete()
-                }) { Text("Delete") }
+                }) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         )
-    }
-}
-
-private fun deleteWarning(name: String, affectedEntryCount: Int?): String {
-    val label = name.ifBlank { "this tag" }
-    val base = "Entries keep their data; the tag is just removed from them."
-    return when {
-        affectedEntryCount == null -> "\"$label\" will be deleted. $base"
-        affectedEntryCount == 0 -> "No entries use \"$label\" yet."
-        affectedEntryCount == 1 -> "1 entry is tagged \"$label\". $base"
-        else -> "$affectedEntryCount entries are tagged \"$label\". $base"
     }
 }

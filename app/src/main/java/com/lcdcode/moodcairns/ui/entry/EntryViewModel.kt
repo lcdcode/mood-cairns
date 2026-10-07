@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
@@ -12,6 +13,7 @@ import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import com.lcdcode.moodcairns.data.repo.TagRepository
+import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +44,7 @@ data class EntryUiState(
     // Whether to offer the "Change date/time..." control. Hidden for
     // notification-initiated entries, which are meant to be logged "now".
     val showDateTimeControl: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 @HiltViewModel
@@ -182,7 +184,7 @@ class EntryViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         saving = false,
-                        error = "Couldn't save: ${t.message ?: t.javaClass.simpleName}",
+                        error = UiText.withDetail(R.string.error_save_failed, t),
                     )
                 }
             }
