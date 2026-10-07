@@ -51,6 +51,7 @@ class HardcodedUiTextTest {
             "ui/scales/ScaleListScreen.kt",
             "ui/scales/ScaleWarnings.kt",
             "ui/settings/ChangePinScreen.kt",
+            "ui/settings/LanguagePicker.kt",
             "ui/settings/PromptWindowEditScreen.kt",
             "ui/settings/SettingsScreen.kt",
             "ui/tags/TagCategoryUi.kt",

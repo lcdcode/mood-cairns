@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.LockState
+import com.lcdcode.moodcairns.settings.LocalizedSurfaces
 import com.lcdcode.moodcairns.ui.AppNav
 import com.lcdcode.moodcairns.ui.NotificationEntryArgs
 import com.lcdcode.moodcairns.ui.lock.LockScreen
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var lockManager: LockManager
     @Inject lateinit var lockRepository: LockRepository
     @Inject lateinit var scheduler: PromptScheduler
+    @Inject lateinit var localizedSurfaces: LocalizedSurfaces
 
     private val pendingEntryArgs = MutableStateFlow<NotificationEntryArgs?>(null)
 
@@ -61,6 +63,8 @@ class MainActivity : AppCompatActivity() {
             )
         }
         enableEdgeToEdge()
+        // A language change recreates this activity; re-render text cached by the system.
+        localizedSurfaces.refreshIfLanguageChanged()
         pendingEntryArgs.value = readNotificationArgs(intent)
         scheduler.ensureDailyRolloverScheduled()
 

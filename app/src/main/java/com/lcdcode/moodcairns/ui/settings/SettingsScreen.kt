@@ -67,6 +67,11 @@ fun SettingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showUnsafeExportWarning by remember { mutableStateOf(false) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
+
+    if (showLanguagePicker) {
+        LanguagePickerDialog(onDismiss = { showLanguagePicker = false })
+    }
 
     if (showUnsafeExportWarning) {
         UnsafeExportWarningDialog(
@@ -116,6 +121,10 @@ fun SettingsScreen(
             contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            item { SectionHeader(stringResource(R.string.settings_section_language)) }
+            item { LanguageSettingRow(onClick = { showLanguagePicker = true }) }
+
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader(stringResource(R.string.settings_section_prompt_windows)) }
             items(state.windows, key = { "w-${it.id}" }) { w ->
                 PromptWindowRow(

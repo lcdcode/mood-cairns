@@ -7,8 +7,10 @@ import android.os.LocaleList
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.LocaleManagerCompat
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,10 +49,15 @@ class AppLocaleManager @Inject constructor(
         return tags.substringBefore(',').ifEmpty { null }
     }
 
+    /** The device's own primary language, which "follow the system" resolves to. */
+    fun systemLocale(): Locale =
+        LocaleManagerCompat.getSystemLocales(context)[0] ?: Locale.getDefault()
+
     /** Selects [tag] (null = system language). Running activities are recreated. */
     fun setLocale(tag: String?) {
-        require(tag == null || tag in SupportedLocales.tags) {
-            "Unsupported app locale '$tag'; expected one of ${SupportedLocales.tags} or null"
+        require(tag == null || SupportedLocales.sanitize(tag) != null) {
+            "Unsupported app locale '$tag'; " +
+                "expected one of ${SupportedLocales.selectable()} or null"
         }
         // An empty tag string yields an empty list, which means "follow the system".
         val tags = tag.orEmpty()

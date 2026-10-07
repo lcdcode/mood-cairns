@@ -52,6 +52,23 @@ class SupportedLocalesTest {
     }
 
     @Test
+    fun pseudoLocale_isSelectableOnlyWhenIncluded() {
+        val shipped = SupportedLocales.tags
+        assertEquals(shipped, SupportedLocales.selectable(includePseudoLocale = false))
+        assertEquals(shipped + PSEUDO_LOCALE, SupportedLocales.selectable(includePseudoLocale = true))
+        assertNull(SupportedLocales.sanitize(PSEUDO_LOCALE, includePseudoLocale = false))
+        assertEquals(
+            PSEUDO_LOCALE,
+            SupportedLocales.sanitize(PSEUDO_LOCALE, includePseudoLocale = true),
+        )
+    }
+
+    @Test
+    fun pseudoLocaleConstant_matchesDebugLocaleConfig() {
+        assertEquals(PSEUDO_LOCALE, SupportedLocales.PSEUDO_LOCALE)
+    }
+
+    @Test
     fun sanitize_dropsUnsupportedOrMissingTag() {
         assertNull(SupportedLocales.sanitize("xx"))
         assertNull(SupportedLocales.sanitize(""))

@@ -2,13 +2,20 @@ package com.lcdcode.moodcairns.ui.lock
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,11 +36,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.ui.common.asString
+import com.lcdcode.moodcairns.ui.settings.LanguagePickerDialog
 
 @Composable
 fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
     val state by viewModel.ui.collectAsStateWithLifecycle()
     var showNoPinWarning by remember { mutableStateOf(false) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
+
+    if (showLanguagePicker) {
+        LanguagePickerDialog(onDismiss = { showLanguagePicker = false })
+    }
 
     if (showNoPinWarning) {
         NoPinWarningDialog(
@@ -47,7 +60,9 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        // The activity draws edge-to-edge and this screen has no Scaffold, so keep
+        // content clear of the status and navigation bars explicitly.
+        modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -113,6 +128,13 @@ fun SetPinScreen(viewModel: SetPinViewModel = hiltViewModel()) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(stringResource(R.string.set_pin_continue_without))
+        }
+
+        // First run is the natural moment to pick a language the device isn't set to.
+        TextButton(onClick = { showLanguagePicker = true }, enabled = !state.saving) {
+            Icon(Icons.Default.Language, contentDescription = null)
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            Text(stringResource(R.string.language_app_language))
         }
     }
 }

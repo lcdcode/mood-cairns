@@ -340,8 +340,17 @@
     <string name="no_pin_warning_body">Without a PIN, anyone who can use this unlocked device can open Mood Cairns and read all of your entries. Your data is still encrypted on disk, but only by your device\'s secure keystore - the extra protection a PIN provides will be removed, and biometric unlock will be turned off. You can set a PIN again any time in Settings.</string>
     <string name="no_pin_warning_accept">Accept and continue</string>
 
+    <!-- App language picker (Settings and first-run setup). Language names themselves are
+         not translated: each is shown in its own language. -->
+    <string name="language_app_language">App language</string>
+    <string name="language_system_default">System default</string>
+    <!-- Under "System default" when the device language has no translation yet.
+         %1$s is that language's name, e.g. "Deutsch". -->
+    <string name="language_system_untranslated">%1$s (not translated yet, so English is used)</string>
+
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_section_language">Language</string>
     <string name="settings_section_prompt_windows">Prompt windows</string>
     <string name="settings_add_window">Add window</string>
     <!-- Prompt window row. %1$s start time, %2$s end time, %3$s slot name. -->
