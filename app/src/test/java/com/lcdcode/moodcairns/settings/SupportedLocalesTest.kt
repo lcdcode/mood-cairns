@@ -99,6 +99,46 @@ class SupportedLocalesTest {
     }
 
     @Test
+    fun regionalVariants_belongToTheirShippedLanguage() {
+        val options = listOf("en", "es")
+        assertEquals("es", SupportedLocales.baseOf("es-MX", options))
+        assertEquals("es", SupportedLocales.baseOf("es-419", options))
+        assertEquals("en", SupportedLocales.baseOf("en-GB", options))
+        assertEquals("en", SupportedLocales.baseOf("en-GB-u-mu-celsius", options))
+        assertNull(SupportedLocales.baseOf("fr-FR", options))
+    }
+
+    @Test
+    fun pseudolocale_isNeverARegionalVariant() {
+        assertNull(SupportedLocales.baseOf(PSEUDO_LOCALE, listOf("en")))
+        assertEquals(
+            PSEUDO_LOCALE,
+            SupportedLocales.baseOf(PSEUDO_LOCALE, listOf("en", PSEUDO_LOCALE)),
+        )
+        // en-XA must not be a base for real regions either.
+        assertNull(SupportedLocales.baseOf("en-GB", listOf(PSEUDO_LOCALE)))
+    }
+
+    @Test
+    fun script_mustMatch() {
+        assertEquals("zh-Hans", SupportedLocales.baseOf("zh-Hans-CN", listOf("zh-Hans")))
+        assertNull(SupportedLocales.baseOf("zh-Hant-TW", listOf("zh-Hans")))
+    }
+
+    @Test
+    fun regionSpecificOption_onlyMatchesThatRegion() {
+        assertEquals("pt-BR", SupportedLocales.baseOf("pt-BR", listOf("pt-BR")))
+        assertNull(SupportedLocales.baseOf("pt-PT", listOf("pt-BR")))
+    }
+
+    @Test
+    fun sanitize_keepsRegionalVariantsOfShippedLanguages() {
+        assertEquals("es-MX", SupportedLocales.sanitize("es-MX", includePseudoLocale = false))
+        assertEquals("en-GB", SupportedLocales.sanitize("en-GB", includePseudoLocale = false))
+        assertNull(SupportedLocales.sanitize(PSEUDO_LOCALE, includePseudoLocale = false))
+    }
+
+    @Test
     fun sanitize_dropsUnsupportedOrMissingTag() {
         assertNull(SupportedLocales.sanitize("xx"))
         assertNull(SupportedLocales.sanitize(""))
