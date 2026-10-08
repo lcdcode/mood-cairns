@@ -1,0 +1,1 @@
+- Support for multiple languages/regions: English and Spanish, with more to come!
