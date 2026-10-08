@@ -419,8 +419,8 @@
     <string name="settings_unsafe_exports_dialog_body">This adds an option to export your data as an unencrypted CSV file to shared storage. That file is plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries.\n\nOnly enable this if you understand and accept that danger.</string>
     <string name="settings_section_diagnostics">Diagnostics</string>
     <plurals name="settings_test_notification">
-        <item quantity="one">Test notification (fires in %1$d second)</item>
-        <item quantity="other">Test notification (fires in %1$d seconds)</item>
+        <item quantity="one">Test notification (fires in about %1$d second)</item>
+        <item quantity="other">Test notification (fires in about %1$d seconds)</item>
     </plurals>
 
     <!-- Lock screen -->

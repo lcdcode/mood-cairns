@@ -360,9 +360,9 @@
     <string name="settings_unsafe_exports_dialog_body">Esto añade una opción para exportar tus datos como un archivo CSV sin cifrar al almacenamiento compartido. Ese archivo es texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
     <string name="settings_section_diagnostics">Diagnóstico</string>
     <plurals name="settings_test_notification">
-        <item quantity="one">Notificación de prueba (en %1$d segundo)</item>
-        <item quantity="many">Notificación de prueba (en %1$d segundos)</item>
-        <item quantity="other">Notificación de prueba (en %1$d segundos)</item>
+        <item quantity="one">Notificación de prueba (en aproximadamente %1$d segundo)</item>
+        <item quantity="many">Notificación de prueba (en unos %1$d segundos)</item>
+        <item quantity="other">Notificación de prueba (en unos %1$d segundos)</item>
     </plurals>
 
     <!-- Lock screen -->

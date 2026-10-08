@@ -72,8 +72,9 @@ of the built-in scales and tags, comes from Android string resources, and dates,
 times, and numbers follow each language's conventions. The language can be set in
 Settings → Language, or on first launch, independently of the phone's language.
 
-The app currently ships in English. Translations are welcome as pull requests;
-[TRANSLATING.md](TRANSLATING.md) explains how, and partial translations are fine.
+The app currently ships in English, Spanish, and German. Translations are welcome as
+pull requests; [TRANSLATING.md](TRANSLATING.md) explains how, and partial translations
+are fine.
 
 ## Contact
 

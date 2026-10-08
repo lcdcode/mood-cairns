@@ -1,1 +1,2 @@
-- Support for multiple languages/regions: English and Spanish, with more to come!
+- Support for multiple languages/regions: English, Spanish, and German, with more to come!
+- Reminders no longer need the exact-alarm permission; on Android 12+ they may arrive a few minutes later than scheduled when the phone is idle

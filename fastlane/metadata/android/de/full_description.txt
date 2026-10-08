@@ -1,0 +1,26 @@
+Ein privates, komplett offline arbeitendes Stimmungstagebuch für Android. Trage ein, wie du dich fühlst: mit deinen eigenen Skalen, deinen eigenen Tags, zu deinen eigenen Erinnerungszeiten und auf deinem eigenen Gerät. Es wird nie etwas hochgeladen. Sicherungen machst du, wenn du möchtest, auf deine eigene Weise (Tipp: Syncthing funktioniert gut mit den verschlüsselten Sicherungen, die du speicherst).
+
+<b>Funktionen</b>
+
+* <b>Eigene Skalen.</b> Fünf integrierte Skalen (Glück, Angst, Stress, Langeweile, Schmerz), jeweils numerisch und mit eigener Farbe. Füge eigene hinzu und archiviere die, die du nicht brauchst.
+* <b>Eigene Tags.</b> Wähle aus vielen integrierten Tags für Orte, Personen, Aktivitäten, Gefühle und mehr, oder lege eigene an, um dein Tagebuch anzupassen.
+* <b>Erinnerungszeiten.</b> Lege Zeitfenster über den Tag fest (z. B. morgens 08:00–12:00, abends 18:00–20:00). Die App sendet pro Zeitfenster eine Benachrichtigung am Tag. Tippe auf die Benachrichtigung, um direkt zum Eintragen zu gelangen.
+* <b>Verlauf und Diagramme.</b> Sieh dir frühere Einträge an und verfolge den Verlauf jeder Skala über die Zeit.
+* <b>In deiner Sprache.</b> Verfügbar auf Deutsch, Englisch und Spanisch. Die App-Sprache kannst du in den Einstellungen wählen, unabhängig von der Sprache deines Telefons.
+* <b>Verschlüsselte Speicherung.</b> Die Datenbank wird mit SQLCipher verschlüsselt gespeichert. Der Schlüssel liegt nur im Arbeitsspeicher, solange die App entsperrt ist, und wird beim Sperren gelöscht.
+* <b>Sperre mit PIN und Biometrie.</b> Zugang zur App per PIN, optional mit biometrischer Entsperrung. Die PIN wird vor dem Speichern mit PBKDF2-HMAC-SHA256 (600.000 Iterationen) gehasht.
+* <b>Verschlüsselte Sicherungen.</b> Der manuelle Export schreibt eine mit AES-GCM verschlüsselte JSON-Datei nach Documents/MoodCairns/. Der Schlüssel wird aus einer Passphrase deiner Wahl (mindestens 8 Zeichen) mit PBKDF2-HMAC-SHA256 (600.000 Iterationen) und einem neuen Salt pro Sicherung abgeleitet, sodass jede Installation, auch eine neue, die Sicherung mit derselben Passphrase entschlüsseln kann. Sicherungen älterer Versionen, die mit der Geräte-PIN verschlüsselt wurden, lassen sich weiterhin mit dieser PIN importieren.
+
+<b>Datenschutzversprechen</b>
+
+Die App fordert <b>keine Netzwerkberechtigungen</b> an. Ohne Internetzugriff kann der Prozess buchstäblich keine Verbindung öffnen, sodass ein heimliches Senden von Daten unmöglich ist, egal was eine eingebundene Bibliothek versucht.
+Der Build-Prozess prüft das, damit ein Update von Abhängigkeiten nie unbemerkt eine Netzwerkberechtigung einführen kann.
+Wenn du Sicherungen auf andere Geräte synchronisieren möchtest, richte Syncthing (oder einen Dateimanager, der Ordner synchronisieren kann) auf Documents/MoodCairns/ ein.
+
+<b>Kontakt</b>
+
+Probleme, Funktionswünsche usw. meldest du am besten auf der Issues-Seite unter github.com/lcdcode/mood-cairns. Ich antworte normalerweise innerhalb von 3 Werktagen.
+
+<b>Quellcode</b>
+
+Vollständig quelloffen unter GPL-3.0-only. Entwickelt mit Kotlin, Jetpack Compose, Room, SQLCipher und AndroidX.

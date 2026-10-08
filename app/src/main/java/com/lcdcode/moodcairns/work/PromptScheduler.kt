@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.work
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -97,11 +98,7 @@ class PromptScheduler @Inject constructor(
             enabled = true,
         )
         val pi = DailyScheduleWorker.pendingIntent(context, LocalDate.now(), testWindow)
-        if (canExact(alarmMgr)) {
-            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireMs, pi)
-        } else {
-            alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireMs, pi)
-        }
+        setWakeAlarm(alarmMgr, fireMs, pi)
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "scheduleTestIn: set alarm for +${seconds}s (exact=${canExact(alarmMgr)})")
         }
@@ -155,17 +152,34 @@ class PromptScheduler @Inject constructor(
         val alarmMgr = context.getSystemService<AlarmManager>() ?: return
         val triggerMs = fireAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val pi = DailyScheduleWorker.pendingIntent(context, day, window)
-        if (canExact(alarmMgr)) {
-            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMs, pi)
-        } else {
-            alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMs, pi)
-        }
+        setWakeAlarm(alarmMgr, triggerMs, pi)
         if (BuildConfig.DEBUG) {
             // Window label is user-supplied free text; keep it out of release logcat.
             Log.i(TAG, "alarm set: ${window.label} day=$day at=$fireAt exact=${canExact(alarmMgr)}")
         }
     }
 
+    /**
+     * Exact when Android allows it (see [canExact]), otherwise inexact. MissingPermission
+     * is suppressed because the exact call only runs when canExact() reports exact alarms
+     * are allowed, which then needs no permission; lint cannot see through that check.
+     */
+    @SuppressLint("MissingPermission")
+    private fun setWakeAlarm(alarmMgr: AlarmManager, triggerAtMs: Long, pi: PendingIntent) {
+        if (canExact(alarmMgr)) {
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pi)
+        } else {
+            alarmMgr.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMs, pi)
+        }
+    }
+
+    /**
+     * The app deliberately declares neither SCHEDULE_EXACT_ALARM nor USE_EXACT_ALARM,
+     * so on API 31+ this is false and prompts use inexact setAndAllowWhileIdle alarms,
+     * which Android may delay (most while the device dozes). Prompts already fire at a
+     * random time within their window, so that drift is acceptable. API 29-30 need no
+     * permission and stay exact.
+     */
     private fun canExact(alarmMgr: AlarmManager): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             alarmMgr.canScheduleExactAlarms()
