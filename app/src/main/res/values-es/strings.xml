@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Spanish (neutral, informal "tú"). Mood tags use nouns rather than adjectives so they
+    stay gender-neutral ("Entusiasmo", not "Emocionado/a"). Source: values/strings.xml.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="widget_title">Registrar ánimo</string>
+    <string name="widget_subtitle">Toca para abrir Mood Cairns</string>
+    <string name="widget_description">Registra rápidamente tu estado de ánimo</string>
+
+    <!-- Common -->
+    <string name="common_back">Atrás</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_edit">Editar</string>
+    <string name="common_enable">Activar</string>
+    <string name="common_loading">Cargando…</string>
+    <string name="common_next">Siguiente</string>
+    <string name="common_ok">Aceptar</string>
+    <string name="common_save">Guardar</string>
+    <string name="common_saving">Guardando…</string>
+    <string name="common_all">Todos</string>
+    <string name="common_clear">Limpiar</string>
+    <string name="common_close">Cerrar</string>
+    <string name="common_delete">Eliminar</string>
+    <string name="common_add">Añadir</string>
+    <string name="common_continue">Continuar</string>
+    <string name="common_deleting">Eliminando…</string>
+    <string name="common_name_label">Nombre</string>
+    <string name="common_reorder">Reordenar</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_date_range">%1$s – %2$s</string>
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">%1$s a %2$s</string>
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <string name="common_value_in_range">%1$s (%2$s)</string>
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d s</item>
+        <item quantity="many">%1$d s</item>
+        <item quantity="other">%1$d s</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d min</item>
+        <item quantity="many">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+
+    <!-- Shared errors -->
+    <string name="error_save_failed">No se pudo guardar: %1$s</string>
+    <string name="error_delete_failed">No se pudo eliminar: %1$s</string>
+    <string name="error_name_required">El nombre es obligatorio</string>
+    <string name="error_pins_mismatch">Los PIN no coinciden</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">El PIN debe tener al menos %1$d dígito</item>
+        <item quantity="many">El PIN debe tener al menos %1$d dígitos</item>
+        <item quantity="other">El PIN debe tener al menos %1$d dígitos</item>
+    </plurals>
+
+    <!-- Prompt slot names -->
+    <string name="enum_prompt_slot_morning">Mañana</string>
+    <string name="enum_prompt_slot_evening">Noche</string>
+    <string name="enum_prompt_slot_manual">Manual</string>
+    <string name="enum_prompt_slot_custom">Personalizada</string>
+
+    <!-- Built-in scales, tags, and prompt windows -->
+    <string name="seed_scale_happiness">Felicidad</string>
+    <string name="seed_scale_anxiety">Ansiedad</string>
+    <string name="seed_scale_stress">Estrés</string>
+    <string name="seed_scale_boredom">Aburrimiento</string>
+    <string name="seed_scale_pain">Dolor</string>
+    <string name="seed_tag_home">Casa</string>
+    <string name="seed_tag_work">Trabajo</string>
+    <string name="seed_tag_school">Escuela</string>
+    <string name="seed_tag_commute">Trayecto</string>
+    <string name="seed_tag_outdoors">Aire libre</string>
+    <string name="seed_tag_travel">Viaje</string>
+    <string name="seed_tag_family">Familia</string>
+    <string name="seed_tag_friends">Amistades</string>
+    <string name="seed_tag_partner">Pareja</string>
+    <string name="seed_tag_coworkers">Compañeros</string>
+    <string name="seed_tag_alone">A solas</string>
+    <string name="seed_tag_exercise">Ejercicio</string>
+    <string name="seed_tag_socializing">Vida social</string>
+    <string name="seed_tag_reading">Lectura</string>
+    <string name="seed_tag_gaming">Videojuegos</string>
+    <string name="seed_tag_chores">Tareas</string>
+    <string name="seed_tag_rest">Descanso</string>
+    <string name="seed_tag_joy">Alegría</string>
+    <string name="seed_tag_excited">Entusiasmo</string>
+    <string name="seed_tag_grateful">Gratitud</string>
+    <string name="seed_tag_content">Satisfacción</string>
+    <string name="seed_tag_calm">Calma</string>
+    <string name="seed_tag_surprise">Sorpresa</string>
+    <string name="seed_tag_frustrated">Frustración</string>
+    <string name="seed_tag_lonely">Soledad</string>
+    <string name="seed_tag_sadness">Tristeza</string>
+    <string name="seed_tag_fear">Miedo</string>
+    <string name="seed_tag_anger">Enojo</string>
+    <string name="seed_tag_disgust">Asco</string>
+    <string name="seed_window_morning">Mañana</string>
+    <string name="seed_window_evening">Noche</string>
+
+    <!-- Tag categories -->
+    <string name="enum_tag_category_place">Lugares</string>
+    <string name="enum_tag_category_person">Personas</string>
+    <string name="enum_tag_category_activity">Actividades</string>
+    <string name="enum_tag_category_mood">Emociones</string>
+    <string name="enum_tag_category_other">Otras</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">Recordatorios de ánimo</string>
+    <string name="notif_channel_prompts_description">Recordatorios amables para registrar cómo te sientes.</string>
+    <string name="notif_prompt_default_title">Es hora de registrarte</string>
+    <string name="notif_prompt_text">Registra cómo te sientes</string>
+    <string name="notif_test_title">Notificación de prueba</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Registra cómo te sientes, en privado.</string>
+    <string name="home_log_entry">Nuevo registro</string>
+    <string name="home_history">Ver historial</string>
+    <string name="home_charts">Gráficos</string>
+    <string name="home_backup">Copia de seguridad</string>
+    <string name="home_scales">Gestionar escalas</string>
+    <string name="home_tags">Gestionar etiquetas</string>
+    <string name="home_settings">Ajustes</string>
+    <string name="home_about">Acerca de</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">¿Cómo estás?</string>
+    <string name="entry_title_edit">Editar registro</string>
+    <string name="entry_no_scales">No hay escalas configuradas. Añade una desde Gestionar escalas.</string>
+    <string name="entry_note_label">Nota (opcional)</string>
+    <string name="entry_prompt_slot_label">Franja de aviso</string>
+    <string name="entry_change_date_time">Cambiar fecha/hora…</string>
+    <string name="entry_slider_description_out_of">%1$s, valor %2$s de %3$d</string>
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, valor %2$s en el rango de %3$d a %4$d</string>
+    <string name="entry_slider_description_lower_better">%1$s, cuanto más bajo, mejor</string>
+
+    <!-- History screen -->
+    <string name="history_title">Historial</string>
+    <string name="history_add_past">Añadir un registro anterior</string>
+    <string name="history_empty">Aún no hay registros.</string>
+    <string name="history_no_matches">Ningún registro coincide con los filtros actuales.</string>
+    <string name="history_delete_title">¿Eliminar registro?</string>
+    <string name="history_delete_body">Este registro se eliminará de forma permanente.</string>
+    <string name="history_search_placeholder">Buscar en notas…</string>
+    <string name="history_search">Buscar</string>
+    <string name="history_clear_search">Borrar búsqueda</string>
+    <string name="history_clear_all">Limpiar todo</string>
+    <string name="history_pick_date">Elegir fecha</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">Escalas</string>
+    <string name="scale_list_add">Añadir escala</string>
+    <string name="scale_list_empty">Aún no hay escalas.</string>
+    <string name="scale_list_section_active">Activas</string>
+    <string name="scale_list_section_archived">Archivadas</string>
+    <string name="scale_list_archive">Archivar</string>
+    <string name="scale_list_unarchive">Desarchivar</string>
+    <string name="scale_list_step">paso %1$s</string>
+    <string name="scale_list_default">inicio %1$s</string>
+    <string name="scale_list_lower_better">cuanto más bajo, mejor</string>
+    <string name="scale_list_built_in">integrada</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">Nueva escala</string>
+    <string name="scale_edit_title_edit">Editar escala</string>
+    <string name="scale_edit_min_label">Mín.</string>
+    <string name="scale_edit_max_label">Máx.</string>
+    <string name="scale_edit_step_label">Paso</string>
+    <string name="scale_edit_default_label">Valor inicial</string>
+    <string name="scale_edit_default_hint">Dónde empieza el control deslizante en un registro nuevo. Si lo dejas vacío, empieza en el punto medio.</string>
+    <string name="scale_edit_lower_better">Cuanto más bajo, mejor</string>
+    <string name="scale_edit_lower_better_hint">Escala inversa: el control deslizante va de mayor a menor y los gráficos la dibujan de modo que una mejora apunte hacia arriba.</string>
+    <string name="scale_edit_color_label">Color</string>
+    <string name="scale_edit_built_in_hint">Las escalas integradas no se pueden renombrar; aun así puedes ajustar el rango, el paso y el color.</string>
+    <string name="scale_edit_delete">Eliminar escala</string>
+    <string name="scale_edit_this_scale">esta escala</string>
+    <string name="scale_edit_remap_title">¿Reasignar los valores registrados?</string>
+    <string name="scale_edit_remap_confirm">Reasignar</string>
+    <string name="scale_edit_remap_keep">Mantener valores</string>
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d registro tiene datos en \"%2$s\". Reasignar sustituye cada valor v por (min + max) - v para que los registros anteriores conserven su significado con la nueva dirección. Elige %3$s si solo querías cambiar cómo se muestra la escala.</item>
+        <item quantity="many">%1$d registros tienen datos en \"%2$s\". Reasignar sustituye cada valor v por (min + max) - v para que los registros anteriores conserven su significado con la nueva dirección. Elige %3$s si solo querías cambiar cómo se muestra la escala.</item>
+        <item quantity="other">%1$d registros tienen datos en \"%2$s\". Reasignar sustituye cada valor v por (min + max) - v para que los registros anteriores conserven su significado con la nueva dirección. Elige %3$s si solo querías cambiar cómo se muestra la escala.</item>
+    </plurals>
+    <string name="scale_edit_delete_title">¿Eliminar escala?</string>
+    <string name="scale_edit_delete_body">\"%1$s\" y todos los datos registrados en ella se eliminarán de forma permanente. Esta acción no se puede deshacer.</string>
+    <string name="scale_edit_delete_body_unused">Ningún registro usa \"%1$s\" todavía. \"%1$s\" y todos los datos registrados en ella se eliminarán de forma permanente. Esta acción no se puede deshacer.</string>
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d registro tiene datos en \"%2$s\". \"%2$s\" y todos los datos registrados en ella se eliminarán de forma permanente. Esta acción no se puede deshacer.</item>
+        <item quantity="many">%1$d registros tienen datos en \"%2$s\". \"%2$s\" y todos los datos registrados en ella se eliminarán de forma permanente. Esta acción no se puede deshacer.</item>
+        <item quantity="other">%1$d registros tienen datos en \"%2$s\". \"%2$s\" y todos los datos registrados en ella se eliminarán de forma permanente. Esta acción no se puede deshacer.</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">Etiquetas</string>
+    <string name="tag_list_empty">Aún no hay etiquetas.</string>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">Nueva etiqueta</string>
+    <string name="tag_edit_title_edit">Editar etiqueta</string>
+    <string name="tag_edit_category_label">Categoría</string>
+    <string name="tag_edit_delete">Eliminar etiqueta</string>
+    <string name="tag_edit_this_tag">esta etiqueta</string>
+    <string name="tag_edit_delete_title">¿Eliminar etiqueta?</string>
+    <string name="tag_edit_delete_body">\"%1$s\" se eliminará. Los registros conservan sus datos; solo se les quita la etiqueta.</string>
+    <string name="tag_edit_delete_body_unused">Ningún registro usa \"%1$s\" todavía.</string>
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">%1$d registro tiene la etiqueta \"%2$s\". Los registros conservan sus datos; solo se les quita la etiqueta.</item>
+        <item quantity="many">%1$d registros tienen la etiqueta \"%2$s\". Los registros conservan sus datos; solo se les quita la etiqueta.</item>
+        <item quantity="other">%1$d registros tienen la etiqueta \"%2$s\". Los registros conservan sus datos; solo se les quita la etiqueta.</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">Nueva franja</string>
+    <string name="window_edit_title_edit">Editar franja</string>
+    <string name="window_edit_label_label">Nombre</string>
+    <string name="window_edit_slot_label">Tipo</string>
+    <string name="window_edit_start">Inicio: %1$s</string>
+    <string name="window_edit_end">Fin: %1$s</string>
+    <string name="window_edit_enabled">Activada</string>
+    <string name="window_edit_select_time">Seleccionar hora</string>
+
+    <!-- Backup screen -->
+    <string name="backup_title">Copia de seguridad</string>
+    <string name="backup_intro">Las copias de seguridad se cifran con AES-GCM mediante una clave derivada de una frase de contraseña que tú eliges, y se guardan en Documents/MoodCairns. Syncthing o cualquier gestor de archivos puede sincronizarlas fuera del dispositivo; la app nunca sube nada.</string>
+    <string name="backup_export">Exportar ahora</string>
+    <string name="backup_export_csv">Exportar CSV sin cifrar</string>
+    <string name="backup_export_csv_warning">El CSV es texto plano y NO está cifrado. Cualquier persona o aplicación que pueda leer tu carpeta Documents (copias en la nube, gestores de archivos, otras apps) puede leer tus registros. Desactiva las exportaciones no seguras en Ajustes para ocultar esta opción.</string>
+    <string name="backup_import">Importar desde archivo (reemplaza todos los datos)</string>
+    <string name="backup_existing_label">Copias existentes</string>
+    <string name="backup_none">Ninguna todavía.</string>
+    <string name="backup_encrypt_title">Cifrar copia de seguridad</string>
+    <string name="backup_encrypt_body">Elige una frase de contraseña para cifrar esta copia. Necesitarás exactamente esta frase para restaurarla, incluso en una instalación nueva. No es el PIN de la app y no se puede recuperar si la olvidas.</string>
+    <string name="backup_passphrase_label">Frase de contraseña</string>
+    <string name="backup_passphrase_confirm_label">Confirmar frase de contraseña</string>
+    <string name="backup_passphrase_mismatch">Las frases de contraseña no coinciden</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">Al menos %1$d carácter</item>
+        <item quantity="many">Al menos %1$d caracteres</item>
+        <item quantity="other">Al menos %1$d caracteres</item>
+    </plurals>
+    <string name="backup_decrypt_title">Descifrar copia de seguridad</string>
+    <string name="backup_decrypt_body">Introduce la frase de contraseña con la que se cifró esta copia. En las copias antiguas, es el PIN que estaba configurado cuando se crearon.</string>
+    <string name="backup_passphrase_or_pin_label">Frase de contraseña o PIN</string>
+
+    <!-- About screen -->
+    <string name="about_title">Acerca de</string>
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_why_title">Por qué existe esta app</string>
+    <string name="about_why_body">Creé Mood Cairns porque quería un registro del estado de ánimo con todas las funciones que me gustaban y nada de lo que no: sin rastreo invasivo, sin analíticas, sin cuentas y sin necesitar Google Play Store para hacer compras. Tus registros viven solo en tu dispositivo: la app no declara permisos de red, y siempre será así.</string>
+    <string name="about_made_by">Creado por %1$s. Libre y de código abierto. ¡Gracias!</string>
+    <string name="about_updates_title">Actualizaciones</string>
+    <string name="about_updates_body">&lt;b&gt;Si usas F-Droid, deberías recibir las actualizaciones automáticamente&lt;/b&gt;. Si no es así, o si descargaste Mood Cairns desde GitHub, usa el botón de abajo para buscar actualizaciones y &lt;b&gt;descargar el archivo .apk más reciente&lt;/b&gt; en Assets.</string>
+    <string name="about_get_latest">Obtener la última versión</string>
+    <string name="about_get_latest_hint">Abre la última versión en GitHub en tu navegador. La app en sí nunca accede a la red.</string>
+    <string name="about_no_browser">No se encontró ningún navegador para abrir la página.</string>
+    <string name="about_contact_title">Contacto</string>
+    <string name="about_contact_body">La mejor forma de contactarme para pedir cambios o funciones nuevas es &lt;a href=\"%1$s\"&gt;abrir un issue en GitHub&lt;/a&gt;.</string>
+
+    <!-- Charts screen -->
+    <string name="charts_title">Gráficos</string>
+    <string name="charts_help_button">Ayuda con los gráficos</string>
+    <string name="charts_no_data">No hay datos en este rango.</string>
+    <string name="charts_date_range_label">Rango de fechas</string>
+    <string name="charts_change_range">Cambiar</string>
+    <string name="charts_select_range">Seleccionar rango</string>
+    <string name="charts_series_label">Serie</string>
+    <string name="charts_mode_raw">Diario</string>
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">Media de %1$d día</item>
+        <item quantity="many">Media de %1$d días</item>
+        <item quantity="other">Media de %1$d días</item>
+    </plurals>
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d registro · valores diarios sin procesar</item>
+        <item quantity="many">%1$d registros · valores diarios sin procesar</item>
+        <item quantity="other">%1$d registros · valores diarios sin procesar</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d registro · media móvil de %2$d días</item>
+        <item quantity="many">%1$d registros · media móvil de %2$d días</item>
+        <item quantity="other">%1$d registros · media móvil de %2$d días</item>
+    </plurals>
+    <string name="charts_y_axis_label">Eje Y</string>
+    <string name="charts_axis_autofit">Automático</string>
+    <string name="charts_axis_absolute">Absoluto</string>
+    <string name="charts_prompt_slots_label">Franjas de aviso</string>
+    <string name="charts_slot_other">Otras</string>
+    <string name="charts_scales_label">Escalas</string>
+    <string name="charts_tags_label">Etiquetas</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Eje vertical: posición dentro del rango de cada escala (100% = parte superior del rango; las escalas \"cuanto más bajo, mejor\" se invierten)</string>
+    <string name="charts_axis_caption_values">Eje vertical: valores registrados</string>
+    <string name="charts_axis_caption_single">Eje vertical: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">Eje vertical: valores registrados - %1$d escala usa este eje</item>
+        <item quantity="many">Eje vertical: valores registrados - %1$d escalas comparten un solo eje</item>
+        <item quantity="other">Eje vertical: valores registrados - %1$d escalas comparten un solo eje</item>
+    </plurals>
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, cuanto más bajo, mejor)</string>
+    <string name="charts_no_entries_day">No hay registros este día.</string>
+    <string name="charts_point_value">%1$s: %2$s</string>
+
+    <!-- Charts help dialog -->
+    <string name="charts_help_title">Cómo leer los gráficos</string>
+    <string name="charts_help_dismiss">Entendido</string>
+    <string name="charts_help_intro">Dos selectores cambian cómo se dibujan tus números. Nada de lo que elijas aquí cambia tus datos, solo el aspecto del gráfico.</string>
+    <string name="charts_help_series_title">Serie: %1$s o %2$s</string>
+    <string name="charts_help_raw_body">Muestra cada día exactamente como lo registraste. Úsalo para ver con precisión los cambios de un día a otro, aunque puede parecer irregular.</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">Sustituye cada día por la media del %1$d día que termina en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="many">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="other">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+    </plurals>
+    <string name="charts_help_axis_title">Eje Y: %1$s o %2$s</string>
+    <string name="charts_help_autofit_body">Ajusta el eje vertical solo al rango que cubren realmente tus datos. Los cambios pequeños se ven con facilidad porque el gráfico ocupa todo el espacio, pero la línea no se mide frente al rango completo de la escala. Las etiquetas de la izquierda son tus valores registrados; cuando se muestra más de una escala, todas comparten ese mismo eje.</string>
+    <string name="charts_help_absolute_body" formatted="false">Muestra cada línea frente al rango completo de su escala, de mínimo a máximo. Los cambios se ven más pequeños, pero las escalas quedan alineadas, así que puedes compararlas entre sí en el mismo gráfico. Las escalas marcadas como \"cuanto más bajo, mejor\" se dibujan invertidas, de modo que mejorar siempre apunta hacia arriba. Las etiquetas de la izquierda se leen como porcentajes porque cada línea se mide frente a su propio rango: 100% es la parte superior de ese rango, o la inferior en una escala marcada como \"cuanto más bajo, mejor\".</string>
+
+    <!-- Data store upgrade -->
+    <string name="migrating_title">Actualizando el almacén de datos…</string>
+    <string name="migrating_body">Tus registros se están trasladando a la base de datos cifrada. No cierres la app.</string>
+    <string name="migration_failed_title">La actualización falló</string>
+    <string name="migration_failed_body">Tus datos originales siguen en el dispositivo. Vuelve a abrir la app para reintentarlo, o desinstálala y restaura una copia de seguridad si el problema continúa.</string>
+
+    <!-- Biometric unlock prompt -->
+    <string name="biometric_prompt_title">Desbloquear Mood Cairns</string>
+    <string name="biometric_prompt_subtitle">Autentícate para continuar</string>
+    <string name="biometric_prompt_use_pin">Usar PIN</string>
+
+    <!-- No-PIN warning -->
+    <string name="no_pin_warning_title_setup">¿Continuar sin PIN?</string>
+    <string name="no_pin_warning_title_remove">¿Quitar tu PIN?</string>
+    <string name="no_pin_warning_body">Sin PIN, cualquier persona que pueda usar este dispositivo desbloqueado podrá abrir Mood Cairns y leer todos tus registros. Tus datos siguen cifrados en el dispositivo, pero solo mediante el almacén seguro de claves del dispositivo: se perderá la protección adicional que da un PIN y se desactivará el desbloqueo biométrico. Puedes volver a configurar un PIN en cualquier momento en Ajustes.</string>
+    <string name="no_pin_warning_accept">Aceptar y continuar</string>
+
+    <!-- App language picker -->
+    <string name="language_app_language">Idioma de la app</string>
+    <string name="language_system_default">Predeterminado del sistema</string>
+    <string name="language_system_untranslated">%1$s (aún sin traducir, se usa el inglés)</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_language">Idioma</string>
+    <string name="settings_section_prompt_windows">Franjas de aviso</string>
+    <string name="settings_add_window">Añadir franja</string>
+    <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
+    <string name="settings_section_security">Seguridad</string>
+    <string name="settings_auto_lock_label">Bloqueo automático al salir de la app</string>
+    <string name="settings_auto_lock_immediate">Inmediato</string>
+    <string name="settings_biometric_unlock">Desbloqueo biométrico</string>
+    <string name="settings_change_pin">Cambiar PIN</string>
+    <string name="settings_lock_now">Bloquear ahora</string>
+    <string name="settings_set_pin">Configurar PIN</string>
+    <string name="settings_no_pin_explanation">No hay ningún PIN configurado. Tus datos están cifrados en este dispositivo, pero solo los protege el almacén de claves del dispositivo, no un PIN. El bloqueo automático, el desbloqueo biométrico y Bloquear ahora no están disponibles sin PIN.</string>
+    <string name="settings_section_backup">Copia de seguridad y exportación</string>
+    <string name="settings_allow_unsafe_exports">Permitir exportaciones no seguras</string>
+    <string name="settings_allow_unsafe_exports_summary">Activa una exportación CSV sin cifrar en Copia de seguridad. Desactivado de forma predeterminada.</string>
+    <string name="settings_unsafe_exports_dialog_title">¿Permitir exportaciones no seguras?</string>
+    <string name="settings_unsafe_exports_dialog_body">Esto añade una opción para exportar tus datos como un archivo CSV sin cifrar al almacenamiento compartido. Ese archivo es texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
+    <string name="settings_section_diagnostics">Diagnóstico</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">Notificación de prueba (en %1$d segundo)</item>
+        <item quantity="many">Notificación de prueba (en %1$d segundos)</item>
+        <item quantity="other">Notificación de prueba (en %1$d segundos)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_title">Bloqueado</string>
+    <string name="lock_subtitle">Introduce el PIN para continuar</string>
+    <string name="lock_pin_label">PIN</string>
+    <string name="lock_unlock">Desbloquear</string>
+    <string name="lock_use_biometric">Usar biometría</string>
+    <string name="lock_try_again_in">Inténtalo de nuevo en %1$s</string>
+    <string name="lock_locked_for">Bloqueado (%1$s)</string>
+    <string name="lock_error_wrong_pin">PIN incorrecto</string>
+    <string name="lock_error_too_many_attempts">Demasiados intentos</string>
+    <string name="lock_error_unlock_failed">No se pudo desbloquear: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_title">Configura un PIN</string>
+    <string name="set_pin_intro">Tus registros nunca salen del dispositivo. Un PIN junto con el desbloqueo biométrico los mantiene solo para ti.</string>
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">PIN (%1$d–%2$d dígito)</item>
+        <item quantity="many">PIN (%1$d–%2$d dígitos)</item>
+        <item quantity="other">PIN (%1$d–%2$d dígitos)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">Confirmar PIN</string>
+    <string name="set_pin_save">Guardar PIN</string>
+    <string name="set_pin_continue_without">Continuar sin PIN</string>
+    <string name="set_pin_error_failed">No se pudo configurar el PIN: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">No se pudo continuar sin PIN: %1$s</string>
+
+    <!-- Change PIN screen -->
+    <string name="change_pin_title_change">Cambiar PIN</string>
+    <string name="change_pin_title_set">Configurar PIN</string>
+    <string name="change_pin_action_change">Cambiar PIN</string>
+    <string name="change_pin_action_set">Configurar PIN</string>
+    <string name="change_pin_action_remove">Quitar PIN</string>
+    <string name="change_pin_current_label">PIN actual</string>
+    <string name="change_pin_new_label">PIN nuevo</string>
+    <string name="change_pin_confirm_label">Confirmar PIN nuevo</string>
+    <string name="change_pin_remove_hint">Deja vacíos los campos del PIN nuevo para quitar tu PIN.</string>
+    <string name="change_pin_error_current_required">Introduce tu PIN actual para quitarlo</string>
+    <string name="change_pin_error_wrong_current">El PIN actual es incorrecto</string>
+    <string name="change_pin_error_locked">La app está bloqueada; desbloquéala e inténtalo de nuevo</string>
+    <string name="change_pin_error_failed">No se pudo actualizar el PIN: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">El PIN nuevo debe tener al menos %1$d dígito</item>
+        <item quantity="many">El PIN nuevo debe tener al menos %1$d dígitos</item>
+        <item quantity="other">El PIN nuevo debe tener al menos %1$d dígitos</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">Demasiados intentos. Inténtalo de nuevo en %1$d segundo.</item>
+        <item quantity="many">Demasiados intentos. Inténtalo de nuevo en %1$d segundos.</item>
+        <item quantity="other">Demasiados intentos. Inténtalo de nuevo en %1$d segundos.</item>
+    </plurals>
+
+    <!-- Scale editor errors -->
+    <string name="scale_edit_error_not_found">No se encontró la escala</string>
+    <string name="scale_edit_error_numbers_required">Introduce valores numéricos para mín., máx. y paso</string>
+    <string name="scale_edit_error_min_not_below_max">El mínimo debe ser menor que el máximo</string>
+    <string name="scale_edit_error_step_not_positive">El paso debe ser mayor que cero</string>
+    <string name="scale_edit_error_range_not_step_multiple">El rango (%1$d) debe ser múltiplo del paso (%2$s)</string>
+    <string name="scale_edit_error_default_not_number">El valor inicial debe ser un número</string>
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">El valor inicial debe estar entre %1$d y %2$d</string>
+    <string name="scale_edit_error_default_off_step">El valor inicial debe coincidir con un paso de %1$s a partir de %2$d</string>
+
+    <!-- Tag editor errors -->
+    <string name="tag_edit_error_not_found">No se encontró la etiqueta</string>
+    <string name="tag_edit_error_name_taken">Ya existe una etiqueta llamada \"%1$s\" en esta categoría</string>
+
+    <!-- Prompt window editor errors -->
+    <string name="window_edit_error_not_found">No se encontró la franja</string>
+    <string name="window_edit_error_label_required">El nombre es obligatorio</string>
+    <string name="window_edit_error_start_not_before_end">El inicio debe ser anterior al fin</string>
+
+    <!-- Backup messages -->
+    <string name="backup_error_unsafe_exports_disabled">Las exportaciones no seguras están desactivadas</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">La frase de contraseña debe tener al menos %1$d carácter</item>
+        <item quantity="many">La frase de contraseña debe tener al menos %1$d caracteres</item>
+        <item quantity="other">La frase de contraseña debe tener al menos %1$d caracteres</item>
+    </plurals>
+    <string name="backup_export_success">Exportado: %1$s</string>
+    <string name="backup_export_csv_success">Exportado: %1$s (sin cifrar)</string>
+    <string name="backup_export_failed">Error al exportar: %1$s</string>
+    <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
+    <string name="backup_import_failed">Error al importar: %1$s</string>
+
+    <!-- Import errors -->
+    <string name="import_error_too_large">El archivo supera el límite de %1$d MB.</string>
+    <string name="import_error_unreadable">No se pudo leer el archivo.</string>
+    <string name="import_error_unreadable_detail">No se pudo leer el archivo (%1$s).</string>
+    <string name="import_error_not_a_backup">Este archivo no es una copia de seguridad de Mood Cairns.</string>
+    <string name="import_error_wrong_secret">No se pudo descifrar la copia. La frase de contraseña es incorrecta o el archivo está dañado.</string>
+    <string name="import_error_unsupported_version">Esta copia usa la versión de formato %1$d, que esta versión de la app no puede leer. Actualizar la app puede ayudar.</string>
+    <string name="import_error_malformed">El archivo de copia está dañado (%1$s).</string>
+    <string name="import_error_write_failed">La importación se detuvo al guardar los datos (%1$s).</string>
+</resources>

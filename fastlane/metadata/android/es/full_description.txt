@@ -1,0 +1,26 @@
+Un registro del estado de ánimo para Android, privado y totalmente sin conexión. Registra cómo te sientes con tus propias escalas, tus propias etiquetas, en tus propias franjas horarias y en tu propio dispositivo. Nunca se sube nada: si quieres copias de seguridad, las haces a tu manera (consejo: Syncthing funciona muy bien con las copias cifradas que guardas).
+
+<b>Funciones</b>
+
+* <b>Escalas personalizadas.</b> Cinco escalas integradas (Felicidad, Ansiedad, Estrés, Aburrimiento, Dolor), cada una numérica y con su propio color. Añade las tuyas y archiva las que no quieras.
+* <b>Etiquetas personalizadas.</b> Elige entre muchas etiquetas integradas de lugares, personas, actividades, emociones y más, o añade las tuyas para adaptar tu registro.
+* <b>Franjas de aviso.</b> Define franjas horarias (por ejemplo, mañana de 08:00 a 12:00 y noche de 18:00 a 20:00). La app envía una notificación por franja al día. Toca la notificación para ir directamente a la pantalla de registro.
+* <b>Historial y gráficos.</b> Consulta registros anteriores y la evolución de cada escala con el tiempo.
+* <b>En tu idioma.</b> Disponible en español e inglés. Puedes elegir el idioma de la app en Ajustes, independientemente del idioma del teléfono.
+* <b>Almacenamiento cifrado.</b> La base de datos se guarda cifrada con SQLCipher. La clave solo está en memoria mientras la app está desbloqueada y se borra al bloquearla.
+* <b>Bloqueo con PIN y biometría.</b> Acceso a la app protegido por PIN, con desbloqueo biométrico opcional. El PIN se guarda como hash con PBKDF2-HMAC-SHA256 (600.000 iteraciones).
+* <b>Copias de seguridad cifradas.</b> La exportación manual guarda un archivo JSON cifrado con AES-GCM en Documents/MoodCairns/. La clave se deriva de una frase de contraseña que tú eliges (mínimo 8 caracteres) con PBKDF2-HMAC-SHA256 (600.000 iteraciones) y una sal nueva para cada copia, así que cualquier instalación, incluso una nueva, puede descifrarla con la misma frase. Las copias de versiones anteriores, cifradas con el PIN, se siguen pudiendo importar con ese PIN.
+
+<b>Compromiso de privacidad</b>
+
+La app <b>no declara ningún permiso de red</b>. Sin acceso a internet, el proceso literalmente no puede abrir una conexión, así que es imposible que envíe datos, haga lo que haga cualquier biblioteca incluida.
+La compilación lo comprueba, de modo que una actualización de dependencias nunca puede añadir un permiso de red sin que se note.
+Si quieres sincronizar las copias de seguridad fuera del dispositivo, apunta Syncthing (o cualquier gestor de archivos que pueda sincronizar una carpeta) a Documents/MoodCairns/.
+
+<b>Contacto</b>
+
+La mejor forma de comunicar problemas, pedir funciones, etc. es la página de incidencias (Issues) en github.com/lcdcode/mood-cairns. Suelo responder en un plazo de 3 días hábiles.
+
+<b>Código fuente</b>
+
+Totalmente de código abierto bajo la licencia GPL-3.0-only. Creado con Kotlin, Jetpack Compose, Room, SQLCipher y AndroidX.

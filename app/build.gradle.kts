@@ -8,6 +8,8 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.register
 import org.w3c.dom.Element
+import org.xml.sax.InputSource
+import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
@@ -31,9 +33,16 @@ fun toResourceQualifier(tag: String): String =
 
 // res/xml/locale_config.xml is the single source of truth for shipped languages.
 fun supportedResourceLocales(): List<String> {
+    // Read through providers.fileContents so the configuration cache tracks the file.
+    // A plain file read is invisible to it: a cached configuration would keep the old
+    // language list and silently strip a newly added language from the APK.
+    val xml = providers
+        .fileContents(layout.projectDirectory.file("src/main/res/xml/locale_config.xml"))
+        .asText
+        .get()
     val doc = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
         .newDocumentBuilder()
-        .parse(file("src/main/res/xml/locale_config.xml"))
+        .parse(InputSource(StringReader(xml)))
     val nodes = doc.getElementsByTagName("locale")
     val tags = (0 until nodes.length).map {
         (nodes.item(it) as Element).getAttributeNS(androidNamespace, "name")
@@ -58,8 +67,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.2.0"
+        versionCode = 11
+        versionName = "1.2.1"
         // Package only the languages the app ships. Library resources for other locales
         // are stripped.
         resourceConfigurations.addAll(supportedResourceLocales())

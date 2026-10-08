@@ -8,7 +8,7 @@ import com.lcdcode.moodcairns.BuildConfig
  */
 object SupportedLocales {
 
-    val tags: List<String> = listOf("en")
+    val tags: List<String> = listOf("en", "es")
 
     /** Accented, lengthened English for spotting untranslated text. Debug builds only. */
     const val PSEUDO_LOCALE = "en-XA"

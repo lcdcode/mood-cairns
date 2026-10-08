@@ -342,7 +342,7 @@
     <string name="charts_tags_label">Tags</string>
     <!-- Caption under the chart explaining the vertical axis. Keep "top of range"
          rather than "best": on a scale where high is bad, 100% is the worst end. -->
-    <string name="charts_axis_caption_absolute">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>
     <string name="charts_axis_caption_values">Vertical axis: logged values</string>
     <!-- %1$s scale name, %2$s its range. -->
     <string name="charts_axis_caption_single">Vertical axis: %1$s (%2$s)</string>
@@ -370,7 +370,7 @@
     </plurals>
     <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
     <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
-    <string name="charts_help_absolute_body">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
+    <string name="charts_help_absolute_body" formatted="false">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
 
     <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
     <string name="migrating_title">Upgrading data store…</string>
