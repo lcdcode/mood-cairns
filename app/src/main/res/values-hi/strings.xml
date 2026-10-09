@@ -134,7 +134,7 @@
     <string name="entry_note_label">नोट (वैकल्पिक)</string>
     <string name="entry_prompt_slot_label">रिमाइंडर समय</string>
     <string name="entry_change_date_time">तारीख/समय बदलें…</string>
-    <string name="entry_slider_description_out_of">%1$s, मान %2$s, %3$d में से</string>
+    <string name="entry_slider_description_out_of">%1$s, %3$d में से मान %2$s</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, मान %2$s, %3$d से %4$d की सीमा में</string>
     <string name="entry_slider_description_lower_better">%1$s, कम होना बेहतर है</string>
 
