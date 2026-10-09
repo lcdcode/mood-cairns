@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Hindi, polite "आप". DRAFT pending native-speaker review.
+    - Verbs in Hindi agree with the subject's gender, and neither the user's nor the
+      author's gender is known, so sentences are built to avoid gendered verb forms
+      (e.g. "आज आपका मूड कैसा है?" agrees with मूड, not the user; passives elsewhere).
+    - Familiar loanwords are used for technical terms (एंट्री, स्केल, टैग, बैकअप, पिन).
+    - Plurals: Hindi's "one" category covers both 0 and 1. Where the noun does not
+      inflect (एंट्री, अंक, दिन, सेकंड) both forms are the same.
+    Source: values/strings.xml.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="widget_title">मूड दर्ज करें</string>
+    <string name="widget_subtitle">Mood Cairns खोलने के लिए टैप करें</string>
+    <string name="widget_description">अपना मूड जल्दी से दर्ज करें</string>
+
+    <!-- Common -->
+    <string name="common_back">वापस</string>
+    <string name="common_cancel">रद्द करें</string>
+    <string name="common_edit">संपादित करें</string>
+    <string name="common_enable">चालू करें</string>
+    <string name="common_loading">लोड हो रहा है…</string>
+    <string name="common_next">आगे</string>
+    <string name="common_ok">ठीक है</string>
+    <string name="common_save">सेव करें</string>
+    <string name="common_saving">सेव हो रहा है…</string>
+    <string name="common_all">सभी</string>
+    <string name="common_clear">साफ़ करें</string>
+    <string name="common_close">बंद करें</string>
+    <string name="common_delete">हटाएँ</string>
+    <string name="common_add">जोड़ें</string>
+    <string name="common_continue">जारी रखें</string>
+    <string name="common_deleting">हटाया जा रहा है…</string>
+    <string name="common_name_label">नाम</string>
+    <string name="common_reorder">क्रम बदलें</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_date_range">%1$s – %2$s</string>
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">%1$s से %2$s</string>
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <string name="common_value_in_range">%1$s (%2$s)</string>
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d सेकंड</item>
+        <item quantity="other">%1$d सेकंड</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d मिनट</item>
+        <item quantity="other">%1$d मिनट</item>
+    </plurals>
+
+    <!-- Shared errors -->
+    <string name="error_save_failed">सेव नहीं हो सका: %1$s</string>
+    <string name="error_delete_failed">हटाया नहीं जा सका: %1$s</string>
+    <string name="error_name_required">नाम ज़रूरी है</string>
+    <string name="error_pins_mismatch">पिन मेल नहीं खाते</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">पिन में कम से कम %1$d अंक होना चाहिए</item>
+        <item quantity="other">पिन में कम से कम %1$d अंक होने चाहिए</item>
+    </plurals>
+
+    <!-- Prompt slot names -->
+    <string name="enum_prompt_slot_morning">सुबह</string>
+    <string name="enum_prompt_slot_evening">शाम</string>
+    <string name="enum_prompt_slot_manual">मैनुअल</string>
+    <string name="enum_prompt_slot_custom">कस्टम</string>
+
+    <!-- Built-in scales, tags, and prompt windows -->
+    <string name="seed_scale_happiness">खुशी</string>
+    <string name="seed_scale_anxiety">चिंता</string>
+    <string name="seed_scale_stress">तनाव</string>
+    <string name="seed_scale_boredom">बोरियत</string>
+    <string name="seed_scale_pain">दर्द</string>
+    <string name="seed_tag_home">घर</string>
+    <string name="seed_tag_work">काम</string>
+    <string name="seed_tag_school">स्कूल</string>
+    <string name="seed_tag_commute">आना-जाना</string>
+    <string name="seed_tag_outdoors">बाहर</string>
+    <string name="seed_tag_travel">यात्रा</string>
+    <string name="seed_tag_family">परिवार</string>
+    <string name="seed_tag_friends">दोस्त</string>
+    <string name="seed_tag_partner">पार्टनर</string>
+    <string name="seed_tag_coworkers">सहकर्मी</string>
+    <string name="seed_tag_alone">अकेले</string>
+    <string name="seed_tag_exercise">व्यायाम</string>
+    <string name="seed_tag_socializing">मेलजोल</string>
+    <string name="seed_tag_reading">पढ़ना</string>
+    <string name="seed_tag_gaming">गेमिंग</string>
+    <string name="seed_tag_chores">घर के काम</string>
+    <string name="seed_tag_rest">आराम</string>
+    <string name="seed_tag_joy">आनंद</string>
+    <string name="seed_tag_excited">उत्साह</string>
+    <string name="seed_tag_grateful">आभार</string>
+    <string name="seed_tag_content">संतोष</string>
+    <string name="seed_tag_calm">शांति</string>
+    <string name="seed_tag_surprise">आश्चर्य</string>
+    <string name="seed_tag_frustrated">झुंझलाहट</string>
+    <string name="seed_tag_lonely">अकेलापन</string>
+    <string name="seed_tag_sadness">उदासी</string>
+    <string name="seed_tag_fear">डर</string>
+    <string name="seed_tag_anger">गुस्सा</string>
+    <string name="seed_tag_disgust">घृणा</string>
+    <string name="seed_window_morning">सुबह</string>
+    <string name="seed_window_evening">शाम</string>
+
+    <!-- Tag categories -->
+    <string name="enum_tag_category_place">जगहें</string>
+    <string name="enum_tag_category_person">लोग</string>
+    <string name="enum_tag_category_activity">गतिविधियाँ</string>
+    <string name="enum_tag_category_mood">भावनाएँ</string>
+    <string name="enum_tag_category_other">अन्य</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">मूड रिमाइंडर</string>
+    <string name="notif_channel_prompts_description">अपना मूड दर्ज करने के लिए हल्के-फुल्के रिमाइंडर।</string>
+    <string name="notif_prompt_default_title">एंट्री का समय</string>
+    <string name="notif_prompt_text">अपना मूड दर्ज करें</string>
+    <string name="notif_test_title">टेस्ट नोटिफ़िकेशन</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">अपना मूड दर्ज करें, पूरी निजता के साथ।</string>
+    <string name="home_log_entry">नई एंट्री</string>
+    <string name="home_history">इतिहास देखें</string>
+    <string name="home_charts">चार्ट</string>
+    <string name="home_backup">बैकअप और इंपोर्ट</string>
+    <string name="home_scales">स्केल प्रबंधित करें</string>
+    <string name="home_tags">टैग प्रबंधित करें</string>
+    <string name="home_settings">सेटिंग्स</string>
+    <string name="home_about">ऐप के बारे में</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">आज आपका मूड कैसा है?</string>
+    <string name="entry_title_edit">एंट्री संपादित करें</string>
+    <string name="entry_no_scales">कोई स्केल सेट नहीं है। “स्केल प्रबंधित करें” से एक जोड़ें।</string>
+    <string name="entry_note_label">नोट (वैकल्पिक)</string>
+    <string name="entry_prompt_slot_label">रिमाइंडर समय</string>
+    <string name="entry_change_date_time">तारीख/समय बदलें…</string>
+    <string name="entry_slider_description_out_of">%1$s, मान %2$s, %3$d में से</string>
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, मान %2$s, %3$d से %4$d की सीमा में</string>
+    <string name="entry_slider_description_lower_better">%1$s, कम होना बेहतर है</string>
+
+    <!-- History screen -->
+    <string name="history_title">इतिहास</string>
+    <string name="history_add_past">पिछली एंट्री जोड़ें</string>
+    <string name="history_empty">अभी तक कोई एंट्री नहीं है।</string>
+    <string name="history_no_matches">मौजूदा फ़िल्टर से कोई एंट्री मेल नहीं खाती।</string>
+    <string name="history_delete_title">एंट्री हटाएँ?</string>
+    <string name="history_delete_body">यह एंट्री स्थायी रूप से हटा दी जाएगी।</string>
+    <string name="history_search_placeholder">नोट में खोजें…</string>
+    <string name="history_search">खोजें</string>
+    <string name="history_clear_search">खोज साफ़ करें</string>
+    <string name="history_clear_all">सभी फ़िल्टर हटाएँ</string>
+    <string name="history_pick_date">तारीख चुनें</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">स्केल</string>
+    <string name="scale_list_add">स्केल जोड़ें</string>
+    <string name="scale_list_empty">अभी तक कोई स्केल नहीं है।</string>
+    <string name="scale_list_section_active">सक्रिय</string>
+    <string name="scale_list_section_archived">संग्रहीत</string>
+    <string name="scale_list_archive">संग्रहीत करें</string>
+    <string name="scale_list_unarchive">संग्रह से निकालें</string>
+    <string name="scale_list_step">स्टेप %1$s</string>
+    <string name="scale_list_default">शुरुआत %1$s</string>
+    <string name="scale_list_lower_better">कम होना बेहतर</string>
+    <string name="scale_list_built_in">बिल्ट-इन</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">नया स्केल</string>
+    <string name="scale_edit_title_edit">स्केल संपादित करें</string>
+    <string name="scale_edit_min_label">न्यूनतम</string>
+    <string name="scale_edit_max_label">अधिकतम</string>
+    <string name="scale_edit_step_label">स्टेप</string>
+    <string name="scale_edit_default_label">शुरुआती मान</string>
+    <string name="scale_edit_default_hint">नई एंट्री में स्लाइडर यहीं से शुरू होता है। खाली छोड़ने पर बीच से शुरू होगा।</string>
+    <string name="scale_edit_lower_better">कम होना बेहतर है</string>
+    <string name="scale_edit_lower_better_hint">उल्टा स्केल: स्लाइडर ऊँचे से नीचे की ओर चलता है, और चार्ट इसे ऐसे दिखाते हैं कि सुधार ऊपर की ओर दिखे।</string>
+    <string name="scale_edit_color_label">रंग</string>
+    <string name="scale_edit_built_in_hint">बिल्ट-इन स्केल का नाम नहीं बदला जा सकता; फिर भी सीमा, स्टेप और रंग बदले जा सकते हैं।</string>
+    <string name="scale_edit_delete">स्केल हटाएँ</string>
+    <string name="scale_edit_this_scale">यह स्केल</string>
+    <string name="scale_edit_remap_title">दर्ज मान बदलें?</string>
+    <string name="scale_edit_remap_confirm">मान बदलें</string>
+    <string name="scale_edit_remap_keep">मान रहने दें</string>
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d एंट्री में “%2$s” का डेटा है। मान बदलने पर हर मान v को (min + max) - v से बदल दिया जाता है, ताकि नई दिशा में भी पिछली एंट्री का अर्थ बना रहे। अगर इरादा सिर्फ़ स्केल के दिखने का तरीका बदलना था, तो %3$s चुनें।</item>
+        <item quantity="other">%1$d एंट्री में “%2$s” का डेटा है। मान बदलने पर हर मान v को (min + max) - v से बदल दिया जाता है, ताकि नई दिशा में भी पिछली एंट्री का अर्थ बना रहे। अगर इरादा सिर्फ़ स्केल के दिखने का तरीका बदलना था, तो %3$s चुनें।</item>
+    </plurals>
+    <string name="scale_edit_delete_title">स्केल हटाएँ?</string>
+    <string name="scale_edit_delete_body">“%1$s” और इस पर दर्ज सारा डेटा स्थायी रूप से हटा दिया जाएगा। इसे पहले जैसा नहीं किया जा सकता।</string>
+    <string name="scale_edit_delete_body_unused">अभी कोई एंट्री “%1$s” का इस्तेमाल नहीं करती। “%1$s” और इस पर दर्ज सारा डेटा स्थायी रूप से हटा दिया जाएगा। इसे पहले जैसा नहीं किया जा सकता।</string>
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d एंट्री में “%2$s” का डेटा है। “%2$s” और इस पर दर्ज सारा डेटा स्थायी रूप से हटा दिया जाएगा। इसे पहले जैसा नहीं किया जा सकता।</item>
+        <item quantity="other">%1$d एंट्री में “%2$s” का डेटा है। “%2$s” और इस पर दर्ज सारा डेटा स्थायी रूप से हटा दिया जाएगा। इसे पहले जैसा नहीं किया जा सकता।</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">टैग</string>
+    <string name="tag_list_empty">अभी तक कोई टैग नहीं है।</string>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">नया टैग</string>
+    <string name="tag_edit_title_edit">टैग संपादित करें</string>
+    <string name="tag_edit_category_label">श्रेणी</string>
+    <string name="tag_edit_delete">टैग हटाएँ</string>
+    <string name="tag_edit_this_tag">यह टैग</string>
+    <string name="tag_edit_delete_title">टैग हटाएँ?</string>
+    <string name="tag_edit_delete_body">“%1$s” हटा दिया जाएगा। एंट्री का डेटा बना रहेगा; बस उनसे यह टैग हट जाएगा।</string>
+    <string name="tag_edit_delete_body_unused">अभी कोई एंट्री “%1$s” का इस्तेमाल नहीं करती।</string>
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">%1$d एंट्री पर “%2$s” टैग लगा है। एंट्री का डेटा बना रहेगा; बस उससे यह टैग हट जाएगा।</item>
+        <item quantity="other">%1$d एंट्री पर “%2$s” टैग लगा है। एंट्री का डेटा बना रहेगा; बस उनसे यह टैग हट जाएगा।</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">नया रिमाइंडर समय</string>
+    <string name="window_edit_title_edit">रिमाइंडर समय संपादित करें</string>
+    <string name="window_edit_label_label">नाम</string>
+    <string name="window_edit_slot_label">प्रकार</string>
+    <string name="window_edit_start">शुरू: %1$s</string>
+    <string name="window_edit_end">खत्म: %1$s</string>
+    <string name="window_edit_enabled">चालू</string>
+    <string name="window_edit_select_time">समय चुनें</string>
+
+    <!-- Backup screen -->
+    <string name="backup_title">बैकअप और इंपोर्ट</string>
+    <string name="backup_intro">बैकअप, आपकी चुनी हुई पासफ़्रेज़ से बनी कुंजी के साथ AES-GCM से एन्क्रिप्ट होकर Documents/MoodCairns में सेव होते हैं। Syncthing या कोई भी फ़ाइल मैनेजर इन्हें दूसरे डिवाइस पर सिंक कर सकता है; ऐप खुद कभी कुछ अपलोड नहीं करता।</string>
+    <string name="backup_export">अभी एक्सपोर्ट करें</string>
+    <string name="backup_export_csv">बिना एन्क्रिप्शन वाली CSV एक्सपोर्ट करें</string>
+    <string name="backup_export_csv_warning">CSV सादा टेक्स्ट है और एन्क्रिप्टेड नहीं है। जो भी आपके Documents फ़ोल्डर को पढ़ सकता है (क्लाउड बैकअप, फ़ाइल मैनेजर, दूसरे ऐप), वह आपकी एंट्री पढ़ सकता है। इस विकल्प को छिपाने के लिए सेटिंग्स में असुरक्षित एक्सपोर्ट बंद करें।</string>
+    <string name="backup_import">फ़ाइल से इंपोर्ट करें (सारा डेटा बदल जाएगा)</string>
+    <string name="backup_existing_label">मौजूदा बैकअप</string>
+    <string name="backup_none">अभी कोई नहीं।</string>
+    <string name="backup_encrypt_title">बैकअप एन्क्रिप्ट करें</string>
+    <string name="backup_encrypt_body">इस बैकअप को एन्क्रिप्ट करने के लिए एक पासफ़्रेज़ चुनें। इसे रीस्टोर करने के लिए ठीक यही पासफ़्रेज़ चाहिए होगी, नए इंस्टॉल पर भी। यह आपका ऐप पिन नहीं है, और भूल जाने पर इसे वापस नहीं पाया जा सकता।</string>
+    <string name="backup_passphrase_label">पासफ़्रेज़</string>
+    <string name="backup_passphrase_confirm_label">पासफ़्रेज़ की पुष्टि करें</string>
+    <string name="backup_passphrase_mismatch">पासफ़्रेज़ मेल नहीं खातीं</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">कम से कम %1$d अक्षर</item>
+        <item quantity="other">कम से कम %1$d अक्षर</item>
+    </plurals>
+    <string name="backup_decrypt_title">बैकअप डिक्रिप्ट करें</string>
+    <string name="backup_decrypt_body">वह पासफ़्रेज़ डालें जिससे यह बैकअप एन्क्रिप्ट किया गया था। पुराने बैकअप के लिए, यह वह पिन है जो उन्हें बनाते समय सेट था।</string>
+    <string name="backup_passphrase_or_pin_label">पासफ़्रेज़ या पिन</string>
+
+    <!-- About screen -->
+    <string name="about_title">ऐप के बारे में</string>
+    <string name="about_version">वर्ज़न %1$s</string>
+    <string name="about_why_title">यह ऐप क्यों बना</string>
+    <string name="about_why_body">मैंने Mood Cairns इसलिए बनाया क्योंकि मुझे एक ऐसा मूड ट्रैकर चाहिए था जिसमें वे सारी सुविधाएँ हों जो मुझे पसंद थीं, और ऐसा कुछ भी न हो जो मुझे पसंद नहीं था: न कोई ताक-झाँक करने वाली ट्रैकिंग, न एनालिटिक्स, न अकाउंट, और न खरीदारी के लिए Google Play Store की ज़रूरत। आपकी एंट्री सिर्फ़ आपके डिवाइस पर रहती हैं; ऐप कोई नेटवर्क अनुमति नहीं माँगता, और हमेशा ऐसा ही रहेगा।</string>
+    <string name="about_made_by">%1$s द्वारा बनाया गया। मुफ़्त और ओपन सोर्स। धन्यवाद!</string>
+    <string name="about_updates_title">अपडेट</string>
+    <string name="about_updates_body">&lt;b&gt;F-Droid इस्तेमाल करने पर अपडेट अपने-आप मिल जाने चाहिए&lt;/b&gt;। अगर ऐसा नहीं होता, या आपने Mood Cairns को GitHub से डाउनलोड किया है, तो नीचे दिए बटन से अपडेट देखें और Assets में से &lt;b&gt;नई .apk फ़ाइल डाउनलोड करें&lt;/b&gt;।</string>
+    <string name="about_get_latest">नया वर्ज़न पाएँ</string>
+    <string name="about_get_latest_hint">यह आपके ब्राउज़र में GitHub पर नया वर्ज़न खोलता है। ऐप खुद कभी नेटवर्क का इस्तेमाल नहीं करता।</string>
+    <string name="about_no_browser">पेज खोलने के लिए कोई ब्राउज़र नहीं मिला।</string>
+    <string name="about_contact_title">संपर्क</string>
+    <string name="about_contact_body">बदलाव या नई सुविधाओं के लिए संपर्क करने का सबसे अच्छा तरीका है &lt;a href=\"%1$s\"&gt;GitHub पर एक नया issue खोलना&lt;/a&gt;।</string>
+
+    <!-- Charts screen -->
+    <string name="charts_title">चार्ट</string>
+    <string name="charts_help_button">चार्ट के बारे में मदद</string>
+    <string name="charts_no_data">इस अवधि में कोई डेटा नहीं है।</string>
+    <string name="charts_date_range_label">तारीख की अवधि</string>
+    <string name="charts_change_range">बदलें</string>
+    <string name="charts_select_range">अवधि चुनें</string>
+    <string name="charts_series_label">सीरीज़</string>
+    <string name="charts_mode_raw">रोज़ाना</string>
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">%1$d दिन का औसत</item>
+        <item quantity="other">%1$d दिन का औसत</item>
+    </plurals>
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d एंट्री · रोज़ के मूल मान</item>
+        <item quantity="other">%1$d एंट्री · रोज़ के मूल मान</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d एंट्री · %2$d दिन का चल औसत</item>
+        <item quantity="other">%1$d एंट्री · %2$d दिन का चल औसत</item>
+    </plurals>
+    <string name="charts_y_axis_label">Y अक्ष</string>
+    <string name="charts_axis_autofit">ऑटो</string>
+    <string name="charts_axis_absolute">पूर्ण</string>
+    <string name="charts_prompt_slots_label">रिमाइंडर समय</string>
+    <string name="charts_slot_other">अन्य</string>
+    <string name="charts_scales_label">स्केल</string>
+    <string name="charts_tags_label">टैग</string>
+    <string name="charts_axis_caption_absolute" formatted="false">खड़ा अक्ष: हर स्केल की अपनी सीमा में स्थिति (100% = सीमा का ऊपरी छोर; “कम होना बेहतर” वाले स्केल उल्टे दिखते हैं)</string>
+    <string name="charts_axis_caption_values">खड़ा अक्ष: दर्ज मान</string>
+    <string name="charts_axis_caption_single">खड़ा अक्ष: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">खड़ा अक्ष: दर्ज मान - %1$d स्केल यह अक्ष इस्तेमाल करता है</item>
+        <item quantity="other">खड़ा अक्ष: दर्ज मान - %1$d स्केल एक ही अक्ष साझा करते हैं</item>
+    </plurals>
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, कम होना बेहतर)</string>
+    <string name="charts_no_entries_day">इस दिन कोई एंट्री नहीं।</string>
+    <string name="charts_point_value">%1$s: %2$s</string>
+
+    <!-- Charts help dialog -->
+    <string name="charts_help_title">चार्ट कैसे पढ़ें</string>
+    <string name="charts_help_dismiss">ठीक है</string>
+    <string name="charts_help_intro">दो टॉगल तय करते हैं कि आपके नंबर कैसे दिखें। यहाँ कुछ भी चुनने से आपका डेटा नहीं बदलता, सिर्फ़ चार्ट का रूप बदलता है।</string>
+    <string name="charts_help_series_title">सीरीज़: %1$s या %2$s</string>
+    <string name="charts_help_raw_body">हर दिन को ठीक वैसा दिखाता है जैसा वह दर्ज किया गया था। इससे दिन-ब-दिन के बदलाव साफ़ दिखते हैं, हालाँकि चार्ट उतार-चढ़ाव भरा लग सकता है।</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">हर दिन को उसी दिन पर खत्म होने वाले %1$d दिन के औसत से बदल देता है। इससे इक्का-दुक्का उछाल सपाट हो जाते हैं, ताकि कुल रुझान (मूड ऊपर जा रहा है या नीचे) देखना आसान हो।</item>
+        <item quantity="other">हर दिन को उसी दिन पर खत्म होने वाले %1$d दिनों के औसत से बदल देता है। इससे इक्का-दुक्का उछाल सपाट हो जाते हैं, ताकि कुल रुझान (मूड ऊपर जा रहा है या नीचे) देखना आसान हो।</item>
+    </plurals>
+    <string name="charts_help_axis_title">Y अक्ष: %1$s या %2$s</string>
+    <string name="charts_help_autofit_body">खड़े अक्ष को सिर्फ़ उस सीमा तक ज़ूम करता है जो आपका डेटा सच में कवर करता है। चार्ट पूरी जगह भरता है, इसलिए छोटे बदलाव भी आसानी से दिखते हैं, लेकिन रेखा को स्केल की पूरी सीमा के मुकाबले नहीं मापा जाता। बाईं ओर के लेबल आपके दर्ज मान हैं; जब एक से ज़्यादा स्केल दिखाए जाते हैं, तो सब यही एक अक्ष साझा करते हैं।</string>
+    <string name="charts_help_absolute_body" formatted="false">हर रेखा को उसके स्केल की पूरी न्यूनतम-से-अधिकतम सीमा के मुकाबले दिखाता है। बदलाव छोटे दिखते हैं, लेकिन अलग-अलग स्केल एक सीध में आ जाते हैं, ताकि एक ही चार्ट पर उनकी तुलना की जा सके। “कम होना बेहतर” वाले स्केल यहाँ उल्टे बनाए जाते हैं, ताकि बेहतर हमेशा ऊपर की ओर हो। बाईं ओर के लेबल प्रतिशत में हैं, क्योंकि हर रेखा अपनी ही सीमा के मुकाबले मापी जाती है: 100% उस सीमा का ऊपरी छोर है, या “कम होना बेहतर” वाले स्केल के लिए निचला छोर।</string>
+
+    <!-- Data store upgrade -->
+    <string name="migrating_title">डेटा स्टोर अपडेट हो रहा है…</string>
+    <string name="migrating_body">आपकी एंट्री एन्क्रिप्टेड डेटाबेस में ले जाई जा रही हैं। ऐप बंद न करें।</string>
+    <string name="migration_failed_title">अपडेट नहीं हो सका</string>
+    <string name="migration_failed_body">आपका मूल डेटा अभी भी डिवाइस पर है। फिर से कोशिश करने के लिए ऐप दोबारा खोलें, या समस्या बनी रहे तो ऐप अनइंस्टॉल करके बैकअप से रीस्टोर करें।</string>
+
+    <!-- Biometric unlock prompt -->
+    <string name="biometric_prompt_title">Mood Cairns अनलॉक करें</string>
+    <string name="biometric_prompt_subtitle">जारी रखने के लिए पहचान की पुष्टि करें</string>
+    <string name="biometric_prompt_use_pin">पिन इस्तेमाल करें</string>
+
+    <!-- No-PIN warning -->
+    <string name="no_pin_warning_title_setup">बिना पिन के जारी रखें?</string>
+    <string name="no_pin_warning_title_remove">अपना पिन हटाएँ?</string>
+    <string name="no_pin_warning_body">पिन के बिना, इस अनलॉक डिवाइस को इस्तेमाल करने वाला कोई भी व्यक्ति Mood Cairns खोलकर आपकी सारी एंट्री पढ़ सकता है। आपका डेटा डिवाइस पर अब भी एन्क्रिप्टेड रहेगा, लेकिन सिर्फ़ डिवाइस के सुरक्षित कीस्टोर से: पिन से मिलने वाली अतिरिक्त सुरक्षा हट जाएगी, और बायोमेट्रिक अनलॉक बंद हो जाएगा। सेटिंग्स में किसी भी समय फिर से पिन सेट किया जा सकता है।</string>
+    <string name="no_pin_warning_accept">स्वीकार करें और जारी रखें</string>
+
+    <!-- App language picker -->
+    <string name="language_app_language">ऐप की भाषा</string>
+    <string name="language_system_default">सिस्टम डिफ़ॉल्ट</string>
+    <string name="language_system_untranslated">%1$s (अभी अनुवाद नहीं हुआ है, इसलिए अंग्रेज़ी इस्तेमाल होगी)</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_section_language">भाषा</string>
+    <string name="settings_section_prompt_windows">रिमाइंडर समय</string>
+    <string name="settings_add_window">रिमाइंडर समय जोड़ें</string>
+    <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
+    <string name="settings_section_security">सुरक्षा</string>
+    <string name="settings_auto_lock_label">बैकग्राउंड में जाने के बाद ऑटो-लॉक</string>
+    <string name="settings_auto_lock_immediate">तुरंत</string>
+    <string name="settings_biometric_unlock">बायोमेट्रिक अनलॉक</string>
+    <string name="settings_change_pin">पिन बदलें</string>
+    <string name="settings_lock_now">अभी लॉक करें</string>
+    <string name="settings_set_pin">पिन सेट करें</string>
+    <string name="settings_no_pin_explanation">कोई पिन सेट नहीं है। आपका डेटा इस डिवाइस पर एन्क्रिप्टेड है, लेकिन पिन से नहीं, सिर्फ़ डिवाइस के कीस्टोर से सुरक्षित है। पिन के बिना ऑटो-लॉक, बायोमेट्रिक अनलॉक और “अभी लॉक करें” उपलब्ध नहीं हैं।</string>
+    <string name="settings_section_backup">बैकअप और एक्सपोर्ट</string>
+    <string name="settings_allow_unsafe_exports">असुरक्षित एक्सपोर्ट की अनुमति दें</string>
+    <string name="settings_allow_unsafe_exports_summary">“बैकअप और इंपोर्ट” में बिना एन्क्रिप्शन वाला CSV एक्सपोर्ट चालू करता है। डिफ़ॉल्ट रूप से बंद।</string>
+    <string name="settings_unsafe_exports_dialog_title">असुरक्षित एक्सपोर्ट की अनुमति दें?</string>
+    <string name="settings_unsafe_exports_dialog_body">इससे डेटा को बिना एन्क्रिप्शन वाली CSV फ़ाइल के रूप में शेयर्ड स्टोरेज में एक्सपोर्ट करने का विकल्प जुड़ जाता है। वह फ़ाइल बिना पासफ़्रेज़ वाला सादा टेक्स्ट है: क्लाउड बैकअप सेवाएँ, फ़ाइल मैनेजर और शेयर्ड स्टोरेज पढ़ सकने वाला कोई भी दूसरा ऐप आपकी सारी एंट्री पढ़ सकेगा।\n\nइसे सिर्फ़ यह जोखिम समझने और स्वीकार करने के बाद ही चालू करें।</string>
+    <string name="settings_section_diagnostics">डायग्नोस्टिक्स</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">टेस्ट नोटिफ़िकेशन (लगभग %1$d सेकंड में)</item>
+        <item quantity="other">टेस्ट नोटिफ़िकेशन (लगभग %1$d सेकंड में)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_title">लॉक है</string>
+    <string name="lock_subtitle">जारी रखने के लिए पिन डालें</string>
+    <string name="lock_pin_label">पिन</string>
+    <string name="lock_unlock">अनलॉक करें</string>
+    <string name="lock_use_biometric">बायोमेट्रिक इस्तेमाल करें</string>
+    <string name="lock_try_again_in">%1$s बाद फिर कोशिश करें</string>
+    <string name="lock_locked_for">लॉक (%1$s)</string>
+    <string name="lock_error_wrong_pin">गलत पिन</string>
+    <string name="lock_error_too_many_attempts">बहुत ज़्यादा कोशिशें</string>
+    <string name="lock_error_unlock_failed">अनलॉक नहीं हो सका: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_title">पिन सेट करें</string>
+    <string name="set_pin_intro">आपकी एंट्री कभी इस डिवाइस से बाहर नहीं जातीं। पिन और बायोमेट्रिक अनलॉक इन्हें सिर्फ़ आपका बनाए रखते हैं।</string>
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">पिन (%1$d–%2$d अंक)</item>
+        <item quantity="other">पिन (%1$d–%2$d अंक)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">पिन की पुष्टि करें</string>
+    <string name="set_pin_save">पिन सेव करें</string>
+    <string name="set_pin_continue_without">बिना पिन के जारी रखें</string>
+    <string name="set_pin_error_failed">पिन सेट नहीं हो सका: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">बिना पिन के आगे बढ़ना संभव नहीं हुआ: %1$s</string>
+
+    <!-- Change PIN screen -->
+    <string name="change_pin_title_change">पिन बदलें</string>
+    <string name="change_pin_title_set">पिन सेट करें</string>
+    <string name="change_pin_action_change">पिन बदलें</string>
+    <string name="change_pin_action_set">पिन सेट करें</string>
+    <string name="change_pin_action_remove">पिन हटाएँ</string>
+    <string name="change_pin_current_label">मौजूदा पिन</string>
+    <string name="change_pin_new_label">नया पिन</string>
+    <string name="change_pin_confirm_label">नए पिन की पुष्टि करें</string>
+    <string name="change_pin_remove_hint">अपना पिन हटाने के लिए नए पिन वाले फ़ील्ड खाली छोड़ दें।</string>
+    <string name="change_pin_error_current_required">पिन हटाने के लिए अपना मौजूदा पिन डालें</string>
+    <string name="change_pin_error_wrong_current">मौजूदा पिन गलत है</string>
+    <string name="change_pin_error_locked">ऐप लॉक है; अनलॉक करके फिर कोशिश करें</string>
+    <string name="change_pin_error_failed">पिन अपडेट नहीं हो सका: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">नए पिन में कम से कम %1$d अंक होना चाहिए</item>
+        <item quantity="other">नए पिन में कम से कम %1$d अंक होने चाहिए</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">बहुत ज़्यादा कोशिशें। %1$d सेकंड बाद फिर कोशिश करें।</item>
+        <item quantity="other">बहुत ज़्यादा कोशिशें। %1$d सेकंड बाद फिर कोशिश करें।</item>
+    </plurals>
+
+    <!-- Scale editor errors -->
+    <string name="scale_edit_error_not_found">स्केल नहीं मिला</string>
+    <string name="scale_edit_error_numbers_required">न्यूनतम, अधिकतम और स्टेप के लिए संख्याएँ डालें</string>
+    <string name="scale_edit_error_min_not_below_max">न्यूनतम, अधिकतम से कम होना चाहिए</string>
+    <string name="scale_edit_error_step_not_positive">स्टेप शून्य से बड़ा होना चाहिए</string>
+    <string name="scale_edit_error_range_not_step_multiple">सीमा (%1$d) स्टेप (%2$s) का गुणज होनी चाहिए</string>
+    <string name="scale_edit_error_default_not_number">शुरुआती मान एक संख्या होना चाहिए</string>
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">शुरुआती मान %1$d और %2$d के बीच होना चाहिए</string>
+    <string name="scale_edit_error_default_off_step">शुरुआती मान %2$d से %1$s के स्टेप पर होना चाहिए</string>
+
+    <!-- Tag editor errors -->
+    <string name="tag_edit_error_not_found">टैग नहीं मिला</string>
+    <string name="tag_edit_error_name_taken">इस श्रेणी में “%1$s” नाम का टैग पहले से मौजूद है</string>
+
+    <!-- Prompt window editor errors -->
+    <string name="window_edit_error_not_found">रिमाइंडर समय नहीं मिला</string>
+    <string name="window_edit_error_label_required">नाम ज़रूरी है</string>
+    <string name="window_edit_error_start_not_before_end">शुरू होने का समय खत्म होने के समय से पहले होना चाहिए</string>
+
+    <!-- Backup messages -->
+    <string name="backup_error_unsafe_exports_disabled">असुरक्षित एक्सपोर्ट बंद हैं</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">पासफ़्रेज़ में कम से कम %1$d अक्षर होना चाहिए</item>
+        <item quantity="other">पासफ़्रेज़ में कम से कम %1$d अक्षर होने चाहिए</item>
+    </plurals>
+    <string name="backup_export_success">एक्सपोर्ट किया गया: %1$s</string>
+    <string name="backup_export_csv_success">एक्सपोर्ट किया गया: %1$s (बिना एन्क्रिप्शन)</string>
+    <string name="backup_export_failed">एक्सपोर्ट नहीं हो सका: %1$s</string>
+    <string name="backup_import_success">इंपोर्ट पूरा हुआ। एंट्री: %1$d, स्केल: %2$d, टैग: %3$d, रिमाइंडर समय: %4$d</string>
+    <string name="backup_import_failed">इंपोर्ट नहीं हो सका: %1$s</string>
+
+    <!-- Import errors -->
+    <string name="import_error_too_large">फ़ाइल %1$d MB की सीमा से बड़ी है।</string>
+    <string name="import_error_unreadable">फ़ाइल पढ़ी नहीं जा सकी।</string>
+    <string name="import_error_unreadable_detail">फ़ाइल पढ़ी नहीं जा सकी (%1$s)।</string>
+    <string name="import_error_not_a_backup">यह फ़ाइल Mood Cairns बैकअप नहीं है।</string>
+    <string name="import_error_wrong_secret">बैकअप डिक्रिप्ट नहीं हो सका। पासफ़्रेज़ गलत है, या फ़ाइल खराब है।</string>
+    <string name="import_error_unsupported_version">यह बैकअप फ़ॉर्मेट वर्ज़न %1$d इस्तेमाल करता है, जिसे ऐप का यह वर्ज़न नहीं पढ़ सकता। ऐप अपडेट करने से मदद मिल सकती है।</string>
+    <string name="import_error_malformed">बैकअप फ़ाइल खराब है (%1$s)।</string>
+    <string name="import_error_write_failed">डेटा सेव करते समय इंपोर्ट रुक गया (%1$s)।</string>
+</resources>

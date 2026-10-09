@@ -9,7 +9,7 @@ import java.util.Locale
  */
 object SupportedLocales {
 
-    val tags: List<String> = listOf("en", "es", "de")
+    val tags: List<String> = listOf("en", "es", "de", "hi")
 
     /** Accented, lengthened English for spotting untranslated text. Debug builds only. */
     const val PSEUDO_LOCALE = "en-XA"
