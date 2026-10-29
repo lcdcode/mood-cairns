@@ -12,6 +12,7 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -27,6 +28,7 @@ class BackupSerializer @Inject constructor(
     private val scaleDao get() = moodHolder.scaleDao()
     private val entryDao get() = moodHolder.entryDao()
     private val tagDao get() = moodHolder.tagDao()
+    private val tagCategoryLabelDao get() = moodHolder.tagCategoryLabelDao()
 
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
@@ -45,6 +47,7 @@ class BackupSerializer @Inject constructor(
             val windows = windowDao.observeAll().first().map(::toDto)
             val entries = entryDao.observeAll().first().map(::toDto)
             val tags = tagDao.observeAll().first().map(::toDto)
+            val categoryLabels = tagCategoryLabelDao.all().map(::toDto)
 
             val file = BackupFile(
                 schemaVersion = BackupFile.CURRENT_VERSION,
@@ -54,6 +57,7 @@ class BackupSerializer @Inject constructor(
                 promptWindows = windows,
                 entries = entries,
                 tags = tags,
+                tagCategoryLabels = categoryLabels,
             )
             val plaintextJson = json.encodeToString(BackupFile.serializer(), file)
             val encrypted = BackupCrypto.encrypt(key, plaintextJson.toByteArray(Charsets.UTF_8))
@@ -122,6 +126,9 @@ class BackupSerializer @Inject constructor(
         scales = file.scales.map(::fromDto),
         windows = file.promptWindows.map(::fromDto),
         tags = file.tags.mapNotNull(::fromDto),
+        tagCategoryLabels = file.tagCategoryLabels
+            .mapNotNull(TagCategoryLabelDto::toEntityOrNull)
+            .distinctBy { it.category },
         entries = file.entries.map { e ->
             val entry = Entry(
                 id = e.id,
@@ -166,6 +173,9 @@ class BackupSerializer @Inject constructor(
         id = t.id, name = t.name, category = t.category.name, sortOrder = t.sortOrder,
     )
 
+    private fun toDto(l: TagCategoryLabel) =
+        TagCategoryLabelDto(category = l.category.name, label = l.label)
+
     private fun fromDto(s: ScaleDto) = Scale(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
         step = s.step, colorArgb = s.colorArgb, isBuiltIn = s.isBuiltIn,
@@ -192,7 +202,18 @@ data class BackupEntities(
     val windows: List<PromptWindow>,
     val tags: List<Tag>,
     val entries: List<EntryBundle>,
+    val tagCategoryLabels: List<TagCategoryLabel> = emptyList(),
 )
+
+/**
+ * Returns null for an unknown category or a label that sanitizes to blank, so a
+ * hand-edited file cannot abort the import or store an invalid name.
+ */
+internal fun TagCategoryLabelDto.toEntityOrNull(): TagCategoryLabel? {
+    val knownCategory = TagCategory.entries.find { it.name == category } ?: return null
+    val cleanLabel = TagCategoryLabel.sanitize(label) ?: return null
+    return TagCategoryLabel(knownCategory, cleanLabel)
+}
 
 data class EntryBundle(
     val entry: Entry,
