@@ -1,2 +1,9 @@
-- Support for multiple languages/regions: English, Spanish, and German, with more to come!
+New Features:
+- Support for more languages with language selection in Settings
+  * German
+  * Russian
+  * Spanish
+  * Ukrainian
+  * more to come
+- Support for dynamic Tag category names
 - Reminders no longer need the exact-alarm permission; on Android 12+ they may arrive a few minutes later than scheduled when the phone is idle
