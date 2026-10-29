@@ -13,12 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import com.lcdcode.moodcairns.ui.common.displayName
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -56,6 +62,7 @@ fun TagListScreen(
     val haptic = LocalHapticFeedback.current
 
     var isDragging by remember { mutableStateOf(false) }
+    var renaming by rememberSaveable { mutableStateOf<TagCategory?>(null) }
     var lists by remember { mutableStateOf(state.byCategory) }
     LaunchedEffect(state.byCategory, isDragging) {
         if (!isDragging) lists = state.byCategory
@@ -103,7 +110,8 @@ fun TagListScreen(
                 val tags = lists[category].orEmpty()
                 item(key = "hdr/${category.name}") {
                     SectionHeader(
-                        text = stringResource(category.displayNameRes()),
+                        text = category.displayName(state.categoryLabels),
+                        onRename = { renaming = category },
                         onAdd = { onAdd(category) },
                     )
                 }
@@ -135,13 +143,26 @@ fun TagListScreen(
             }
         }
     }
+
+    renaming?.let { category ->
+        val defaultName = stringResource(category.displayNameRes())
+        RenameCategoryDialog(
+            currentName = category.displayName(state.categoryLabels),
+            defaultName = defaultName,
+            onDismiss = { renaming = null },
+            onSave = { raw ->
+                viewModel.renameCategory(category, raw, defaultName)
+                renaming = null
+            },
+        )
+    }
 }
 
 /** Stable LazyColumn key; '/' cannot appear in a category name so the prefix parses cleanly. */
 private fun tagKey(tag: Tag) = "${tag.category.name}/${tag.id}"
 
 @Composable
-private fun SectionHeader(text: String, onAdd: () -> Unit) {
+private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -152,8 +173,61 @@ private fun SectionHeader(text: String, onAdd: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
+        IconButton(onClick = onRename) {
+            Icon(
+                Icons.Default.Edit,
+                contentDescription = stringResource(R.string.common_edit),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
+}
+
+/**
+ * Renames a category using only shared strings, so no new translations are needed.
+ * Saving a blank field, or the default name, restores the translated default.
+ */
+@Composable
+private fun RenameCategoryDialog(
+    currentName: String,
+    defaultName: String,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit,
+) {
+    var draft by rememberSaveable { mutableStateOf(currentName) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(currentName) },
+        text = {
+            OutlinedTextField(
+                value = draft,
+                onValueChange = { new ->
+                    if (new.codePointCount(0, new.length) <= TagCategoryLabel.MAX_LENGTH) draft = new
+                },
+                label = { Text(stringResource(R.string.common_name_label)) },
+                placeholder = { Text(defaultName) },
+                singleLine = true,
+                trailingIcon = {
+                    if (draft.isNotEmpty()) {
+                        IconButton(onClick = { draft = "" }) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = stringResource(R.string.common_clear),
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onSave(draft) }) { Text(stringResource(R.string.common_save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+        },
+    )
 }
 
 @Composable

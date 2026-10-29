@@ -9,6 +9,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
@@ -32,6 +33,7 @@ data class EntryUiState(
     val promptWindowId: Long? = null,
     val windows: List<PromptWindow> = emptyList(),
     val tags: List<Tag> = emptyList(),
+    val categoryLabels: Map<TagCategory, String> = emptyMap(),
     val selectedTagIds: Set<Long> = emptySet(),
     // A window referenced by the entry being edited that is no longer in the
     // enabled set (disabled in settings). Pinned so its chip still renders and
@@ -125,6 +127,11 @@ class EntryViewModel @Inject constructor(
         viewModelScope.launch {
             tags.observeAll().collect { list ->
                 _state.update { it.copy(tags = list) }
+            }
+        }
+        viewModelScope.launch {
+            tags.observeCategoryLabels().collect { labels ->
+                _state.update { it.copy(categoryLabels = labels) }
             }
         }
     }
