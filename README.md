@@ -42,7 +42,7 @@ For more information, see [AI-DECLARATION.md](AI-DECLARATION.md)
   passphrase you choose (minimum 8 characters) with PBKDF2-HMAC-SHA256 (600k
   iterations) and a fresh per-backup salt embedded in the envelope, so any
   install — including a fresh one — can decrypt with the same passphrase.
-  Backups from older versions, which were encrypted with the device PIN, still
+  Backups from older versions, which were encrypted with the app PIN, still
   import — just enter that PIN as the passphrase. Drop a file manager or
   Syncthing on that folder if you want off-device copies.
 - **PIN + biometric lock.** PIN-gated app entry, with optional biometric
@@ -72,8 +72,9 @@ of the built-in scales and tags, comes from Android string resources, and dates,
 times, and numbers follow each language's conventions. The language can be set in
 Settings → Language, or on first launch, independently of the phone's language.
 
-The app currently ships in English. Translations are welcome as pull requests;
-[TRANSLATING.md](TRANSLATING.md) explains how, and partial translations are fine.
+The app currently ships in English, Spanish, and German. Translations are welcome as
+pull requests; [TRANSLATING.md](TRANSLATING.md) explains how, and partial translations
+are fine.
 
 ## Contact
 

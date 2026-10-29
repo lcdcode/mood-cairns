@@ -51,11 +51,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptWindow
+import com.lcdcode.moodcairns.security.ScreenCaptureGate
 import com.lcdcode.moodcairns.ui.common.UiText
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.displayLabel
 import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
+import java.time.Duration
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +71,7 @@ fun SettingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showUnsafeExportWarning by remember { mutableStateOf(false) }
+    var showScreenshotWarning by remember { mutableStateOf(false) }
     var showLanguagePicker by remember { mutableStateOf(false) }
 
     if (showLanguagePicker) {
@@ -81,6 +85,16 @@ fun SettingsScreen(
                 showUnsafeExportWarning = false
             },
             onDismiss = { showUnsafeExportWarning = false },
+        )
+    }
+
+    if (showScreenshotWarning) {
+        ScreenshotWarningDialog(
+            onConfirm = {
+                viewModel.setScreenshotsAllowed(true)
+                showScreenshotWarning = false
+            },
+            onDismiss = { showScreenshotWarning = false },
         )
     }
 
@@ -192,7 +206,7 @@ fun SettingsScreen(
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
-            item { SectionHeader(stringResource(R.string.settings_section_backup)) }
+            item { SectionHeader(stringResource(R.string.settings_section_danger_zone)) }
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -216,6 +230,31 @@ fun SettingsScreen(
             item {
                 Text(
                     stringResource(R.string.settings_allow_unsafe_exports_summary),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.settings_allow_screenshots),
+                        modifier = Modifier.weight(1f),
+                    )
+                    Switch(
+                        checked = state.screenshotsRemainingMs > 0L,
+                        onCheckedChange = { checked ->
+                            if (checked) showScreenshotWarning = true
+                            else viewModel.setScreenshotsAllowed(false)
+                        },
+                    )
+                }
+            }
+            item {
+                Text(
+                    screenshotsSummary(state.screenshotsRemainingMs),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -257,6 +296,39 @@ private fun UnsafeExportWarningDialog(
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
+}
+
+@Composable
+private fun ScreenshotWarningDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val minutes = ScreenCaptureGate.ALLOW_DURATION_MINUTES
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_screenshots_dialog_title)) },
+        text = {
+            Text(pluralStringResource(R.plurals.settings_screenshots_dialog_body, minutes, minutes))
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text(stringResource(R.string.common_enable)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+        },
+    )
+}
+
+/** "Allowed until <time>" while the opt-out is open, else the feature description. */
+@Composable
+private fun screenshotsSummary(remainingMs: Long): String {
+    val timeFmt = rememberSkeletonDateFormat("jm")
+    if (remainingMs <= 0L) {
+        val minutes = ScreenCaptureGate.ALLOW_DURATION_MINUTES
+        return pluralStringResource(R.plurals.settings_allow_screenshots_summary, minutes, minutes)
+    }
+    val expiresAt = remember(remainingMs) { LocalTime.now().plus(Duration.ofMillis(remainingMs)) }
+    return stringResource(R.string.settings_screenshots_allowed_until, timeFmt.format(expiresAt))
 }
 
 @Composable

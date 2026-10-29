@@ -62,6 +62,7 @@ class LockManager @Inject constructor(
     private val scheduleDb: ScheduleDatabase,
     private val moodHolder: MoodDatabaseHolder,
     private val migrator: LegacyMigrator,
+    private val screenCaptureGate: ScreenCaptureGate,
 ) {
     private val _state = MutableStateFlow<LockState>(initialState())
     val state: StateFlow<LockState> = _state.asStateFlow()
@@ -146,6 +147,8 @@ class LockManager @Inject constructor(
 
     fun lockNow() {
         if (!repo.isPinSet()) return
+        // A screenshot opt-out must not outlive the session it was granted in.
+        screenCaptureGate.revoke()
         dbKey?.fill(0)
         dbKey = null
         moodHolder.close()

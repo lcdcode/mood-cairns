@@ -82,11 +82,12 @@ fun LanguagePickerDialog(onDismiss: () -> Unit, viewModel: LanguageViewModel = h
                     selected = current == null,
                     onClick = { choose(null) },
                 )
+                val currentOption = pickerOptionFor(current)
                 viewModel.selectableTags.forEach { tag ->
                     LanguageOptionRow(
                         label = endonym(tag),
                         detail = null,
-                        selected = current == tag,
+                        selected = currentOption == tag,
                         onClick = { choose(tag) },
                     )
                 }

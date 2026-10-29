@@ -22,6 +22,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.LockState
+import com.lcdcode.moodcairns.security.ScreenCaptureGate
+import com.lcdcode.moodcairns.security.shouldSecureWindow
 import com.lcdcode.moodcairns.settings.LocalizedSurfaces
 import com.lcdcode.moodcairns.ui.AppNav
 import com.lcdcode.moodcairns.ui.NotificationEntryArgs
@@ -33,6 +35,7 @@ import com.lcdcode.moodcairns.notifications.PromptAlarmReceiver
 import com.lcdcode.moodcairns.work.PromptScheduler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var lockRepository: LockRepository
     @Inject lateinit var scheduler: PromptScheduler
     @Inject lateinit var localizedSurfaces: LocalizedSurfaces
+    @Inject lateinit var screenCaptureGate: ScreenCaptureGate
 
     private val pendingEntryArgs = MutableStateFlow<NotificationEntryArgs?>(null)
 
@@ -52,16 +56,10 @@ class MainActivity : AppCompatActivity() {
         // Prevent the OS recents/task switcher from caching screenshots of any
         // screen (history, notes, charts, PIN entry), and block screen recording
         // and casting. Sensitive content is rendered everywhere in this app, so
-        // applying app-wide is simpler than per-screen.
-        //
-        // Debug builds skip the flag so store/metadata screenshots can be
-        // captured; release builds are always protected.
-        if (!BuildConfig.DEBUG) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE,
-            )
-        }
+        // applying app-wide is simpler than per-screen. Secure from the first
+        // frame; the user may lift it temporarily via Settings (see
+        // [ScreenCaptureGate]), and [shouldSecureWindow] decides from then on.
+        updateSecureFlag()
         enableEdgeToEdge()
         // A language change recreates this activity; re-render text cached by the system.
         localizedSurfaces.refreshIfLanguageChanged()
@@ -72,6 +70,18 @@ class MainActivity : AppCompatActivity() {
             MoodCairnsTheme {
                 Surface(Modifier.fillMaxSize()) {
                     val state by lockManager.state.collectAsStateWithLifecycle()
+                    val captureAllowedUntil by screenCaptureGate.allowedUntil
+                        .collectAsStateWithLifecycle()
+
+                    LaunchedEffect(state, captureAllowedUntil) {
+                        updateSecureFlag()
+                        val remaining = screenCaptureGate.remainingMs()
+                        if (remaining > 0L) {
+                            delay(remaining)
+                            screenCaptureGate.revoke()
+                            updateSecureFlag()
+                        }
+                    }
 
                     val pendingArgs by pendingEntryArgs.collectAsStateWithLifecycle()
                     val ctx = LocalContext.current
@@ -119,6 +129,18 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         lockManager.onAppForegrounded()
+        // The capture window may have expired while the app was in the background.
+        updateSecureFlag()
+    }
+
+    private fun updateSecureFlag() {
+        val secure = shouldSecureWindow(
+            isDebug = BuildConfig.DEBUG,
+            lockState = lockManager.state.value,
+            captureAllowed = screenCaptureGate.isAllowed(),
+        )
+        if (secure) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 
     // Auto-lock keys off onStop, not onPause: onPause fires under transient

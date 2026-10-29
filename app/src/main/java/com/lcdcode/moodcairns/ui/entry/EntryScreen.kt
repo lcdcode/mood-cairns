@@ -76,7 +76,7 @@ import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
-import com.lcdcode.moodcairns.ui.tags.displayNameRes
+import com.lcdcode.moodcairns.ui.tags.displayName
 import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
 import java.time.LocalDate
@@ -194,6 +194,7 @@ fun EntryScreen(
             if (state.tags.isNotEmpty()) {
                 TagPicker(
                     tags = state.tags,
+                    categoryLabels = state.categoryLabels,
                     selectedTagIds = state.selectedTagIds,
                     onToggle = viewModel::toggleTag,
                 )
@@ -227,6 +228,7 @@ fun EntryScreen(
 @Composable
 private fun TagPicker(
     tags: List<Tag>,
+    categoryLabels: Map<TagCategory, String>,
     selectedTagIds: Set<Long>,
     onToggle: (Long) -> Unit,
 ) {
@@ -237,7 +239,7 @@ private fun TagPicker(
         TagCategory.entries.forEach { category ->
             val categoryTags = byCategory[category] ?: return@forEach
             Text(
-                stringResource(category.displayNameRes()),
+                category.displayName(categoryLabels),
                 style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

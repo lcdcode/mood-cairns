@@ -1,0 +1,1 @@
+Privates Offline-Stimmungstagebuch mit Tags und Diagrammen. Kein Netzzugriff.

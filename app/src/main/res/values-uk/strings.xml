@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Ukrainian, polite "ви". Translated from the English source.
+    - "ви" takes plural agreement, so verbs stay gender-neutral; first-person text about
+      the author avoids gendered past tense ("Mood Cairns з’явився…").
+    - Plurals use all four categories: one (1, 21, …), few (2-4, 22-24, …),
+      many (0, 5-20, 25-30, …) and other (fractions; genitive singular).
+    - The apostrophe is the typographic ’ (U+2019), which needs no XML escaping.
+    - The rolling-average days use the invariant abbreviation "дн.", since that number
+      is not the one driving the plural.
+    Source: values/strings.xml.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="widget_title">Записати настрій</string>
+    <string name="widget_subtitle">Торкніться, щоб відкрити Mood Cairns</string>
+    <string name="widget_description">Швидко записати настрій</string>
+
+    <!-- Common -->
+    <string name="common_back">Назад</string>
+    <string name="common_cancel">Скасувати</string>
+    <string name="common_edit">Редагувати</string>
+    <string name="common_enable">Увімкнути</string>
+    <string name="common_loading">Завантаження…</string>
+    <string name="common_next">Далі</string>
+    <string name="common_ok">Гаразд</string>
+    <string name="common_save">Зберегти</string>
+    <string name="common_saving">Збереження…</string>
+    <string name="common_all">Усі</string>
+    <string name="common_clear">Скинути</string>
+    <string name="common_close">Закрити</string>
+    <string name="common_delete">Видалити</string>
+    <string name="common_add">Додати</string>
+    <string name="common_continue">Продовжити</string>
+    <string name="common_deleting">Видалення…</string>
+    <string name="common_name_label">Назва</string>
+    <string name="common_reorder">Змінити порядок</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_date_range">%1$s – %2$s</string>
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">від %1$s до %2$s</string>
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <string name="common_value_in_range">%1$s (%2$s)</string>
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d с</item>
+        <item quantity="few">%1$d с</item>
+        <item quantity="many">%1$d с</item>
+        <item quantity="other">%1$d с</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d хв</item>
+        <item quantity="few">%1$d хв</item>
+        <item quantity="many">%1$d хв</item>
+        <item quantity="other">%1$d хв</item>
+    </plurals>
+
+    <!-- Shared errors -->
+    <string name="error_save_failed">Не вдалося зберегти: %1$s</string>
+    <string name="error_delete_failed">Не вдалося видалити: %1$s</string>
+    <string name="error_name_required">Вкажіть назву</string>
+    <string name="error_pins_mismatch">PIN-коди не збігаються</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">PIN-код має містити щонайменше %1$d цифру</item>
+        <item quantity="few">PIN-код має містити щонайменше %1$d цифри</item>
+        <item quantity="many">PIN-код має містити щонайменше %1$d цифр</item>
+        <item quantity="other">PIN-код має містити щонайменше %1$d цифри</item>
+    </plurals>
+
+    <!-- Prompt slot names -->
+    <string name="enum_prompt_slot_morning">Ранок</string>
+    <string name="enum_prompt_slot_evening">Вечір</string>
+    <string name="enum_prompt_slot_manual">Вручну</string>
+    <string name="enum_prompt_slot_custom">Власне</string>
+
+    <!-- Built-in scales, tags, and prompt windows -->
+    <string name="seed_scale_happiness">Щастя</string>
+    <string name="seed_scale_anxiety">Тривога</string>
+    <string name="seed_scale_stress">Стрес</string>
+    <string name="seed_scale_boredom">Нудьга</string>
+    <string name="seed_scale_pain">Біль</string>
+    <string name="seed_tag_home">Дім</string>
+    <string name="seed_tag_work">Робота</string>
+    <string name="seed_tag_school">Навчання</string>
+    <string name="seed_tag_commute">Дорога</string>
+    <string name="seed_tag_outdoors">Надворі</string>
+    <string name="seed_tag_travel">Подорожі</string>
+    <string name="seed_tag_family">Сім’я</string>
+    <string name="seed_tag_friends">Друзі</string>
+    <string name="seed_tag_partner">Партнер</string>
+    <string name="seed_tag_coworkers">Колеги</string>
+    <string name="seed_tag_alone">Наодинці</string>
+    <string name="seed_tag_exercise">Спорт</string>
+    <string name="seed_tag_socializing">Спілкування</string>
+    <string name="seed_tag_reading">Читання</string>
+    <string name="seed_tag_gaming">Ігри</string>
+    <string name="seed_tag_chores">Домашні справи</string>
+    <string name="seed_tag_rest">Відпочинок</string>
+    <string name="seed_tag_joy">Радість</string>
+    <string name="seed_tag_excited">Піднесення</string>
+    <string name="seed_tag_grateful">Вдячність</string>
+    <string name="seed_tag_content">Задоволення</string>
+    <string name="seed_tag_calm">Спокій</string>
+    <string name="seed_tag_surprise">Здивування</string>
+    <string name="seed_tag_frustrated">Роздратування</string>
+    <string name="seed_tag_lonely">Самотність</string>
+    <string name="seed_tag_sadness">Смуток</string>
+    <string name="seed_tag_fear">Страх</string>
+    <string name="seed_tag_anger">Злість</string>
+    <string name="seed_tag_disgust">Відраза</string>
+    <string name="seed_window_morning">Ранок</string>
+    <string name="seed_window_evening">Вечір</string>
+
+    <!-- Tag categories -->
+    <string name="enum_tag_category_place">Місця</string>
+    <string name="enum_tag_category_person">Люди</string>
+    <string name="enum_tag_category_activity">Заняття</string>
+    <string name="enum_tag_category_mood">Емоції</string>
+    <string name="enum_tag_category_other">Інше</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">Нагадування про настрій</string>
+    <string name="notif_channel_prompts_description">Ненав’язливі нагадування записати, як ви почуваєтеся.</string>
+    <string name="notif_prompt_default_title">Час для запису</string>
+    <string name="notif_prompt_text">Запишіть, як ви почуваєтеся</string>
+    <string name="notif_test_title">Тестове сповіщення</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Записуйте, як ви почуваєтеся. Конфіденційно.</string>
+    <string name="home_log_entry">Новий запис</string>
+    <string name="home_history">Історія</string>
+    <string name="home_charts">Графіки</string>
+    <string name="home_backup">Резервні копії та імпорт</string>
+    <string name="home_scales">Керування шкалами</string>
+    <string name="home_tags">Керування тегами</string>
+    <string name="home_settings">Налаштування</string>
+    <string name="home_about">Про застосунок</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">Як ви почуваєтеся?</string>
+    <string name="entry_title_edit">Редагувати запис</string>
+    <string name="entry_no_scales">Шкали не налаштовано. Додайте шкалу в розділі «Керування шкалами».</string>
+    <string name="entry_note_label">Нотатка (опціонально)</string>
+    <string name="entry_prompt_slot_label">Вікно нагадування</string>
+    <string name="entry_change_date_time">Змінити дату й час…</string>
+    <string name="entry_slider_description_out_of">%1$s, значення %2$s з %3$d</string>
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, значення %2$s у діапазоні від %3$d до %4$d</string>
+    <string name="entry_slider_description_lower_better">%1$s, що нижче, то краще</string>
+
+    <!-- History screen -->
+    <string name="history_title">Історія</string>
+    <string name="history_add_past">Додати минулий запис</string>
+    <string name="history_empty">Записів поки немає.</string>
+    <string name="history_no_matches">Немає записів, що відповідають фільтрам.</string>
+    <string name="history_delete_title">Видалити запис?</string>
+    <string name="history_delete_body">Цей запис буде видалено назавжди.</string>
+    <string name="history_search_placeholder">Пошук у нотатках…</string>
+    <string name="history_search">Пошук</string>
+    <string name="history_clear_search">Очистити пошук</string>
+    <string name="history_clear_all">Скинути все</string>
+    <string name="history_pick_date">Вибрати дату</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">Шкали</string>
+    <string name="scale_list_add">Додати шкалу</string>
+    <string name="scale_list_empty">Шкал поки немає.</string>
+    <string name="scale_list_section_active">Активні</string>
+    <string name="scale_list_section_archived">В архіві</string>
+    <string name="scale_list_archive">В архів</string>
+    <string name="scale_list_unarchive">З архіву</string>
+    <string name="scale_list_step">крок %1$s</string>
+    <string name="scale_list_default">початкове %1$s</string>
+    <string name="scale_list_lower_better">що нижче, то краще</string>
+    <string name="scale_list_built_in">вбудована</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">Нова шкала</string>
+    <string name="scale_edit_title_edit">Редагувати шкалу</string>
+    <string name="scale_edit_min_label">Мін.</string>
+    <string name="scale_edit_max_label">Макс.</string>
+    <string name="scale_edit_step_label">Крок</string>
+    <string name="scale_edit_default_label">Початкове значення</string>
+    <string name="scale_edit_default_hint">З цього значення починається повзунок у новому записі. Якщо залишити порожнім, повзунок почнеться з середини.</string>
+    <string name="scale_edit_lower_better">Що нижче, то краще</string>
+    <string name="scale_edit_lower_better_hint">Обернена шкала: повзунок іде від більшого до меншого, а на графіках покращення спрямоване вгору.</string>
+    <string name="scale_edit_color_label">Колір</string>
+    <string name="scale_edit_built_in_hint">Вбудовані шкали не можна перейменувати, але можна змінити діапазон, крок і колір.</string>
+    <string name="scale_edit_delete">Видалити шкалу</string>
+    <string name="scale_edit_this_scale">ця шкала</string>
+    <string name="scale_edit_remap_title">Перерахувати записані значення?</string>
+    <string name="scale_edit_remap_confirm">Перерахувати</string>
+    <string name="scale_edit_remap_keep">Залишити значення</string>
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d запис містить дані за шкалою «%2$s». Під час перерахунку кожне значення v замінюється на (min + max) - v, щоб попередні записи зберегли зміст за нового напрямку. Виберіть «%3$s», якщо потрібно змінити лише відображення шкали.</item>
+        <item quantity="few">%1$d записи містять дані за шкалою «%2$s». Під час перерахунку кожне значення v замінюється на (min + max) - v, щоб попередні записи зберегли зміст за нового напрямку. Виберіть «%3$s», якщо потрібно змінити лише відображення шкали.</item>
+        <item quantity="many">%1$d записів містять дані за шкалою «%2$s». Під час перерахунку кожне значення v замінюється на (min + max) - v, щоб попередні записи зберегли зміст за нового напрямку. Виберіть «%3$s», якщо потрібно змінити лише відображення шкали.</item>
+        <item quantity="other">%1$d запису містять дані за шкалою «%2$s». Під час перерахунку кожне значення v замінюється на (min + max) - v, щоб попередні записи зберегли зміст за нового напрямку. Виберіть «%3$s», якщо потрібно змінити лише відображення шкали.</item>
+    </plurals>
+    <string name="scale_edit_delete_title">Видалити шкалу?</string>
+    <string name="scale_edit_delete_body">Шкалу «%1$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</string>
+    <string name="scale_edit_delete_body_unused">Шкала «%1$s» поки не використовується в жодному записі. Шкалу «%1$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</string>
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d запис містить дані за шкалою «%2$s». Шкалу «%2$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</item>
+        <item quantity="few">%1$d записи містять дані за шкалою «%2$s». Шкалу «%2$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</item>
+        <item quantity="many">%1$d записів містять дані за шкалою «%2$s». Шкалу «%2$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</item>
+        <item quantity="other">%1$d запису містять дані за шкалою «%2$s». Шкалу «%2$s» і всі записані за нею дані буде видалено назавжди. Цю дію неможливо скасувати.</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">Теги</string>
+    <string name="tag_list_empty">Тегів поки немає.</string>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">Новий тег</string>
+    <string name="tag_edit_title_edit">Редагувати тег</string>
+    <string name="tag_edit_category_label">Категорія</string>
+    <string name="tag_edit_delete">Видалити тег</string>
+    <string name="tag_edit_this_tag">цей тег</string>
+    <string name="tag_edit_delete_title">Видалити тег?</string>
+    <string name="tag_edit_delete_body">Тег «%1$s» буде видалено. Дані записів збережуться, з них буде знято лише цей тег.</string>
+    <string name="tag_edit_delete_body_unused">Тег «%1$s» поки не використовується в жодному записі.</string>
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">%1$d запис позначено тегом «%2$s». Дані записів збережуться, з них буде знято лише цей тег.</item>
+        <item quantity="few">%1$d записи позначено тегом «%2$s». Дані записів збережуться, з них буде знято лише цей тег.</item>
+        <item quantity="many">%1$d записів позначено тегом «%2$s». Дані записів збережуться, з них буде знято лише цей тег.</item>
+        <item quantity="other">%1$d запису позначено тегом «%2$s». Дані записів збережуться, з них буде знято лише цей тег.</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">Нове вікно нагадування</string>
+    <string name="window_edit_title_edit">Редагувати вікно нагадування</string>
+    <string name="window_edit_label_label">Назва</string>
+    <string name="window_edit_slot_label">Тип вікна</string>
+    <string name="window_edit_start">Початок: %1$s</string>
+    <string name="window_edit_end">Кінець: %1$s</string>
+    <string name="window_edit_enabled">Увімкнено</string>
+    <string name="window_edit_select_time">Виберіть час</string>
+
+    <!-- Backup screen -->
+    <string name="backup_title">Резервні копії та імпорт</string>
+    <string name="backup_intro">Резервні копії шифруються алгоритмом AES-GCM із ключем, отриманим з обраної вами парольної фрази, і зберігаються в Documents/MoodCairns. Syncthing або будь-який файловий менеджер може синхронізувати їх з іншими пристроями; сам застосунок нічого не надсилає в мережу.</string>
+    <string name="backup_export">Експортувати</string>
+    <string name="backup_export_csv">Експорт у CSV без шифрування</string>
+    <string name="backup_export_csv_warning">CSV-файл містить звичайний текст і НЕ зашифрований. Усе, що може читати вашу папку Documents (хмарні резервні копії, файлові менеджери, інші застосунки), зможе прочитати ваші записи. Щоб приховати цей варіант, вимкніть небезпечний експорт у налаштуваннях.</string>
+    <string name="backup_import">Імпорт з файлу (замінить усі дані)</string>
+    <string name="backup_existing_label">Наявні копії</string>
+    <string name="backup_none">Поки немає.</string>
+    <string name="backup_encrypt_title">Зашифрувати резервну копію</string>
+    <string name="backup_encrypt_body">Виберіть парольну фразу для шифрування цієї копії. Для відновлення знадобиться саме ця фраза, навіть після нового встановлення. Це не PIN-код застосунку, і відновити фразу, якщо ви її забудете, неможливо.</string>
+    <string name="backup_passphrase_label">Парольна фраза</string>
+    <string name="backup_passphrase_confirm_label">Підтвердьте парольну фразу</string>
+    <string name="backup_passphrase_mismatch">Парольні фрази не збігаються</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">Щонайменше %1$d символ</item>
+        <item quantity="few">Щонайменше %1$d символи</item>
+        <item quantity="many">Щонайменше %1$d символів</item>
+        <item quantity="other">Щонайменше %1$d символу</item>
+    </plurals>
+    <string name="backup_decrypt_title">Розшифрувати резервну копію</string>
+    <string name="backup_decrypt_body">Введіть парольну фразу, якою було зашифровано цю копію. Для старих копій це PIN-код застосунку, встановлений під час їх створення.</string>
+    <string name="backup_passphrase_or_pin_label">Парольна фраза або PIN-код</string>
+
+    <!-- About screen -->
+    <string name="about_title">Про застосунок</string>
+    <string name="about_version">Версія %1$s</string>
+    <string name="about_why_title">Навіщо цей застосунок</string>
+    <string name="about_why_body">Mood Cairns з’явився, бо мені хотілося мати трекер настрою з усіма потрібними мені функціями і без зайвого: без нав’язливого стеження, без аналітики, без облікового запису й без потреби купувати щось через Google Play Store. Ваші записи зберігаються лише на вашому пристрої: застосунок не запитує доступу до мережі, і так буде завжди.</string>
+    <string name="about_made_by">Розробник: %1$s. Безкоштовно й з відкритим вихідним кодом. Дякую!</string>
+    <string name="about_updates_title">Оновлення</string>
+    <string name="about_updates_body">&lt;b&gt;Якщо ви користуєтеся F-Droid, оновлення мають надходити автоматично&lt;/b&gt;. Якщо цього не відбувається або ви завантажили Mood Cairns з GitHub, перевірте оновлення кнопкою нижче й &lt;b&gt;завантажте останній файл .apk&lt;/b&gt; у розділі Assets.</string>
+    <string name="about_get_latest">Завантажити останню версію</string>
+    <string name="about_get_latest_hint">Відкриває останній випуск на GitHub у браузері. Сам застосунок ніколи не звертається до мережі.</string>
+    <string name="about_no_browser">Не знайдено браузера, щоб відкрити сторінку.</string>
+    <string name="about_contact_title">Зв’язок</string>
+    <string name="about_contact_body">Щоб повідомити про проблему чи запропонувати нову функцію, найкраще &lt;a href=\"%1$s\"&gt;створити нове звернення (issue) на GitHub&lt;/a&gt;.</string>
+
+    <!-- Charts screen -->
+    <string name="charts_title">Графіки</string>
+    <string name="charts_help_button">Як читати графіки</string>
+    <string name="charts_no_data">Немає даних за цей період.</string>
+    <string name="charts_date_range_label">Період</string>
+    <string name="charts_change_range">Змінити</string>
+    <string name="charts_select_range">Виберіть період</string>
+    <string name="charts_series_label">Ряд</string>
+    <string name="charts_mode_raw">За днями</string>
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">Середнє за %1$d день</item>
+        <item quantity="few">Середнє за %1$d дні</item>
+        <item quantity="many">Середнє за %1$d днів</item>
+        <item quantity="other">Середнє за %1$d дня</item>
+    </plurals>
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d запис · вихідні значення за днями</item>
+        <item quantity="few">%1$d записи · вихідні значення за днями</item>
+        <item quantity="many">%1$d записів · вихідні значення за днями</item>
+        <item quantity="other">%1$d запису · вихідні значення за днями</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d запис · рухоме середнє за %2$d дн.</item> 
+        <item quantity="few">%1$d записи · рухоме середнє за %2$d дн.</item> 
+        <item quantity="many">%1$d записів · рухоме середнє за %2$d дн.</item>
+        <item quantity="other">%1$d запису · рухоме середнє за %2$d дн.</item> 
+    </plurals>
+    <string name="charts_y_axis_label">Вісь Y</string>
+    <string name="charts_axis_autofit">Авто</string>
+    <string name="charts_axis_absolute">Повна</string>
+    <string name="charts_prompt_slots_label">Вікна нагадувань</string>
+    <string name="charts_slot_other">Інші</string>
+    <string name="charts_scales_label">Шкали</string>
+    <string name="charts_tags_label">Теги</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Вертикальна вісь: положення в межах діапазону кожної шкали (100% = верх діапазону; шкали «що нижче, то краще» перевернуто)</string>
+    <string name="charts_axis_caption_values">Вертикальна вісь: записані значення</string>
+    <string name="charts_axis_caption_single">Вертикальна вісь: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">Вертикальна вісь: записані значення, %1$d шкала використовує одну вісь</item>
+        <item quantity="few">Вертикальна вісь: записані значення, %1$d шкали використовують одну вісь</item>
+        <item quantity="many">Вертикальна вісь: записані значення, %1$d шкал використовують одну вісь</item>
+        <item quantity="other">Вертикальна вісь: записані значення, %1$d шкали використовують одну вісь</item>
+    </plurals>
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, що нижче, то краще)</string>
+    <string name="charts_no_entries_day">Цього дня записів немає.</string>
+    <string name="charts_point_value">%1$s: %2$s</string>
+
+    <!-- Charts help dialog -->
+    <string name="charts_help_title">Як читати графіки</string>
+    <string name="charts_help_dismiss">Зрозуміло</string>
+    <string name="charts_help_intro">Два перемикачі змінюють те, як відображаються ваші значення. Вибір тут не змінює дані, лише вигляд графіка.</string>
+    <string name="charts_help_series_title">Ряд: %1$s або %2$s</string>
+    <string name="charts_help_raw_body">Показує кожен день точно так, як його було записано. Зручно, щоб бачити зміни день у день, але графік може виглядати нерівним.</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">Кожен день замінюється середнім за період у %1$d дн., що закінчується цим днем. Так згладжуються окремі сплески, і загальну тенденцію (показник зростає чи знижується) видно краще.</item>
+        <item quantity="few">Кожен день замінюється середнім за період у %1$d дн., що закінчується цим днем. Так згладжуються окремі сплески, і загальну тенденцію (показник зростає чи знижується) видно краще.</item>
+        <item quantity="many">Кожен день замінюється середнім за період у %1$d дн., що закінчується цим днем. Так згладжуються окремі сплески, і загальну тенденцію (показник зростає чи знижується) видно краще.</item>
+        <item quantity="other">Кожен день замінюється середнім за період у %1$d дн., що закінчується цим днем. Так згладжуються окремі сплески, і загальну тенденцію (показник зростає чи знижується) видно краще.</item>
+    </plurals>
+    <string name="charts_help_axis_title">Вісь Y: %1$s або %2$s</string>
+    <string name="charts_help_autofit_body">Масштабує вертикальну вісь лише до того діапазону, який справді займають ваші дані. Невеликі зміни добре видно, бо графік заповнює весь простір, але лінія не співвідноситься з повним діапазоном шкали. Підписи ліворуч показують записані значення; якщо показано кілька шкал, усі вони використовують цю одну вісь.</string>
+    <string name="charts_help_absolute_body" formatted="false">Показує кожну лінію відносно повного діапазону її шкали, від мінімуму до максимуму. Зміни виглядають меншими, зате різні шкали вирівнюються, і їх можна порівнювати на одному графіку. Шкали з позначкою «що нижче, то краще» тут перевернуто, щоб покращення завжди було спрямоване вгору. Підписи ліворуч указано у відсотках, бо кожна лінія вимірюється відносно власного діапазону: 100% відповідає верху діапазону, а для шкали «що нижче, то краще» відповідає його низу.</string>
+
+    <!-- Data store upgrade -->
+    <string name="migrating_title">Оновлення сховища даних…</string>
+    <string name="migrating_body">Ваші записи переносяться до зашифрованої бази даних. Не закривайте застосунок.</string>
+    <string name="migration_failed_title">Не вдалося оновити</string>
+    <string name="migration_failed_body">Вихідні дані досі на пристрої. Відкрийте застосунок знову, щоб повторити спробу, або, якщо проблема не зникне, видаліть застосунок і відновіть дані з резервної копії.</string>
+
+    <!-- Biometric unlock prompt -->
+    <string name="biometric_prompt_title">Розблокувати Mood Cairns</string>
+    <string name="biometric_prompt_subtitle">Підтвердьте особу, щоб продовжити</string>
+    <string name="biometric_prompt_use_pin">Ввести PIN-код</string>
+
+    <!-- No-PIN warning -->
+    <string name="no_pin_warning_title_setup">Продовжити без PIN-коду?</string>
+    <string name="no_pin_warning_title_remove">Видалити PIN-код?</string>
+    <string name="no_pin_warning_body">Без PIN-коду будь-хто, хто може користуватися цим розблокованим пристроєм, зможе відкрити Mood Cairns і прочитати всі ваші записи. Дані залишаться зашифрованими на пристрої, але лише за допомогою захищеного сховища ключів пристрою: додатковий захист PIN-коду зникне, а біометричне розблокування буде вимкнено. Знову встановити PIN-код можна будь-коли в налаштуваннях.</string>
+    <string name="no_pin_warning_accept">Прийняти й продовжити</string>
+
+    <!-- App language picker -->
+    <string name="language_app_language">Мова застосунку</string>
+    <string name="language_system_default">Як у системі</string>
+    <string name="language_system_untranslated">%1$s (перекладу поки немає, використовується англійська)</string> <!-- Quite funny. As i see there is no end-case for this string -->
+
+    <!-- Settings screen -->
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_section_language">Мова</string>
+    <string name="settings_section_prompt_windows">Вікна нагадувань</string>
+    <string name="settings_add_window">Додати вікно</string>
+    <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
+    <string name="settings_section_security">Безпека</string>
+    <string name="settings_auto_lock_label">Автоблокування у фоні</string>
+    <string name="settings_auto_lock_immediate">Одразу</string>
+    <string name="settings_biometric_unlock">Біометричне розблокування</string>
+    <string name="settings_change_pin">Змінити PIN-код</string>
+    <string name="settings_lock_now">Заблокувати зараз</string>
+    <string name="settings_set_pin">Встановити PIN-код</string>
+    <string name="settings_no_pin_explanation">PIN-код не встановлено. Ваші дані зашифровано на цьому пристрої, але захищено лише сховищем ключів пристрою, а не PIN-кодом. Без PIN-коду недоступні автоблокування, біометричне розблокування та «Заблокувати зараз».</string>
+    <string name="settings_section_danger_zone">Небезпечна зона</string>
+    <string name="settings_allow_unsafe_exports">Дозволити небезпечний експорт</string>
+    <string name="settings_allow_unsafe_exports_summary">Вмикає експорт у CSV без шифрування в розділі «Резервні копії та імпорт». За замовчуванням вимкнено.</string>
+    <string name="settings_unsafe_exports_dialog_title">Дозволити небезпечний експорт?</string>
+    <string name="settings_unsafe_exports_dialog_body">З’явиться можливість експортувати дані в незашифрований CSV-файл у спільному сховищі. Цей файл містить звичайний текст без парольної фрази: хмарні сервіси резервного копіювання, файлові менеджери та будь-які інші застосунки з доступом до спільного сховища зможуть прочитати всі ваші записи.\n\nВмикайте цю функцію, лише якщо розумієте й приймаєте цей ризик.</string>
+    <string name="settings_allow_screenshots">Дозволити знімки екрана</string>
+    <plurals name="settings_allow_screenshots_summary">
+        <item quantity="one">Тимчасово дозволяє знімки й запис екрана на %1$d хвилину. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
+        <item quantity="few">Тимчасово дозволяє знімки й запис екрана на %1$d хвилини. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
+        <item quantity="many">Тимчасово дозволяє знімки й запис екрана на %1$d хвилин. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
+        <item quantity="other">Тимчасово дозволяє знімки й запис екрана на %1$d хвилини. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
+    </plurals>
+    <string name="settings_screenshots_allowed_until">Дозволено до %1$s</string>
+    <string name="settings_screenshots_dialog_title">Дозволити знімки екрана?</string>
+    <plurals name="settings_screenshots_dialog_body">
+        <item quantity="one">На наступну %1$d хвилину знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилину або під час блокування застосунку.</item>
+        <item quantity="few">На наступні %1$d хвилини знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилини або під час блокування застосунку.</item>
+        <item quantity="many">На наступні %1$d хвилин знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилин або під час блокування застосунку.</item>
+        <item quantity="other">На наступні %1$d хвилини знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилини або під час блокування застосунку.</item>
+    </plurals>
+    <string name="settings_section_diagnostics">Діагностика</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">Тестове сповіщення (приблизно через %1$d секунду)</item>
+        <item quantity="few">Тестове сповіщення (приблизно через %1$d секунди)</item>
+        <item quantity="many">Тестове сповіщення (приблизно через %1$d секунд)</item>
+        <item quantity="other">Тестове сповіщення (приблизно через %1$d секунди)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_title">Заблоковано</string>
+    <string name="lock_subtitle">Введіть PIN-код, щоб продовжити</string>
+    <string name="lock_pin_label">PIN-код</string>
+    <string name="lock_unlock">Розблокувати</string>
+    <string name="lock_use_biometric">Використати біометрію</string>
+    <string name="lock_try_again_in">Повторіть через %1$s</string>
+    <string name="lock_locked_for">Заблоковано (%1$s)</string>
+    <string name="lock_error_wrong_pin">Неправильний PIN-код</string>
+    <string name="lock_error_too_many_attempts">Забагато спроб</string>
+    <string name="lock_error_unlock_failed">Не вдалося розблокувати: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_title">Встановіть PIN-код</string>
+    <string name="set_pin_intro">Ваші записи ніколи не залишають пристрій. PIN-код і біометричне розблокування зберігають їх лише для вас.</string>
+    <!-- A range ("4–10") always takes the genitive plural, whatever the quantity. -->
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">PIN-код (%1$d–%2$d цифр)</item>
+        <item quantity="few">PIN-код (%1$d–%2$d цифр)</item>
+        <item quantity="many">PIN-код (%1$d–%2$d цифр)</item>
+        <item quantity="other">PIN-код (%1$d–%2$d цифр)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">Підтвердьте PIN-код</string>
+    <string name="set_pin_save">Зберегти PIN-код</string>
+    <string name="set_pin_continue_without">Продовжити без PIN-коду</string>
+    <string name="set_pin_error_failed">Не вдалося встановити PIN-код: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">Не вдалося продовжити без PIN-коду: %1$s</string>
+
+    <!-- Change PIN screen -->
+    <string name="change_pin_title_change">Змінити PIN-код</string>
+    <string name="change_pin_title_set">Встановити PIN-код</string>
+    <string name="change_pin_action_change">Змінити PIN-код</string>
+    <string name="change_pin_action_set">Встановити PIN-код</string>
+    <string name="change_pin_action_remove">Видалити PIN-код</string>
+    <string name="change_pin_current_label">Поточний PIN-код</string>
+    <string name="change_pin_new_label">Новий PIN-код</string>
+    <string name="change_pin_confirm_label">Підтвердьте новий PIN-код</string>
+    <string name="change_pin_remove_hint">Залиште поля нового PIN-коду порожніми, щоб видалити PIN-код.</string>
+    <string name="change_pin_error_current_required">Введіть поточний PIN-код, щоб видалити його</string>
+    <string name="change_pin_error_wrong_current">Поточний PIN-код неправильний</string>
+    <string name="change_pin_error_locked">Застосунок заблоковано; розблокуйте його й повторіть спробу</string>
+    <string name="change_pin_error_failed">Не вдалося змінити PIN-код: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">Новий PIN-код має містити щонайменше %1$d цифру</item>
+        <item quantity="few">Новий PIN-код має містити щонайменше %1$d цифри</item>
+        <item quantity="many">Новий PIN-код має містити щонайменше %1$d цифр</item>
+        <item quantity="other">Новий PIN-код має містити щонайменше %1$d цифри</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">Забагато спроб. Повторіть через %1$d секунду.</item>
+        <item quantity="few">Забагато спроб. Повторіть через %1$d секунди.</item>
+        <item quantity="many">Забагато спроб. Повторіть через %1$d секунд.</item>
+        <item quantity="other">Забагато спроб. Повторіть через %1$d секунди.</item>
+    </plurals>
+
+    <!-- Scale editor errors -->
+    <string name="scale_edit_error_not_found">Шкалу не знайдено</string>
+    <string name="scale_edit_error_numbers_required">Введіть числа для мін., макс. і кроку</string>
+    <string name="scale_edit_error_min_not_below_max">Мінімум має бути меншим за максимум</string>
+    <string name="scale_edit_error_step_not_positive">Крок має бути більшим за нуль</string>
+    <string name="scale_edit_error_range_not_step_multiple">Діапазон (%1$d) має бути кратним кроку (%2$s)</string>
+    <string name="scale_edit_error_default_not_number">Початкове значення має бути числом</string>
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Початкове значення має бути від %1$d до %2$d</string>
+    <string name="scale_edit_error_default_off_step">Початкове значення має збігатися з кроком %1$s від %2$d</string>
+
+    <!-- Tag editor errors -->
+    <string name="tag_edit_error_not_found">Тег не знайдено</string>
+    <string name="tag_edit_error_name_taken">Тег «%1$s» уже є в цій категорії</string>
+
+    <!-- Prompt window editor errors -->
+    <string name="window_edit_error_not_found">Вікно нагадування не знайдено</string>
+    <string name="window_edit_error_label_required">Вкажіть назву</string>
+    <string name="window_edit_error_start_not_before_end">Початок має бути раніше за кінець</string>
+
+    <!-- Backup messages -->
+    <string name="backup_error_unsafe_exports_disabled">Небезпечний експорт вимкнено</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">Парольна фраза має містити щонайменше %1$d символ</item>
+        <item quantity="few">Парольна фраза має містити щонайменше %1$d символи</item>
+        <item quantity="many">Парольна фраза має містити щонайменше %1$d символів</item>
+        <item quantity="other">Парольна фраза має містити щонайменше %1$d символу</item>
+    </plurals>
+    <string name="backup_export_success">Експортовано: %1$s</string>
+    <string name="backup_export_csv_success">Експортовано: %1$s (без шифрування)</string>
+    <string name="backup_export_failed">Не вдалося експортувати: %1$s</string>
+    <string name="backup_import_success">Імпорт завершено. Записи: %1$d, шкали: %2$d, теги: %3$d, вікна нагадувань: %4$d</string>
+    <string name="backup_import_failed">Не вдалося імпортувати: %1$s</string>
+
+    <!-- Import errors -->
+    <string name="import_error_too_large">Файл перевищує обмеження в %1$d МБ.</string>
+    <string name="import_error_unreadable">Не вдалося прочитати файл.</string>
+    <string name="import_error_unreadable_detail">Не вдалося прочитати файл (%1$s).</string>
+    <string name="import_error_not_a_backup">Цей файл не є резервною копією Mood Cairns.</string>
+    <string name="import_error_wrong_secret">Не вдалося розшифрувати копію. Неправильна парольна фраза або файл пошкоджено.</string>
+    <string name="import_error_unsupported_version">Ця копія використовує формат версії %1$d, який ця версія застосунку не може прочитати. Може допомогти оновлення застосунку.</string>
+    <string name="import_error_malformed">Файл резервної копії пошкоджено (%1$s).</string>
+    <string name="import_error_write_failed">Імпорт перервано під час збереження даних (%1$s).</string>
+</resources>

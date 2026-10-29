@@ -47,6 +47,7 @@ fun TagEditScreen(
     viewModel: TagEditViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val categoryLabels by viewModel.categoryLabels.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
@@ -94,7 +95,7 @@ fun TagEditScreen(
                 onExpandedChange = { categoryExpanded = it },
             ) {
                 OutlinedTextField(
-                    value = stringResource(state.category.displayNameRes()),
+                    value = state.category.displayName(categoryLabels),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.tag_edit_category_label)) },
@@ -111,7 +112,7 @@ fun TagEditScreen(
                 ) {
                     TagCategory.entries.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(stringResource(category.displayNameRes())) },
+                            text = { Text(category.displayName(categoryLabels)) },
                             onClick = {
                                 viewModel.setCategory(category)
                                 categoryExpanded = false

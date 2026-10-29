@@ -342,7 +342,7 @@
     <string name="charts_tags_label">Tags</string>
     <!-- Caption under the chart explaining the vertical axis. Keep "top of range"
          rather than "best": on a scale where high is bad, 100% is the worst end. -->
-    <string name="charts_axis_caption_absolute">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>
     <string name="charts_axis_caption_values">Vertical axis: logged values</string>
     <!-- %1$s scale name, %2$s its range. -->
     <string name="charts_axis_caption_single">Vertical axis: %1$s (%2$s)</string>
@@ -370,7 +370,7 @@
     </plurals>
     <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
     <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
-    <string name="charts_help_absolute_body">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
+    <string name="charts_help_absolute_body" formatted="false">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
 
     <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
     <string name="migrating_title">Upgrading data store…</string>
@@ -412,15 +412,26 @@
     <string name="settings_lock_now">Lock now</string>
     <string name="settings_set_pin">Set PIN</string>
     <string name="settings_no_pin_explanation">No PIN set. Your data is encrypted on this device but protected only by your device\'s keystore, not by a PIN. Auto-lock, biometric unlock, and lock-now are unavailable without a PIN.</string>
-    <string name="settings_section_backup">Backup &amp; export</string>
+    <string name="settings_section_danger_zone">Danger zone</string>
     <string name="settings_allow_unsafe_exports">Allow unsafe exports</string>
     <string name="settings_allow_unsafe_exports_summary">Enables an unencrypted CSV export under Backup &amp; import. Off by default.</string>
     <string name="settings_unsafe_exports_dialog_title">Allow unsafe exports?</string>
     <string name="settings_unsafe_exports_dialog_body">This adds an option to export your data as an unencrypted CSV file to shared storage. That file is plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries.\n\nOnly enable this if you understand and accept that danger.</string>
+    <string name="settings_allow_screenshots">Allow screenshots</string>
+    <plurals name="settings_allow_screenshots_summary">
+        <item quantity="one">Temporarily allows screenshots and screen recording for %1$d minute. The lock screen stays protected. Off by default.</item>
+        <item quantity="other">Temporarily allows screenshots and screen recording for %1$d minutes. The lock screen stays protected. Off by default.</item>
+    </plurals>
+    <string name="settings_screenshots_allowed_until">Allowed until %1$s</string>
+    <string name="settings_screenshots_dialog_title">Allow screenshots?</string>
+    <plurals name="settings_screenshots_dialog_body">
+        <item quantity="one">For the next %1$d minute, screenshots, screen recordings, casting, and the recent-apps preview can capture everything shown, including your entries. Screenshots are saved to shared storage, where cloud backup services and other apps can read them.\n\nScreenshots are blocked again automatically after %1$d minute or when the app locks.</item>
+        <item quantity="other">For the next %1$d minutes, screenshots, screen recordings, casting, and the recent-apps preview can capture everything shown, including your entries. Screenshots are saved to shared storage, where cloud backup services and other apps can read them.\n\nScreenshots are blocked again automatically after %1$d minutes or when the app locks.</item>
+    </plurals>
     <string name="settings_section_diagnostics">Diagnostics</string>
     <plurals name="settings_test_notification">
-        <item quantity="one">Test notification (fires in %1$d second)</item>
-        <item quantity="other">Test notification (fires in %1$d seconds)</item>
+        <item quantity="one">Test notification (fires in about %1$d second)</item>
+        <item quantity="other">Test notification (fires in about %1$d seconds)</item>
     </plurals>
 
     <!-- Lock screen -->

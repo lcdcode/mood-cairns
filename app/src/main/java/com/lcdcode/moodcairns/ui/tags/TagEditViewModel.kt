@@ -11,8 +11,10 @@ import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -44,6 +46,9 @@ class TagEditViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(TagEditUiState())
     val state: StateFlow<TagEditUiState> = _state.asStateFlow()
+
+    val categoryLabels: StateFlow<Map<TagCategory, String>> = repo.observeCategoryLabels()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
 
     init {
         val id = savedState.get<Long>(ARG_TAG_ID)?.takeIf { it > 0L }

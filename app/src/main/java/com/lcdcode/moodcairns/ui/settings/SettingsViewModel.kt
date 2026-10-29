@@ -6,6 +6,7 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.security.ScreenCaptureGate
 import com.lcdcode.moodcairns.work.PromptScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,8 @@ data class SettingsUiState(
     val biometricEnabled: Boolean = true,
     val pinSet: Boolean = true,
     val allowUnsafeExports: Boolean = false,
+    /** Remaining screen-capture opt-out in ms, or 0 when screenshots are blocked. */
+    val screenshotsRemainingMs: Long = 0L,
     val loaded: Boolean = false,
 )
 
@@ -32,6 +35,7 @@ class SettingsViewModel @Inject constructor(
     private val lockRepo: LockRepository,
     private val lockManager: LockManager,
     private val promptScheduler: PromptScheduler,
+    private val screenCaptureGate: ScreenCaptureGate,
 ) : ViewModel() {
 
     private val lockState = MutableStateFlow(
@@ -41,8 +45,10 @@ class SettingsViewModel @Inject constructor(
     val state: StateFlow<SettingsUiState> = combine(
         windowsRepo.observeAll(),
         lockState,
-    ) { windows, lock ->
+        screenCaptureGate.allowedUntil,
+    ) { windows, lock, _ ->
         SettingsUiState(
+            screenshotsRemainingMs = screenCaptureGate.remainingMs(),
             windows = windows,
             lockTimeoutMs = lock.first,
             biometricEnabled = lock.second,
@@ -87,6 +93,10 @@ class SettingsViewModel @Inject constructor(
     fun setAllowUnsafeExports(enabled: Boolean) {
         lockRepo.allowUnsafeExports = enabled
         lockState.update { it.copy(third = it.third + 1) }
+    }
+
+    fun setScreenshotsAllowed(enabled: Boolean) {
+        if (enabled) screenCaptureGate.allowTemporarily() else screenCaptureGate.revoke()
     }
 
     fun lockNow() = lockManager.lockNow()

@@ -20,6 +20,7 @@ data class BackupFile(
     val promptWindows: List<PromptWindowDto>,
     val entries: List<EntryDto>,
     val tags: List<TagDto> = emptyList(),
+    val tagCategoryLabels: List<TagCategoryLabelDto> = emptyList(),
 ) {
     companion object {
         const val CURRENT_VERSION = 2
@@ -69,6 +70,13 @@ data class TagDto(
     val name: String,
     val category: String,
     val sortOrder: Int,
+)
+
+/** A renamed tag category. Categories absent from the list use their default name. */
+@Serializable
+data class TagCategoryLabelDto(
+    val category: String,
+    val label: String,
 )
 
 @Serializable

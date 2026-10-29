@@ -64,6 +64,10 @@ The About strings contain `&lt;b&gt;...&lt;/b&gt;` (bold) and
 translate only the text between them. Keep `common_list_separator` in its
 surrounding quotes, which preserve its spaces.
 
+Keep any `formatted="false"` attribute. It marks a string with a literal `%`
+(like "100%") that is not a placeholder; without it, a translation such as
+"100% es" is misread as a format code ("% e") and fails the lint check.
+
 ### Built-in names
 
 The `seed_*` strings are the names of the built-in scales, tags, and reminder
@@ -113,8 +117,9 @@ Then run the unit tests and open a pull request.
 ### Store listing (optional)
 
 F-Droid shows a translated description when it finds one. Copy
-`fastlane/metadata/android/en-US/` to a folder for your language (for example
-`fastlane/metadata/android/de-DE/`) and translate:
+`fastlane/metadata/android/en-US/` to a folder for your language and translate it.
+Use just the language code (for example `es/`) when the translation suits every
+region, or add a region (`pt-BR/`) when it does not:
 
 - `title.txt`: at most 50 characters
 - `short_description.txt`: at most 80 characters

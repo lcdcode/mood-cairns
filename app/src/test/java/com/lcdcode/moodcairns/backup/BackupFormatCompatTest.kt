@@ -1,5 +1,7 @@
 package com.lcdcode.moodcairns.backup
 
+import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -142,5 +144,57 @@ class BackupFormatCompatTest {
 
         assertEquals(original, decoded)
         assertEquals(listOf(1L, 3L), decoded.entries.single().tagIds)
+    }
+
+    @Test
+    fun fileWithoutCategoryLabels_parsesWithNoRenames() {
+        val preLabels = """
+            {"schemaVersion": 2, "exportedAt": "2026-01-01T00:00:00Z", "appVersion": "1.1",
+             "scales": [], "promptWindows": [], "entries": [], "tags": []}
+        """.trimIndent()
+
+        val parsed = json.decodeFromString(BackupFile.serializer(), preLabels)
+
+        assertTrue(parsed.tagCategoryLabels.isEmpty())
+    }
+
+    @Test
+    fun categoryLabels_roundTrip() {
+        val original = BackupFile(
+            schemaVersion = BackupFile.CURRENT_VERSION,
+            exportedAt = "2026-01-01T00:00:00Z",
+            appVersion = "1.2",
+            scales = emptyList(),
+            promptWindows = emptyList(),
+            entries = emptyList(),
+            tagCategoryLabels = listOf(
+                TagCategoryLabelDto(category = "PLACE", label = "Spots"),
+                TagCategoryLabelDto(category = "OTHER", label = "Misc"),
+            ),
+        )
+
+        val decoded = json.decodeFromString(
+            BackupFile.serializer(),
+            json.encodeToString(BackupFile.serializer(), original),
+        )
+
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun categoryLabelDto_mapsToEntity() {
+        val entity = TagCategoryLabelDto(category = "PERSON", label = "  Crew ").toEntityOrNull()
+
+        assertEquals(TagCategoryLabel(TagCategory.PERSON, "Crew"), entity)
+    }
+
+    @Test
+    fun categoryLabelDto_withUnknownCategory_isDropped() {
+        assertNull(TagCategoryLabelDto(category = "PETS", label = "Pets").toEntityOrNull())
+    }
+
+    @Test
+    fun categoryLabelDto_withBlankLabel_isDropped() {
+        assertNull(TagCategoryLabelDto(category = "PLACE", label = " \n ").toEntityOrNull())
     }
 }

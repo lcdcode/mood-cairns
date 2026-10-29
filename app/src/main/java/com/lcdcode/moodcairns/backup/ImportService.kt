@@ -77,6 +77,7 @@ class ImportService @Inject constructor(
                 // defaults so those users are not left with an empty tag list.
                 for (t in entities.tags) tagDao.insert(t)
                 if (entities.schemaVersion < 2) tagDao.insertAllIgnore(SeedTags.tags)
+                moodDb.tagCategoryLabelDao().upsertAll(entities.tagCategoryLabels)
                 val knownTagIds = entities.tags.map { it.id }.toSet()
                 for ((entry, values, tagIds) in entities.entries) {
                     val newId = entryDao.insertEntry(entry.copy(id = 0))
