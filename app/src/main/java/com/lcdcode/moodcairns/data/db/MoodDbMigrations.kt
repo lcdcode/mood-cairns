@@ -34,6 +34,11 @@ internal object MoodDbMigrationSql {
         "ALTER TABLE `scale` ADD COLUMN `defaultValue` REAL",
     )
 
+    val V4_TO_V5: List<String> = listOf(
+        "CREATE TABLE IF NOT EXISTS `tag_category_label` (`category` TEXT NOT NULL, " +
+            "`label` TEXT NOT NULL, PRIMARY KEY(`category`))",
+    )
+
     /**
      * INSERT OR IGNORE keeps the seeding idempotent: reruns and collisions with
      * user-created tags of the same name are silently skipped thanks to the
@@ -79,5 +84,15 @@ val MIGRATION_3_4: Migration = object : Migration(3, 4) {
     override fun migrate(db: SupportSQLiteDatabase) {
         MoodDbMigrationSql.V3_TO_V4.forEach(db::execSQL)
         MoodDbMigrationSql.seedTagInserts(SeedTags.moodTags).forEach(db::execSQL)
+    }
+}
+
+/**
+ * Adds tag_category_label for user-chosen category names. The table starts
+ * empty, so every category keeps its translated default until renamed.
+ */
+val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        MoodDbMigrationSql.V4_TO_V5.forEach(db::execSQL)
     }
 }
