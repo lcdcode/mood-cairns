@@ -42,9 +42,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,6 +88,7 @@ import com.patrykandpatrick.vico.compose.common.fill
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
@@ -93,8 +97,24 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import kotlin.math.roundToInt
+
+/** Raw swaps daily means for individual entries once this many days or fewer are on screen. */
+private const val ENTRY_DETAIL_MAX_VISIBLE_DAYS = 3f
+
+/** Deepest zoom, as the x span left on screen: 6 hours on either axis. */
+private const val MIN_VISIBLE_HOURS = 6
+private const val MIN_VISIBLE_MINUTES = MIN_VISIBLE_HOURS * MINUTES_PER_HOUR
+
+/** Entries the Hourly tapped-point card lists at first, and adds per "+N more" tap. */
+private const val HOURLY_CARD_PAGE_SIZE = 10
+
+// One major x step per hour on both axes. Kept as stable instances because
+// rememberCartesianChart keys on them.
+private val MINUTE_AXIS_X_STEP: (CartesianChartModel) -> Double = { MINUTES_PER_HOUR.toDouble() }
+private val HOUR_AXIS_X_STEP: (CartesianChartModel) -> Double = { 1.0 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -177,6 +197,11 @@ fun ChartsScreen(
                     state.entryCount,
                     ROLLING_AVERAGE_DAYS,
                 )
+                ChartMode.Hourly -> pluralStringResource(
+                    R.plurals.charts_summary_hourly,
+                    state.entryCount,
+                    state.entryCount,
+                )
             }
             Text(
                 summary,
@@ -196,10 +221,7 @@ fun ChartsScreen(
 
             val visibleSeries = state.series.filter { it.scale.id in state.selectedScaleIds }
             val hasData = visibleSeries.any {
-                when (state.chartMode) {
-                    ChartMode.Raw -> it.daily.isNotEmpty()
-                    ChartMode.RollingAvg -> it.rolling.isNotEmpty()
-                }
+                plotPoints(it, state.chartMode, showEntries = false).isNotEmpty()
             }
             if (!hasData) {
                 Box(
@@ -223,6 +245,7 @@ fun ChartsScreen(
                     scales = state.scales,
                     windows = state.windows,
                     entriesByDay = state.entriesByDay,
+                    entriesByHour = state.entriesByHour,
                 )
             }
         }
@@ -533,24 +556,34 @@ private fun ChartArea(
     scales: List<Scale>,
     windows: List<PromptWindow>,
     entriesByDay: Map<Int, List<EntryWithValues>>,
+    entriesByHour: Map<Int, List<EntryWithValues>>,
 ) {
-    val pointsForMode: (ScaleSeries) -> List<DayPoint> = { s ->
-        when (mode) {
-            ChartMode.Raw -> s.daily
-            ChartMode.RollingAvg -> s.rolling
+    val isHourly = mode == ChartMode.Hourly
+    val maxZoom = remember(isHourly) {
+        val minVisibleX = if (isHourly) MIN_VISIBLE_HOURS else MIN_VISIBLE_MINUTES
+        Zoom.max(Zoom.x(minVisibleX.toDouble()), Zoom.Content)
+    }
+    // Keyed on maxZoom, so switching between the date and hour axes resets zoom.
+    val zoomState = rememberVicoZoomState(initialZoom = Zoom.Content, maxZoom = maxZoom)
+    val showEntries by remember(mode, totalDays, zoomState) {
+        derivedStateOf {
+            val fraction = visibleFraction(zoomState.valueRange.start, zoomState.value)
+            val visibleDays = totalDays * fraction
+            mode == ChartMode.Raw && visibleDays <= ENTRY_DETAIL_MAX_VISIBLE_DAYS
         }
     }
-    val nonEmpty = series.filter { pointsForMode(it).isNotEmpty() }
+
+    val nonEmpty = series.filter { plotPoints(it, mode, showEntries).isNotEmpty() }
     val modelProducer = remember { CartesianChartModelProducer() }
 
-    LaunchedEffect(nonEmpty, mode, totalDays, absoluteY) {
+    LaunchedEffect(nonEmpty, mode, showEntries, absoluteY) {
         if (nonEmpty.isEmpty()) return@LaunchedEffect
         modelProducer.runTransaction {
             lineSeries {
                 nonEmpty.forEach { s ->
-                    val pts = pointsForMode(s)
+                    val pts = plotPoints(s, mode, showEntries)
                     series(
-                        x = pts.map { it.dayIndex },
+                        x = pts.map { it.x },
                         y = pts.map { p -> if (absoluteY) normalize(p.value, s.scale) else p.value },
                     )
                 }
@@ -560,34 +593,57 @@ private fun ChartArea(
 
     val lines = nonEmpty.map { s -> rememberLine(Color(s.scale.colorArgb)) }
 
-    // Pin the x range to the selected window so points draw at their true day index
-    // rather than getting auto-scaled to span the data extent — keeps the chart aligned
-    // with the start/mid/end date labels below it. In absolute mode, also pin y to
-    // [0,1] since each series is normalized against its own scale's min/max.
-    val rangeProvider = remember(totalDays, absoluteY) {
-        if (absoluteY) {
-            CartesianLayerRangeProvider.fixed(
-                minX = 0.0,
-                maxX = (totalDays - 1).coerceAtLeast(0).toDouble(),
-                minY = 0.0,
-                maxY = 1.0,
-            )
+    // Pin the x range to the selected window (or the whole 0-23h day) so points draw
+    // at their true position rather than getting auto-scaled to span the data
+    // extent. In absolute mode, also pin y to [0,1] since each series is
+    // normalized against its own scale's min/max.
+    val rangeProvider = remember(isHourly, totalDays, absoluteY) {
+        val maxX = if (isHourly) {
+            (HOURS_PER_DAY - 1).toDouble()
         } else {
-            CartesianLayerRangeProvider.fixed(
-                minX = 0.0,
-                maxX = (totalDays - 1).coerceAtLeast(0).toDouble(),
-            )
+            (totalDays * MINUTES_PER_DAY).toDouble()
+        }
+        if (absoluteY) {
+            CartesianLayerRangeProvider.fixed(minX = 0.0, maxX = maxX, minY = 0.0, maxY = 1.0)
+        } else {
+            CartesianLayerRangeProvider.fixed(minX = 0.0, maxX = maxX)
         }
     }
 
-    var tappedDay by remember { mutableStateOf<Int?>(null) }
+    // A tap remembers the mode it was made in, so switching modes never reads a
+    // minute-axis x as an hour (or vice versa) before the card is cleared.
+    var tapped by remember { mutableStateOf<Pair<ChartMode, Double>?>(null) }
+    val currentMode by rememberUpdatedState(mode)
 
     val locale = currentLocale()
-    val axisDateFormat = rememberSkeletonDateFormat("MMMd")
-    val dateLabelFormatter = remember(startDate, axisDateFormat) {
-        CartesianValueFormatter { _, x, _ ->
-            axisDateFormat.format(startDate.plusDays(x.toLong().coerceAtLeast(0)))
+    val dayLabelFormat = rememberSkeletonDateFormat("MMMd")
+    val timeLabelFormat = rememberSkeletonDateFormat("jm")
+    val hourLabelFormat = rememberSkeletonDateFormat("j")
+    val xLabelFormatter = remember(
+        isHourly,
+        startDate,
+        dayLabelFormat,
+        timeLabelFormat,
+        hourLabelFormat,
+    ) {
+        if (isHourly) {
+            CartesianValueFormatter { _, x, _ ->
+                val hour = x.roundToInt().coerceIn(0, HOURS_PER_DAY - 1)
+                hourLabelFormat.format(LocalTime.of(hour, 0))
+            }
+        } else {
+            CartesianValueFormatter { _, x, _ ->
+                val pos = minuteAxisPosition(x)
+                if (pos.isMidnight) {
+                    dayLabelFormat.format(startDate.plusDays(pos.dayIndex.coerceAtLeast(0)))
+                } else {
+                    timeLabelFormat.format(LocalTime.ofSecondOfDay(pos.minuteOfDay * 60L))
+                }
+            }
         }
+    }
+    val xLabelPlacer = remember(isHourly) {
+        SteppedLabelPlacer(if (isHourly) HOUR_AXIS_LABEL_SPACINGS else MINUTE_AXIS_LABEL_SPACINGS)
     }
 
     val valueLabelFormatter = remember(absoluteY, locale) {
@@ -596,16 +652,16 @@ private fun ChartArea(
 
     // Vico's marker pipeline handles touch in chart-data coordinates, so the
     // reported `x` already accounts for the current zoom/scroll state. A no-op
-    // marker (no visible decoration on the chart itself) is enough — the
-    // TappedPointCard below the chart is the actual UX surface.
+    // marker (no visible decoration on the chart itself) is enough - the
+    // tapped-point card below the chart is the actual UX surface.
     val invisibleMarker = remember { object : CartesianMarker {} }
     val markerListener = remember {
         object : CartesianMarkerVisibilityListener {
             override fun onShown(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-                tappedDay = targets.firstOrNull()?.x?.roundToInt()
+                targets.firstOrNull()?.let { tapped = currentMode to it.x }
             }
             override fun onUpdated(marker: CartesianMarker, targets: List<CartesianMarker.Target>) {
-                tappedDay = targets.firstOrNull()?.x?.roundToInt()
+                targets.firstOrNull()?.let { tapped = currentMode to it.x }
             }
             // Intentionally don't clear on hide: Vico hides the marker on touch
             // release, but the detail card should persist until the user taps a
@@ -629,7 +685,10 @@ private fun ChartArea(
                         rangeProvider = rangeProvider,
                     ),
                     startAxis = VerticalAxis.rememberStart(valueFormatter = valueLabelFormatter),
-                    bottomAxis = HorizontalAxis.rememberBottom(valueFormatter = dateLabelFormatter),
+                    bottomAxis = HorizontalAxis.rememberBottom(
+                        valueFormatter = xLabelFormatter,
+                        itemPlacer = xLabelPlacer,
+                    ),
                     marker = invisibleMarker,
                     markerVisibilityListener = markerListener,
                     // Inset the data area slightly on both sides so the points
@@ -640,10 +699,11 @@ private fun ChartArea(
                         unscalableStart = 8.dp,
                         unscalableEnd = 8.dp,
                     ),
+                    getXStep = if (isHourly) HOUR_AXIS_X_STEP else MINUTE_AXIS_X_STEP,
                 ),
                 modelProducer = modelProducer,
                 modifier = Modifier.fillMaxSize(),
-                zoomState = rememberVicoZoomState(initialZoom = Zoom.Content),
+                zoomState = zoomState,
             )
         }
 
@@ -657,16 +717,31 @@ private fun ChartArea(
 
         Spacer(Modifier.height(8.dp))
 
-        tappedDay?.let { day ->
-            val scalesById = remember(scales) { scales.associateBy { it.id } }
-            val windowsById = remember(windows) { windows.associateBy { it.id } }
-            TappedPointCard(
-                date = startDate.plusDays(day.toLong()),
-                entries = entriesByDay[day].orEmpty(),
-                scales = scalesById,
-                windows = windowsById,
-                onDismiss = { tappedDay = null },
-            )
+        val scalesById = remember(scales) { scales.associateBy { it.id } }
+        val windowsById = remember(windows) { windows.associateBy { it.id } }
+        tapped?.takeIf { (tapMode, _) -> tapMode == mode }?.let { (_, x) ->
+            if (isHourly) {
+                val hour = x.roundToInt().coerceIn(0, HOURS_PER_DAY - 1)
+                HourlyPointCard(
+                    hour = hour,
+                    entries = entriesByHour[hour].orEmpty(),
+                    averages = nonEmpty.mapNotNull { s ->
+                        s.hourly.firstOrNull { it.hour == hour }?.let { s.scale to it.value }
+                    },
+                    scales = scalesById,
+                    windows = windowsById,
+                    onDismiss = { tapped = null },
+                )
+            } else {
+                val day = minuteAxisPosition(x).dayIndex.toInt()
+                TappedPointCard(
+                    date = startDate.plusDays(day.toLong()),
+                    entries = entriesByDay[day].orEmpty(),
+                    scales = scalesById,
+                    windows = windowsById,
+                    onDismiss = { tapped = null },
+                )
+            }
             Spacer(Modifier.height(8.dp))
         }
 
@@ -739,6 +814,91 @@ private fun TappedPointCard(
 }
 
 @Composable
+private fun HourlyPointCard(
+    hour: Int,
+    entries: List<EntryWithValues>,
+    averages: List<Pair<Scale, Float>>,
+    scales: Map<Long, Scale>,
+    windows: Map<Long, PromptWindow>,
+    onDismiss: () -> Unit,
+) {
+    val locale = currentLocale()
+    val hourFmt = rememberSkeletonDateFormat("jm")
+    val entryTimeFmt = rememberSkeletonDateFormat("yMMMdjm")
+    val nextHour = (hour + 1) % HOURS_PER_DAY
+    // Keyed on hour so tapping a different hour starts back at one page.
+    var shownCount by remember(hour) { mutableIntStateOf(HOURLY_CARD_PAGE_SIZE) }
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    stringResource(
+                        R.string.charts_hour_range,
+                        hourFmt.format(LocalTime.of(hour, 0)),
+                        hourFmt.format(LocalTime.of(nextHour, 0)),
+                    ),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
+            }
+            Text(
+                pluralStringResource(R.plurals.charts_hour_entry_count, entries.size, entries.size),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            averages.forEach { (scale, average) ->
+                ScaleValueRow(
+                    scale,
+                    stringResource(
+                        R.string.charts_hour_average,
+                        scale.displayName(),
+                        formatScaleValue(average, locale),
+                    ),
+                )
+            }
+            entries.asReversed().take(shownCount).forEach { entry ->
+                HorizontalDivider()
+                TappedEntry(entry, scales, windows, entryTimeFmt)
+            }
+            val hiddenCount = entries.size - shownCount
+            if (hiddenCount > 0) {
+                HorizontalDivider()
+                TextButton(onClick = { shownCount += HOURLY_CARD_PAGE_SIZE }) {
+                    Text(
+                        pluralStringResource(
+                            R.plurals.charts_hour_more_entries,
+                            hiddenCount,
+                            hiddenCount,
+                        ),
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScaleValueRow(scale: Scale, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = Color(scale.colorArgb),
+            modifier = Modifier.size(10.dp),
+        ) {}
+        Text(text, style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+/** One entry in a tapped-point card; [timeFmt] decides whether the date is shown too. */
+@Composable
 private fun TappedEntry(
     entry: EntryWithValues,
     scales: Map<Long, Scale>,
@@ -746,7 +906,7 @@ private fun TappedEntry(
     timeFmt: SkeletonDateFormat,
 ) {
     val locale = currentLocale()
-    val time = entry.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalTime()
+    val recordedAt = entry.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalDateTime()
     val listSeparator = stringResource(R.string.common_list_separator)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(
@@ -754,29 +914,19 @@ private fun TappedEntry(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(timeFmt.format(time), fontWeight = FontWeight.Medium)
+            Text(timeFmt.format(recordedAt), fontWeight = FontWeight.Medium)
             SlotChip(slotLabel(entry.entry.slot, entry.entry.promptWindowId, windows))
         }
         entry.values.forEach { v ->
             val scale = scales[v.scaleId] ?: return@forEach
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = Color(scale.colorArgb),
-                    modifier = Modifier.size(10.dp),
-                ) {}
-                Text(
-                    stringResource(
-                        R.string.charts_point_value,
-                        scale.displayName(),
-                        formatScaleValue(v.value, locale),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            ScaleValueRow(
+                scale,
+                stringResource(
+                    R.string.charts_point_value,
+                    scale.displayName(),
+                    formatScaleValue(v.value, locale),
+                ),
+            )
         }
         entry.entry.note?.takeIf { it.isNotBlank() }?.let {
             Text(it, style = MaterialTheme.typography.bodySmall)
@@ -809,7 +959,8 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
 
                 val raw = chartModeLabel(ChartMode.Raw)
                 val rolling = chartModeLabel(ChartMode.RollingAvg)
-                HelpSection(stringResource(R.string.charts_help_series_title, raw, rolling))
+                val hourly = chartModeLabel(ChartMode.Hourly)
+                HelpSection(stringResource(R.string.charts_help_series_title, raw, rolling, hourly))
                 HelpEntry(raw, stringResource(R.string.charts_help_raw_body))
                 HelpEntry(
                     rolling,
@@ -819,6 +970,7 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                         ROLLING_AVERAGE_DAYS,
                     ),
                 )
+                HelpEntry(hourly, stringResource(R.string.charts_help_hourly_body))
 
                 val autoFit = yAxisModeLabel(absolute = false)
                 val absolute = yAxisModeLabel(absolute = true)
@@ -842,6 +994,7 @@ private fun chartModeLabel(mode: ChartMode): String = when (mode) {
             ROLLING_AVERAGE_DAYS,
             ROLLING_AVERAGE_DAYS,
         )
+    ChartMode.Hourly -> stringResource(R.string.charts_mode_hourly)
 }
 
 @Composable

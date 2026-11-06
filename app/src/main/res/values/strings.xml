@@ -323,14 +323,20 @@
         <item quantity="one">%1$d-day avg</item>
         <item quantity="other">%1$d-day avg</item>
     </plurals>
+    <string name="charts_mode_hourly">Hourly</string>
     <!-- Line under the filters. %1$d entry count; %2$d days in the rolling average. -->
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d entry · raw daily values</item>
         <item quantity="other">%1$d entries · raw daily values</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d entry · %2$d-day rolling average</item>
-        <item quantity="other">%1$d entries · %2$d-day rolling average</item>
+        <item quantity="one">%1$d entry · %2$d-day centered average</item>
+        <item quantity="other">%1$d entries · %2$d-day centered average</item>
+    </plurals>
+    <!-- %1$d entry count. -->
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d entry · averaged by hour of day</item>
+        <item quantity="other">%1$d entries · averaged by hour of day</item>
     </plurals>
     <string name="charts_y_axis_label">Y axis</string>
     <string name="charts_axis_autofit">Auto-fit</string>
@@ -356,18 +362,34 @@
     <string name="charts_no_entries_day">No entries on this day.</string>
     <!-- A scale value in the tapped-day card, e.g. "Happiness: 7". -->
     <string name="charts_point_value">%1$s: %2$s</string>
+    <!-- Title of the Hourly tapped-point card. %1$s and %2$s are the start and end times of the hour. -->
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <!-- %1$d entries logged during this hour on any day in the range. -->
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d entry in this hour</item>
+        <item quantity="other">%1$d entries in this hour</item>
+    </plurals>
+    <!-- Hourly card average, e.g. "Happiness average: 6.4". %1$s scale name, %2$s value. -->
+    <string name="charts_hour_average">%1$s average: %2$s</string>
+    <!-- Button under the Hourly card's entry list; tapping it shows more entries.
+         %1$d entries not shown yet. -->
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d more entry</item>
+        <item quantity="other">+%1$d more entries</item>
+    </plurals>
 
-    <!-- Charts help dialog. Mode names (%1$s, %2$s) come from charts_mode_* and
-         charts_axis_* so the help always matches the buttons. -->
+    <!-- Charts help dialog. Mode names (%1$s, %2$s, and %3$s in the series title) come
+         from charts_mode_* and charts_axis_* so the help always matches the buttons. -->
     <string name="charts_help_title">Reading the charts</string>
     <string name="charts_help_dismiss">Got it</string>
     <string name="charts_help_intro">Two toggles change how your numbers are drawn. Nothing you pick here changes your data - only how the chart looks.</string>
-    <string name="charts_help_series_title">Series: %1$s vs %2$s</string>
-    <string name="charts_help_raw_body">Plots each day exactly as you logged it. Use it to see precise day-to-day changes - though it can look jumpy.</string>
+    <string name="charts_help_series_title">Series: %1$s, %2$s, or %3$s</string>
+    <string name="charts_help_raw_body">Plots each day exactly as you logged it, averaging days with more than one entry. Use it to see precise day-to-day changes - though it can look jumpy. Pinch to zoom in: once only a few days fill the chart, each entry appears at the time you logged it.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Replaces each day with the average over the %1$d day ending on it. This smooths out one-off spikes so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
-        <item quantity="other">Replaces each day with the average over the %1$d days ending on it. This smooths out one-off spikes so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
+        <item quantity="one">Replaces each day with a weighted average of the %1$d day centered on it, with the middle day counting most. This smooths out one-off spikes without pushing them onto later days, so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
+        <item quantity="other">Replaces each day with a weighted average of the %1$d days centered on it, with the middle day counting most. This smooths out one-off spikes without pushing them onto later days, so the overall trend - whether your moods are drifting up or down - is easier to see.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Stacks every entry in the date range onto a single 24-hour day and plots the average for each hour, so you can spot time-of-day patterns - for example, whether mornings tend to be harder than evenings. Hours with no entries are skipped. Tap a point to see the entries behind it.</string>
     <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
     <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
     <string name="charts_help_absolute_body" formatted="false">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>

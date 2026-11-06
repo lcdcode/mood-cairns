@@ -265,13 +265,18 @@
         <item quantity="one">Ø %1$d Tag</item>
         <item quantity="other">Ø %1$d Tage</item>
     </plurals>
+    <string name="charts_mode_hourly">Stündlich</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d Eintrag · tägliche Rohwerte</item>
         <item quantity="other">%1$d Einträge · tägliche Rohwerte</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d Eintrag · gleitender %2$d-Tage-Durchschnitt</item>
-        <item quantity="other">%1$d Einträge · gleitender %2$d-Tage-Durchschnitt</item>
+        <item quantity="one">%1$d Eintrag · zentrierter %2$d-Tage-Durchschnitt</item>
+        <item quantity="other">%1$d Einträge · zentrierter %2$d-Tage-Durchschnitt</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d Eintrag · nach Tageszeit gemittelt</item>
+        <item quantity="other">%1$d Einträge · nach Tageszeit gemittelt</item>
     </plurals>
     <string name="charts_y_axis_label">Y-Achse</string>
     <string name="charts_axis_autofit">Automatisch</string>
@@ -291,17 +296,28 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, niedriger ist besser)</string>
     <string name="charts_no_entries_day">Keine Einträge an diesem Tag.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d Eintrag in dieser Stunde</item>
+        <item quantity="other">%1$d Einträge in dieser Stunde</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s im Schnitt: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d weiterer Eintrag</item>
+        <item quantity="other">+%1$d weitere Einträge</item>
+    </plurals>
 
     <!-- Charts help dialog -->
     <string name="charts_help_title">Diagramme lesen</string>
     <string name="charts_help_dismiss">Verstanden</string>
     <string name="charts_help_intro">Zwei Schalter ändern, wie deine Werte dargestellt werden. Nichts davon ändert deine Daten, nur das Aussehen des Diagramms.</string>
-    <string name="charts_help_series_title">Reihe: %1$s oder %2$s</string>
-    <string name="charts_help_raw_body">Zeigt jeden Tag genau so, wie du ihn eingetragen hast. Gut für präzise Veränderungen von Tag zu Tag, kann aber unruhig wirken.</string>
+    <string name="charts_help_series_title">Reihe: %1$s, %2$s oder %3$s</string>
+    <string name="charts_help_raw_body">Zeigt jeden Tag genau so, wie du ihn eingetragen hast; mehrere Einträge an einem Tag werden gemittelt. Gut für präzise Veränderungen von Tag zu Tag, kann aber unruhig wirken. Zoome mit zwei Fingern hinein: Sobald nur noch wenige Tage zu sehen sind, erscheint jeder Eintrag zu der Uhrzeit, zu der du ihn gemacht hast.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Ersetzt jeden Tag durch den Durchschnitt des %1$d Tages, der mit ihm endet. Das glättet einzelne Ausreißer, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
-        <item quantity="other">Ersetzt jeden Tag durch den Durchschnitt der %1$d Tage, die mit ihm enden. Das glättet einzelne Ausreißer, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
+        <item quantity="one">Ersetzt jeden Tag durch einen gewichteten Durchschnitt des %1$d Tages um ihn herum, wobei der mittlere Tag am stärksten zählt. Das glättet einzelne Ausreißer, ohne sie auf spätere Tage zu verschieben, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
+        <item quantity="other">Ersetzt jeden Tag durch einen gewichteten Durchschnitt der %1$d Tage um ihn herum, wobei der mittlere Tag am stärksten zählt. Das glättet einzelne Ausreißer, ohne sie auf spätere Tage zu verschieben, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Legt alle Einträge im gewählten Zeitraum auf einen einzigen 24-Stunden-Tag und zeigt den Durchschnitt jeder Stunde. So erkennst du Muster im Tagesverlauf, etwa ob Vormittage schwerer fallen als Abende. Stunden ohne Einträge werden übersprungen. Tippe auf einen Punkt, um die Einträge dahinter zu sehen.</string>
     <string name="charts_help_axis_title">Y-Achse: %1$s oder %2$s</string>
     <string name="charts_help_autofit_body">Zoomt die vertikale Achse auf den Bereich, den deine Daten tatsächlich abdecken. Kleine Veränderungen sind gut sichtbar, weil das Diagramm den Platz ausfüllt, aber die Linie wird nicht am vollen Bereich der Skala gemessen. Die Beschriftungen links sind deine erfassten Werte; werden mehrere Skalen dargestellt, teilen sie sich diese eine Achse.</string>
     <string name="charts_help_absolute_body" formatted="false">Zeigt jede Linie im vollen Bereich ihrer Skala, vom Minimum bis zum Maximum. Veränderungen wirken kleiner, aber die Skalen liegen übereinander, sodass du sie im selben Diagramm vergleichen kannst. Als „niedriger ist besser“ markierte Skalen werden hier umgekehrt gezeichnet, damit besser immer nach oben zeigt. Die Beschriftungen links sind Prozentwerte, weil jede Linie an ihrem eigenen Bereich gemessen wird: 100&#160;% ist das obere Ende dieses Bereichs, bei einer als „niedriger ist besser“ markierten Skala das untere.</string>

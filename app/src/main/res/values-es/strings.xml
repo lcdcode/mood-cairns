@@ -272,15 +272,21 @@
         <item quantity="many">Media de %1$d días</item>
         <item quantity="other">Media de %1$d días</item>
     </plurals>
+    <string name="charts_mode_hourly">Por horas</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d registro · valores diarios sin procesar</item>
         <item quantity="many">%1$d registros · valores diarios sin procesar</item>
         <item quantity="other">%1$d registros · valores diarios sin procesar</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d registro · media móvil de %2$d días</item>
-        <item quantity="many">%1$d registros · media móvil de %2$d días</item>
-        <item quantity="other">%1$d registros · media móvil de %2$d días</item>
+        <item quantity="one">%1$d registro · media centrada de %2$d días</item>
+        <item quantity="many">%1$d registros · media centrada de %2$d días</item>
+        <item quantity="other">%1$d registros · media centrada de %2$d días</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d registro · media por hora del día</item>
+        <item quantity="many">%1$d registros · media por hora del día</item>
+        <item quantity="other">%1$d registros · media por hora del día</item>
     </plurals>
     <string name="charts_y_axis_label">Eje Y</string>
     <string name="charts_axis_autofit">Automático</string>
@@ -301,18 +307,31 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, cuanto más bajo, mejor)</string>
     <string name="charts_no_entries_day">No hay registros este día.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d registro en esta hora</item>
+        <item quantity="many">%1$d registros en esta hora</item>
+        <item quantity="other">%1$d registros en esta hora</item>
+    </plurals>
+    <string name="charts_hour_average">Media de %1$s: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d registro más</item>
+        <item quantity="many">+%1$d registros más</item>
+        <item quantity="other">+%1$d registros más</item>
+    </plurals>
 
     <!-- Charts help dialog -->
     <string name="charts_help_title">Cómo leer los gráficos</string>
     <string name="charts_help_dismiss">Entendido</string>
     <string name="charts_help_intro">Dos selectores cambian cómo se dibujan tus números. Nada de lo que elijas aquí cambia tus datos, solo el aspecto del gráfico.</string>
-    <string name="charts_help_series_title">Serie: %1$s o %2$s</string>
-    <string name="charts_help_raw_body">Muestra cada día exactamente como lo registraste. Úsalo para ver con precisión los cambios de un día a otro, aunque puede parecer irregular.</string>
+    <string name="charts_help_series_title">Serie: %1$s, %2$s o %3$s</string>
+    <string name="charts_help_raw_body">Muestra cada día exactamente como lo registraste; si un día tiene varios registros, se promedian. Úsalo para ver con precisión los cambios de un día a otro, aunque puede parecer irregular. Pellizca para ampliar: cuando solo se ven unos pocos días, cada registro aparece a la hora en que lo hiciste.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Sustituye cada día por la media del %1$d día que termina en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
-        <item quantity="many">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
-        <item quantity="other">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="one">Sustituye cada día por una media ponderada del %1$d día centrado en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="many">Sustituye cada día por una media ponderada de los %1$d días centrados en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="other">Sustituye cada día por una media ponderada de los %1$d días centrados en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Reúne todos los registros del periodo elegido en un solo día de 24 horas y muestra la media de cada hora, para que puedas ver patrones según la hora del día; por ejemplo, si las mañanas te cuestan más que las tardes. Las horas sin registros se omiten. Toca un punto para ver los registros que lo forman.</string>
     <string name="charts_help_axis_title">Eje Y: %1$s o %2$s</string>
     <string name="charts_help_autofit_body">Ajusta el eje vertical solo al rango que cubren realmente tus datos. Los cambios pequeños se ven con facilidad porque el gráfico ocupa todo el espacio, pero la línea no se mide frente al rango completo de la escala. Las etiquetas de la izquierda son tus valores registrados; cuando se muestra más de una escala, todas comparten ese mismo eje.</string>
     <string name="charts_help_absolute_body" formatted="false">Muestra cada línea frente al rango completo de su escala, de mínimo a máximo. Los cambios se ven más pequeños, pero las escalas quedan alineadas, así que puedes compararlas entre sí en el mismo gráfico. Las escalas marcadas como \"cuanto más bajo, mejor\" se dibujan invertidas, de modo que mejorar siempre apunta hacia arriba. Las etiquetas de la izquierda se leen como porcentajes porque cada línea se mide frente a su propio rango: 100% es la parte superior de ese rango, o la inferior en una escala marcada como \"cuanto más bajo, mejor\".</string>

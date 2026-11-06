@@ -288,6 +288,7 @@
         <item quantity="many">Średnia %1$d-dniowa</item>
         <item quantity="other">Średnia %1$d-dniowa</item>
     </plurals>
+    <string name="charts_mode_hourly">Godzinowe</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d wpis · surowe wartości dzienne</item>
         <item quantity="few">%1$d wpisy · surowe wartości dzienne</item>
@@ -295,10 +296,16 @@
         <item quantity="other">%1$d wpisu · surowe wartości dzienne</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d wpis · średnia krocząca %2$d-dniowa</item>
-        <item quantity="few">%1$d wpisy · średnia krocząca %2$d-dniowa</item>
-        <item quantity="many">%1$d wpisów · średnia krocząca %2$d-dniowa</item>
-        <item quantity="other">%1$d wpisu · średnia krocząca %2$d-dniowa</item>
+        <item quantity="one">%1$d wpis · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="few">%1$d wpisy · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="many">%1$d wpisów · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="other">%1$d wpisu · wyśrodkowana średnia %2$d-dniowa</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d wpis · średnie według godziny</item>
+        <item quantity="few">%1$d wpisy · średnie według godziny</item>
+        <item quantity="many">%1$d wpisów · średnie według godziny</item>
+        <item quantity="other">%1$d wpisu · średnie według godziny</item>
     </plurals>
     <string name="charts_y_axis_label">Oś Y</string>
     <string name="charts_axis_autofit">Dopasuj</string>
@@ -320,19 +327,34 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, im niżej, tym lepiej)</string>
     <string name="charts_no_entries_day">Brak wpisów w tym dniu.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d wpis w tej godzinie</item>
+        <item quantity="few">%1$d wpisy w tej godzinie</item>
+        <item quantity="many">%1$d wpisów w tej godzinie</item>
+        <item quantity="other">%1$d wpisu w tej godzinie</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s, średnio: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d kolejny wpis</item>
+        <item quantity="few">+%1$d kolejne wpisy</item>
+        <item quantity="many">+%1$d kolejnych wpisów</item>
+        <item quantity="other">+%1$d kolejnego wpisu</item>
+    </plurals>
 
     <!-- Charts help dialog -->
     <string name="charts_help_title">Jak czytać wykresy</string>
     <string name="charts_help_dismiss">Rozumiem</string>
     <string name="charts_help_intro">Dwa przełączniki zmieniają sposób rysowania twoich wartości. Wybór tutaj nie zmienia danych, tylko wygląd wykresu.</string>
-    <string name="charts_help_series_title">Seria: %1$s czy %2$s</string>
-    <string name="charts_help_raw_body">Pokazuje każdy dzień dokładnie tak, jak został zapisany. Pozwala zobaczyć dokładne zmiany z dnia na dzień, choć wykres może wyglądać na poszarpany.</string>
+    <string name="charts_help_series_title">Seria: %1$s, %2$s czy %3$s</string>
+    <string name="charts_help_raw_body">Pokazuje każdy dzień dokładnie tak, jak został zapisany; kilka wpisów z jednego dnia jest uśrednianych. Pozwala zobaczyć dokładne zmiany z dnia na dzień, choć wykres może wyglądać na poszarpany. Rozsuń palce, aby przybliżyć: gdy widać tylko kilka dni, każdy wpis pojawia się o godzinie, o której go dodano.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Zastępuje każdy dzień średnią z %1$d dnia kończącego się tym dniem. Wygładza to pojedyncze skoki, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
-        <item quantity="few">Zastępuje każdy dzień średnią z %1$d dni kończących się tym dniem. Wygładza to pojedyncze skoki, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
-        <item quantity="many">Zastępuje każdy dzień średnią z %1$d dni kończących się tym dniem. Wygładza to pojedyncze skoki, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
-        <item quantity="other">Zastępuje każdy dzień średnią z %1$d dnia kończącego się tym dniem. Wygładza to pojedyncze skoki, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="one">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="few">Zastępuje każdy dzień średnią ważoną z %1$d dni wyśrodkowanych na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="many">Zastępuje każdy dzień średnią ważoną z %1$d dni wyśrodkowanych na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="other">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Zbiera wszystkie wpisy z wybranego okresu w jednej dobie i pokazuje średnią dla każdej godziny, dzięki czemu widać wzorce w ciągu dnia, np. czy poranki są trudniejsze niż wieczory. Godziny bez wpisów są pomijane. Dotknij punktu, aby zobaczyć tworzące go wpisy.</string>
     <string name="charts_help_axis_title">Oś Y: %1$s czy %2$s</string>
     <string name="charts_help_autofit_body">Przybliża oś pionową do zakresu, który faktycznie zajmują twoje dane. Drobne zmiany są dobrze widoczne, bo wykres wypełnia całą przestrzeń, ale linia nie jest odnoszona do pełnego zakresu skali. Etykiety po lewej to zapisane wartości. Gdy na wykresie jest kilka skal, wszystkie korzystają z tej jednej osi.</string>
     <string name="charts_help_absolute_body" formatted="false">Pokazuje każdą linię względem pełnego zakresu jej skali, od minimum do maksimum. Zmiany wyglądają na mniejsze, ale różne skale się wyrównują, więc można je porównywać na jednym wykresie. Skale oznaczone „im niżej, tym lepiej” są tu odwrócone, aby poprawa zawsze była skierowana w górę. Etykiety po lewej są w procentach, bo każda linia jest mierzona względem własnego zakresu: 100% to góra tego zakresu, a w przypadku skali „im niżej, tym lepiej” jego dół.</string>
