@@ -1,0 +1,26 @@
+Prywatny dziennik nastroju na Androida, działający całkowicie offline. Zapisuj, jak się czujesz, na własnych skalach, z własnymi tagami, we własnych oknach czasowych i na własnym urządzeniu. Nic nigdy nie jest wysyłane: kopie zapasowe, jeśli ich potrzebujesz, robisz po swojemu (wskazówka: Syncthing świetnie sprawdza się z zaszyfrowanymi kopiami, które zapisujesz).
+
+<b>Funkcje</b>
+
+* <b>Własne skale.</b> Pięć wbudowanych skal (Szczęście, Niepokój, Stres, Nuda, Ból), każda liczbowa i z własnym kolorem. Dodawaj własne i archiwizuj te, których nie potrzebujesz.
+* <b>Własne tagi.</b> Wybieraj spośród wielu wbudowanych tagów dla miejsc, ludzi, zajęć, emocji i nie tylko albo dodawaj własne, aby dopasować dziennik do siebie.
+* <b>Okna przypomnień.</b> Określ przedziały czasu w ciągu dnia (np. rano 08:00-12:00, wieczorem 18:00-20:00). Aplikacja wysyła jedno powiadomienie dziennie dla każdego okna. Dotknij powiadomienia, aby od razu przejść do nowego wpisu.
+* <b>Historia i wykresy.</b> Przeglądaj wcześniejsze wpisy i zmiany każdej skali w czasie.
+* <b>W twoim języku.</b> Aplikacja jest dostępna po polsku i w innych językach. Język aplikacji możesz wybrać w ustawieniach, niezależnie od języka telefonu.
+* <b>Zaszyfrowane przechowywanie.</b> Baza danych jest zaszyfrowana za pomocą SQLCipher. Klucz znajduje się w pamięci tylko wtedy, gdy aplikacja jest odblokowana, i jest usuwany po jej zablokowaniu.
+* <b>Blokada kodem PIN i biometrią.</b> Wejście do aplikacji chronione kodem PIN, z opcjonalnym odblokowaniem biometrycznym. Kod PIN jest przed zapisaniem haszowany za pomocą PBKDF2-HMAC-SHA256 (600 000 iteracji).
+* <b>Zaszyfrowane kopie zapasowe.</b> Ręczny eksport zapisuje zaszyfrowany algorytmem AES-GCM plik JSON w folderze Documents/MoodCairns/. Klucz szyfrowania powstaje z wybranego przez ciebie hasła (co najmniej 8 znaków) za pomocą PBKDF2-HMAC-SHA256 (600 000 iteracji) i nowej soli dla każdej kopii, więc każda instalacja, nawet nowa, może odszyfrować kopię tym samym hasłem. Kopie ze starszych wersji, zaszyfrowane kodem PIN aplikacji, nadal można zaimportować za pomocą tego kodu PIN.
+
+<b>Zobowiązanie dotyczące prywatności</b>
+
+Aplikacja <b>nie deklaruje żadnych uprawnień sieciowych</b>. Bez dostępu do internetu proces dosłownie nie może otworzyć połączenia, więc wysłanie danych na zewnątrz jest niemożliwe, niezależnie od tego, co próbowałaby zrobić dołączona biblioteka.
+Sprawdza to proces kompilacji, więc aktualizacja zależności nigdy nie doda po cichu uprawnienia sieciowego.
+Jeśli chcesz synchronizować kopie zapasowe z innymi urządzeniami, skieruj Syncthing (lub dowolny menedżer plików, który potrafi synchronizować folder) na Documents/MoodCairns/.
+
+<b>Kontakt</b>
+
+Najlepszym sposobem na zgłoszenie problemu, propozycję funkcji itp. jest strona Issues na github.com/lcdcode/mood-cairns. Zwykle odpowiadam w ciągu 3 dni roboczych.
+
+<b>Kod źródłowy</b>
+
+W pełni otwarty kod źródłowy na licencji GPL-3.0-only. Zbudowano z użyciem Kotlin, Jetpack Compose, Room, SQLCipher i AndroidX.
