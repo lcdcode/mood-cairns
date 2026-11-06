@@ -66,7 +66,7 @@
     </plurals>
 
     <!-- Prompt slot names -->
-    <string name="enum_prompt_slot_morning">Rano</string>
+    <string name="enum_prompt_slot_morning">Ranek</string>
     <string name="enum_prompt_slot_evening">Wieczór</string>
     <string name="enum_prompt_slot_manual">Ręcznie</string>
     <string name="enum_prompt_slot_custom">Własne</string>
@@ -95,7 +95,7 @@
     <string name="seed_tag_chores">Obowiązki domowe</string>
     <string name="seed_tag_rest">Odpoczynek</string>
     <string name="seed_tag_joy">Radość</string>
-    <string name="seed_tag_excited">Ekscytacja</string>
+    <string name="seed_tag_excited">Podniecenie</string>
     <string name="seed_tag_grateful">Wdzięczność</string>
     <string name="seed_tag_content">Zadowolenie</string>
     <string name="seed_tag_calm">Spokój</string>
@@ -106,7 +106,7 @@
     <string name="seed_tag_fear">Strach</string>
     <string name="seed_tag_anger">Złość</string>
     <string name="seed_tag_disgust">Wstręt</string>
-    <string name="seed_window_morning">Rano</string>
+    <string name="seed_window_morning">Ranek</string>
     <string name="seed_window_evening">Wieczór</string>
 
     <!-- Tag categories -->
@@ -494,7 +494,7 @@
     <string name="import_error_unreadable_detail">Nie udało się odczytać pliku (%1$s).</string>
     <string name="import_error_not_a_backup">Ten plik nie jest kopią zapasową Mood Cairns.</string>
     <string name="import_error_wrong_secret">Nie udało się odszyfrować kopii. Hasło jest nieprawidłowe lub plik jest uszkodzony.</string>
-    <string name="import_error_unsupported_version">Ta kopia używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi odczytać. Aktualizacja aplikacji może pomóc.</string>
+    <string name="import_error_unsupported_version">Ta kopia używa formatu w wersji %1$d, którego ta aplikacja nie potrafi odczytać. Aktualizacja aplikacji może pomóc.</string>
     <string name="import_error_malformed">Plik kopii zapasowej jest uszkodzony (%1$s).</string>
     <string name="import_error_write_failed">Import przerwany podczas zapisywania danych (%1$s).</string>
 </resources>
