@@ -67,8 +67,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 11
-        versionName = "1.2.1"
+        versionCode = 12
+        versionName = "1.2.2"
         // Package only the languages the app ships. Library resources for other locales
         // are stripped.
         resourceConfigurations.addAll(supportedResourceLocales())
