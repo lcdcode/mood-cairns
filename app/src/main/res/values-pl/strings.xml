@@ -112,7 +112,7 @@
     <!-- Tag categories -->
     <string name="enum_tag_category_place">Miejsca</string>
     <string name="enum_tag_category_person">Ludzie</string>
-    <string name="enum_tag_category_activity">Zajęcia</string>
+    <string name="enum_tag_category_activity">Działania</string>
     <string name="enum_tag_category_mood">Emocje</string>
     <string name="enum_tag_category_other">Inne</string>
 
