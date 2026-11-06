@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -299,7 +300,9 @@ private fun ChartModeRow(mode: ChartMode, onSelect: (ChartMode) -> Unit) {
                     onClick = { onSelect(m) },
                     shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 ) {
-                    Text(chartModeLabel(m))
+                    // Three modes share the row: a long translation ellipsizes
+                    // rather than wrapping into a tall, uneven button.
+                    Text(chartModeLabel(m), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
         }

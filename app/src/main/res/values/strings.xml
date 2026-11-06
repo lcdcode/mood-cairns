@@ -318,7 +318,9 @@
     <string name="charts_select_range">Select range</string>
     <string name="charts_series_label">Series</string>
     <string name="charts_mode_raw">Raw</string>
-    <!-- Short label for the rolling-average series. %1$d is the number of days. -->
+    <!-- Short label for the rolling-average series. %1$d is the number of days. It shares
+         one row with charts_mode_raw and charts_mode_hourly, so keep it about 10 characters
+         and abbreviate (like "avg") rather than letting it run long. -->
     <plurals name="charts_mode_rolling">
         <item quantity="one">%1$d-day avg</item>
         <item quantity="other">%1$d-day avg</item>

@@ -282,10 +282,10 @@
     <string name="charts_series_label">Ряд</string>
     <string name="charts_mode_raw">За днями</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Середнє за %1$d день</item>
-        <item quantity="few">Середнє за %1$d дні</item>
-        <item quantity="many">Середнє за %1$d днів</item>
-        <item quantity="other">Середнє за %1$d дня</item>
+        <item quantity="one">Сер. за %1$d дн.</item>
+        <item quantity="few">Сер. за %1$d дн.</item>
+        <item quantity="many">Сер. за %1$d дн.</item>
+        <item quantity="other">Сер. за %1$d дн.</item>
     </plurals>
     <string name="charts_mode_hourly">За годинами</string>
     <plurals name="charts_summary_raw">

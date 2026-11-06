@@ -266,10 +266,10 @@
     <string name="charts_series_label">Отображение</string>
     <string name="charts_mode_raw">По дням</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Среднее за %1$d день</item>
-        <item quantity="few">Среднее за %1$d дня</item>
-        <item quantity="many">Среднее за %1$d дней</item>
-        <item quantity="other">Среднее за %1$d дня</item>
+        <item quantity="one">Ср. за %1$d дн.</item>
+        <item quantity="few">Ср. за %1$d дн.</item>
+        <item quantity="many">Ср. за %1$d дн.</item>
+        <item quantity="other">Ср. за %1$d дн.</item>
     </plurals>
     <string name="charts_mode_hourly">По часам</string>
     <plurals name="charts_summary_raw">
