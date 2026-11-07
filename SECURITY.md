@@ -5,10 +5,6 @@
 Please note: As an open source project, I will only provide security patches for the latest major version.
 Older versions will not receive retroactive security patches.
 
-| Version  | Supported          |
-| -------- | ------------------ |
-| 1.0.7    | :white_check_mark: |
-
 ## Reporting a Vulnerability
 
 **Please do not report security vulnerabilities through public GitHub issues, discussions, or pull requests.**
