@@ -47,6 +47,7 @@ class HardcodedUiTextTest {
             "ui/lock/MigratingScreen.kt",
             "ui/lock/NoPinWarningDialog.kt",
             "ui/lock/SetPinScreen.kt",
+            "ui/scales/ColorPickerDialog.kt",
             "ui/scales/ScaleEditScreen.kt",
             "ui/scales/ScaleListScreen.kt",
             "ui/scales/ScaleWarnings.kt",

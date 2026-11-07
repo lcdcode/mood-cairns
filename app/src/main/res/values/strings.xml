@@ -213,6 +213,15 @@
     <string name="scale_edit_lower_better">Lower is better</string>
     <string name="scale_edit_lower_better_hint">Inverse scale: the slider runs high to low, and charts draw it so improvement points up.</string>
     <string name="scale_edit_color_label">Color</string>
+    <string name="scale_edit_color_custom">Custom color</string>
+    <string name="scale_edit_color_picker_title">Choose a color</string>
+    <!-- Label of the field holding a 6-digit hex color code such as 6BAA75. -->
+    <string name="scale_edit_color_hex_label">Hex code</string>
+    <!-- Accessibility description of the square where you drag to pick a color's
+         saturation (left to right) and brightness (bottom to top). -->
+    <string name="scale_edit_color_panel_description">Saturation and brightness</string>
+    <!-- Accessibility description of the rainbow bar that sets the color's hue. -->
+    <string name="scale_edit_color_hue_description">Hue</string>
     <string name="scale_edit_built_in_hint">Built-in scales can\'t be renamed; you can still adjust the range, step, and color.</string>
     <string name="scale_edit_delete">Delete scale</string>
     <!-- Stands in for a scale's name inside the dialogs below when it has none. -->
@@ -517,6 +526,7 @@
     <!-- %1$d the range (max - min), %2$s the step. -->
     <string name="scale_edit_error_range_not_step_multiple">Range (%1$d) must be a multiple of step (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Default must be a number</string>
+    <string name="scale_edit_error_hex_incomplete">Enter 6 digits (0-9, A-F)</string>
     <!-- %1$d and %2$d are the scale minimum and maximum: a range, not a count. -->
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Default must be between %1$d and %2$d</string>
     <!-- %1$s the step, %2$d the scale minimum. -->

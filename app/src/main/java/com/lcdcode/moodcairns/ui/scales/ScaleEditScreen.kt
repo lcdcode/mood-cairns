@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -58,6 +60,7 @@ fun ScaleEditScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showColorPicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.saved) { if (state.saved) onBack() }
     // Built-in names cannot be edited, so showing the translation is display only.
@@ -171,14 +174,43 @@ fun ScaleEditScreen(
                 Switch(checked = state.inverted, onCheckedChange = viewModel::setInverted)
             }
 
-            Text(
-                stringResource(R.string.scale_edit_color_label),
-                style = MaterialTheme.typography.labelLarge,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    stringResource(R.string.scale_edit_color_label),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                Surface(
+                    shape = CircleShape,
+                    color = Color(state.colorArgb),
+                    modifier = Modifier.size(CURRENT_COLOR_DOT),
+                ) {}
+                Text(
+                    formatHexColor(state.colorArgb),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             ColorPalette(
                 selected = state.colorArgb,
                 onSelect = viewModel::setColor,
             )
+            OutlinedButton(
+                onClick = { showColorPicker = true },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Icon(
+                    Icons.Filled.Palette,
+                    contentDescription = null,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(stringResource(R.string.scale_edit_color_custom))
+            }
 
             state.error?.let {
                 Text(it.asString(), color = MaterialTheme.colorScheme.error)
@@ -248,6 +280,17 @@ fun ScaleEditScreen(
         )
     }
 
+    if (showColorPicker) {
+        ColorPickerDialog(
+            initialArgb = state.colorArgb,
+            onConfirm = { argb ->
+                viewModel.setColor(argb)
+                showColorPicker = false
+            },
+            onDismiss = { showColorPicker = false },
+        )
+    }
+
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -269,6 +312,7 @@ fun ScaleEditScreen(
 }
 
 private const val PALETTE_COLUMNS = 5
+private val CURRENT_COLOR_DOT = 20.dp
 
 @Composable
 private fun ColorPalette(selected: Int, onSelect: (Int) -> Unit) {
