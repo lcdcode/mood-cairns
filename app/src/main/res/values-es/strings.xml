@@ -172,6 +172,13 @@
     <string name="scale_edit_lower_better">Cuanto más bajo, mejor</string>
     <string name="scale_edit_lower_better_hint">Escala inversa: el control deslizante va de mayor a menor y los gráficos la dibujan de modo que una mejora apunte hacia arriba.</string>
     <string name="scale_edit_color_label">Color</string>
+    <string name="scale_edit_color_custom">Color personalizado</string>
+    <string name="scale_edit_color_picker_title">Elige un color</string>
+    <string name="scale_edit_color_hex_label">Código hexadecimal</string>
+    <string name="scale_edit_color_panel_description">Saturación y brillo</string>
+    <string name="scale_edit_color_hue_description">Tono</string>
+    <string name="scale_edit_color_low_contrast_light">Puede que este color apenas se vea en modo claro.</string>
+    <string name="scale_edit_color_low_contrast_dark">Puede que este color apenas se vea en modo oscuro.</string>
     <string name="scale_edit_built_in_hint">Las escalas integradas no se pueden renombrar; aun así puedes ajustar el rango, el paso y el color.</string>
     <string name="scale_edit_delete">Eliminar escala</string>
     <string name="scale_edit_this_scale">esta escala</string>
@@ -455,6 +462,7 @@
     <string name="scale_edit_error_step_not_positive">El paso debe ser mayor que cero</string>
     <string name="scale_edit_error_range_not_step_multiple">El rango (%1$d) debe ser múltiplo del paso (%2$s)</string>
     <string name="scale_edit_error_default_not_number">El valor inicial debe ser un número</string>
+    <string name="scale_edit_error_hex_incomplete">Introduce 6 caracteres (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">El valor inicial debe estar entre %1$d y %2$d</string>
     <string name="scale_edit_error_default_off_step">El valor inicial debe coincidir con un paso de %1$s a partir de %2$d</string>
 

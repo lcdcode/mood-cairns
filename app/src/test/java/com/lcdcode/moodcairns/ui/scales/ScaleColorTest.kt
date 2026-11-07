@@ -71,11 +71,59 @@ class ScaleColorTest {
 
     @Test
     fun seedAndPaletteColors_roundTrip() {
-        val palette = listOf(
-            0xFFF6C453, 0xFF7D99D1, 0xFFD17D7D, 0xFF9AA39A, 0xFFB5651D,
-            0xFF6BAA75, 0xFFA46CBF, 0xFF4DB6AC, 0xFFE57373, 0xFF5C6BC0,
-        ).map(Long::toInt)
-        palette.forEach { assertEquals(formatHexColor(it), it, hsvOf(it).toArgb()) }
+        PRESETS.forEach { assertEquals(formatHexColor(it), it, hsvOf(it).toArgb()) }
+    }
+
+    @Test
+    fun contrastRatio_matchesWcagEndpoints() {
+        val white = 0xFFFFFFFF.toInt()
+        val black = 0xFF000000.toInt()
+        assertEquals(21.0, contrastRatio(black, white), 1e-9)
+        assertEquals(1.0, contrastRatio(white, white), 1e-9)
+        assertEquals(contrastRatio(black, white), contrastRatio(white, black), 1e-9)
+    }
+
+    @Test
+    fun relativeLuminance_usesLinearSegmentForDarkChannels() {
+        // 10/255 is under the 0.04045 cutoff, so it is divided by 12.92, not gamma-expanded.
+        assertEquals(10 / 255.0 / 12.92, relativeLuminance(0xFF0A0A0A.toInt()), 1e-9)
+    }
+
+    @Test
+    fun happinessYellow_onLightBackground_isPinned() {
+        val yellow = 0xFFF6C453.toInt()
+        assertEquals(1.52, contrastRatio(yellow, ThemeTone.LIGHT.backgroundArgb), 0.01)
+    }
+
+    /** The warning flags vanishing colors only; the curated presets must never trip it. */
+    @Test
+    fun presets_neverWarn() {
+        val warned = PRESETS.filter { lowContrastThemes(it).isNotEmpty() }.map(::formatHexColor)
+        assertEquals(emptyList<String>(), warned)
+    }
+
+    @Test
+    fun paleColor_warnsForLightOnly() {
+        assertEquals(listOf(ThemeTone.LIGHT), lowContrastThemes(0xFFFFFFF0.toInt()))
+    }
+
+    @Test
+    fun nearBlack_warnsForDarkOnly() {
+        assertEquals(listOf(ThemeTone.DARK), lowContrastThemes(0xFF1A1A1A.toInt()))
+    }
+
+    /** At 1.5:1 the light and dark danger zones cannot overlap, so at most one line shows. */
+    @Test
+    fun noColor_warnsForBothThemes() {
+        val levels = 0..255 step 5
+        for (r in levels) for (g in levels) for (b in levels) {
+            val argb = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+            assertTrue(formatHexColor(argb), lowContrastThemes(argb).size <= 1)
+        }
+    }
+
+    private companion object {
+        val PRESETS = ScaleEditUiState.PALETTE
     }
 
     @Test

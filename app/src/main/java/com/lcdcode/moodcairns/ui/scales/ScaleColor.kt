@@ -1,7 +1,10 @@
 package com.lcdcode.moodcairns.ui.scales
 
+import com.lcdcode.moodcairns.ui.theme.DARK_BACKGROUND_ARGB
+import com.lcdcode.moodcairns.ui.theme.LIGHT_BACKGROUND_ARGB
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 // Pure Kotlin so it runs in JVM unit tests, where android.graphics.Color is a stub.
@@ -72,3 +75,50 @@ internal fun sanitizeHexInput(raw: String): String =
 
 /** True when [digits] is a complete six-digit hex color. */
 internal fun isCompleteHex(digits: String): Boolean = parseHexColor(digits) != null
+
+/**
+ * Below this contrast against a theme background, a scale color nearly vanishes.
+ * Deliberately under WCAG's 3:1 for graphics, which most of the presets fail on the
+ * light theme: this flags invisible colors, not merely pale ones.
+ */
+internal const val MIN_VISIBLE_CONTRAST = 1.5
+
+internal enum class ThemeTone(val backgroundArgb: Int) {
+    LIGHT(LIGHT_BACKGROUND_ARGB),
+    DARK(DARK_BACKGROUND_ARGB),
+}
+
+/** Themes whose background [argb] would nearly vanish against, whichever theme is active. */
+internal fun lowContrastThemes(argb: Int): List<ThemeTone> =
+    ThemeTone.entries.filter { contrastRatio(argb, it.backgroundArgb) < MIN_VISIBLE_CONTRAST }
+
+/** WCAG 2 contrast ratio, from 1.0 (identical) to 21.0 (black on white). Ignores alpha. */
+internal fun contrastRatio(argb1: Int, argb2: Int): Double {
+    val lighter = maxOf(relativeLuminance(argb1), relativeLuminance(argb2))
+    val darker = minOf(relativeLuminance(argb1), relativeLuminance(argb2))
+    return (lighter + LUMINANCE_FLARE) / (darker + LUMINANCE_FLARE)
+}
+
+private const val LUMINANCE_FLARE = 0.05
+private const val RED_WEIGHT = 0.2126
+private const val GREEN_WEIGHT = 0.7152
+private const val BLUE_WEIGHT = 0.0722
+private const val SRGB_LINEAR_CUTOFF = 0.04045
+private const val SRGB_LINEAR_SLOPE = 12.92
+private const val SRGB_OFFSET = 0.055
+private const val SRGB_GAMMA = 2.4
+
+/** WCAG 2 relative luminance of an sRGB color, 0.0 (black) to 1.0 (white). */
+internal fun relativeLuminance(argb: Int): Double =
+    RED_WEIGHT * linearChannel(argb shr 16 and 0xFF) +
+        GREEN_WEIGHT * linearChannel(argb shr 8 and 0xFF) +
+        BLUE_WEIGHT * linearChannel(argb and 0xFF)
+
+private fun linearChannel(channel: Int): Double {
+    val c = channel / CHANNEL_MAX.toDouble()
+    return if (c <= SRGB_LINEAR_CUTOFF) {
+        c / SRGB_LINEAR_SLOPE
+    } else {
+        ((c + SRGB_OFFSET) / (1 + SRGB_OFFSET)).pow(SRGB_GAMMA)
+    }
+}

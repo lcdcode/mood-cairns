@@ -195,6 +195,7 @@ fun ScaleEditScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            LowContrastWarning(state.colorArgb)
             ColorPalette(
                 selected = state.colorArgb,
                 onSelect = viewModel::setColor,

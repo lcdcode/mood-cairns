@@ -170,6 +170,13 @@
     <string name="scale_edit_lower_better">Niedriger ist besser</string>
     <string name="scale_edit_lower_better_hint">Umgekehrte Skala: Der Schieberegler läuft von hoch nach niedrig, und Diagramme zeichnen sie so, dass eine Verbesserung nach oben zeigt.</string>
     <string name="scale_edit_color_label">Farbe</string>
+    <string name="scale_edit_color_custom">Eigene Farbe</string>
+    <string name="scale_edit_color_picker_title">Farbe wählen</string>
+    <string name="scale_edit_color_hex_label">Hex-Code</string>
+    <string name="scale_edit_color_panel_description">Sättigung und Helligkeit</string>
+    <string name="scale_edit_color_hue_description">Farbton</string>
+    <string name="scale_edit_color_low_contrast_light">Diese Farbe ist im hellen Modus möglicherweise kaum sichtbar.</string>
+    <string name="scale_edit_color_low_contrast_dark">Diese Farbe ist im dunklen Modus möglicherweise kaum sichtbar.</string>
     <string name="scale_edit_built_in_hint">Integrierte Skalen können nicht umbenannt werden; Bereich, Schritt und Farbe lassen sich trotzdem anpassen.</string>
     <string name="scale_edit_delete">Skala löschen</string>
     <string name="scale_edit_this_scale">diese Skala</string>
@@ -435,6 +442,7 @@
     <string name="scale_edit_error_step_not_positive">Der Schritt muss größer als null sein</string>
     <string name="scale_edit_error_range_not_step_multiple">Der Bereich (%1$d) muss ein Vielfaches des Schritts (%2$s) sein</string>
     <string name="scale_edit_error_default_not_number">Der Startwert muss eine Zahl sein</string>
+    <string name="scale_edit_error_hex_incomplete">6 Zeichen eingeben (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Der Startwert muss zwischen %1$d und %2$d liegen</string>
     <string name="scale_edit_error_default_off_step">Der Startwert muss in Schritten von %1$s ab %2$d liegen</string>
 

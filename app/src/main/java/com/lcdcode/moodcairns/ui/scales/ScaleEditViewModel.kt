@@ -1,6 +1,5 @@
 package com.lcdcode.moodcairns.ui.scales
 
-import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,9 +38,9 @@ data class ScaleEditUiState(
 ) {
     companion object {
         val PALETTE: List<Int> = listOf(
-            "#F6C453", "#7D99D1", "#D17D7D", "#9AA39A", "#B5651D",
-            "#6BAA75", "#A46CBF", "#4DB6AC", "#E57373", "#5C6BC0",
-        ).map(Color::parseColor)
+            0xFFF6C453, 0xFF7D99D1, 0xFFD17D7D, 0xFF9AA39A, 0xFFB5651D,
+            0xFF6BAA75, 0xFFA46CBF, 0xFF4DB6AC, 0xFFE57373, 0xFF5C6BC0,
+        ).map(Long::toInt)
     }
 }
 

@@ -182,6 +182,13 @@
     <string name="scale_edit_lower_better">Що нижче, то краще</string>
     <string name="scale_edit_lower_better_hint">Обернена шкала: повзунок іде від більшого до меншого, а на графіках покращення спрямоване вгору.</string>
     <string name="scale_edit_color_label">Колір</string>
+    <string name="scale_edit_color_custom">Власний колір</string>
+    <string name="scale_edit_color_picker_title">Виберіть колір</string>
+    <string name="scale_edit_color_hex_label">HEX-код</string>
+    <string name="scale_edit_color_panel_description">Насиченість і яскравість</string>
+    <string name="scale_edit_color_hue_description">Відтінок</string>
+    <string name="scale_edit_color_low_contrast_light">У світлій темі цей колір може бути майже непомітним.</string>
+    <string name="scale_edit_color_low_contrast_dark">У темній темі цей колір може бути майже непомітним.</string>
     <string name="scale_edit_built_in_hint">Вбудовані шкали не можна перейменувати, але можна змінити діапазон, крок і колір.</string>
     <string name="scale_edit_delete">Видалити шкалу</string>
     <string name="scale_edit_this_scale">ця шкала</string>
@@ -484,6 +491,7 @@
     <string name="scale_edit_error_step_not_positive">Крок має бути більшим за нуль</string>
     <string name="scale_edit_error_range_not_step_multiple">Діапазон (%1$d) має бути кратним кроку (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Початкове значення має бути числом</string>
+    <string name="scale_edit_error_hex_incomplete">Введіть 6 символів (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Початкове значення має бути від %1$d до %2$d</string>
     <string name="scale_edit_error_default_off_step">Початкове значення має збігатися з кроком %1$s від %2$d</string>
 

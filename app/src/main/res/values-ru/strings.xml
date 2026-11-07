@@ -172,6 +172,13 @@
     <string name="scale_edit_lower_better">Меньше — лучше</string>
     <string name="scale_edit_lower_better_hint">Инвертировать шкалу: меньшие значения будут считаться улучшением состояния, а на графиках тренд поползет вверх.</string>
     <string name="scale_edit_color_label">Цвет</string>
+    <string name="scale_edit_color_custom">Свой цвет</string>
+    <string name="scale_edit_color_picker_title">Выберите цвет</string>
+    <string name="scale_edit_color_hex_label">HEX-код</string>
+    <string name="scale_edit_color_panel_description">Насыщенность и яркость</string>
+    <string name="scale_edit_color_hue_description">Оттенок</string>
+    <string name="scale_edit_color_low_contrast_light">В светлой теме этот цвет может быть почти не виден.</string>
+    <string name="scale_edit_color_low_contrast_dark">В тёмной теме этот цвет может быть почти не виден.</string>
     <string name="scale_edit_built_in_hint">Встроенные шкалы нельзя переименовать, но можно изменить их диапазон, шаг ползунка и цвет.</string>
     <string name="scale_edit_delete">Удалить шкалу</string>
     <string name="scale_edit_this_scale">эта шкала</string>
@@ -457,6 +464,7 @@
     <string name="scale_edit_error_step_not_positive">Шаг должен быть больше нуля</string>
     <string name="scale_edit_error_range_not_step_multiple">Диапазон (%1$d) должен делиться без остатка на шаг (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Начальное значение должно быть числом</string>
+    <string name="scale_edit_error_hex_incomplete">Введите 6 символов (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Начальное значение должно быть в пределах от %1$d до %2$d</string>
     <string name="scale_edit_error_default_off_step">Начальное значение должно соответствовать шагу %1$s от %2$d</string>
     <!-- Tag editor errors -->

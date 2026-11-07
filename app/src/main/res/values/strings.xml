@@ -222,6 +222,10 @@
     <string name="scale_edit_color_panel_description">Saturation and brightness</string>
     <!-- Accessibility description of the rainbow bar that sets the color's hue. -->
     <string name="scale_edit_color_hue_description">Hue</string>
+    <!-- Warnings that a scale color nearly blends into the background of the
+         system's light or dark appearance, whichever one is active right now. -->
+    <string name="scale_edit_color_low_contrast_light">This color may be almost invisible in light mode.</string>
+    <string name="scale_edit_color_low_contrast_dark">This color may be almost invisible in dark mode.</string>
     <string name="scale_edit_built_in_hint">Built-in scales can\'t be renamed; you can still adjust the range, step, and color.</string>
     <string name="scale_edit_delete">Delete scale</string>
     <!-- Stands in for a scale's name inside the dialogs below when it has none. -->

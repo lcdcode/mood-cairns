@@ -11,6 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+// Fallback backgrounds. Also the references for warning about scale colors that would
+// vanish; dynamic-color surfaces sit at nearly the same tones.
+internal const val LIGHT_BACKGROUND_ARGB = 0xFFFBF7F1.toInt()
+internal const val DARK_BACKGROUND_ARGB = 0xFF16140F.toInt()
+
 // Warm stone/earth palette — evokes the "cairn" (stacked-stone) metaphor without
 // being too saturated. Used only when dynamic color is unavailable (pre-S).
 private val LightColors = lightColorScheme(
@@ -24,9 +29,9 @@ private val LightColors = lightColorScheme(
     onSecondaryContainer = Color(0xFF231B13),
     tertiary = Color(0xFF506A4E),
     onTertiary = Color.White,
-    background = Color(0xFFFBF7F1),
+    background = Color(LIGHT_BACKGROUND_ARGB),
     onBackground = Color(0xFF1D1B17),
-    surface = Color(0xFFFBF7F1),
+    surface = Color(LIGHT_BACKGROUND_ARGB),
     onSurface = Color(0xFF1D1B17),
     surfaceVariant = Color(0xFFECE1D0),
     onSurfaceVariant = Color(0xFF4D463A),
@@ -46,9 +51,9 @@ private val DarkColors = darkColorScheme(
     onSecondaryContainer = Color(0xFFF4E4D2),
     tertiary = Color(0xFFB7CDB4),
     onTertiary = Color(0xFF233723),
-    background = Color(0xFF16140F),
+    background = Color(DARK_BACKGROUND_ARGB),
     onBackground = Color(0xFFE8E2D7),
-    surface = Color(0xFF16140F),
+    surface = Color(DARK_BACKGROUND_ARGB),
     onSurface = Color(0xFFE8E2D7),
     surfaceVariant = Color(0xFF4D463A),
     onSurfaceVariant = Color(0xFFD0C6B4),

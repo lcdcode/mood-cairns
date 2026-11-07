@@ -18,7 +18,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -31,6 +34,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -40,8 +44,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
@@ -59,6 +66,7 @@ private val HUE_BAR_HEIGHT = 28.dp
 private val PREVIEW_SIZE = 56.dp
 private val THUMB_RADIUS = 9.dp
 private val THUMB_STROKE = 3.dp
+private val WARNING_ICON_SIZE = 18.dp
 private val CORNER = RoundedCornerShape(8.dp)
 
 /** Red through the spectrum and back to red, for the hue bar's gradient. */
@@ -112,8 +120,12 @@ internal fun ColorPickerDialog(
                         label = { Text(stringResource(R.string.scale_edit_color_hex_label)) },
                         prefix = { Text(HEX_PREFIX) },
                         isError = !hexValid,
-                        supportingText = if (hexValid) null else {
-                            { Text(stringResource(R.string.scale_edit_error_hex_incomplete)) }
+                        // Always laid out, so the error never changes the dialog's height.
+                        supportingText = {
+                            Text(
+                                stringResource(R.string.scale_edit_error_hex_incomplete),
+                                modifier = Modifier.hiddenWhen(hexValid),
+                            )
                         },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
@@ -124,6 +136,7 @@ internal fun ColorPickerDialog(
                         modifier = Modifier.weight(1f),
                     )
                 }
+                LowContrastWarning(hsv.toArgb(), reserveSpace = true)
             }
         },
         confirmButton = {
@@ -220,6 +233,63 @@ private fun DrawScope.drawThumb(center: Offset) {
     drawCircle(Color.Black, radius = radius + stroke / 2f, center = center, style = outline)
     drawCircle(Color.White, radius = radius, center = center, style = Stroke(stroke))
 }
+
+/**
+ * Warns when [argb] would nearly vanish on a theme. With [reserveSpace], every message
+ * is laid out (invisibly when inactive) so the slot is always as tall as the tallest
+ * translation: showing a warning mid-drag must not resize the dialog and move the
+ * panel under the finger. Messages overlap in one Box, which is safe because a color
+ * can never be low-contrast on both themes (see ScaleColorTest).
+ */
+@Composable
+internal fun LowContrastWarning(argb: Int, reserveSpace: Boolean = false) {
+    val active = lowContrastThemes(argb)
+    val announcement = active.firstOrNull()?.let { stringResource(lowContrastMessage(it)) }
+    val laidOut = if (reserveSpace) ThemeTone.entries else active
+
+    // One stable live-region node whose text changes, so TalkBack announces the warning
+    // when it appears; the visual lines below are hidden from screen readers.
+    Box(
+        modifier = Modifier.clearAndSetSemantics {
+            liveRegion = LiveRegionMode.Polite
+            announcement?.let { contentDescription = it }
+        },
+    ) {
+        laidOut.forEach { tone ->
+            WarningLine(tone, modifier = Modifier.hiddenWhen(tone !in active))
+        }
+    }
+}
+
+@Composable
+private fun WarningLine(tone: ThemeTone, modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            Icons.Outlined.WarningAmber,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(WARNING_ICON_SIZE),
+        )
+        Text(
+            stringResource(lowContrastMessage(tone)),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+private fun lowContrastMessage(tone: ThemeTone): Int = when (tone) {
+    ThemeTone.LIGHT -> R.string.scale_edit_color_low_contrast_light
+    ThemeTone.DARK -> R.string.scale_edit_color_low_contrast_dark
+}
+
+/** Keeps the layout slot but hides it from sight and from screen readers. */
+private fun Modifier.hiddenWhen(hidden: Boolean): Modifier =
+    if (hidden) alpha(0f).clearAndSetSemantics {} else this
 
 /** The original color on the left, the new one on the right. */
 @Composable

@@ -182,6 +182,13 @@
     <string name="scale_edit_lower_better">Im niżej, tym lepiej</string>
     <string name="scale_edit_lower_better_hint">Skala odwrócona: suwak biegnie od wysokich do niskich wartości, a na wykresach poprawa jest skierowana w górę.</string>
     <string name="scale_edit_color_label">Kolor</string>
+    <string name="scale_edit_color_custom">Własny kolor</string>
+    <string name="scale_edit_color_picker_title">Wybierz kolor</string>
+    <string name="scale_edit_color_hex_label">Kod szesnastkowy</string>
+    <string name="scale_edit_color_panel_description">Nasycenie i jasność</string>
+    <string name="scale_edit_color_hue_description">Odcień</string>
+    <string name="scale_edit_color_low_contrast_light">Ten kolor może być prawie niewidoczny w trybie jasnym.</string>
+    <string name="scale_edit_color_low_contrast_dark">Ten kolor może być prawie niewidoczny w trybie ciemnym.</string>
     <string name="scale_edit_built_in_hint">Nazwy wbudowanych skal nie można zmienić, ale można dostosować zakres, krok i kolor.</string>
     <string name="scale_edit_delete">Usuń skalę</string>
     <string name="scale_edit_this_scale">ta skala</string>
@@ -484,6 +491,7 @@
     <string name="scale_edit_error_step_not_positive">Krok musi być większy od zera</string>
     <string name="scale_edit_error_range_not_step_multiple">Zakres (%1$d) musi być wielokrotnością kroku (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Wartość domyślna musi być liczbą</string>
+    <string name="scale_edit_error_hex_incomplete">Wpisz 6 znaków (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Wartość domyślna musi mieścić się w zakresie od %1$d do %2$d</string>
     <string name="scale_edit_error_default_off_step">Wartość domyślna musi wypadać na kroku %1$s, licząc od %2$d</string>
 
