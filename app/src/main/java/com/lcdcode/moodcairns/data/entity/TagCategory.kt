@@ -18,6 +18,9 @@ data class TagCategory(
     companion object {
         const val MAX_LABEL_LENGTH = 32
 
+        /** Longest id accepted from a backup; generated UUIDs are 36 characters. */
+        const val MAX_ID_LENGTH = 64
+
         /** Tags of a deleted category move here, so it can never be deleted itself. */
         val OTHER_ID: String = BuiltInTagCategory.OTHER.id
 

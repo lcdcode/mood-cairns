@@ -142,7 +142,9 @@ class MoodCsvTest {
         val entries = listOf(
             entry(
                 1, "2026-01-01T08:00:00Z",
-                tags = listOf(Tag(id = 1, name = "work, late shift", categoryId = BuiltInTagCategory.ACTIVITY.id)),
+                tags = listOf(
+                    Tag(id = 1, name = "work, late shift", categoryId = BuiltInTagCategory.ACTIVITY.id),
+                ),
             ),
         )
         val csv = MoodCsv.build(emptyList(), emptyList(), entries)

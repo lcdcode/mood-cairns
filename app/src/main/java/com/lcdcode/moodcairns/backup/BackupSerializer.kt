@@ -5,8 +5,6 @@ import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
-import com.lcdcode.moodcairns.data.db.SeedTagCategories
-import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.PromptSlot
@@ -48,7 +46,7 @@ class BackupSerializer @Inject constructor(
             val windows = windowDao.observeAll().first().map(::toDto)
             val entries = entryDao.observeAll().first().map(::toDto)
             val tags = tagDao.observeAll().first().map(::toDto)
-            val categoryLabels = tagCategoryDao.all().mapNotNull(::toLabelDto)
+            val categories = tagCategoryDao.all().map(::toDto)
 
             val file = BackupFile(
                 schemaVersion = BackupFile.CURRENT_VERSION,
@@ -58,7 +56,7 @@ class BackupSerializer @Inject constructor(
                 promptWindows = windows,
                 entries = entries,
                 tags = tags,
-                tagCategoryLabels = categoryLabels,
+                tagCategories = categories,
             )
             val plaintextJson = json.encodeToString(BackupFile.serializer(), file)
             val encrypted = BackupCrypto.encrypt(key, plaintextJson.toByteArray(Charsets.UTF_8))
@@ -122,26 +120,35 @@ class BackupSerializer @Inject constructor(
 
     private fun fail(error: ImportError): Nothing = throw BackupImportException(error)
 
-    fun toEntities(file: BackupFile): BackupEntities = BackupEntities(
-        schemaVersion = file.schemaVersion,
-        scales = file.scales.map(::fromDto),
-        windows = file.promptWindows.map(::fromDto),
-        tags = file.tags.mapNotNull(::fromDto),
-        tagCategories = builtInCategoriesWithLabels(file.tagCategoryLabels),
-        entries = file.entries.map { e ->
-            val entry = Entry(
-                id = e.id,
-                recordedAt = Instant.parse(e.recordedAt),
-                slot = PromptSlot.valueOf(e.slot),
-                promptWindowId = e.promptWindowId,
-                note = e.note,
-            )
-            val values = e.values.map { v ->
-                EntryValue(entryId = e.id, scaleId = v.scaleId, value = v.value)
-            }
-            EntryBundle(entry = entry, values = values, tagIds = e.tagIds)
-        },
-    )
+    fun toEntities(file: BackupFile): BackupEntities {
+        val categories = resolveCategories(file)
+        val resolvedTags = resolveTags(file.tags, categories.mapTo(HashSet()) { it.id })
+        return BackupEntities(
+            schemaVersion = file.schemaVersion,
+            scales = file.scales.map(::fromDto),
+            windows = file.promptWindows.map(::fromDto),
+            tags = resolvedTags.tags,
+            tagCategories = categories,
+            entries = file.entries.map { e -> toBundle(e, resolvedTags.replacedIds) },
+        )
+    }
+
+    private fun toBundle(e: EntryDto, replacedTagIds: Map<Long, Long>): EntryBundle {
+        val entry = Entry(
+            id = e.id,
+            recordedAt = Instant.parse(e.recordedAt),
+            slot = PromptSlot.valueOf(e.slot),
+            promptWindowId = e.promptWindowId,
+            note = e.note,
+        )
+        val values = e.values.map { v ->
+            EntryValue(entryId = e.id, scaleId = v.scaleId, value = v.value)
+        }
+        // A tag merged away on import is replaced by its survivor; distinct() drops
+        // the duplicate link when the entry already carried both.
+        val tagIds = e.tagIds.map { replacedTagIds[it] ?: it }.distinct()
+        return EntryBundle(entry = entry, values = values, tagIds = tagIds)
+    }
 
     private fun b64(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
 
@@ -170,10 +177,11 @@ class BackupSerializer @Inject constructor(
 
     private fun toDto(t: Tag) = TagDto(
         id = t.id, name = t.name, category = t.categoryId, sortOrder = t.sortOrder,
+        columnIndex = t.columnIndex,
     )
 
-    private fun toLabelDto(c: TagCategory): TagCategoryLabelDto? =
-        c.label?.let { TagCategoryLabelDto(category = c.id, label = it) }
+    private fun toDto(c: TagCategory) =
+        TagCategoryDto(id = c.id, label = c.label, sortOrder = c.sortOrder)
 
     private fun fromDto(s: ScaleDto) = Scale(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
@@ -187,12 +195,6 @@ class BackupSerializer @Inject constructor(
         startTime = LocalTime.parse(w.startTime), endTime = LocalTime.parse(w.endTime),
         enabled = w.enabled,
     )
-
-    /** Returns null for unknown categories so a hand-edited file cannot abort the import. */
-    private fun fromDto(t: TagDto): Tag? {
-        if (BuiltInTagCategory.fromId(t.category) == null) return null
-        return Tag(id = t.id, name = t.name, categoryId = t.category, sortOrder = t.sortOrder)
-    }
 }
 
 data class BackupEntities(
@@ -201,26 +203,8 @@ data class BackupEntities(
     val windows: List<PromptWindow>,
     val tags: List<Tag>,
     val entries: List<EntryBundle>,
-    val tagCategories: List<TagCategory> = SeedTagCategories.all,
+    val tagCategories: List<TagCategory>,
 )
-
-/**
- * Returns null for an unknown category or a label that sanitizes to blank, so a
- * hand-edited file cannot abort the import or store an invalid name.
- */
-internal fun TagCategoryLabelDto.toEntityOrNull(): TagCategory? {
-    val builtIn = BuiltInTagCategory.fromId(category) ?: return null
-    val cleanLabel = TagCategory.sanitizeLabel(label) ?: return null
-    return TagCategory(id = builtIn.id, label = cleanLabel, sortOrder = builtIn.ordinal)
-}
-
-/** The built-in categories with any custom names from [labels]; the first label per id wins. */
-internal fun builtInCategoriesWithLabels(labels: List<TagCategoryLabelDto>): List<TagCategory> {
-    val renamed = labels.mapNotNull(TagCategoryLabelDto::toEntityOrNull)
-        .distinctBy { it.id }
-        .associateBy { it.id }
-    return SeedTagCategories.all.map { renamed[it.id] ?: it }
-}
 
 data class EntryBundle(
     val entry: Entry,

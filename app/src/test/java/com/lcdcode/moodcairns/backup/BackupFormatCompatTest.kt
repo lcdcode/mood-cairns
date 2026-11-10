@@ -18,10 +18,59 @@ class BackupFormatCompatTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun versionConstants_coverV1AndV2() {
-        assertEquals(2, BackupFile.CURRENT_VERSION)
-        assertTrue(1 in BackupFile.SUPPORTED_VERSIONS)
-        assertTrue(2 in BackupFile.SUPPORTED_VERSIONS)
+    fun versionConstants_coverV1ThroughV3() {
+        assertEquals(3, BackupFile.CURRENT_VERSION)
+        assertEquals(1..3, BackupFile.SUPPORTED_VERSIONS)
+        assertEquals(BackupFile.CURRENT_VERSION, BackupFile.FIRST_VERSION_WITH_CATEGORIES)
+    }
+
+    @Test
+    fun v2TagWithoutColumnIndex_parsesAsColumnZero() {
+        val v2Tag = """{"id": 1, "name": "Home", "category": "PLACE", "sortOrder": 0}"""
+
+        assertEquals(0, json.decodeFromString(TagDto.serializer(), v2Tag).columnIndex)
+    }
+
+    @Test
+    fun v3File_roundTripsCategoriesAndColumns() {
+        val original = BackupFile(
+            schemaVersion = BackupFile.CURRENT_VERSION,
+            exportedAt = "2026-11-10T00:00:00Z",
+            appVersion = "1.2.2",
+            scales = emptyList(),
+            promptWindows = emptyList(),
+            entries = emptyList(),
+            tags = listOf(
+                TagDto(id = 1, name = "Gym", category = "c-1", sortOrder = 0, columnIndex = 2),
+            ),
+            tagCategories = listOf(
+                TagCategoryDto(id = "PLACE", label = null, sortOrder = 0),
+                TagCategoryDto(id = "c-1", label = "Health", sortOrder = 1),
+                TagCategoryDto(id = "OTHER", label = "Misc", sortOrder = 2),
+            ),
+        )
+
+        val decoded = json.decodeFromString(
+            BackupFile.serializer(),
+            json.encodeToString(BackupFile.serializer(), original),
+        )
+
+        assertEquals(original, decoded)
+    }
+
+    @Test
+    fun v3File_doesNotWriteTheV2LabelField() {
+        val file = BackupFile(
+            schemaVersion = BackupFile.CURRENT_VERSION,
+            exportedAt = "2026-11-10T00:00:00Z",
+            appVersion = "1.2.2",
+            scales = emptyList(),
+            promptWindows = emptyList(),
+            entries = emptyList(),
+        )
+
+        val encoded = json.encodeToString(BackupFile.serializer(), file)
+        assertFalse(encoded.contains("tagCategoryLabels"))
     }
 
     @Test
@@ -207,7 +256,8 @@ class BackupFormatCompatTest {
             ),
         )
 
-        assertEquals(listOf("PLACE", "PERSON", "ACTIVITY", "MOOD", "OTHER"), categories.map { it.id })
+        val ids = categories.map { it.id }
+        assertEquals(listOf("PLACE", "PERSON", "ACTIVITY", "MOOD", "OTHER"), ids)
         assertEquals(listOf("Spots", null, null, null, null), categories.map { it.label })
         assertEquals(listOf(0, 1, 2, 3, 4), categories.map { it.sortOrder })
     }

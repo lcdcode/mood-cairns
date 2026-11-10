@@ -10,6 +10,9 @@ import kotlinx.serialization.Serializable
  * [EntryDto.tagIds]). Purely additive defaulted fields (e.g. [ScaleDto.inverted])
  * do NOT bump the version: a bump would make older app builds reject newer
  * files outright, while an unknown key is merely dropped on import.
+ *
+ * v3 added [tagCategories] (user-created categories). It is a real bump: a v2 reader
+ * would drop every tag in a category it does not know, with no error.
  */
 @Serializable
 data class BackupFile(
@@ -20,10 +23,13 @@ data class BackupFile(
     val promptWindows: List<PromptWindowDto>,
     val entries: List<EntryDto>,
     val tags: List<TagDto> = emptyList(),
+    /** v2 only: custom names for the built-in categories. Read on import, never written. */
     val tagCategoryLabels: List<TagCategoryLabelDto> = emptyList(),
+    val tagCategories: List<TagCategoryDto> = emptyList(),
 ) {
     companion object {
-        const val CURRENT_VERSION = 2
+        const val CURRENT_VERSION = 3
+        const val FIRST_VERSION_WITH_CATEGORIES = 3
         val SUPPORTED_VERSIONS = 1..CURRENT_VERSION
     }
 }
@@ -69,6 +75,15 @@ data class TagDto(
     val id: Long,
     val name: String,
     val category: String,
+    val sortOrder: Int,
+    val columnIndex: Int = 0,
+)
+
+/** A tag category. [label] is null for a built-in that keeps its translated name. */
+@Serializable
+data class TagCategoryDto(
+    val id: String,
+    val label: String? = null,
     val sortOrder: Int,
 )
 
