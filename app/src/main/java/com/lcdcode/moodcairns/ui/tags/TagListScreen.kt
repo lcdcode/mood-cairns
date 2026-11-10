@@ -5,24 +5,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.displayName
@@ -61,7 +63,9 @@ fun TagListScreen(
     val haptic = LocalHapticFeedback.current
 
     var isDragging by remember { mutableStateOf(false) }
-    var renamingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var editingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var deletingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var creating by rememberSaveable { mutableStateOf(false) }
     var lists by remember { mutableStateOf(state.byCategory) }
     LaunchedEffect(state.byCategory, isDragging) {
         if (!isDragging) lists = state.byCategory
@@ -108,8 +112,8 @@ fun TagListScreen(
                 item(key = "hdr/${category.id}") {
                     SectionHeader(
                         text = category.displayName(),
-                        // Other is the catch-all for deleted categories; its name is fixed.
-                        onRename = { renamingId = category.id }
+                        // Other is the catch-all for deleted categories: fixed name, no delete.
+                        onEdit = { editingId = category.id }
                             .takeIf { category.id != TagCategory.OTHER_ID },
                         onAdd = { onAdd(category.id) },
                     )
@@ -140,18 +144,89 @@ fun TagListScreen(
                     }
                 }
             }
+            if (state.categories.isNotEmpty()) {
+                item(key = "add-category") {
+                    OutlinedButton(
+                        onClick = { creating = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.tag_list_add_category))
+                    }
+                }
+            }
         }
     }
 
-    state.categories.find { it.id == renamingId }?.let { category ->
-        val defaultName = category.defaultName()
-        RenameCategoryDialog(
-            currentName = category.displayName(),
-            defaultName = defaultName,
-            onDismiss = { renamingId = null },
+    CategoryDialogs(
+        state = state,
+        editingId = editingId,
+        deletingId = deletingId,
+        creating = creating,
+        onCloseEdit = { editingId = null },
+        onRequestDelete = { id ->
+            editingId = null
+            deletingId = id
+        },
+        onCloseDelete = { deletingId = null },
+        onCloseCreate = { creating = false },
+        onCreate = viewModel::createCategory,
+        onRename = viewModel::renameCategory,
+        onDelete = viewModel::deleteCategory,
+    )
+}
+
+/** Whichever category dialog is open: create, edit (rename or delete), or delete confirmation. */
+@Composable
+private fun CategoryDialogs(
+    state: TagListUiState,
+    editingId: String?,
+    deletingId: String?,
+    creating: Boolean,
+    onCloseEdit: () -> Unit,
+    onRequestDelete: (String) -> Unit,
+    onCloseDelete: () -> Unit,
+    onCloseCreate: () -> Unit,
+    onCreate: (name: String) -> Unit,
+    onRename: (categoryId: String, name: String, defaultName: String?) -> Unit,
+    onDelete: (categoryId: String) -> Unit,
+) {
+    if (creating) {
+        CategoryNameDialog(
+            title = stringResource(R.string.tag_list_add_category),
+            initialName = "",
+            defaultName = null,
+            onDismiss = onCloseCreate,
             onSave = { raw ->
-                viewModel.renameCategory(category.id, raw, defaultName)
-                renamingId = null
+                onCreate(raw)
+                onCloseCreate()
+            },
+        )
+    }
+    state.categories.find { it.id == editingId }?.let { category ->
+        val defaultName = category.defaultName()
+        CategoryNameDialog(
+            title = category.displayName(),
+            initialName = category.displayName(),
+            defaultName = defaultName,
+            onDismiss = onCloseEdit,
+            onSave = { raw ->
+                onRename(category.id, raw, defaultName)
+                onCloseEdit()
+            },
+            onDelete = { onRequestDelete(category.id) },
+        )
+    }
+    state.categories.find { it.id == deletingId }?.let { category ->
+        DeleteCategoryDialog(
+            name = category.displayName(),
+            tagCount = state.byCategory[category.id].orEmpty().size,
+            otherName = stringResource(BuiltInTagCategory.OTHER.displayNameRes()),
+            onDismiss = onCloseDelete,
+            onConfirm = {
+                onDelete(category.id)
+                onCloseDelete()
             },
         )
     }
@@ -164,7 +239,7 @@ fun TagListScreen(
 private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.id}"
 
 @Composable
-private fun SectionHeader(text: String, onRename: (() -> Unit)?, onAdd: () -> Unit) {
+private fun SectionHeader(text: String, onEdit: (() -> Unit)?, onAdd: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -175,8 +250,8 @@ private fun SectionHeader(text: String, onRename: (() -> Unit)?, onAdd: () -> Un
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
-        if (onRename != null) {
-            IconButton(onClick = onRename) {
+        if (onEdit != null) {
+            IconButton(onClick = onEdit) {
                 Icon(
                     Icons.Default.Edit,
                     contentDescription = stringResource(R.string.common_edit),
@@ -186,54 +261,6 @@ private fun SectionHeader(text: String, onRename: (() -> Unit)?, onAdd: () -> Un
         }
         TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
-}
-
-/**
- * Renames a category using only shared strings, so no new translations are needed.
- * Saving a blank field, or the default name, restores the translated default.
- */
-@Composable
-private fun RenameCategoryDialog(
-    currentName: String,
-    defaultName: String?,
-    onDismiss: () -> Unit,
-    onSave: (String) -> Unit,
-) {
-    var draft by rememberSaveable { mutableStateOf(currentName) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(currentName) },
-        text = {
-            OutlinedTextField(
-                value = draft,
-                onValueChange = { new ->
-                    if (new.codePointCount(0, new.length) <= TagCategory.MAX_LABEL_LENGTH) {
-                        draft = new
-                    }
-                },
-                label = { Text(stringResource(R.string.common_name_label)) },
-                placeholder = defaultName?.let { { Text(it) } },
-                singleLine = true,
-                trailingIcon = {
-                    if (draft.isNotEmpty()) {
-                        IconButton(onClick = { draft = "" }) {
-                            Icon(
-                                Icons.Default.Clear,
-                                contentDescription = stringResource(R.string.common_clear),
-                            )
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onSave(draft) }) { Text(stringResource(R.string.common_save)) }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
-        },
-    )
 }
 
 @Composable

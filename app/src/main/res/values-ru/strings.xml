@@ -203,6 +203,15 @@
     <!-- Tag list -->
     <string name="tag_list_title">Теги</string>
     <string name="tag_list_empty">Тегов пока нет.</string>
+    <string name="tag_list_add_category">Добавить категорию</string>
+    <string name="tag_category_delete_title">Удалить категорию?</string>
+    <string name="tag_category_delete_body_empty">Категория «%1$s» будет удалена. В ней нет тегов.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Категория «%1$s» будет удалена. Её %2$d тег будет перенесён в категорию «%3$s».</item>
+        <item quantity="few">Категория «%1$s» будет удалена. Её %2$d тега будут перенесены в категорию «%3$s».</item>
+        <item quantity="many">Категория «%1$s» будет удалена. Её %2$d тегов будут перенесены в категорию «%3$s».</item>
+        <item quantity="other">Категория «%1$s» будет удалена. Её теги (%2$d) будут перенесены в категорию «%3$s».</item>
+    </plurals>
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Новый тег</string>
     <string name="tag_edit_title_edit">Изменить тег</string>

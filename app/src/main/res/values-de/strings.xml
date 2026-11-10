@@ -198,6 +198,13 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">Noch keine Tags.</string>
+    <string name="tag_list_add_category">Kategorie hinzufügen</string>
+    <string name="tag_category_delete_title">Kategorie löschen?</string>
+    <string name="tag_category_delete_body_empty">Die Kategorie „%1$s“ wird gelöscht. Sie enthält keine Tags.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Die Kategorie „%1$s“ wird gelöscht. Ihr Tag wird in die Kategorie „%3$s“ verschoben.</item>
+        <item quantity="other">Die Kategorie „%1$s“ wird gelöscht. Ihre %2$d Tags werden in die Kategorie „%3$s“ verschoben.</item>
+    </plurals>
 
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Neuer Tag</string>

@@ -55,6 +55,7 @@ class HardcodedUiTextTest {
             "ui/settings/LanguagePicker.kt",
             "ui/settings/PromptWindowEditScreen.kt",
             "ui/settings/SettingsScreen.kt",
+            "ui/tags/CategoryDialogs.kt",
             "ui/tags/TagCategoryUi.kt",
             "ui/tags/TagEditScreen.kt",
             "ui/tags/TagListScreen.kt",

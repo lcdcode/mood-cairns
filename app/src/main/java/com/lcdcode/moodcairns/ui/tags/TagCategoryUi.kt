@@ -35,6 +35,13 @@ fun categoryLabelToStore(raw: String, defaultName: String): String =
     if (TagCategory.sanitizeLabel(raw) == defaultName) "" else raw
 
 /**
+ * True when [draft] cannot be saved: a user category needs a name, while a blank
+ * built-in name ([defaultName] non-null) just restores its default.
+ */
+fun isMissingCategoryName(draft: String, defaultName: String?): Boolean =
+    defaultName == null && TagCategory.sanitizeLabel(draft) == null
+
+/**
  * Groups tags by category id, keeping each group's order. A tag whose category is not
  * in [categories] is grouped under Other, so it stays visible and editable.
  */

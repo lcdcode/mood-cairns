@@ -214,6 +214,15 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tagi</string>
     <string name="tag_list_empty">Brak tagów.</string>
+    <string name="tag_list_add_category">Dodaj kategorię</string>
+    <string name="tag_category_delete_title">Usunąć kategorię?</string>
+    <string name="tag_category_delete_body_empty">Kategoria „%1$s” zostanie usunięta. Nie zawiera tagów.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Kategoria „%1$s” zostanie usunięta. Jej tag zostanie przeniesiony do kategorii „%3$s”.</item>
+        <item quantity="few">Kategoria „%1$s” zostanie usunięta. Jej %2$d tagi zostaną przeniesione do kategorii „%3$s”.</item>
+        <item quantity="many">Kategoria „%1$s” zostanie usunięta. Jej %2$d tagów zostanie przeniesionych do kategorii „%3$s”.</item>
+        <item quantity="other">Kategoria „%1$s” zostanie usunięta. Jej tagi (%2$d) zostaną przeniesione do kategorii „%3$s”.</item>
+    </plurals>
 
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Nowy tag</string>

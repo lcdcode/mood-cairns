@@ -1,6 +1,8 @@
 package com.lcdcode.moodcairns.ui.tags
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CategoryLabelToStoreTest {
@@ -30,5 +32,16 @@ class CategoryLabelToStoreTest {
     @Test
     fun blank_isPassedThroughForTheRepositoryToReset() {
         assertEquals("   ", categoryLabelToStore("   ", defaultName))
+    }
+
+    @Test
+    fun userCategory_withBlankName_isMissingAName() {
+        assertTrue(isMissingCategoryName("  \n", defaultName = null))
+        assertFalse(isMissingCategoryName("Health", defaultName = null))
+    }
+
+    @Test
+    fun builtIn_withBlankName_isFine_becauseItRestoresTheDefault() {
+        assertFalse(isMissingCategoryName("", defaultName))
     }
 }

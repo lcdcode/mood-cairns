@@ -252,6 +252,18 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">No tags yet.</string>
+    <!-- Button at the end of the Tags screen that creates a tag category; also the title of
+         the dialog that names it. -->
+    <string name="tag_list_add_category">Add category</string>
+    <string name="tag_category_delete_title">Delete category?</string>
+    <!-- %1$s category name. Shown when the category holds no tags. -->
+    <string name="tag_category_delete_body_empty">\"%1$s\" will be deleted. It has no tags.</string>
+    <!-- %1$s category name, %2$d number of its tags, %3$s the name of the fallback
+         category, the same text as enum_tag_category_other. The tags are kept, not deleted. -->
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">\"%1$s\" will be deleted. Its %2$d tag will move to \"%3$s\".</item>
+        <item quantity="other">\"%1$s\" will be deleted. Its %2$d tags will move to \"%3$s\".</item>
+    </plurals>
 
     <!-- Tag editor -->
     <string name="tag_edit_title_new">New tag</string>
