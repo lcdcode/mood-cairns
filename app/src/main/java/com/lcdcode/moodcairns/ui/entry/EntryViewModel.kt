@@ -33,7 +33,7 @@ data class EntryUiState(
     val promptWindowId: Long? = null,
     val windows: List<PromptWindow> = emptyList(),
     val tags: List<Tag> = emptyList(),
-    val categoryLabels: Map<TagCategory, String> = emptyMap(),
+    val categories: List<TagCategory> = emptyList(),
     val selectedTagIds: Set<Long> = emptySet(),
     // A window referenced by the entry being edited that is no longer in the
     // enabled set (disabled in settings). Pinned so its chip still renders and
@@ -130,8 +130,8 @@ class EntryViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            tags.observeCategoryLabels().collect { labels ->
-                _state.update { it.copy(categoryLabels = labels) }
+            tags.observeCategories().collect { categories ->
+                _state.update { it.copy(categories = categories) }
             }
         }
     }

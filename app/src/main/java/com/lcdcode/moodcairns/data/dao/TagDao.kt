@@ -11,7 +11,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TagDao {
-    @Query("SELECT * FROM tag ORDER BY category, sortOrder, name COLLATE NOCASE")
+    /**
+     * All tags in display order: by category sortOrder, then tag sortOrder. A tag whose
+     * category row is missing sorts with Other, where the UI also shows it.
+     */
+    @Query(
+        "SELECT tag.* FROM tag LEFT JOIN tag_category ON tag_category.id = tag.category " +
+            "ORDER BY COALESCE(tag_category.sortOrder, " +
+            "(SELECT sortOrder FROM tag_category WHERE id = 'OTHER')), " +
+            "tag.sortOrder, tag.name COLLATE NOCASE",
+    )
     fun observeAll(): Flow<List<Tag>>
 
     @Query("SELECT * FROM tag WHERE id = :id")
@@ -36,8 +45,8 @@ interface TagDao {
     @Query("UPDATE tag SET sortOrder = :sortOrder WHERE id = :id")
     suspend fun setSortOrder(id: Long, sortOrder: Int)
 
-    @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM tag WHERE category = :category")
-    suspend fun maxSortOrder(category: String): Int
+    @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM tag WHERE category = :categoryId")
+    suspend fun maxSortOrder(categoryId: String): Int
 
     @Transaction
     suspend fun applySortOrder(orderedIds: List<Long>) {

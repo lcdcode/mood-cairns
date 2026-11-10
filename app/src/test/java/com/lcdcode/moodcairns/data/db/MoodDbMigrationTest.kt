@@ -38,7 +38,7 @@ class MoodDbMigrationTest {
                     rowExists(
                         c,
                         "SELECT 1 FROM tag WHERE name = '${seed.name}' " +
-                            "AND category = '${seed.category.name}' AND sortOrder = ${seed.sortOrder}",
+                            "AND category = '${seed.categoryId}' AND sortOrder = ${seed.sortOrder}",
                     ),
                 )
             }

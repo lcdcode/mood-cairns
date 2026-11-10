@@ -77,7 +77,6 @@ import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
-import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -505,7 +504,7 @@ private fun TagFilterRow(
                     onClick = onClear,
                     label = { Text(allOrClearLabel(noTagsSelected)) },
                 )
-                tags.orderedByCategory().forEach { tag ->
+                tags.forEach { tag ->
                     FilterChip(
                         selected = tag.id in selected,
                         onClick = { onToggle(tag.id) },
@@ -936,7 +935,7 @@ private fun TappedEntry(
         }
         if (entry.tags.isNotEmpty()) {
             Text(
-                entry.tags.orderedByCategory().map { it.displayName() }.joinToString(listSeparator),
+                entry.tags.map { it.displayName() }.joinToString(listSeparator),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

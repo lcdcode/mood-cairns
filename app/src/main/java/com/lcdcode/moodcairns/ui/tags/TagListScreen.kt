@@ -45,7 +45,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
-import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import com.lcdcode.moodcairns.ui.common.displayName
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -54,7 +53,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun TagListScreen(
     onBack: () -> Unit,
-    onAdd: (TagCategory) -> Unit,
+    onAdd: (categoryId: String) -> Unit,
     onEdit: (Long) -> Unit,
     viewModel: TagListViewModel = hiltViewModel(),
 ) {
@@ -62,7 +61,7 @@ fun TagListScreen(
     val haptic = LocalHapticFeedback.current
 
     var isDragging by remember { mutableStateOf(false) }
-    var renaming by rememberSaveable { mutableStateOf<TagCategory?>(null) }
+    var renamingId by rememberSaveable { mutableStateOf<String?>(null) }
     var lists by remember { mutableStateOf(state.byCategory) }
     LaunchedEffect(state.byCategory, isDragging) {
         if (!isDragging) lists = state.byCategory
@@ -72,16 +71,14 @@ fun TagListScreen(
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromKey = from.key as? String ?: return@rememberReorderableLazyListState
         val toKey = to.key as? String ?: return@rememberReorderableLazyListState
-        val categoryName = fromKey.substringBefore('/')
-        if (categoryName != toKey.substringBefore('/')) return@rememberReorderableLazyListState
-        val category = TagCategory.entries.find { it.name == categoryName }
-            ?: return@rememberReorderableLazyListState
-        val updated = lists[category].orEmpty().toMutableList()
-        val fromIdx = updated.indexOfFirst { tagKey(it) == fromKey }
-        val toIdx = updated.indexOfFirst { tagKey(it) == toKey }
+        val categoryId = fromKey.substringBeforeLast('/')
+        if (categoryId != toKey.substringBeforeLast('/')) return@rememberReorderableLazyListState
+        val updated = lists[categoryId].orEmpty().toMutableList()
+        val fromIdx = updated.indexOfFirst { tagKey(categoryId, it) == fromKey }
+        val toIdx = updated.indexOfFirst { tagKey(categoryId, it) == toKey }
         if (fromIdx == -1 || toIdx == -1) return@rememberReorderableLazyListState
         updated.add(toIdx, updated.removeAt(fromIdx))
-        lists = lists + (category to updated)
+        lists = lists + (categoryId to updated)
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
@@ -106,17 +103,17 @@ fun TagListScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            for (category in TagCategory.entries) {
-                val tags = lists[category].orEmpty()
-                item(key = "hdr/${category.name}") {
+            for (category in state.categories) {
+                val tags = lists[category.id].orEmpty()
+                item(key = "hdr/${category.id}") {
                     SectionHeader(
-                        text = category.displayName(state.categoryLabels),
-                        onRename = { renaming = category },
-                        onAdd = { onAdd(category) },
+                        text = category.displayName(),
+                        onRename = { renamingId = category.id },
+                        onAdd = { onAdd(category.id) },
                     )
                 }
                 if (tags.isEmpty()) {
-                    item(key = "empty/${category.name}") {
+                    item(key = "empty/${category.id}") {
                         Text(
                             stringResource(R.string.tag_list_empty),
                             style = MaterialTheme.typography.bodySmall,
@@ -124,12 +121,12 @@ fun TagListScreen(
                         )
                     }
                 }
-                items(tags, key = ::tagKey) { tag ->
-                    ReorderableItem(reorderableState, key = tagKey(tag)) { _ ->
+                items(tags, key = { tagKey(category.id, it) }) { tag ->
+                    ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
                         val dragModifier = Modifier.draggableHandle(
                             onDragStarted = { _ -> isDragging = true },
                             onDragStopped = {
-                                viewModel.onReorder(lists[tag.category].orEmpty().map { it.id })
+                                viewModel.onReorder(lists[category.id].orEmpty().map { it.id })
                                 isDragging = false
                             },
                         )
@@ -144,22 +141,25 @@ fun TagListScreen(
         }
     }
 
-    renaming?.let { category ->
-        val defaultName = stringResource(category.displayNameRes())
+    state.categories.find { it.id == renamingId }?.let { category ->
+        val defaultName = category.defaultName()
         RenameCategoryDialog(
-            currentName = category.displayName(state.categoryLabels),
+            currentName = category.displayName(),
             defaultName = defaultName,
-            onDismiss = { renaming = null },
+            onDismiss = { renamingId = null },
             onSave = { raw ->
-                viewModel.renameCategory(category, raw, defaultName)
-                renaming = null
+                viewModel.renameCategory(category.id, raw, defaultName)
+                renamingId = null
             },
         )
     }
 }
 
-/** Stable LazyColumn key; '/' cannot appear in a category name so the prefix parses cleanly. */
-private fun tagKey(tag: Tag) = "${tag.category.name}/${tag.id}"
+/**
+ * Stable LazyColumn key "<section category id>/<tag id>". Tag ids are numbers, so the
+ * last '/' always splits it, even if a category id contained one.
+ */
+private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.id}"
 
 @Composable
 private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit) {
@@ -191,7 +191,7 @@ private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit)
 @Composable
 private fun RenameCategoryDialog(
     currentName: String,
-    defaultName: String,
+    defaultName: String?,
     onDismiss: () -> Unit,
     onSave: (String) -> Unit,
 ) {
@@ -203,10 +203,12 @@ private fun RenameCategoryDialog(
             OutlinedTextField(
                 value = draft,
                 onValueChange = { new ->
-                    if (new.codePointCount(0, new.length) <= TagCategoryLabel.MAX_LENGTH) draft = new
+                    if (new.codePointCount(0, new.length) <= TagCategory.MAX_LABEL_LENGTH) {
+                        draft = new
+                    }
                 },
                 label = { Text(stringResource(R.string.common_name_label)) },
-                placeholder = { Text(defaultName) },
+                placeholder = defaultName?.let { { Text(it) } },
                 singleLine = true,
                 trailingIcon = {
                     if (draft.isNotEmpty()) {

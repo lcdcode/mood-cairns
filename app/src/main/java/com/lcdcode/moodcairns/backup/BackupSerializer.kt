@@ -5,6 +5,8 @@ import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
+import com.lcdcode.moodcairns.data.db.SeedTagCategories
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.Entry
 import com.lcdcode.moodcairns.data.entity.EntryValue
 import com.lcdcode.moodcairns.data.entity.PromptSlot
@@ -12,7 +14,6 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
-import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.time.Instant
@@ -28,7 +29,7 @@ class BackupSerializer @Inject constructor(
     private val scaleDao get() = moodHolder.scaleDao()
     private val entryDao get() = moodHolder.entryDao()
     private val tagDao get() = moodHolder.tagDao()
-    private val tagCategoryLabelDao get() = moodHolder.tagCategoryLabelDao()
+    private val tagCategoryDao get() = moodHolder.tagCategoryDao()
 
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
@@ -47,7 +48,7 @@ class BackupSerializer @Inject constructor(
             val windows = windowDao.observeAll().first().map(::toDto)
             val entries = entryDao.observeAll().first().map(::toDto)
             val tags = tagDao.observeAll().first().map(::toDto)
-            val categoryLabels = tagCategoryLabelDao.all().map(::toDto)
+            val categoryLabels = tagCategoryDao.all().mapNotNull(::toLabelDto)
 
             val file = BackupFile(
                 schemaVersion = BackupFile.CURRENT_VERSION,
@@ -126,9 +127,7 @@ class BackupSerializer @Inject constructor(
         scales = file.scales.map(::fromDto),
         windows = file.promptWindows.map(::fromDto),
         tags = file.tags.mapNotNull(::fromDto),
-        tagCategoryLabels = file.tagCategoryLabels
-            .mapNotNull(TagCategoryLabelDto::toEntityOrNull)
-            .distinctBy { it.category },
+        tagCategories = builtInCategoriesWithLabels(file.tagCategoryLabels),
         entries = file.entries.map { e ->
             val entry = Entry(
                 id = e.id,
@@ -170,11 +169,11 @@ class BackupSerializer @Inject constructor(
     )
 
     private fun toDto(t: Tag) = TagDto(
-        id = t.id, name = t.name, category = t.category.name, sortOrder = t.sortOrder,
+        id = t.id, name = t.name, category = t.categoryId, sortOrder = t.sortOrder,
     )
 
-    private fun toDto(l: TagCategoryLabel) =
-        TagCategoryLabelDto(category = l.category.name, label = l.label)
+    private fun toLabelDto(c: TagCategory): TagCategoryLabelDto? =
+        c.label?.let { TagCategoryLabelDto(category = c.id, label = it) }
 
     private fun fromDto(s: ScaleDto) = Scale(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
@@ -191,8 +190,8 @@ class BackupSerializer @Inject constructor(
 
     /** Returns null for unknown categories so a hand-edited file cannot abort the import. */
     private fun fromDto(t: TagDto): Tag? {
-        val category = runCatching { TagCategory.valueOf(t.category) }.getOrNull() ?: return null
-        return Tag(id = t.id, name = t.name, category = category, sortOrder = t.sortOrder)
+        if (BuiltInTagCategory.fromId(t.category) == null) return null
+        return Tag(id = t.id, name = t.name, categoryId = t.category, sortOrder = t.sortOrder)
     }
 }
 
@@ -202,17 +201,25 @@ data class BackupEntities(
     val windows: List<PromptWindow>,
     val tags: List<Tag>,
     val entries: List<EntryBundle>,
-    val tagCategoryLabels: List<TagCategoryLabel> = emptyList(),
+    val tagCategories: List<TagCategory> = SeedTagCategories.all,
 )
 
 /**
  * Returns null for an unknown category or a label that sanitizes to blank, so a
  * hand-edited file cannot abort the import or store an invalid name.
  */
-internal fun TagCategoryLabelDto.toEntityOrNull(): TagCategoryLabel? {
-    val knownCategory = TagCategory.entries.find { it.name == category } ?: return null
-    val cleanLabel = TagCategoryLabel.sanitize(label) ?: return null
-    return TagCategoryLabel(knownCategory, cleanLabel)
+internal fun TagCategoryLabelDto.toEntityOrNull(): TagCategory? {
+    val builtIn = BuiltInTagCategory.fromId(category) ?: return null
+    val cleanLabel = TagCategory.sanitizeLabel(label) ?: return null
+    return TagCategory(id = builtIn.id, label = cleanLabel, sortOrder = builtIn.ordinal)
+}
+
+/** The built-in categories with any custom names from [labels]; the first label per id wins. */
+internal fun builtInCategoriesWithLabels(labels: List<TagCategoryLabelDto>): List<TagCategory> {
+    val renamed = labels.mapNotNull(TagCategoryLabelDto::toEntityOrNull)
+        .distinctBy { it.id }
+        .associateBy { it.id }
+    return SeedTagCategories.all.map { renamed[it.id] ?: it }
 }
 
 data class EntryBundle(

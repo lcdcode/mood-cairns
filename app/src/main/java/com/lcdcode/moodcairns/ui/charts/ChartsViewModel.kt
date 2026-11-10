@@ -12,6 +12,8 @@ import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import com.lcdcode.moodcairns.data.repo.TagRepository
+import com.lcdcode.moodcairns.ui.tags.sortedByDisplayRank
+import com.lcdcode.moodcairns.ui.tags.tagDisplayRank
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -254,9 +256,12 @@ class ChartsViewModel @Inject constructor(
             slotFilteredRows.filter { row -> row.tags.any { it.id in f.selectedTags } }
         }
 
+        // Entry tags arrive in junction order; show them in the tag list's display order.
+        val tagRank = tagDisplayRank(tagList)
         val located = filteredRows.map { row ->
             val local = row.entry.recordedAt.atZone(zone).toLocalDateTime()
-            LocatedRow(row, local, (local.toLocalDate().toEpochDay() - startDay).toInt())
+            val ordered = row.copy(tags = row.tags.sortedByDisplayRank(tagRank))
+            LocatedRow(ordered, local, (local.toLocalDate().toEpochDay() - startDay).toInt())
         }
         val inRange = located.filter { it.dayIndex in 0 until days }
 

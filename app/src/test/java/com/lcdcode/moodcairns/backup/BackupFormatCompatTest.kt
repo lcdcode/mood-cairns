@@ -1,7 +1,6 @@
 package com.lcdcode.moodcairns.backup
 
 import com.lcdcode.moodcairns.data.entity.TagCategory
-import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -185,7 +184,7 @@ class BackupFormatCompatTest {
     fun categoryLabelDto_mapsToEntity() {
         val entity = TagCategoryLabelDto(category = "PERSON", label = "  Crew ").toEntityOrNull()
 
-        assertEquals(TagCategoryLabel(TagCategory.PERSON, "Crew"), entity)
+        assertEquals(TagCategory(id = "PERSON", label = "Crew", sortOrder = 1), entity)
     }
 
     @Test
@@ -196,5 +195,20 @@ class BackupFormatCompatTest {
     @Test
     fun categoryLabelDto_withBlankLabel_isDropped() {
         assertNull(TagCategoryLabelDto(category = "PLACE", label = " \n ").toEntityOrNull())
+    }
+
+    @Test
+    fun v2Labels_applyToBuiltIns_firstLabelWins() {
+        val categories = builtInCategoriesWithLabels(
+            listOf(
+                TagCategoryLabelDto(category = "PLACE", label = "Spots"),
+                TagCategoryLabelDto(category = "PLACE", label = "Ignored"),
+                TagCategoryLabelDto(category = "PETS", label = "Pets"),
+            ),
+        )
+
+        assertEquals(listOf("PLACE", "PERSON", "ACTIVITY", "MOOD", "OTHER"), categories.map { it.id })
+        assertEquals(listOf("Spots", null, null, null, null), categories.map { it.label })
+        assertEquals(listOf(0, 1, 2, 3, 4), categories.map { it.sortOrder })
     }
 }

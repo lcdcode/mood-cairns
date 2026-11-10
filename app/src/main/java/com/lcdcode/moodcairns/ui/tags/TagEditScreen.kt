@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
-import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.asString
 
@@ -47,7 +46,7 @@ fun TagEditScreen(
     viewModel: TagEditViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val categoryLabels by viewModel.categoryLabels.collectAsStateWithLifecycle()
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
@@ -95,7 +94,7 @@ fun TagEditScreen(
                 onExpandedChange = { categoryExpanded = it },
             ) {
                 OutlinedTextField(
-                    value = state.category.displayName(categoryLabels),
+                    value = categories.find { it.id == state.categoryId }?.displayName().orEmpty(),
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.tag_edit_category_label)) },
@@ -110,11 +109,11 @@ fun TagEditScreen(
                     expanded = categoryExpanded,
                     onDismissRequest = { categoryExpanded = false },
                 ) {
-                    TagCategory.entries.forEach { category ->
+                    categories.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category.displayName(categoryLabels)) },
+                            text = { Text(category.displayName()) },
                             onClick = {
-                                viewModel.setCategory(category)
+                                viewModel.setCategory(category.id)
                                 categoryExpanded = false
                             },
                         )

@@ -77,7 +77,6 @@ import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
-import com.lcdcode.moodcairns.ui.tags.orderedByCategory
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -483,7 +482,7 @@ private fun FilterBar(
                         onClick = onTagClear,
                         label = { Text(allOrClearLabel(noTagsSelected)) },
                     )
-                    tags.orderedByCategory().forEach { tag ->
+                    tags.forEach { tag ->
                         FilterChip(
                             selected = tag.id in selectedTagIds,
                             onClick = { onTagToggle(tag.id) },

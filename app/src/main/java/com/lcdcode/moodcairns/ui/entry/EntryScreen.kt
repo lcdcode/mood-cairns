@@ -77,6 +77,7 @@ import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.tags.displayName
+import com.lcdcode.moodcairns.ui.tags.groupedByCategory
 import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
 import java.time.LocalDate
@@ -194,7 +195,7 @@ fun EntryScreen(
             if (state.tags.isNotEmpty()) {
                 TagPicker(
                     tags = state.tags,
-                    categoryLabels = state.categoryLabels,
+                    categories = state.categories,
                     selectedTagIds = state.selectedTagIds,
                     onToggle = viewModel::toggleTag,
                 )
@@ -228,18 +229,16 @@ fun EntryScreen(
 @Composable
 private fun TagPicker(
     tags: List<Tag>,
-    categoryLabels: Map<TagCategory, String>,
+    categories: List<TagCategory>,
     selectedTagIds: Set<Long>,
     onToggle: (Long) -> Unit,
 ) {
-    // observeAll() sorts category alphabetically; iterate TagCategory.entries
-    // instead so the display order follows the enum's declaration order.
-    val byCategory = remember(tags) { tags.groupBy { it.category } }
+    val byCategory = remember(tags, categories) { tags.groupedByCategory(categories) }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        TagCategory.entries.forEach { category ->
-            val categoryTags = byCategory[category] ?: return@forEach
+        categories.forEach { category ->
+            val categoryTags = byCategory[category.id] ?: return@forEach
             Text(
-                category.displayName(categoryLabels),
+                category.displayName(),
                 style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
