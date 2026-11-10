@@ -123,6 +123,19 @@ class TagImportTest {
     }
 
     @Test
+    fun othersName_isDropped_fromV2AndV3Files() {
+        val fromV2 = resolveCategories(
+            file(version = 2, labels = listOf(TagCategoryLabelDto(other, "Exercises"))),
+        )
+        val fromV3 = resolveCategories(
+            file(version = 3, categories = listOf(cat(other, "Exercises"))),
+        )
+
+        assertNull(fromV2.single { it.id == other }.label)
+        assertNull(fromV3.single { it.id == other }.label)
+    }
+
+    @Test
     fun v3File_repeatedId_keepsTheFirst() {
         val categories = resolveCategories(
             file(version = 3, categories = listOf(cat("c", "First"), cat("c", "Second"))),

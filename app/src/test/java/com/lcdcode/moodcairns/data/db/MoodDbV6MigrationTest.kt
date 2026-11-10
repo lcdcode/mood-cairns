@@ -76,6 +76,20 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
+    fun migration_clearsOthersName_becauseOtherCanNoLongerBeRenamed() {
+        connectV5().use { c ->
+            exec(c, "INSERT INTO tag_category_label VALUES ('OTHER', 'Exercises')")
+
+            runStatements(c, MoodDbMigrationSql.V5_TO_V6)
+
+            assertEquals(
+                0,
+                count(c, "SELECT COUNT(*) FROM tag_category WHERE label IS NOT NULL"),
+            )
+        }
+    }
+
+    @Test
     fun migration_dropsLabelTable() {
         connectV5().use { c ->
             runStatements(c, MoodDbMigrationSql.V5_TO_V6)

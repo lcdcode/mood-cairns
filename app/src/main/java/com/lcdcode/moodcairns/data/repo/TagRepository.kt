@@ -34,9 +34,11 @@ class TagRepository @Inject constructor(private val holder: MoodDatabaseHolder) 
 
     /**
      * Renames a category. A blank [raw] restores a built-in's translated default;
-     * user categories have no default, so a blank name is rejected.
+     * user categories have no default, so a blank name is rejected. Other is the
+     * catch-all for deleted categories and always keeps its own name.
      */
     suspend fun renameCategory(id: String, raw: String) {
+        require(id != TagCategory.OTHER_ID) { "Category $id cannot be renamed" }
         val label = TagCategory.sanitizeLabel(raw)
         require(label != null || BuiltInTagCategory.fromId(id) != null) {
             "User category $id cannot have a blank name"
@@ -53,4 +55,10 @@ class TagRepository @Inject constructor(private val holder: MoodDatabaseHolder) 
         categoryDao().insertBeforeOther(TagCategory(id = id, label = label, sortOrder = 0))
         return id
     }
+
+    /** Number of tags that deleting [categoryId] would move to Other. */
+    suspend fun countTagsIn(categoryId: String): Int = categoryDao().countTagsIn(categoryId)
+
+    /** Deletes a category, moving its tags to Other. Other itself cannot be deleted. */
+    suspend fun deleteCategory(id: String) = categoryDao().deleteMovingTagsToOther(id)
 }

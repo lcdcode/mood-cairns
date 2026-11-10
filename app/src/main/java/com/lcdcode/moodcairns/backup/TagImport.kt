@@ -58,22 +58,25 @@ internal fun builtInCategoriesWithLabels(labels: List<TagCategoryLabelDto>): Lis
 /**
  * Returns null for an unusable id (blank, too long, control characters) or for a
  * user category whose name sanitizes to blank, since it would have nothing to show.
+ * A name given for Other is dropped: it cannot be renamed.
  */
 internal fun TagCategoryDto.toEntityOrNull(): TagCategory? {
     val validId = id.isNotBlank() && id.length <= TagCategory.MAX_ID_LENGTH &&
         id.none(Char::isISOControl)
     if (!validId) return null
-    val cleanLabel = label?.let(TagCategory::sanitizeLabel)
+    val cleanLabel = label?.takeIf { id != TagCategory.OTHER_ID }?.let(TagCategory::sanitizeLabel)
     if (cleanLabel == null && BuiltInTagCategory.fromId(id) == null) return null
     return TagCategory(id = id, label = cleanLabel, sortOrder = sortOrder)
 }
 
 /**
- * Returns null for an unknown category or a label that sanitizes to blank, so a
- * hand-edited v2 file cannot abort the import or store an invalid name.
+ * Returns null for an unknown category, for Other (no longer renamable), or for a
+ * label that sanitizes to blank, so a hand-edited v2 file cannot abort the import or
+ * store an invalid name.
  */
 internal fun TagCategoryLabelDto.toEntityOrNull(): TagCategory? {
     val builtIn = BuiltInTagCategory.fromId(category) ?: return null
+    if (builtIn.id == TagCategory.OTHER_ID) return null
     val cleanLabel = TagCategory.sanitizeLabel(label) ?: return null
     return TagCategory(id = builtIn.id, label = cleanLabel, sortOrder = builtIn.ordinal)
 }

@@ -11,7 +11,7 @@ import java.util.UUID
 @Entity(tableName = "tag_category")
 data class TagCategory(
     @PrimaryKey val id: String,
-    /** User-chosen name. Null shows a built-in's translated default; user categories set it. */
+    /** User-chosen name, null for a built-in's translated default. Always null for Other. */
     val label: String?,
     val sortOrder: Int,
 ) {
@@ -21,7 +21,10 @@ data class TagCategory(
         /** Longest id accepted from a backup; generated UUIDs are 36 characters. */
         const val MAX_ID_LENGTH = 64
 
-        /** Tags of a deleted category move here, so it can never be deleted itself. */
+        /**
+         * Tags of a deleted category move here, so it can never be deleted, and it
+         * cannot be renamed so it always reads as the catch-all.
+         */
         val OTHER_ID: String = BuiltInTagCategory.OTHER.id
 
         fun newCustomId(): String = UUID.randomUUID().toString()

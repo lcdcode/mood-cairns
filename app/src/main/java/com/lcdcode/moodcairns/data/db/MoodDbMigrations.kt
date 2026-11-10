@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.data.db
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 
 /**
  * SQL for the versioned migrations, kept as plain strings (no Android deps) so
@@ -41,16 +42,21 @@ internal object MoodDbMigrationSql {
 
     /**
      * Replaces tag_category_label with tag_category: the built-ins are seeded in their
-     * old fixed order and keep any custom name. tag.category already stores the
-     * built-in names, which become the category ids, so tag rows need no rewrite.
+     * old fixed order and keep any custom name, except Other, which can no longer be
+     * renamed. tag.category already stores the built-in names, which become the
+     * category ids, so tag rows need no rewrite.
      */
     val V5_TO_V6: List<String> = listOf(
         "CREATE TABLE IF NOT EXISTS `tag_category` (`id` TEXT NOT NULL, `label` TEXT, " +
             "`sortOrder` INTEGER NOT NULL, PRIMARY KEY(`id`))",
     ) + SeedTagCategories.all.map { category ->
-        "INSERT OR IGNORE INTO tag_category (id, label, sortOrder) VALUES ('${category.id}', " +
-            "(SELECT label FROM tag_category_label WHERE category = '${category.id}'), " +
-            "${category.sortOrder})"
+        val label = if (category.id == TagCategory.OTHER_ID) {
+            "NULL"
+        } else {
+            "(SELECT label FROM tag_category_label WHERE category = '${category.id}')"
+        }
+        "INSERT OR IGNORE INTO tag_category (id, label, sortOrder) " +
+            "VALUES ('${category.id}', $label, ${category.sortOrder})"
     } + listOf(
         "DROP TABLE IF EXISTS `tag_category_label`",
         "ALTER TABLE `tag` ADD COLUMN `columnIndex` INTEGER NOT NULL DEFAULT 0",

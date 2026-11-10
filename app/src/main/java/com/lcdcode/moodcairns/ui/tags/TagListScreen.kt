@@ -108,7 +108,9 @@ fun TagListScreen(
                 item(key = "hdr/${category.id}") {
                     SectionHeader(
                         text = category.displayName(),
-                        onRename = { renamingId = category.id },
+                        // Other is the catch-all for deleted categories; its name is fixed.
+                        onRename = { renamingId = category.id }
+                            .takeIf { category.id != TagCategory.OTHER_ID },
                         onAdd = { onAdd(category.id) },
                     )
                 }
@@ -162,7 +164,7 @@ fun TagListScreen(
 private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.id}"
 
 @Composable
-private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit) {
+private fun SectionHeader(text: String, onRename: (() -> Unit)?, onAdd: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -173,12 +175,14 @@ private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit)
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
-        IconButton(onClick = onRename) {
-            Icon(
-                Icons.Default.Edit,
-                contentDescription = stringResource(R.string.common_edit),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (onRename != null) {
+            IconButton(onClick = onRename) {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.common_edit),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
         TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
