@@ -95,7 +95,7 @@
     <string name="seed_tag_chores">Obowiązki domowe</string>
     <string name="seed_tag_rest">Odpoczynek</string>
     <string name="seed_tag_joy">Radość</string>
-    <string name="seed_tag_excited">Podniecenie</string>
+    <string name="seed_tag_excited">Ekscytacja</string>
     <string name="seed_tag_grateful">Wdzięczność</string>
     <string name="seed_tag_content">Zadowolenie</string>
     <string name="seed_tag_calm">Spokój</string>
@@ -112,8 +112,8 @@
     <!-- Tag categories -->
     <string name="enum_tag_category_place">Miejsca</string>
     <string name="enum_tag_category_person">Ludzie</string>
-    <string name="enum_tag_category_activity">Działania</string>
-    <string name="enum_tag_category_mood">Emocje</string>
+    <string name="enum_tag_category_activity">Czynności</string>
+    <string name="enum_tag_category_mood">Nastroje</string>
     <string name="enum_tag_category_other">Inne</string>
 
     <!-- Notifications -->
@@ -166,7 +166,7 @@
     <string name="scale_list_section_archived">Zarchiwizowane</string>
     <string name="scale_list_archive">Archiwizuj</string>
     <string name="scale_list_unarchive">Przywróć z archiwum</string>
-    <string name="scale_list_step">krok %1$s</string>
+    <string name="scale_list_step">stopniowanie %1$s</string>
     <string name="scale_list_default">domyślnie %1$s</string>
     <string name="scale_list_lower_better">im niżej, tym lepiej</string>
     <string name="scale_list_built_in">wbudowana</string>
@@ -176,7 +176,7 @@
     <string name="scale_edit_title_edit">Edytuj skalę</string>
     <string name="scale_edit_min_label">Min.</string>
     <string name="scale_edit_max_label">Maks.</string>
-    <string name="scale_edit_step_label">Krok</string>
+    <string name="scale_edit_step_label">Stopniowanie</string>
     <string name="scale_edit_default_label">Wartość domyślna</string>
     <string name="scale_edit_default_hint">Od tej wartości zaczyna się suwak w nowym wpisie. Puste pole oznacza środek skali.</string>
     <string name="scale_edit_lower_better">Im niżej, tym lepiej</string>
@@ -189,7 +189,7 @@
     <string name="scale_edit_color_hue_description">Odcień</string>
     <string name="scale_edit_color_low_contrast_light">Ten kolor może być prawie niewidoczny w trybie jasnym.</string>
     <string name="scale_edit_color_low_contrast_dark">Ten kolor może być prawie niewidoczny w trybie ciemnym.</string>
-    <string name="scale_edit_built_in_hint">Nazwy wbudowanych skal nie można zmienić, ale można dostosować zakres, krok i kolor.</string>
+    <string name="scale_edit_built_in_hint">Nazwy wbudowanych skal nie można zmienić, ale można dostosować zakres, stopniowanie i kolor.</string>
     <string name="scale_edit_delete">Usuń skalę</string>
     <string name="scale_edit_this_scale">ta skala</string>
     <string name="scale_edit_remap_title">Przeliczyć zapisane wartości?</string>
@@ -279,10 +279,10 @@
     <string name="about_title">O aplikacji</string>
     <string name="about_version">Wersja %1$s</string>
     <string name="about_why_title">Dlaczego powstała ta aplikacja</string>
-    <string name="about_why_body">Mood Cairns powstał, bo brakowało mi dziennika nastroju z wszystkimi potrzebnymi funkcjami i bez niczego zbędnego: bez natrętnego śledzenia, bez analityki, bez konta i bez zakupów przez Sklep Google Play. Twoje wpisy są przechowywane tylko na twoim urządzeniu. Aplikacja nie deklaruje żadnych uprawnień sieciowych i zawsze tak będzie.</string>
+    <string name="about_why_body">Mood Cairns powstało, bo brakowało mi dziennika nastroju ze wszystkimi potrzebnymi funkcjami i bez niczego zbędnego: bez natrętnego śledzenia, bez analityki, bez konta i bez zakupów przez Sklep Google Play. Twoje wpisy są przechowywane tylko na twoim urządzeniu. Aplikacja nie deklaruje żadnych uprawnień sieciowych i zawsze tak będzie.</string>
     <string name="about_made_by">Autor: %1$s. Za darmo i z otwartym kodem źródłowym. Dziękuję!</string>
     <string name="about_updates_title">Aktualizacje</string>
-    <string name="about_updates_body">&lt;b&gt;Użytkownicy F-Droid powinni otrzymywać aktualizacje automatycznie&lt;/b&gt;. Jeśli tak się nie dzieje albo Mood Cairns został pobrany z GitHuba, sprawdź aktualizacje przyciskiem poniżej i &lt;b&gt;pobierz najnowszy plik .apk&lt;/b&gt; z sekcji Assets.</string>
+    <string name="about_updates_body">&lt;b&gt;Użytkownicy F-Droid powinni otrzymywać aktualizacje automatycznie&lt;/b&gt;. Jeśli tak się nie dzieje albo Mood Cairns został pobrany z GitHuba, sprawdź aktualizacje przyciskiem poniżej i &lt;b&gt;pobierz najnowszy plik .apk&lt;/b&gt; z sekcji zasobów (Assets).</string>
     <string name="about_get_latest">Pobierz najnowszą wersję</string>
     <string name="about_get_latest_hint">Otwiera najnowsze wydanie na GitHubie w przeglądarce. Sama aplikacja nigdy nie łączy się z siecią.</string>
     <string name="about_no_browser">Nie znaleziono przeglądarki do otwarcia strony.</string>
@@ -297,14 +297,14 @@
     <string name="charts_change_range">Zmień</string>
     <string name="charts_select_range">Wybierz zakres</string>
     <string name="charts_series_label">Seria</string>
-    <string name="charts_mode_raw">Dzienne</string>
+    <string name="charts_mode_raw">Dzienna</string>
     <plurals name="charts_mode_rolling">
         <item quantity="one">Średnia %1$d-dniowa</item>
         <item quantity="few">Średnia %1$d-dniowa</item>
         <item quantity="many">Średnia %1$d-dniowa</item>
         <item quantity="other">Średnia %1$d-dniowa</item>
     </plurals>
-    <string name="charts_mode_hourly">Godzinowe</string>
+    <string name="charts_mode_hourly">Godzinowa</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d wpis · surowe wartości dzienne</item>
         <item quantity="few">%1$d wpisy · surowe wartości dzienne</item>
@@ -323,8 +323,8 @@
         <item quantity="many">%1$d wpisów · średnie według godziny</item>
         <item quantity="other">%1$d wpisu · średnie według godziny</item>
     </plurals>
-    <string name="charts_y_axis_label">Oś Y</string>
-    <string name="charts_axis_autofit">Dopasuj</string>
+    <string name="charts_y_axis_label">Oś pionowa</string>
+    <string name="charts_axis_autofit">Dopasowana</string>
     <string name="charts_axis_absolute">Pełna</string>
     <string name="charts_prompt_slots_label">Okna przypomnień</string>
     <string name="charts_slot_other">Inne</string>
@@ -371,7 +371,7 @@
         <item quantity="other">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
     </plurals>
     <string name="charts_help_hourly_body">Zbiera wszystkie wpisy z wybranego okresu w jednej dobie i pokazuje średnią dla każdej godziny, dzięki czemu widać wzorce w ciągu dnia, np. czy poranki są trudniejsze niż wieczory. Godziny bez wpisów są pomijane. Dotknij punktu, aby zobaczyć tworzące go wpisy.</string>
-    <string name="charts_help_axis_title">Oś Y: %1$s czy %2$s</string>
+    <string name="charts_help_axis_title">Oś pionowa: %1$s czy %2$s</string>
     <string name="charts_help_autofit_body">Przybliża oś pionową do zakresu, który faktycznie zajmują twoje dane. Drobne zmiany są dobrze widoczne, bo wykres wypełnia całą przestrzeń, ale linia nie jest odnoszona do pełnego zakresu skali. Etykiety po lewej to zapisane wartości. Gdy na wykresie jest kilka skal, wszystkie korzystają z tej jednej osi.</string>
     <string name="charts_help_absolute_body" formatted="false">Pokazuje każdą linię względem pełnego zakresu jej skali, od minimum do maksimum. Zmiany wyglądają na mniejsze, ale różne skale się wyrównują, więc można je porównywać na jednym wykresie. Skale oznaczone „im niżej, tym lepiej” są tu odwrócone, aby poprawa zawsze była skierowana w górę. Etykiety po lewej są w procentach, bo każda linia jest mierzona względem własnego zakresu: 100% to góra tego zakresu, a w przypadku skali „im niżej, tym lepiej” jego dół.</string>
 
@@ -403,7 +403,7 @@
     <string name="settings_section_prompt_windows">Okna przypomnień</string>
     <string name="settings_add_window">Dodaj okno</string>
     <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
-    <string name="settings_section_security">Bezpieczeństwo</string>
+    <string name="settings_section_security">Zabezpieczenia</string>
     <string name="settings_auto_lock_label">Automatyczna blokada w tle</string>
     <string name="settings_auto_lock_immediate">Natychmiast</string>
     <string name="settings_biometric_unlock">Odblokowanie biometryczne</string>
@@ -453,7 +453,7 @@
 
     <!-- First-run PIN setup -->
     <string name="set_pin_title">Ustaw kod PIN</string>
-    <string name="set_pin_intro">Twoje wpisy nigdy nie opuszczają urządzenia. Kod PIN i odblokowanie biometryczne sprawiają, że należą tylko do ciebie.</string>
+    <string name="set_pin_intro">Twoje wpisy nigdy nie opuszczają urządzenia. Kod PIN i odblokowanie biometryczne sprawiają, że należą tylko do Ciebie.</string>
     <plurals name="set_pin_pin_label">
         <item quantity="one">Kod PIN (%1$d–%2$d cyfr)</item>
         <item quantity="few">Kod PIN (%1$d–%2$d cyfr)</item>
@@ -495,14 +495,14 @@
 
     <!-- Scale editor errors -->
     <string name="scale_edit_error_not_found">Nie znaleziono skali</string>
-    <string name="scale_edit_error_numbers_required">Wpisz liczby dla min., maks. i kroku</string>
+    <string name="scale_edit_error_numbers_required">Wpisz liczby dla min., maks. i stopniowania</string>
     <string name="scale_edit_error_min_not_below_max">Minimum musi być mniejsze niż maksimum</string>
-    <string name="scale_edit_error_step_not_positive">Krok musi być większy od zera</string>
-    <string name="scale_edit_error_range_not_step_multiple">Zakres (%1$d) musi być wielokrotnością kroku (%2$s)</string>
+    <string name="scale_edit_error_step_not_positive">Stopniowanie musi być większe od zera</string>
+    <string name="scale_edit_error_range_not_step_multiple">Zakres (%1$d) musi być wielokrotnością stopniowania (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Wartość domyślna musi być liczbą</string>
     <string name="scale_edit_error_hex_incomplete">Wpisz 6 znaków (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Wartość domyślna musi mieścić się w zakresie od %1$d do %2$d</string>
-    <string name="scale_edit_error_default_off_step">Wartość domyślna musi wypadać na kroku %1$s, licząc od %2$d</string>
+    <string name="scale_edit_error_default_off_step">Wartość domyślna musi wypadać na stopniowaniu %1$s, licząc od %2$d</string>
 
     <!-- Tag editor errors -->
     <string name="tag_edit_error_not_found">Nie znaleziono tagu</string>
