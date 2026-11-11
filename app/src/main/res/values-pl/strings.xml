@@ -166,7 +166,7 @@
     <string name="scale_list_section_archived">Zarchiwizowane</string>
     <string name="scale_list_archive">Archiwizuj</string>
     <string name="scale_list_unarchive">Przywróć z archiwum</string>
-    <string name="scale_list_step">stopniowanie %1$s</string>
+    <string name="scale_list_step">stopniowanie co %1$s</string>
     <string name="scale_list_default">domyślnie %1$s</string>
     <string name="scale_list_lower_better">im niżej, tym lepiej</string>
     <string name="scale_list_built_in">wbudowana</string>
