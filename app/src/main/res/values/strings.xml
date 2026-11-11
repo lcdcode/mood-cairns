@@ -252,6 +252,9 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">No tags yet.</string>
+    <!-- %1$d column number (1, 2 or 3). Heading over one column's tags on the Tags
+         screen, shown when a category's tags are split into several columns. -->
+    <string name="tag_list_column_heading">Column %1$d</string>
     <!-- Button at the end of the Tags screen that creates a tag category; also the title of
          the dialog that names it. -->
     <string name="tag_list_add_category">Add category</string>
@@ -269,6 +272,9 @@
     <string name="tag_edit_title_new">New tag</string>
     <string name="tag_edit_title_edit">Edit tag</string>
     <string name="tag_edit_category_label">Category</string>
+    <!-- Label over the 1 / 2 / 3 buttons that pick which column of its category a tag
+         appears in, side by side on the entry screen. -->
+    <string name="tag_edit_column_label">Column</string>
     <string name="tag_edit_delete">Delete tag</string>
     <!-- Stands in for a tag's name inside the dialogs below when it has none. -->
     <string name="tag_edit_this_tag">this tag</string>

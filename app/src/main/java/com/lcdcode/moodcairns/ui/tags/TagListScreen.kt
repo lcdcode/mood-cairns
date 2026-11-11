@@ -75,8 +75,10 @@ fun TagListScreen(
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromKey = from.key as? String ?: return@rememberReorderableLazyListState
         val toKey = to.key as? String ?: return@rememberReorderableLazyListState
-        val categoryId = fromKey.substringBeforeLast('/')
-        if (categoryId != toKey.substringBeforeLast('/')) return@rememberReorderableLazyListState
+        // Tags only move within their own column; another column is a different group.
+        val group = fromKey.substringBeforeLast('/')
+        if (group != toKey.substringBeforeLast('/')) return@rememberReorderableLazyListState
+        val categoryId = group.substringBeforeLast('/')
         val updated = lists[categoryId].orEmpty().toMutableList()
         val fromIdx = updated.indexOfFirst { tagKey(categoryId, it) == fromKey }
         val toIdx = updated.indexOfFirst { tagKey(categoryId, it) == toKey }
@@ -119,28 +121,35 @@ fun TagListScreen(
                     )
                 }
                 if (tags.isEmpty()) {
-                    item(key = "empty/${category.id}") {
-                        Text(
-                            stringResource(R.string.tag_list_empty),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    item(key = "empty/${category.id}") { EmptyNote() }
                 }
-                items(tags, key = { tagKey(category.id, it) }) { tag ->
-                    ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
-                        val dragModifier = Modifier.draggableHandle(
-                            onDragStarted = { _ -> isDragging = true },
-                            onDragStopped = {
-                                viewModel.onReorder(lists[category.id].orEmpty().map { it.id })
-                                isDragging = false
-                            },
-                        )
-                        TagRow(
-                            tag = tag,
-                            onClick = { onEdit(tag.id) },
-                            dragHandleModifier = dragModifier,
-                        )
+                val columns = tags.inColumns()
+                columns.forEachIndexed { column, columnTags ->
+                    // Single-column sections look as before; split ones get headings.
+                    if (columns.size > 1) {
+                        item(key = "col/${category.id}/$column") { ColumnHeading(column) }
+                        if (columnTags.isEmpty()) {
+                            item(key = "empty/${category.id}/$column") { EmptyNote() }
+                        }
+                    }
+                    items(columnTags, key = { tagKey(category.id, it) }) { tag ->
+                        ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
+                            val dragModifier = Modifier.draggableHandle(
+                                onDragStarted = { _ -> isDragging = true },
+                                onDragStopped = {
+                                    val columnIds = lists[category.id].orEmpty()
+                                        .filter { it.visibleColumn == column }
+                                        .map { it.id }
+                                    viewModel.onReorder(columnIds)
+                                    isDragging = false
+                                },
+                            )
+                            TagRow(
+                                tag = tag,
+                                onClick = { onEdit(tag.id) },
+                                dragHandleModifier = dragModifier,
+                            )
+                        }
                     }
                 }
             }
@@ -233,10 +242,30 @@ private fun CategoryDialogs(
 }
 
 /**
- * Stable LazyColumn key "<section category id>/<tag id>". Tag ids are numbers, so the
- * last '/' always splits it, even if a category id contained one.
+ * Stable LazyColumn key "<section category id>/<column>/<tag id>". Column and tag id are
+ * numbers, so splitting at the last '/' twice works even if a category id contained one.
  */
-private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.id}"
+private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.visibleColumn}/${tag.id}"
+
+@Composable
+private fun EmptyNote() {
+    Text(
+        stringResource(R.string.tag_list_empty),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/** "Column 2" above a column's tags; [column] is zero-based. */
+@Composable
+private fun ColumnHeading(column: Int) {
+    Text(
+        stringResource(R.string.tag_list_column_heading, column + 1),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+    )
+}
 
 @Composable
 private fun SectionHeader(text: String, onEdit: (() -> Unit)?, onAdd: () -> Unit) {

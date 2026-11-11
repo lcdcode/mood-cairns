@@ -29,9 +29,10 @@ internal fun resolveCategories(file: BackupFile): List<TagCategory> {
 
 /**
  * Converts backup tags. A tag whose category is not in [categoryIds] moves to Other
- * with columnIndex 0; a negative columnIndex is clamped to 0. Tags that would share a
- * name within a category (rejected by the unique index) collapse into the first one,
- * preferring tags already in their own category, and a repeated id keeps its first tag.
+ * with columnIndex 0; any other columnIndex is clamped into [Tag.COLUMN_RANGE]. Tags
+ * that would share a name within a category (rejected by the unique index) collapse
+ * into the first one, preferring tags already in their own category, and a repeated id
+ * keeps its first tag.
  */
 internal fun resolveTags(dtos: List<TagDto>, categoryIds: Set<String>): ResolvedTags {
     val (homed, orphaned) = dtos.partition { it.category in categoryIds }
@@ -88,7 +89,7 @@ private fun TagDto.toEntity(categoryIds: Set<String>): Tag {
         name = name,
         categoryId = if (keepsCategory) category else TagCategory.OTHER_ID,
         sortOrder = sortOrder,
-        columnIndex = if (keepsCategory) columnIndex.coerceAtLeast(0) else 0,
+        columnIndex = if (keepsCategory) columnIndex.coerceIn(Tag.COLUMN_RANGE) else 0,
     )
 }
 

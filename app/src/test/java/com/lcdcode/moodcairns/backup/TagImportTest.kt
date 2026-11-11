@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.backup
 
+import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -164,6 +165,13 @@ class TagImportTest {
         val resolved = resolveTags(listOf(tag(1, "Gym", other, column = -3)), setOf(other))
 
         assertEquals(0, resolved.tags.single().columnIndex)
+    }
+
+    @Test
+    fun columnIndexAboveTheMax_isClampedToTheLastColumn() {
+        val resolved = resolveTags(listOf(tag(1, "Gym", other, column = 99)), setOf(other))
+
+        assertEquals(Tag.MAX_COLUMNS - 1, resolved.tags.single().columnIndex)
     }
 
     @Test

@@ -203,6 +203,7 @@
     <!-- Tag list -->
     <string name="tag_list_title">Теги</string>
     <string name="tag_list_empty">Тегов пока нет.</string>
+    <string name="tag_list_column_heading">Столбец %1$d</string>
     <string name="tag_list_add_category">Добавить категорию</string>
     <string name="tag_category_delete_title">Удалить категорию?</string>
     <string name="tag_category_delete_body_empty">Категория «%1$s» будет удалена. В ней нет тегов.</string>
@@ -216,6 +217,7 @@
     <string name="tag_edit_title_new">Новый тег</string>
     <string name="tag_edit_title_edit">Изменить тег</string>
     <string name="tag_edit_category_label">Категория</string>
+    <string name="tag_edit_column_label">Столбец</string>
     <string name="tag_edit_delete">Удалить тег</string>
     <string name="tag_edit_this_tag">этот тег</string>
     <string name="tag_edit_delete_title">Удалить тег?</string>

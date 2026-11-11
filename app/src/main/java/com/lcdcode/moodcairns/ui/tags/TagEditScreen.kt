@@ -21,6 +21,9 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -36,8 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.ui.common.currentLocale
 import com.lcdcode.moodcairns.ui.common.SeedNames
 import com.lcdcode.moodcairns.ui.common.asString
+import java.text.NumberFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,6 +127,8 @@ fun TagEditScreen(
                 }
             }
 
+            ColumnPicker(selected = state.columnIndex, onSelect = viewModel::setColumn)
+
             OutlinedTextField(
                 value = shownName,
                 onValueChange = viewModel::setName,
@@ -188,5 +196,31 @@ fun TagEditScreen(
                 }
             },
         )
+    }
+}
+
+/** Picks which of the category's columns the tag sits in, shown as 1..[Tag.MAX_COLUMNS]. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ColumnPicker(selected: Int, onSelect: (Int) -> Unit) {
+    val locale = currentLocale()
+    val numberFormat = remember(locale) { NumberFormat.getIntegerInstance(locale) }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            stringResource(R.string.tag_edit_column_label),
+            style = MaterialTheme.typography.labelLarge,
+        )
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            Tag.COLUMN_RANGE.forEach { column ->
+                SegmentedButton(
+                    selected = column == selected,
+                    onClick = { onSelect(column) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = column,
+                        count = Tag.MAX_COLUMNS,
+                    ),
+                ) { Text(numberFormat.format(column + 1)) }
+            }
+        }
     }
 }

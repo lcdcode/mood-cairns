@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,8 +65,6 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
-import com.lcdcode.moodcairns.data.entity.Tag
-import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.currentLocale
 import com.lcdcode.moodcairns.ui.common.displayLabel
 import com.lcdcode.moodcairns.ui.common.displayName
@@ -76,8 +72,7 @@ import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
-import com.lcdcode.moodcairns.ui.tags.displayName
-import com.lcdcode.moodcairns.ui.tags.groupedByCategory
+import com.lcdcode.moodcairns.ui.tags.TagChipGroups
 import com.lcdcode.moodcairns.ui.common.asString
 import java.time.Instant
 import java.time.LocalDate
@@ -193,9 +188,9 @@ fun EntryScreen(
             Spacer(Modifier.height(8.dp))
 
             if (state.tags.isNotEmpty()) {
-                TagPicker(
-                    tags = state.tags,
+                TagChipGroups(
                     categories = state.categories,
+                    tags = state.tags,
                     selectedTagIds = state.selectedTagIds,
                     onToggle = viewModel::toggleTag,
                 )
@@ -221,35 +216,6 @@ fun EntryScreen(
             )
 
             Spacer(Modifier.height(8.dp))
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
-@Composable
-private fun TagPicker(
-    tags: List<Tag>,
-    categories: List<TagCategory>,
-    selectedTagIds: Set<Long>,
-    onToggle: (Long) -> Unit,
-) {
-    val byCategory = remember(tags, categories) { tags.groupedByCategory(categories) }
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        categories.forEach { category ->
-            val categoryTags = byCategory[category.id] ?: return@forEach
-            Text(
-                category.displayName(),
-                style = androidx.compose.material3.MaterialTheme.typography.labelMedium,
-            )
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                categoryTags.forEach { tag ->
-                    FilterChip(
-                        selected = tag.id in selectedTagIds,
-                        onClick = { onToggle(tag.id) },
-                        label = { Text(tag.displayName()) },
-                    )
-                }
-            }
         }
     }
 }

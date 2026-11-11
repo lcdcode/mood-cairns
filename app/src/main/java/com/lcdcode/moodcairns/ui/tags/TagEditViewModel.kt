@@ -29,9 +29,8 @@ data class TagEditUiState(
     val nameIsDefault: Boolean = false,
     val categoryId: String = "",
     val sortOrder: Int = 0,
+    /** Zero-based; the picker shows it as 1..[Tag.MAX_COLUMNS]. */
     val columnIndex: Int = 0,
-    /** Category when loaded; moving to another one resets [columnIndex]. */
-    val originalCategoryId: String? = null,
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
@@ -73,8 +72,7 @@ class TagEditViewModel @Inject constructor(
                             nameIsDefault = SeedNames.tagRes(existing.name) != null,
                             categoryId = existing.categoryId,
                             sortOrder = existing.sortOrder,
-                            columnIndex = existing.columnIndex,
-                            originalCategoryId = existing.categoryId,
+                            columnIndex = existing.visibleColumn,
                             loaded = true,
                         )
                     }
@@ -92,8 +90,16 @@ class TagEditViewModel @Inject constructor(
 
     fun setName(v: String) =
         _state.update { it.copy(name = v, nameIsDefault = false, error = null) }
-    fun setCategory(categoryId: String) =
-        _state.update { it.copy(categoryId = categoryId, error = null) }
+    fun setCategory(categoryId: String) = _state.update {
+        it.copy(
+            categoryId = categoryId,
+            columnIndex = columnAfterCategoryChange(it.columnIndex, it.categoryId, categoryId),
+            error = null,
+        )
+    }
+
+    fun setColumn(columnIndex: Int) =
+        _state.update { it.copy(columnIndex = columnIndex.coerceIn(Tag.COLUMN_RANGE)) }
 
     fun save() {
         val cur = _state.value
@@ -106,13 +112,12 @@ class TagEditViewModel @Inject constructor(
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
             val sortOrder = if (cur.id == 0L) repo.nextSortOrder(cur.categoryId) else cur.sortOrder
-            val keepsCategory = cur.categoryId == cur.originalCategoryId
             val tag = Tag(
                 id = cur.id,
                 name = name,
                 categoryId = cur.categoryId,
                 sortOrder = sortOrder,
-                columnIndex = if (keepsCategory) cur.columnIndex else 0,
+                columnIndex = cur.columnIndex,
             )
             try {
                 repo.upsert(tag)

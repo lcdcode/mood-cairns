@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 data class TagListUiState(
     val categories: List<TagCategory> = emptyList(),
-    /** Tags keyed by category id; see [groupedByCategory]. */
+    /** Tags keyed by category id (see [groupedByCategory]), each sorted by column. */
     val byCategory: Map<String, List<Tag>> = emptyMap(),
 )
 
@@ -26,7 +26,9 @@ class TagListViewModel @Inject constructor(
 
     val state: StateFlow<TagListUiState> =
         combine(repo.observeAll(), repo.observeCategories()) { all, categories ->
-            TagListUiState(categories = categories, byCategory = all.groupedByCategory(categories))
+            val byCategory = all.groupedByCategory(categories)
+                .mapValues { (_, tags) -> tags.sortedBy { it.visibleColumn } }
+            TagListUiState(categories = categories, byCategory = byCategory)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TagListUiState())
 
     fun onReorder(orderedIds: List<Long>) = viewModelScope.launch {

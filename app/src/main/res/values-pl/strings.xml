@@ -214,6 +214,7 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tagi</string>
     <string name="tag_list_empty">Brak tagów.</string>
+    <string name="tag_list_column_heading">Kolumna %1$d</string>
     <string name="tag_list_add_category">Dodaj kategorię</string>
     <string name="tag_category_delete_title">Usunąć kategorię?</string>
     <string name="tag_category_delete_body_empty">Kategoria „%1$s” zostanie usunięta. Nie zawiera tagów.</string>
@@ -228,6 +229,7 @@
     <string name="tag_edit_title_new">Nowy tag</string>
     <string name="tag_edit_title_edit">Edytuj tag</string>
     <string name="tag_edit_category_label">Kategoria</string>
+    <string name="tag_edit_column_label">Kolumna</string>
     <string name="tag_edit_delete">Usuń tag</string>
     <string name="tag_edit_this_tag">ten tag</string>
     <string name="tag_edit_delete_title">Usunąć tag?</string>

@@ -30,8 +30,15 @@ data class Tag(
     @ColumnInfo(name = "category") val categoryId: String,
     val sortOrder: Int = 0,
     /**
-     * Visual column within the category section; [sortOrder] orders tags inside a
-     * column. Stored for an upcoming layout feature, not yet read by the UI.
+     * Zero-based visual column within the category section, below [MAX_COLUMNS];
+     * [sortOrder] orders tags inside a column.
      */
     @ColumnInfo(defaultValue = "0") val columnIndex: Int = 0,
-)
+) {
+    companion object {
+        /** Most columns a category section can be split into. */
+        const val MAX_COLUMNS = 3
+
+        val COLUMN_RANGE: IntRange = 0 until MAX_COLUMNS
+    }
+}
