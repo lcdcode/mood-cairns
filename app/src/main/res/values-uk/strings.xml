@@ -33,6 +33,7 @@
     <string name="common_continue">Продовжити</string>
     <string name="common_deleting">Видалення…</string>
     <string name="common_name_label">Назва</string>
+    <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Змінити порядок</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -214,6 +215,12 @@
     <!-- Tag list -->
     <string name="tag_list_title">Теги</string>
     <string name="tag_list_empty">Тегів поки немає.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">Вибрано: %1$d</item>
+        <item quantity="few">Вибрано: %1$d</item>
+        <item quantity="many">Вибрано: %1$d</item>
+        <item quantity="other">Вибрано: %1$d</item>
+    </plurals>
     <string name="tag_list_column_heading">Стовпець %1$d</string>
     <string name="tag_list_add_category">Додати категорію</string>
     <string name="tag_category_delete_title">Видалити категорію?</string>
@@ -330,7 +337,6 @@
     <string name="charts_prompt_slots_label">Вікна нагадувань</string>
     <string name="charts_slot_other">Інші</string>
     <string name="charts_scales_label">Шкали</string>
-    <string name="charts_tags_label">Теги</string>
     <string name="charts_axis_caption_absolute" formatted="false">Вертикальна вісь: положення в межах діапазону кожної шкали (100% = верх діапазону; шкали «що нижче, то краще» перевернуто)</string>
     <string name="charts_axis_caption_values">Вертикальна вісь: записані значення</string>
     <string name="charts_axis_caption_single">Вертикальна вісь: %1$s (%2$s)</string>

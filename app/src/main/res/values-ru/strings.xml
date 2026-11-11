@@ -33,6 +33,7 @@
     <string name="common_continue">Продолжить</string>
     <string name="common_deleting">Удаление…</string>
     <string name="common_name_label">Название</string>
+    <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Изменить порядок</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -203,6 +204,12 @@
     <!-- Tag list -->
     <string name="tag_list_title">Теги</string>
     <string name="tag_list_empty">Тегов пока нет.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">Выбрано: %1$d</item>
+        <item quantity="few">Выбрано: %1$d</item>
+        <item quantity="many">Выбрано: %1$d</item>
+        <item quantity="other">Выбрано: %1$d</item>
+    </plurals>
     <string name="tag_list_column_heading">Столбец %1$d</string>
     <string name="tag_list_add_category">Добавить категорию</string>
     <string name="tag_category_delete_title">Удалить категорию?</string>
@@ -314,7 +321,6 @@
     <string name="charts_prompt_slots_label">Интервалы напоминаний</string>
     <string name="charts_slot_other">Другие</string>
     <string name="charts_scales_label">Шкалы</string>
-    <string name="charts_tags_label">Теги</string>
     <string name="charts_axis_caption_absolute" formatted="false">Вертикальная ось: положение в пределах диапазона каждой шкалы (100% = верх диапазона; шкалы с пометкой «меньше — лучше» перевёрнуты)</string>
     <string name="charts_axis_caption_values">Вертикальная ось: записанные значения</string>
     <string name="charts_axis_caption_single">Вертикальная ось: %1$s (%2$s)</string>

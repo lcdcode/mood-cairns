@@ -26,6 +26,7 @@
     <string name="common_continue">Continuar</string>
     <string name="common_deleting">Eliminando…</string>
     <string name="common_name_label">Nombre</string>
+    <string name="common_tags_label">Etiquetas</string>
     <string name="common_reorder">Reordenar</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -202,6 +203,11 @@
     <!-- Tag list -->
     <string name="tag_list_title">Etiquetas</string>
     <string name="tag_list_empty">Aún no hay etiquetas.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d seleccionada</item>
+        <item quantity="many">%1$d seleccionadas</item>
+        <item quantity="other">%1$d seleccionadas</item>
+    </plurals>
     <string name="tag_list_column_heading">Columna %1$d</string>
     <string name="tag_list_add_category">Añadir categoría</string>
     <string name="tag_category_delete_title">¿Eliminar categoría?</string>
@@ -311,7 +317,6 @@
     <string name="charts_prompt_slots_label">Franjas de aviso</string>
     <string name="charts_slot_other">Otras</string>
     <string name="charts_scales_label">Escalas</string>
-    <string name="charts_tags_label">Etiquetas</string>
     <string name="charts_axis_caption_absolute" formatted="false">Eje vertical: posición dentro del rango de cada escala (100% = parte superior del rango; las escalas \"cuanto más bajo, mejor\" se invierten)</string>
     <string name="charts_axis_caption_values">Eje vertical: valores registrados</string>
     <string name="charts_axis_caption_single">Eje vertical: %1$s (%2$s)</string>

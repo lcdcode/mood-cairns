@@ -33,6 +33,7 @@
     <string name="common_continue">Kontynuuj</string>
     <string name="common_deleting">Usuwanie…</string>
     <string name="common_name_label">Nazwa</string>
+    <string name="common_tags_label">Tagi</string>
     <string name="common_reorder">Zmień kolejność</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -214,6 +215,12 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tagi</string>
     <string name="tag_list_empty">Brak tagów.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">Wybrano: %1$d</item>
+        <item quantity="few">Wybrano: %1$d</item>
+        <item quantity="many">Wybrano: %1$d</item>
+        <item quantity="other">Wybrano: %1$d</item>
+    </plurals>
     <string name="tag_list_column_heading">Kolumna %1$d</string>
     <string name="tag_list_add_category">Dodaj kategorię</string>
     <string name="tag_category_delete_title">Usunąć kategorię?</string>
@@ -331,7 +338,6 @@
     <string name="charts_prompt_slots_label">Okna przypomnień</string>
     <string name="charts_slot_other">Inne</string>
     <string name="charts_scales_label">Skale</string>
-    <string name="charts_tags_label">Tagi</string>
     <string name="charts_axis_caption_absolute" formatted="false">Oś pionowa: położenie w zakresie każdej skali (100% = góra zakresu; skale „im niżej, tym lepiej” są odwrócone)</string>
     <string name="charts_axis_caption_values">Oś pionowa: zapisane wartości</string>
     <string name="charts_axis_caption_single">Oś pionowa: %1$s (%2$s)</string>

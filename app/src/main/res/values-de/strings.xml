@@ -27,6 +27,7 @@
     <string name="common_continue">Weiter</string>
     <string name="common_deleting">Wird gelöscht…</string>
     <string name="common_name_label">Name</string>
+    <string name="common_tags_label">Tags</string>
     <string name="common_reorder">Neu anordnen</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -198,6 +199,10 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">Noch keine Tags.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d ausgewählt</item>
+        <item quantity="other">%1$d ausgewählt</item>
+    </plurals>
     <string name="tag_list_column_heading">Spalte %1$d</string>
     <string name="tag_list_add_category">Kategorie hinzufügen</string>
     <string name="tag_category_delete_title">Kategorie löschen?</string>
@@ -300,7 +305,6 @@
     <string name="charts_prompt_slots_label">Erinnerungszeiten</string>
     <string name="charts_slot_other">Sonstige</string>
     <string name="charts_scales_label">Skalen</string>
-    <string name="charts_tags_label">Tags</string>
     <string name="charts_axis_caption_absolute" formatted="false">Vertikale Achse: Position im Bereich der jeweiligen Skala (100&#160;% = oberes Ende; „niedriger ist besser“-Skalen sind umgekehrt)</string>
     <string name="charts_axis_caption_values">Vertikale Achse: erfasste Werte</string>
     <string name="charts_axis_caption_single">Vertikale Achse: %1$s (%2$s)</string>

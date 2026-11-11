@@ -7,6 +7,7 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
@@ -25,6 +26,7 @@ data class HistoryUiState(
     val scalesById: Map<Long, Scale> = emptyMap(),
     val windowsById: Map<Long, PromptWindow> = emptyMap(),
     val tags: List<Tag> = emptyList(),
+    val categories: List<TagCategory> = emptyList(),
     val dateFilter: LocalDate? = null,
     val slotFilter: PromptSlot? = null,
     val searchQuery: String = "",
@@ -51,12 +53,14 @@ class HistoryViewModel @Inject constructor(
                 scales.observeAll(),
                 windows.observeAll(),
                 tags.observeAll(),
-            ) { list, scaleList, windowList, tagList ->
+                tags.observeCategories(),
+            ) { list, scaleList, windowList, tagList, categoryList ->
                 _state.value.copy(
                     entries = list,
                     scalesById = scaleList.associateBy { it.id },
                     windowsById = windowList.associateBy { it.id },
                     tags = tagList,
+                    categories = categoryList,
                 )
             }.collect { _state.value = it }
         }

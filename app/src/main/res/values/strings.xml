@@ -41,6 +41,8 @@
     <string name="common_continue">Continue</string>
     <string name="common_deleting">Deleting…</string>
     <string name="common_name_label">Name</string>
+    <!-- Heading over tag filters on History and Charts. -->
+    <string name="common_tags_label">Tags</string>
     <!-- Content description of a drag handle used to reorder list items. -->
     <string name="common_reorder">Reorder</string>
     <!-- Joins short items such as tag names into one line. The quotes keep the spaces. -->
@@ -252,6 +254,12 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">No tags yet.</string>
+    <!-- %1$d number of tags selected as a filter. Shown next to the "Tags" heading on
+         History and Charts while the tag list is collapsed or open. -->
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
     <!-- %1$d column number (1, 2 or 3). Heading over one column's tags on the Tags
          screen, shown when a category's tags are split into several columns. -->
     <string name="tag_list_column_heading">Column %1$d</string>
@@ -378,7 +386,6 @@
     <!-- Filter chip for entries whose prompt window no longer exists. -->
     <string name="charts_slot_other">Other</string>
     <string name="charts_scales_label">Scales</string>
-    <string name="charts_tags_label">Tags</string>
     <!-- Caption under the chart explaining the vertical axis. Keep "top of range"
          rather than "best": on a scale where high is bad, 100% is the worst end. -->
     <string name="charts_axis_caption_absolute" formatted="false">Vertical axis: position within each scale\'s own range (100% = top of range; \"lower is better\" scales are flipped)</string>

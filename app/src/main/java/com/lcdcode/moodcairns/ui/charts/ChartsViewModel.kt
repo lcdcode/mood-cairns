@@ -8,6 +8,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
@@ -90,6 +91,7 @@ data class ChartsUiState(
     val selectedScaleIds: Set<Long> = emptySet(),
     val scales: List<Scale> = emptyList(),
     val tags: List<Tag> = emptyList(),
+    val categories: List<TagCategory> = emptyList(),
     // OR semantics: entries carrying any selected tag pass; empty = no tag filter.
     val selectedTagIds: Set<Long> = emptySet(),
     val series: List<ScaleSeries> = emptyList(),
@@ -154,7 +156,8 @@ class ChartsViewModel @Inject constructor(
     private val scalesFlow = scales.observeAll()
     private val windowsFlow = windows.observeAll()
     private val earliestFlow = entries.observeEarliestRecordedAt()
-    private val tagsFlow = tags.observeAll()
+    // Paired so the state combine stays within the typed five-flow overload.
+    private val tagsFlow = combine(tags.observeAll(), tags.observeCategories(), ::Pair)
 
     val state: StateFlow<ChartsUiState> = filters
         .flatMapLatest { f ->
@@ -173,8 +176,9 @@ class ChartsViewModel @Inject constructor(
                 earliestFlow,
                 windowsFlow,
                 tagsFlow,
-            ) { rows, scaleList, earliest, windowList, tagList ->
+            ) { rows, scaleList, earliest, windowList, (tagList, categoryList) ->
                 buildState(f, rows, scaleList, earliest, windowList, tagList)
+                    .copy(categories = categoryList)
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ChartsUiState())

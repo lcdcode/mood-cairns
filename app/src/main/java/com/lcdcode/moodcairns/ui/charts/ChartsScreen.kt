@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +68,6 @@ import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.ui.common.SkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.SlotChip
-import com.lcdcode.moodcairns.ui.common.allOrClearLabel
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.currentLocale
 import com.lcdcode.moodcairns.ui.common.displayLabel
@@ -77,6 +77,7 @@ import com.lcdcode.moodcairns.ui.common.formatScaleValue
 import com.lcdcode.moodcairns.ui.common.rangeLabel
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
+import com.lcdcode.moodcairns.ui.tags.TagFilterPanel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
@@ -178,9 +179,10 @@ fun ChartsScreen(
                 onToggle = viewModel::toggleScale,
             )
 
-            TagFilterRow(
+            TagFilterPanel(
+                categories = state.categories,
                 tags = state.tags,
-                selected = state.selectedTagIds,
+                selectedTagIds = state.selectedTagIds,
                 onToggle = viewModel::toggleTagFilter,
                 onClear = viewModel::clearTagFilter,
             )
@@ -479,75 +481,6 @@ private fun ScaleToggleRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TagFilterRow(
-    tags: List<com.lcdcode.moodcairns.data.entity.Tag>,
-    selected: Set<Long>,
-    onToggle: (Long) -> Unit,
-    onClear: () -> Unit,
-) {
-    if (tags.isEmpty()) return
-    val scrollState = rememberScrollState()
-    val surface = MaterialTheme.colorScheme.surface
-    Column {
-        SectionLabel(R.string.charts_tags_label)
-        Spacer(Modifier.height(4.dp))
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.horizontalScroll(scrollState),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val noTagsSelected = selected.isEmpty()
-                FilterChip(
-                    selected = noTagsSelected,
-                    onClick = onClear,
-                    label = { Text(allOrClearLabel(noTagsSelected)) },
-                )
-                tags.forEach { tag ->
-                    FilterChip(
-                        selected = tag.id in selected,
-                        onClick = { onToggle(tag.id) },
-                        label = { Text(tag.displayName()) },
-                    )
-                }
-            }
-            // Edge fades signal that more chips exist off-screen. These overlays
-            // are purely decorative and do not intercept pointer events.
-            if (scrollState.canScrollBackward) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                colorStops = arrayOf(
-                                    0f to surface,
-                                    0.08f to Color.Transparent,
-                                    1f to Color.Transparent,
-                                ),
-                            ),
-                        ),
-                )
-            }
-            if (scrollState.canScrollForward) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(
-                            Brush.horizontalGradient(
-                                colorStops = arrayOf(
-                                    0f to Color.Transparent,
-                                    0.92f to Color.Transparent,
-                                    1f to surface,
-                                ),
-                            ),
-                        ),
-                )
-            }
-        }
-    }
-}
-
 @Composable
 private fun ChartArea(
     series: List<ScaleSeries>,
@@ -678,7 +611,10 @@ private fun ChartArea(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(plotHeight),
+                .height(plotHeight)
+                // Own render layer: when content above resizes (e.g. the tag panel
+                // animating open), the chart is moved, not redrawn, every frame.
+                .graphicsLayer(),
         ) {
             CartesianChartHost(
                 chart = rememberCartesianChart(

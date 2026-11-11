@@ -67,6 +67,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.SkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.SlotChip
 import com.lcdcode.moodcairns.ui.common.allOrClearLabel
@@ -77,6 +78,7 @@ import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
+import com.lcdcode.moodcairns.ui.tags.TagFilterPanel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -140,6 +142,7 @@ fun HistoryScreen(
                 onSlotSelect = { viewModel.setSlotFilter(it) },
                 selectedDate = state.dateFilter,
                 onDateSelect = { viewModel.setDateFilter(it) },
+                categories = state.categories,
                 tags = state.tags,
                 selectedTagIds = state.tagFilter,
                 onTagToggle = { viewModel.toggleTagFilter(it) },
@@ -339,6 +342,7 @@ private fun FilterBar(
     onSlotSelect: (PromptSlot?) -> Unit,
     selectedDate: LocalDate?,
     onDateSelect: (LocalDate?) -> Unit,
+    categories: List<TagCategory>,
     tags: List<Tag>,
     selectedTagIds: Set<Long>,
     onTagToggle: (Long) -> Unit,
@@ -469,59 +473,13 @@ private fun FilterBar(
             }
         }
 
-        if (tags.isNotEmpty()) {
-            val tagScrollState = rememberScrollState()
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.horizontalScroll(tagScrollState),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    val noTagsSelected = selectedTagIds.isEmpty()
-                    FilterChip(
-                        selected = noTagsSelected,
-                        onClick = onTagClear,
-                        label = { Text(allOrClearLabel(noTagsSelected)) },
-                    )
-                    tags.forEach { tag ->
-                        FilterChip(
-                            selected = tag.id in selectedTagIds,
-                            onClick = { onTagToggle(tag.id) },
-                            label = { Text(tag.displayName()) },
-                        )
-                    }
-                }
-                if (tagScrollState.canScrollBackward) {
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colorStops = arrayOf(
-                                        0f to surface,
-                                        0.08f to Color.Transparent,
-                                        1f to Color.Transparent,
-                                    ),
-                                ),
-                            ),
-                    )
-                }
-                if (tagScrollState.canScrollForward) {
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colorStops = arrayOf(
-                                        0f to Color.Transparent,
-                                        0.92f to Color.Transparent,
-                                        1f to surface,
-                                    ),
-                                ),
-                            ),
-                    )
-                }
-            }
-        }
+        TagFilterPanel(
+            categories = categories,
+            tags = tags,
+            selectedTagIds = selectedTagIds,
+            onToggle = onTagToggle,
+            onClear = onTagClear,
+        )
     }
 
     if (showDatePicker) {

@@ -58,6 +58,7 @@ class HardcodedUiTextTest {
             "ui/tags/CategoryDialogs.kt",
             "ui/tags/TagCategoryUi.kt",
             "ui/tags/TagChipGroups.kt",
+            "ui/tags/TagFilterPanel.kt",
             "ui/tags/TagEditScreen.kt",
             "ui/tags/TagListScreen.kt",
             "ui/tags/TagWarnings.kt",
