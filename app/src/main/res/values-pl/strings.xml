@@ -546,9 +546,11 @@
     <string name="backup_config_export_success">Wyeksportowano konfigurację: %1$s</string>
     <string name="backup_config_import_success">Konfiguracja zaimportowana. Skale: %1$d, tagi: %2$d, okna przypomnień: %3$d. Twoje wpisy nie zostały zmienione.</string>
     <string name="backup_config_import_failed">Import konfiguracji nie powiódł się: %1$s</string>
+    <string name="backup_config_import_partial">Konfiguracja zaimportowana częściowo. Skale: %1$d, tagi: %2$d. Nie udało się zaktualizować okien przypomnień (%3$s), sprawdź je w Ustawieniach. Twoje wpisy nie zostały zmienione.</string>
     <string name="backup_config_only_label">Tylko konfiguracja</string>
     <string name="backup_config_incompatible_title">Niezgodna konfiguracja</string>
     <string name="backup_config_incompatible_version">Ta konfiguracja używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi zaimportować. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
+    <string name="backup_config_incompatible_backup_version">Ta kopia używa formatu w wersji %1$d, z którego ta wersja aplikacji nie potrafi zaimportować konfiguracji. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
     <string name="backup_config_incompatible_data_loss">Ta konfiguracja jest niezgodna z twoimi danymi: jej import mógłby usunąć lub zmienić dane w istniejących wpisach. Nic nie zostało zmienione.</string>
     <string name="backup_config_conflict_item">• %1$s</string>
     <plurals name="backup_config_conflict_scale_missing">

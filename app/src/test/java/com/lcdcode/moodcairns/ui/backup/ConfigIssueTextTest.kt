@@ -14,10 +14,14 @@ class ConfigIssueTextTest {
     private val sleep = Scale(id = 1, name = "Sleep", minValue = 1, maxValue = 10, colorArgb = 0)
 
     @Test
-    fun unsupportedVersion_explainsTheVersion() {
+    fun unsupportedVersion_namesTheKindOfFile() {
         assertEquals(
             listOf(UiText.Res(R.string.backup_config_incompatible_version, listOf(7))),
-            ConfigIssue.UnsupportedVersion(found = 7).toUiTexts(),
+            ConfigIssue.UnsupportedVersion(found = 7, fromConfigFile = true).toUiTexts(),
+        )
+        assertEquals(
+            listOf(UiText.Res(R.string.backup_config_incompatible_backup_version, listOf(7))),
+            ConfigIssue.UnsupportedVersion(found = 7, fromConfigFile = false).toUiTexts(),
         )
     }
 

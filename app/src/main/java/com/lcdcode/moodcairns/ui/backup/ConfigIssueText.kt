@@ -12,7 +12,8 @@ import com.lcdcode.moodcairns.ui.tags.displayNameRes
 
 /** Why a configuration could not be imported. Nothing was changed in either case. */
 sealed interface ConfigIssue {
-    data class UnsupportedVersion(val found: Int) : ConfigIssue
+    /** [fromConfigFile] is false when the file was a full backup. */
+    data class UnsupportedVersion(val found: Int, val fromConfigFile: Boolean) : ConfigIssue
     data class WouldLoseData(val conflicts: List<ConfigConflict>) : ConfigIssue
 }
 
@@ -21,8 +22,14 @@ const val MAX_LISTED_CONFLICTS = 10
 
 /** The dialog's paragraphs: an explanation, then one line per listed conflict. */
 fun ConfigIssue.toUiTexts(): List<UiText> = when (this) {
-    is ConfigIssue.UnsupportedVersion ->
-        listOf(UiText.Res(R.string.backup_config_incompatible_version, listOf(found)))
+    is ConfigIssue.UnsupportedVersion -> {
+        val message = if (fromConfigFile) {
+            R.string.backup_config_incompatible_version
+        } else {
+            R.string.backup_config_incompatible_backup_version
+        }
+        listOf(UiText.Res(message, listOf(found)))
+    }
     is ConfigIssue.WouldLoseData -> {
         val listed = conflicts.take(MAX_LISTED_CONFLICTS).map {
             UiText.Res(R.string.backup_config_conflict_item, listOf(it.toUiText()))

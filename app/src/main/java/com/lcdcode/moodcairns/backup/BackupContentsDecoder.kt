@@ -48,7 +48,7 @@ internal class BackupContentsDecoder(private val json: Json) {
     private fun decodeConfigFile(contents: JsonObject): ConfigFile {
         val version = intField(contents, ConfigFile.VERSION_KEY)
         if (version !in ConfigFile.SUPPORTED_VERSIONS) {
-            fail(ImportError.UnsupportedVersion(version))
+            fail(ImportError.UnsupportedVersion(version, fromConfigFile = true))
         }
         return decode(contents) { json.decodeFromJsonElement(ConfigFile.serializer(), it) }
     }
@@ -79,11 +79,10 @@ internal class BackupContentsDecoder(private val json: Json) {
 
     private fun toConfigEntities(file: ConfigFile): ConfigEntities {
         val categories = resolveCategories(file.tagCategories)
-        val namedTags = file.tags.filter { it.name.isNotBlank() }
         return ConfigEntities(
             scales = file.scales.map(::validScale),
             tagCategories = categories,
-            tags = resolveTags(namedTags, categories.mapTo(HashSet()) { it.id }).tags,
+            tags = resolveTags(file.tags, categories.mapTo(HashSet()) { it.id }).tags,
             windows = file.promptWindows.map(::validWindow),
         )
     }
@@ -100,9 +99,14 @@ internal class BackupContentsDecoder(private val json: Json) {
         return scale
     }
 
+    /**
+     * Applies the window editor's rules: a window that ends before it starts would never
+     * fire, and the editor could not fix it without changing its times.
+     */
     private fun validWindow(dto: PromptWindowDto): PromptWindow =
-        runCatching { dto.toEntity() }
-            .getOrElse { fail(ImportError.Malformed("Invalid prompt window \"${dto.label}\"")) }
+        runCatching { dto.toEntity() }.getOrNull()
+            ?.takeIf { it.label.isNotBlank() && it.startTime.isBefore(it.endTime) }
+            ?: fail(ImportError.Malformed("Invalid prompt window \"${dto.label}\""))
 
     private companion object {
         const val SCHEMA_VERSION_KEY = "schemaVersion"

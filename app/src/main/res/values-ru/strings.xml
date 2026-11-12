@@ -516,9 +516,11 @@
     <string name="backup_config_export_success">Конфигурация сохранена: %1$s</string>
     <string name="backup_config_import_success">Конфигурация импортирована. Шкалы: %1$d, теги: %2$d, интервалы напоминаний: %3$d. Ваши записи не изменены.</string>
     <string name="backup_config_import_failed">Не удалось импортировать конфигурацию: %1$s</string>
+    <string name="backup_config_import_partial">Конфигурация импортирована частично. Шкалы: %1$d, теги: %2$d. Не удалось обновить интервалы напоминаний (%3$s), проверьте их в настройках. Ваши записи не изменены.</string>
     <string name="backup_config_only_label">Только конфигурация</string>
     <string name="backup_config_incompatible_title">Конфигурация несовместима</string>
     <string name="backup_config_incompatible_version">Эта конфигурация использует формат версии %1$d, который текущая версия приложения не может импортировать. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
+    <string name="backup_config_incompatible_backup_version">Этот бэкап использует формат версии %1$d, из которого текущая версия приложения не может импортировать конфигурацию. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
     <string name="backup_config_incompatible_data_loss">Эта конфигурация несовместима с вашими данными: её импорт может удалить или изменить данные в существующих записях. Ничего не изменено.</string>
     <string name="backup_config_conflict_item">• %1$s</string>
     <plurals name="backup_config_conflict_scale_missing">

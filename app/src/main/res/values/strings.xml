@@ -599,10 +599,14 @@
     <string name="backup_config_import_success">Configuration imported. Scales: %1$d, tags: %2$d, prompt windows: %3$d. Your entries were not changed.</string>
     <!-- %1$s is one of the import_error_* sentences. -->
     <string name="backup_config_import_failed">Configuration import failed: %1$s</string>
+    <!-- The setup was imported but the prompt windows were not. %3$s is a technical detail, shown as-is. -->
+    <string name="backup_config_import_partial">Configuration partly imported. Scales: %1$d, tags: %2$d. Updating the prompt windows failed (%3$s), so check them in Settings. Your entries were not changed.</string>
     <!-- Shown under the file name of a configuration-only export in the list of backups. -->
     <string name="backup_config_only_label">Configuration only</string>
     <string name="backup_config_incompatible_title">Configuration not compatible</string>
     <string name="backup_config_incompatible_version">This configuration uses format version %1$d, which this version of the app can\'t import. Update the app and try again. Nothing was changed.</string>
+    <!-- Like backup_config_incompatible_version, when the picked file is a full backup. -->
+    <string name="backup_config_incompatible_backup_version">This backup uses format version %1$d, which this version of the app can\'t import a configuration from. Update the app and try again. Nothing was changed.</string>
     <string name="backup_config_incompatible_data_loss">This configuration is not compatible with your data: importing it could delete or change data in your existing entries. Nothing was changed.</string>
     <!-- A bullet before one reason. %1$s is one backup_config_conflict_* sentence. -->
     <string name="backup_config_conflict_item">• %1$s</string>

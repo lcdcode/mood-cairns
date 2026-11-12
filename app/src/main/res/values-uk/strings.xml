@@ -546,9 +546,11 @@
     <string name="backup_config_export_success">Конфігурацію експортовано: %1$s</string>
     <string name="backup_config_import_success">Конфігурацію імпортовано. Шкали: %1$d, теги: %2$d, вікна нагадувань: %3$d. Ваші записи не змінено.</string>
     <string name="backup_config_import_failed">Не вдалося імпортувати конфігурацію: %1$s</string>
+    <string name="backup_config_import_partial">Конфігурацію імпортовано частково. Шкали: %1$d, теги: %2$d. Не вдалося оновити вікна нагадувань (%3$s), перевірте їх у налаштуваннях. Ваші записи не змінено.</string>
     <string name="backup_config_only_label">Лише конфігурація</string>
     <string name="backup_config_incompatible_title">Конфігурація несумісна</string>
     <string name="backup_config_incompatible_version">Ця конфігурація використовує формат версії %1$d, який ця версія застосунку не може імпортувати. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
+    <string name="backup_config_incompatible_backup_version">Ця копія використовує формат версії %1$d, з якого ця версія застосунку не може імпортувати конфігурацію. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
     <string name="backup_config_incompatible_data_loss">Ця конфігурація несумісна з вашими даними: її імпорт може видалити або змінити дані в наявних записах. Нічого не змінено.</string>
     <string name="backup_config_conflict_item">• %1$s</string>
     <plurals name="backup_config_conflict_scale_missing">

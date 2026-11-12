@@ -257,6 +257,8 @@ class BackupViewModel @Inject constructor(
             Log.w(TAG, "Config import refused: ${result.conflicts.size} conflicts")
         is ConfigImportResult.UnsupportedVersion ->
             Log.w(TAG, "Config import refused: format version ${result.found}")
+        is ConfigImportResult.WindowsNotUpdated ->
+            Log.w(TAG, "Config imported without prompt windows: ${result.detail}")
         is ConfigImportResult.Failure -> Log.w(TAG, "Config import failed: ${result.error}")
     }
 
@@ -273,6 +275,10 @@ class BackupViewModel @Inject constructor(
                 R.string.backup_config_import_success,
                 listOf(scales, tags, windows),
             )
+            is ConfigImportResult.WindowsNotUpdated -> UiText.Res(
+                R.string.backup_config_import_partial,
+                listOf(scales, tags, detail),
+            )
             is ConfigImportResult.Failure ->
                 UiText.Res(R.string.backup_config_import_failed, listOf(error.toUiText()))
             is ConfigImportResult.Incompatible, is ConfigImportResult.UnsupportedVersion -> null
@@ -280,8 +286,12 @@ class BackupViewModel @Inject constructor(
 
         private fun ConfigImportResult.toConfigIssue(): ConfigIssue? = when (this) {
             is ConfigImportResult.Incompatible -> ConfigIssue.WouldLoseData(conflicts)
-            is ConfigImportResult.UnsupportedVersion -> ConfigIssue.UnsupportedVersion(found)
-            is ConfigImportResult.Success, is ConfigImportResult.Failure -> null
+            is ConfigImportResult.UnsupportedVersion ->
+                ConfigIssue.UnsupportedVersion(found, fromConfigFile)
+            is ConfigImportResult.Success,
+            is ConfigImportResult.WindowsNotUpdated,
+            is ConfigImportResult.Failure,
+            -> null
         }
 
         /** Minimum length for a new backup passphrase. Not applied on import. */

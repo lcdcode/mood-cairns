@@ -1,6 +1,7 @@
 package com.lcdcode.moodcairns.backup
 
 import android.net.Uri
+import android.util.Log
 import androidx.room.withTransaction
 import com.lcdcode.moodcairns.data.db.MoodDatabase
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
@@ -18,6 +19,9 @@ import javax.inject.Singleton
  * Imports the setup (scales, tags, categories, prompt windows) from a configuration file
  * or a full backup, keeping every entry. See [planMoodConfigImport] for what makes an
  * import incompatible. Nothing is written unless the whole mood-side plan applies.
+ *
+ * The two databases cannot share a transaction, so prompt windows are written after the
+ * mood side commits; if that step fails the result is [ConfigImportResult.WindowsNotUpdated].
  */
 @Singleton
 class ConfigImportService @Inject constructor(
@@ -28,31 +32,45 @@ class ConfigImportService @Inject constructor(
     private val scheduler: PromptScheduler,
 ) {
     suspend fun importConfig(uri: Uri, secret: CharArray): ConfigImportResult {
-        val incoming = try {
-            serializer.parseConfig(reader.readText(uri), secret)
-        } catch (e: BackupImportException) {
-            return e.error.toConfigResult()
+        val incoming = catchingFailures { serializer.parseConfig(reader.readText(uri), secret) }
+            .getOrElse { return parseFailure(it) }
+
+        // The mood side goes first: it is the side that can refuse, and a failure there
+        // rolls back its transaction, so nothing has changed yet.
+        val plan = catchingFailures { applyMoodConfig(incoming) }.getOrElse {
+            Log.w(TAG, "Config import failed before anything was changed", it)
+            return ConfigImportResult.Failure(ImportError.WriteFailed(it.describe()))
+        }
+        if (plan is MoodConfigPlan.Incompatible) {
+            return ConfigImportResult.Incompatible(plan.conflicts)
         }
 
-        return try {
-            // The mood side goes first: it is the side that can refuse. The schedule
-            // side only runs once the mood side has committed.
-            val plan = applyMoodConfig(incoming)
-            if (plan is MoodConfigPlan.Incompatible) {
-                return ConfigImportResult.Incompatible(plan.conflicts)
-            }
-            val previousWindows = applyWindows(incoming.windows)
-            reschedulePrompts(previousWindows)
+        // The setup is committed from here on, so a failure must not read as "nothing changed".
+        return catchingFailures {
+            reschedulePrompts(applyWindows(incoming.windows))
             ConfigImportResult.Success(
                 scales = incoming.scales.size,
                 tags = incoming.tags.size,
                 windows = incoming.windows.size,
             )
-        } catch (e: CancellationException) {
-            throw e
-        } catch (t: Throwable) {
-            ConfigImportResult.Failure(ImportError.WriteFailed(t.message ?: t.javaClass.simpleName))
+        }.getOrElse {
+            Log.w(TAG, "Config imported, but its prompt windows could not be applied", it)
+            ConfigImportResult.WindowsNotUpdated(
+                scales = incoming.scales.size,
+                tags = incoming.tags.size,
+                detail = it.describe(),
+            )
         }
+    }
+
+    /**
+     * Maps a failure to read the file. Most arrive as [BackupImportException]; anything
+     * else (e.g. the KDF rejecting an empty salt) means the file is damaged.
+     */
+    private fun parseFailure(t: Throwable): ConfigImportResult {
+        if (t is BackupImportException) return t.error.toConfigResult()
+        Log.w(TAG, "Config file could not be parsed", t)
+        return ConfigImportResult.Failure(ImportError.Malformed(t.describe()))
     }
 
     /**
@@ -156,18 +174,39 @@ class ConfigImportService @Inject constructor(
 sealed interface ConfigImportResult {
     data class Success(val scales: Int, val tags: Int, val windows: Int) : ConfigImportResult
 
+    /** Scales, tags, and categories were imported, but the prompt windows were not. */
+    data class WindowsNotUpdated(
+        val scales: Int,
+        val tags: Int,
+        val detail: String,
+    ) : ConfigImportResult
+
     /** Importing would delete or change entry data; nothing was written. */
     data class Incompatible(val conflicts: List<ConfigConflict>) : ConfigImportResult
 
     /** The file's format is newer (or older) than this app version can import. */
-    data class UnsupportedVersion(val found: Int) : ConfigImportResult
+    data class UnsupportedVersion(val found: Int, val fromConfigFile: Boolean) : ConfigImportResult
 
     data class Failure(val error: ImportError) : ConfigImportResult
 }
 
 private fun ImportError.toConfigResult(): ConfigImportResult =
     if (this is ImportError.UnsupportedVersion) {
-        ConfigImportResult.UnsupportedVersion(found)
+        ConfigImportResult.UnsupportedVersion(found, fromConfigFile)
     } else {
         ConfigImportResult.Failure(this)
     }
+
+/** Runs [block], capturing any failure except cancellation, which must propagate. */
+private inline fun <T> catchingFailures(block: () -> T): Result<T> =
+    try {
+        Result.success(block())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (t: Throwable) {
+        Result.failure(t)
+    }
+
+private fun Throwable.describe(): String = message ?: javaClass.simpleName
+
+private const val TAG = "ConfigImportService"

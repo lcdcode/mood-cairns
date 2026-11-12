@@ -30,14 +30,15 @@ internal fun resolveCategories(dtos: List<TagCategoryDto>): List<TagCategory> =
     withOtherLast(dtos.mapNotNull(TagCategoryDto::toEntityOrNull).distinctBy { it.id })
 
 /**
- * Converts backup tags. A tag whose category is not in [categoryIds] moves to Other
- * with columnIndex 0; any other columnIndex is clamped into [Tag.COLUMN_RANGE]. Tags
- * that would share a name within a category (rejected by the unique index) collapse
- * into the first one, preferring tags already in their own category, and a repeated id
- * keeps its first tag.
+ * Converts backup tags, dropping any with a blank name. A tag whose category is not in
+ * [categoryIds] moves to Other with columnIndex 0; any other columnIndex is clamped into
+ * [Tag.COLUMN_RANGE]. Tags that would share a name within a category (rejected by the
+ * unique index) collapse into the first one, preferring tags already in their own
+ * category, and a repeated id keeps its first tag.
  */
 internal fun resolveTags(dtos: List<TagDto>, categoryIds: Set<String>): ResolvedTags {
-    val (homed, orphaned) = dtos.partition { it.category in categoryIds }
+    val (homed, orphaned) = dtos.filter { it.name.isNotBlank() }
+        .partition { it.category in categoryIds }
     val byNameAndCategory = LinkedHashMap<Pair<String, String>, Tag>()
     val seenIds = HashSet<Long>()
     val replacedIds = HashMap<Long, Long>()

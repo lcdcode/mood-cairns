@@ -85,7 +85,10 @@ class BackupContentsDecoderTest {
 
         val error = importError { decoder.forConfigImport(future) }
 
-        assertEquals(ImportError.UnsupportedVersion(ConfigFile.CURRENT_VERSION + 1), error)
+        assertEquals(
+            ImportError.UnsupportedVersion(ConfigFile.CURRENT_VERSION + 1, fromConfigFile = true),
+            error,
+        )
     }
 
     @Test
@@ -122,14 +125,29 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun windowWithUnknownSlot_isMalformed() {
-        val badWindow = morning().copy(slot = "NOON")
-
-        val error = importError {
-            decoder.forConfigImport(encode(configFile(windows = listOf(badWindow))))
+    fun windowsTheEditorCouldNotSave_areRejected() {
+        val invalid = listOf(
+            morning().copy(slot = "NOON"),
+            morning().copy(startTime = "late"),
+            morning().copy(label = " "),
+            morning().copy(startTime = "22:00", endTime = "06:00"),
+            morning().copy(startTime = "08:00", endTime = "08:00"),
+        )
+        for (window in invalid) {
+            val error = importError {
+                decoder.forConfigImport(encode(configFile(windows = listOf(window))))
+            }
+            assertTrue("$window should be rejected, got $error", error is ImportError.Malformed)
         }
+    }
 
-        assertTrue(error is ImportError.Malformed)
+    @Test
+    fun blankTagNames_areDroppedFromAFullBackupToo() {
+        val backup = backupFile().copy(tags = listOf(gym(), gym().copy(id = 2, name = "")))
+
+        val entities = decoder.forConfigImport(encode(backup))
+
+        assertEquals(listOf("Gym"), entities.tags.map { it.name })
     }
 
     @Test

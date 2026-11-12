@@ -161,6 +161,15 @@ class TagImportTest {
     }
 
     @Test
+    fun blankNames_areDropped() {
+        val dtos = listOf(tag(1, "Gym", other), tag(2, "", other), tag(3, "  ", other))
+
+        val resolved = resolveTags(dtos, setOf(other))
+
+        assertEquals(listOf(1L), resolved.tags.map { it.id })
+    }
+
+    @Test
     fun negativeColumnIndex_isClampedToZero() {
         val resolved = resolveTags(listOf(tag(1, "Gym", other, column = -3)), setOf(other))
 

@@ -491,9 +491,11 @@
     <string name="backup_config_export_success">Konfiguration exportiert: %1$s</string>
     <string name="backup_config_import_success">Konfiguration importiert. Skalen: %1$d, Tags: %2$d, Erinnerungszeiten: %3$d. Deine Einträge wurden nicht verändert.</string>
     <string name="backup_config_import_failed">Import der Konfiguration fehlgeschlagen: %1$s</string>
+    <string name="backup_config_import_partial">Konfiguration teilweise importiert. Skalen: %1$d, Tags: %2$d. Die Erinnerungszeiten konnten nicht aktualisiert werden (%3$s), prüfe sie daher in den Einstellungen. Deine Einträge wurden nicht verändert.</string>
     <string name="backup_config_only_label">Nur Konfiguration</string>
     <string name="backup_config_incompatible_title">Konfiguration nicht kompatibel</string>
     <string name="backup_config_incompatible_version">Diese Konfiguration verwendet Formatversion %1$d, die diese App-Version nicht importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
+    <string name="backup_config_incompatible_backup_version">Diese Sicherung verwendet Formatversion %1$d, aus der diese App-Version keine Konfiguration importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
     <string name="backup_config_incompatible_data_loss">Diese Konfiguration ist nicht mit deinen Daten kompatibel: Der Import könnte Daten in deinen bestehenden Einträgen löschen oder verändern. Es wurde nichts verändert.</string>
     <string name="backup_config_conflict_item">• %1$s</string>
     <plurals name="backup_config_conflict_scale_missing">

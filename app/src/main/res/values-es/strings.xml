@@ -514,9 +514,11 @@
     <string name="backup_config_export_success">Configuración exportada: %1$s</string>
     <string name="backup_config_import_success">Configuración importada. Escalas: %1$d, etiquetas: %2$d, franjas de aviso: %3$d. Tus registros no se han modificado.</string>
     <string name="backup_config_import_failed">Error al importar la configuración: %1$s</string>
+    <string name="backup_config_import_partial">Configuración importada en parte. Escalas: %1$d, etiquetas: %2$d. No se pudieron actualizar las franjas de aviso (%3$s); revísalas en Ajustes. Tus registros no se han modificado.</string>
     <string name="backup_config_only_label">Solo configuración</string>
     <string name="backup_config_incompatible_title">Configuración no compatible</string>
     <string name="backup_config_incompatible_version">Esta configuración usa la versión de formato %1$d, que esta versión de la app no puede importar. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
+    <string name="backup_config_incompatible_backup_version">Esta copia usa la versión de formato %1$d, de la que esta versión de la app no puede importar la configuración. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
     <string name="backup_config_incompatible_data_loss">Esta configuración no es compatible con tus datos: importarla podría eliminar o cambiar datos de tus registros existentes. No se ha cambiado nada.</string>
     <string name="backup_config_conflict_item">• %1$s</string>
     <plurals name="backup_config_conflict_scale_missing">
