@@ -169,7 +169,7 @@
     <string name="scale_edit_max_label">Макс.</string>
     <string name="scale_edit_step_label">Шаг</string>
     <string name="scale_edit_default_label">Начальное значение</string>
-    <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкал.</string>
+    <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкалы.</string>
     <string name="scale_edit_lower_better">Меньше — лучше</string>
     <string name="scale_edit_lower_better_hint">Инвертировать шкалу: меньшие значения будут считаться улучшением состояния, а на графиках тренд поползет вверх.</string>
     <string name="scale_edit_color_label">Цвет</string>

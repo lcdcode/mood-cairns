@@ -308,10 +308,10 @@
     <string name="charts_series_label">Seria</string>
     <string name="charts_mode_raw">Dzienna</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Średnia %1$d-dniowa</item>
-        <item quantity="few">Średnia %1$d-dniowa</item>
-        <item quantity="many">Średnia %1$d-dniowa</item>
-        <item quantity="other">Średnia %1$d-dniowa</item>
+        <item quantity="one">Śr. %1$d dni</item>
+        <item quantity="few">Śr. %1$d dni</item>
+        <item quantity="many">Śr. %1$d dni</item>
+        <item quantity="other">Śr. %1$d dni</item>
     </plurals>
     <string name="charts_mode_hourly">Godzinowa</string>
     <plurals name="charts_summary_raw">
@@ -370,7 +370,7 @@
     <string name="charts_help_title">Jak czytać wykresy</string>
     <string name="charts_help_dismiss">Rozumiem</string>
     <string name="charts_help_intro">Dwa przełączniki zmieniają sposób rysowania twoich wartości. Wybór tutaj nie zmienia danych, tylko wygląd wykresu.</string>
-    <string name="charts_help_series_title">Seria: %1$s, %2$s czy %3$s</string>
+    <string name="charts_help_series_title">Seria: %1$s, %2$s lub %3$s</string>
     <string name="charts_help_raw_body">Pokazuje każdy dzień dokładnie tak, jak został zapisany; kilka wpisów z jednego dnia jest uśrednianych. Pozwala zobaczyć dokładne zmiany z dnia na dzień, choć wykres może wyglądać na poszarpany. Rozsuń palce, aby przybliżyć: gdy widać tylko kilka dni, każdy wpis pojawia się o godzinie, o której go dodano.</string>
     <plurals name="charts_help_rolling_body">
         <item quantity="one">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>

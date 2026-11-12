@@ -291,9 +291,9 @@
     <string name="charts_series_label">Serie</string>
     <string name="charts_mode_raw">Diario</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Media de %1$d día</item>
-        <item quantity="many">Media de %1$d días</item>
-        <item quantity="other">Media de %1$d días</item>
+        <item quantity="one">Media %1$d día</item>
+        <item quantity="many">Media %1$d días</item>
+        <item quantity="other">Media %1$d días</item>
     </plurals>
     <string name="charts_mode_hourly">Por horas</string>
     <plurals name="charts_summary_raw">

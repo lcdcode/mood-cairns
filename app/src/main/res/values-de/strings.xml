@@ -107,7 +107,7 @@
 
     <!-- Notifications -->
     <string name="notif_channel_prompts_name">Stimmungserinnerungen</string>
-    <string name="notif_channel_prompts_description">Sanfte Erinnerungszeitraum, deine Stimmung festzuhalten.</string>
+    <string name="notif_channel_prompts_description">Sanfte Erinnerungen, deine Stimmung festzuhalten.</string>
     <string name="notif_prompt_default_title">Zeit für einen Eintrag</string>
     <string name="notif_prompt_text">Trage ein, wie du dich fühlst</string>
     <string name="notif_test_title">Testbenachrichtigung</string>
