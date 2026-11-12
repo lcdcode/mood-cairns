@@ -21,6 +21,10 @@ data class BackupFile(
     val appVersion: String,
     val scales: List<ScaleDto>,
     val promptWindows: List<PromptWindowDto>,
+    /**
+     * Must never get a default value: its absence would make a [ConfigFile] fail to
+     * decode as a full backup, so restoring one can never wipe the user's entries.
+     */
     val entries: List<EntryDto>,
     val tags: List<TagDto> = emptyList(),
     /** v2 only: custom names for the built-in categories. Read on import, never written. */

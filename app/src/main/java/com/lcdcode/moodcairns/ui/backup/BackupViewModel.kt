@@ -8,6 +8,8 @@ import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
 import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
+import com.lcdcode.moodcairns.backup.ConfigImportResult
+import com.lcdcode.moodcairns.backup.ConfigImportService
 import com.lcdcode.moodcairns.backup.CsvExporter
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
@@ -30,9 +32,16 @@ data class BackupUiState(
     val message: UiText? = null,
     val pinPrompt: PinPrompt? = null,
     val allowUnsafeExports: Boolean = false,
+    /** Shown as a dialog: the reasons need more room than a snackbar. */
+    val configIssue: ConfigIssue? = null,
 )
 
-enum class PinPromptMode { Export, Import }
+enum class PinPromptMode(val isExport: Boolean, val isConfigOnly: Boolean) {
+    Export(isExport = true, isConfigOnly = false),
+    Import(isExport = false, isConfigOnly = false),
+    ExportConfig(isExport = true, isConfigOnly = true),
+    ImportConfig(isExport = false, isConfigOnly = true),
+}
 
 data class PinPrompt(val mode: PinPromptMode, val importUri: Uri? = null)
 
@@ -42,6 +51,7 @@ class BackupViewModel @Inject constructor(
     private val csvExporter: CsvExporter,
     private val store: BackupStore,
     private val importer: ImportService,
+    private val configImporter: ConfigImportService,
     private val lockManager: LockManager,
     private val lockRepo: LockRepository,
 ) : ViewModel() {
@@ -62,6 +72,10 @@ class BackupViewModel @Inject constructor(
 
     fun requestExport() {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.Export)) }
+    }
+
+    fun requestConfigExport() {
+        _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ExportConfig)) }
     }
 
     /**
@@ -91,6 +105,10 @@ class BackupViewModel @Inject constructor(
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.Import, importUri = uri)) }
     }
 
+    fun requestConfigImport(uri: Uri) {
+        _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ImportConfig, importUri = uri)) }
+    }
+
     fun cancelPinPrompt() {
         _ui.update { it.copy(pinPrompt = null) }
     }
@@ -108,52 +126,68 @@ class BackupViewModel @Inject constructor(
             secret.fill('\u0000')
             return
         }
-        when (prompt.mode) {
-            PinPromptMode.Export -> {
-                // Defence in depth: the dialog already blocks short passphrases,
-                // but never trust the UI to be the only gate.
-                if (secret.size < MIN_PASSPHRASE_LEN) {
-                    secret.fill('\u0000')
-                    _ui.update {
-                        it.copy(
-                            pinPrompt = null,
-                            message = UiText.Plural(
-                                R.plurals.backup_error_passphrase_too_short,
-                                MIN_PASSPHRASE_LEN,
-                            ),
-                        )
-                    }
-                    return
-                }
-                _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-                runExport(secret)
-            }
-            PinPromptMode.Import -> {
-                // The envelope carries its own salt + iteration count, so any
-                // install (including a fresh one after device loss) can restore
-                // given the correct secret. AES-GCM's tag check is the gate; no
-                // minimum length, since legacy backups used short PINs.
-                val uri = prompt.importUri
-                if (uri == null) {
-                    secret.fill('\u0000')
-                    _ui.update { it.copy(pinPrompt = null, busy = false) }
-                } else {
-                    _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-                    runImport(uri, secret)
-                }
-            }
+        if (prompt.mode.isExport) {
+            submitExportPassphrase(prompt.mode, secret)
+        } else {
+            submitImportSecret(prompt, secret)
         }
     }
 
-    private fun runExport(passphrase: CharArray) = viewModelScope.launch {
+    private fun submitExportPassphrase(mode: PinPromptMode, secret: CharArray) {
+        // Defence in depth: the dialog already blocks short passphrases,
+        // but never trust the UI to be the only gate.
+        if (secret.size < MIN_PASSPHRASE_LEN) {
+            secret.fill('\u0000')
+            _ui.update {
+                it.copy(
+                    pinPrompt = null,
+                    message = UiText.Plural(
+                        R.plurals.backup_error_passphrase_too_short,
+                        MIN_PASSPHRASE_LEN,
+                    ),
+                )
+            }
+            return
+        }
+        _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
+        runExport(secret, configOnly = mode.isConfigOnly)
+    }
+
+    private fun submitImportSecret(prompt: PinPrompt, secret: CharArray) {
+        // The envelope carries its own salt + iteration count, so any
+        // install (including a fresh one after device loss) can restore
+        // given the correct secret. AES-GCM's tag check is the gate; no
+        // minimum length, since legacy backups used short PINs.
+        val uri = prompt.importUri
+        if (uri == null) {
+            secret.fill('\u0000')
+            _ui.update { it.copy(pinPrompt = null, busy = false) }
+        } else {
+            _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
+            if (prompt.mode.isConfigOnly) runConfigImport(uri, secret)
+            else runImport(uri, secret)
+        }
+    }
+
+    private fun runExport(passphrase: CharArray, configOnly: Boolean) = viewModelScope.launch {
         val text = try {
             // PBKDF2 (600k rounds) + AES + file write; off the UI thread so a
             // large export can't freeze or ANR-crash the app on slow devices.
             withContext(Dispatchers.Default) {
-                val json = serializer.exportJson(passphrase)
-                val name = store.suggestName()
+                val json: String
+                val name: String
+                if (configOnly) {
+                    json = serializer.exportConfigJson(passphrase)
+                    name = BackupStore.suggestConfigName()
+                } else {
+                    json = serializer.exportJson(passphrase)
+                    name = BackupStore.suggestName()
+                }
                 store.writeBackup(name, json)
-                UiText.Res(R.string.backup_export_success, listOf(name))
+                val success =
+                    if (configOnly) R.string.backup_config_export_success
+                    else R.string.backup_export_success
+                UiText.Res(success, listOf(name))
             }
         } catch (t: Throwable) {
             Log.w(TAG, "Export failed", t)
@@ -170,7 +204,7 @@ class BackupViewModel @Inject constructor(
             // DB read + CSV build + file write; off the UI thread to avoid ANRs.
             withContext(Dispatchers.Default) {
                 val csv = csvExporter.exportCsv()
-                val name = store.suggestCsvName()
+                val name = BackupStore.suggestCsvName()
                 store.writeBackup(name, csv, BackupStore.MIME_CSV)
                 UiText.Res(R.string.backup_export_csv_success, listOf(name))
             }
@@ -203,10 +237,52 @@ class BackupViewModel @Inject constructor(
         refresh()
     }
 
+    private fun runConfigImport(uri: Uri, secret: CharArray) = viewModelScope.launch {
+        val result = try {
+            // PBKDF2 + decrypt + DB writes; keep it off the UI thread.
+            withContext(Dispatchers.Default) { configImporter.importConfig(uri, secret) }
+        } finally {
+            secret.fill('\u0000')
+        }
+        logConfigImportOutcome(result)
+        val text = result.toMessage()
+        val issue = result.toConfigIssue()
+        _ui.update { it.copy(busy = false, message = text, configIssue = issue) }
+        refresh()
+    }
+
+    private fun logConfigImportOutcome(result: ConfigImportResult) = when (result) {
+        is ConfigImportResult.Success -> Unit
+        is ConfigImportResult.Incompatible ->
+            Log.w(TAG, "Config import refused: ${result.conflicts.size} conflicts")
+        is ConfigImportResult.UnsupportedVersion ->
+            Log.w(TAG, "Config import refused: format version ${result.found}")
+        is ConfigImportResult.Failure -> Log.w(TAG, "Config import failed: ${result.error}")
+    }
+
     fun dismissMessage() = _ui.update { it.copy(message = null) }
+
+    fun dismissConfigIssue() = _ui.update { it.copy(configIssue = null) }
 
     companion object {
         private const val TAG = "BackupViewModel"
+
+        /** Snackbar text for [ConfigImportResult]s that do not open the issue dialog. */
+        private fun ConfigImportResult.toMessage(): UiText? = when (this) {
+            is ConfigImportResult.Success -> UiText.Res(
+                R.string.backup_config_import_success,
+                listOf(scales, tags, windows),
+            )
+            is ConfigImportResult.Failure ->
+                UiText.Res(R.string.backup_config_import_failed, listOf(error.toUiText()))
+            is ConfigImportResult.Incompatible, is ConfigImportResult.UnsupportedVersion -> null
+        }
+
+        private fun ConfigImportResult.toConfigIssue(): ConfigIssue? = when (this) {
+            is ConfigImportResult.Incompatible -> ConfigIssue.WouldLoseData(conflicts)
+            is ConfigImportResult.UnsupportedVersion -> ConfigIssue.UnsupportedVersion(found)
+            is ConfigImportResult.Success, is ConfigImportResult.Failure -> null
+        }
 
         /** Minimum length for a new backup passphrase. Not applied on import. */
         const val MIN_PASSPHRASE_LEN = 8
