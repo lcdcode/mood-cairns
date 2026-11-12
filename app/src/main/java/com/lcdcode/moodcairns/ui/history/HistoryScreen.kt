@@ -56,8 +56,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -83,6 +85,9 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+
+/** Most of the screen height the open tag filter may take before it scrolls. */
+private const val TAG_PANEL_MAX_SCREEN_FRACTION = 0.4f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -473,12 +478,15 @@ private fun FilterBar(
             }
         }
 
+        // The filter bar doesn't scroll, so cap the open tag list and let it scroll
+        // inside that height, leaving room for the entries below.
         TagFilterPanel(
             categories = categories,
             tags = tags,
             selectedTagIds = selectedTagIds,
             onToggle = onTagToggle,
             onClear = onTagClear,
+            maxChipsHeight = tagPanelMaxHeight(),
         )
     }
 
@@ -513,3 +521,7 @@ private fun FilterBar(
         }
     }
 }
+
+@Composable
+private fun tagPanelMaxHeight(): Dp =
+    (LocalConfiguration.current.screenHeightDp * TAG_PANEL_MAX_SCREEN_FRACTION).dp
