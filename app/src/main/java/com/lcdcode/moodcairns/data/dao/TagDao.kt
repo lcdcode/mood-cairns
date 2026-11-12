@@ -9,8 +9,24 @@ import androidx.room.Update
 import com.lcdcode.moodcairns.data.entity.Tag
 import kotlinx.coroutines.flow.Flow
 
+/** SQL shared with JVM tests, which run it on sqlite-jdbc. */
+object TagSql {
+    /** Per used tag: how many entries carry it. */
+    const val USAGE_COUNTS =
+        "SELECT tagId, COUNT(DISTINCT entryId) AS entryCount FROM entry_tag GROUP BY tagId"
+}
+
+/** A row of [TagSql.USAGE_COUNTS]. */
+data class TagUsageRow(val tagId: Long, val entryCount: Int)
+
 @Dao
 interface TagDao {
+    @Query("SELECT * FROM tag ORDER BY id")
+    suspend fun all(): List<Tag>
+
+    @Query(TagSql.USAGE_COUNTS)
+    suspend fun usageCounts(): List<TagUsageRow>
+
     /**
      * All tags in display order: by category sortOrder, then tag sortOrder. A tag whose
      * category row is missing sorts with Other, where the UI also shows it.

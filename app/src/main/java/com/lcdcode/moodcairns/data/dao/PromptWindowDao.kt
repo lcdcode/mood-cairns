@@ -14,6 +14,12 @@ interface PromptWindowDao {
     @Query("SELECT * FROM prompt_window ORDER BY startTime")
     fun observeAll(): Flow<List<PromptWindow>>
 
+    @Query("SELECT * FROM prompt_window ORDER BY startTime")
+    suspend fun all(): List<PromptWindow>
+
+    @Query("DELETE FROM prompt_window WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
     @Query("SELECT * FROM prompt_window WHERE enabled = 1 ORDER BY startTime")
     suspend fun enabled(): List<PromptWindow>
 

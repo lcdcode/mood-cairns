@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,9 @@ interface TagCategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(category: TagCategory)
+
+    @Update
+    suspend fun update(category: TagCategory)
 
     @Query("UPDATE tag_category SET label = :label WHERE id = :id")
     suspend fun setLabel(id: String, label: String?)
