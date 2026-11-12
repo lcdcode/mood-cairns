@@ -18,14 +18,16 @@ internal data class ResolvedTags(val tags: List<Tag>, val replacedIds: Map<Long,
  * The categories to restore, renumbered 0..n-1 with Other last (added if missing).
  * Files before v3 have no categories, so they get the built-ins with any v2 names.
  */
-internal fun resolveCategories(file: BackupFile): List<TagCategory> {
-    val categories = if (file.schemaVersion < BackupFile.FIRST_VERSION_WITH_CATEGORIES) {
-        builtInCategoriesWithLabels(file.tagCategoryLabels)
+internal fun resolveCategories(file: BackupFile): List<TagCategory> =
+    if (file.schemaVersion < BackupFile.FIRST_VERSION_WITH_CATEGORIES) {
+        withOtherLast(builtInCategoriesWithLabels(file.tagCategoryLabels))
     } else {
-        file.tagCategories.mapNotNull(TagCategoryDto::toEntityOrNull).distinctBy { it.id }
+        resolveCategories(file.tagCategories)
     }
-    return withOtherLast(categories)
-}
+
+/** Categories from a v3+ backup or a configuration file, sanitized like [resolveCategories]. */
+internal fun resolveCategories(dtos: List<TagCategoryDto>): List<TagCategory> =
+    withOtherLast(dtos.mapNotNull(TagCategoryDto::toEntityOrNull).distinctBy { it.id })
 
 /**
  * Converts backup tags. A tag whose category is not in [categoryIds] moves to Other

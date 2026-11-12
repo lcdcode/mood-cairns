@@ -16,6 +16,7 @@ class ImportErrorTextTest {
             ImportError.Unreadable(detail = "EACCES"),
             ImportError.NotABackup,
             ImportError.WrongSecretOrCorrupt,
+            ImportError.ConfigOnlyFile,
             ImportError.UnsupportedVersion(found = 9),
             ImportError.Malformed(detail = "bad salt"),
             ImportError.WriteFailed(detail = "disk full"),

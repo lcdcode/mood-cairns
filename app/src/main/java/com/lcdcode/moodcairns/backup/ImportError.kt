@@ -10,6 +10,8 @@ sealed interface ImportError {
     data class Unreadable(val detail: String?) : ImportError
     data object NotABackup : ImportError
     data object WrongSecretOrCorrupt : ImportError
+    /** A configuration-only file was picked for a full restore; it has no entries. */
+    data object ConfigOnlyFile : ImportError
     data class UnsupportedVersion(val found: Int) : ImportError
     data class Malformed(val detail: String) : ImportError
     data class WriteFailed(val detail: String) : ImportError

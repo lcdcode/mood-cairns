@@ -15,7 +15,6 @@ import com.lcdcode.moodcairns.data.entity.TagCategory
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import java.time.Instant
-import java.time.LocalTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,37 +29,49 @@ class BackupSerializer @Inject constructor(
     private val tagCategoryDao get() = moodHolder.tagCategoryDao()
 
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
+    private val contents = BackupContentsDecoder(json)
+
+    /** Encrypted JSON of every scale, window, tag, category, and entry. */
+    suspend fun exportJson(passphrase: CharArray): String {
+        val file = BackupFile(
+            schemaVersion = BackupFile.CURRENT_VERSION,
+            exportedAt = Instant.now().toString(),
+            appVersion = appVersion(),
+            scales = scaleDao.observeAll().first().map(::toDto),
+            promptWindows = windowDao.observeAll().first().map(::toDto),
+            entries = entryDao.observeAll().first().map(::toDto),
+            tags = tagDao.observeAll().first().map(::toDto),
+            tagCategories = tagCategoryDao.all().map(::toDto),
+        )
+        return encryptEnvelope(json.encodeToString(BackupFile.serializer(), file), passphrase)
+    }
+
+    /** Encrypted JSON of the tracking setup only: no entries. */
+    suspend fun exportConfigJson(passphrase: CharArray): String {
+        val file = ConfigFile(
+            kind = ConfigFile.KIND,
+            configVersion = ConfigFile.CURRENT_VERSION,
+            exportedAt = Instant.now().toString(),
+            appVersion = appVersion(),
+            scales = scaleDao.observeAll().first().map(::toDto),
+            promptWindows = windowDao.observeAll().first().map(::toDto),
+            tags = tagDao.observeAll().first().map(::toDto),
+            tagCategories = tagCategoryDao.all().map(::toDto),
+        )
+        return encryptEnvelope(json.encodeToString(ConfigFile.serializer(), file), passphrase)
+    }
 
     /**
-     * Build the plaintext [BackupFile], AES-GCM encrypt it with a key freshly
-     * derived from [pin] + a random per-backup salt, and serialize the
-     * envelope. The salt/iter are carried in the envelope so any install —
-     * including a fresh one — can decrypt given the same PIN.
+     * AES-GCM encrypt [plaintext] with a key freshly derived from [passphrase] + a random
+     * salt, and serialize the envelope. The salt/iter are carried in the envelope so any
+     * install - including a fresh one - can decrypt given the same passphrase.
      */
-    suspend fun exportJson(passphrase: CharArray): String {
+    private fun encryptEnvelope(plaintext: String, passphrase: CharArray): String {
         val salt = BackupCrypto.newSalt()
         val iter = BackupCrypto.PBKDF2_ITERATIONS
         val key = BackupCrypto.deriveKey(passphrase, salt, iter)
         try {
-            val scales = scaleDao.observeAll().first().map(::toDto)
-            val windows = windowDao.observeAll().first().map(::toDto)
-            val entries = entryDao.observeAll().first().map(::toDto)
-            val tags = tagDao.observeAll().first().map(::toDto)
-            val categories = tagCategoryDao.all().map(::toDto)
-
-            val file = BackupFile(
-                schemaVersion = BackupFile.CURRENT_VERSION,
-                exportedAt = Instant.now().toString(),
-                appVersion = runCatching { BuildConfig.VERSION_NAME }.getOrDefault("unknown"),
-                scales = scales,
-                promptWindows = windows,
-                entries = entries,
-                tags = tags,
-                tagCategories = categories,
-            )
-            val plaintextJson = json.encodeToString(BackupFile.serializer(), file)
-            val encrypted = BackupCrypto.encrypt(key, plaintextJson.toByteArray(Charsets.UTF_8))
-
+            val encrypted = BackupCrypto.encrypt(key, plaintext.toByteArray(Charsets.UTF_8))
             val envelope = EncryptedBackup(
                 kdf = BackupCrypto.KDF_ALGORITHM,
                 iter = iter,
@@ -75,12 +86,27 @@ class BackupSerializer @Inject constructor(
     }
 
     /**
-     * Parse and decrypt [raw] using [secret] and the salt/iter carried inside the
-     * envelope itself. [secret] is the backup passphrase, or - for backups made
-     * before passphrases existed - the device PIN used at export time. Throws
-     * [BackupImportException] on corrupt data or a wrong secret.
+     * Decrypt [raw] as a full backup using [secret] and the salt/iter carried inside the
+     * envelope itself. [secret] is the backup passphrase, or - for backups made before
+     * passphrases existed - the device PIN used at export time. Throws
+     * [BackupImportException] on corrupt data, a wrong secret, or a configuration-only
+     * file (which has no entries to restore).
      */
-    fun parse(raw: String, secret: CharArray): BackupFile {
+    fun parse(raw: String, secret: CharArray): BackupFile =
+        contents.forFullRestore(decryptToObject(raw, secret))
+
+    /**
+     * Decrypt [raw] and return just its setup. Accepts a configuration file or a full
+     * backup, whose entries are ignored. Throws [BackupImportException] when the file
+     * cannot be read or is from an unsupported format version.
+     */
+    fun parseConfig(raw: String, secret: CharArray): ConfigEntities =
+        contents.forConfigImport(decryptToObject(raw, secret))
+
+    private fun decryptToObject(raw: String, secret: CharArray) =
+        contents.parseObject(String(decryptEnvelope(raw, secret), Charsets.UTF_8))
+
+    private fun decryptEnvelope(raw: String, secret: CharArray): ByteArray {
         val envelope = runCatching {
             json.decodeFromString(EncryptedBackup.serializer(), raw)
         }.getOrNull() ?: fail(ImportError.NotABackup)
@@ -97,21 +123,13 @@ class BackupSerializer @Inject constructor(
         val ct = decodeField(envelope.ciphertext, "ciphertext")
 
         val key = BackupCrypto.deriveKey(secret, salt, envelope.iter)
-        val plaintext = try {
+        return try {
             BackupCrypto.decrypt(key, iv, ct)
         } catch (_: Throwable) {
             fail(ImportError.WrongSecretOrCorrupt)
         } finally {
             key.fill(0)
         }
-
-        val parsed = runCatching {
-            json.decodeFromString(BackupFile.serializer(), String(plaintext, Charsets.UTF_8))
-        }.getOrElse { fail(ImportError.Malformed(it.message ?: "Unreadable backup contents")) }
-        if (parsed.schemaVersion !in BackupFile.SUPPORTED_VERSIONS) {
-            fail(ImportError.UnsupportedVersion(parsed.schemaVersion))
-        }
-        return parsed
     }
 
     private fun decodeField(value: String, fieldName: String): ByteArray =
@@ -125,8 +143,8 @@ class BackupSerializer @Inject constructor(
         val resolvedTags = resolveTags(file.tags, categories.mapTo(HashSet()) { it.id })
         return BackupEntities(
             schemaVersion = file.schemaVersion,
-            scales = file.scales.map(::fromDto),
-            windows = file.promptWindows.map(::fromDto),
+            scales = file.scales.map { it.toEntity() },
+            windows = file.promptWindows.map { it.toEntity() },
             tags = resolvedTags.tags,
             tagCategories = categories,
             entries = file.entries.map { e -> toBundle(e, resolvedTags.replacedIds) },
@@ -149,6 +167,9 @@ class BackupSerializer @Inject constructor(
         val tagIds = e.tagIds.map { replacedTagIds[it] ?: it }.distinct()
         return EntryBundle(entry = entry, values = values, tagIds = tagIds)
     }
+
+    private fun appVersion(): String =
+        runCatching { BuildConfig.VERSION_NAME }.getOrDefault("unknown")
 
     private fun b64(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
 
@@ -182,19 +203,6 @@ class BackupSerializer @Inject constructor(
 
     private fun toDto(c: TagCategory) =
         TagCategoryDto(id = c.id, label = c.label, sortOrder = c.sortOrder)
-
-    private fun fromDto(s: ScaleDto) = Scale(
-        id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,
-        step = s.step, colorArgb = s.colorArgb, isBuiltIn = s.isBuiltIn,
-        archived = s.archived, sortOrder = s.sortOrder, inverted = s.inverted,
-        defaultValue = s.defaultValue,
-    )
-
-    private fun fromDto(w: PromptWindowDto) = PromptWindow(
-        id = w.id, label = w.label, slot = PromptSlot.valueOf(w.slot),
-        startTime = LocalTime.parse(w.startTime), endTime = LocalTime.parse(w.endTime),
-        enabled = w.enabled,
-    )
 }
 
 data class BackupEntities(

@@ -15,6 +15,7 @@ fun ImportError.toUiText(): UiText = when (this) {
         }
     ImportError.NotABackup -> UiText.Res(R.string.import_error_not_a_backup)
     ImportError.WrongSecretOrCorrupt -> UiText.Res(R.string.import_error_wrong_secret)
+    ImportError.ConfigOnlyFile -> UiText.Res(R.string.import_error_config_only)
     is ImportError.UnsupportedVersion ->
         UiText.Res(R.string.import_error_unsupported_version, listOf(found))
     is ImportError.Malformed -> UiText.Res(R.string.import_error_malformed, listOf(detail))
