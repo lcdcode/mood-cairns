@@ -1,6 +1,5 @@
 package com.lcdcode.moodcairns.backup
 
-import android.content.Context
 import android.net.Uri
 import androidx.room.withTransaction
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
@@ -8,13 +7,12 @@ import com.lcdcode.moodcairns.data.db.ScheduleDatabase
 import com.lcdcode.moodcairns.data.db.SeedTags
 import com.lcdcode.moodcairns.data.entity.EntryTag
 import com.lcdcode.moodcairns.data.entity.EntryValue
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ImportService @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val reader: BackupFileReader,
     private val scheduleDb: ScheduleDatabase,
     private val moodHolder: MoodDatabaseHolder,
     private val serializer: BackupSerializer,
@@ -30,28 +28,10 @@ class ImportService @Inject constructor(
      * idempotently is cheap on retry.
      */
     suspend fun importReplace(uri: Uri, secret: CharArray): ImportResult {
-        // Cap the input to avoid OOM on a huge (intentional or accidental) file.
-        // Real backups are well under a megabyte even with thousands of entries;
-        // 50 MB is a generous ceiling that still keeps the JVM heap safe.
-        val knownSize = runCatching {
-            context.contentResolver.openAssetFileDescriptor(uri, "r")?.use { it.length }
-        }.getOrNull() ?: -1L
-        if (knownSize > MAX_BACKUP_BYTES) {
-            return ImportResult.Failure(tooLarge())
-        }
-
         val raw = try {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                // Stream up to MAX+1 bytes so we can detect overruns when the
-                // provider didn't report a length (knownSize == -1).
-                val bytes = input.readNBytesCapped(MAX_BACKUP_BYTES + 1)
-                if (bytes.size > MAX_BACKUP_BYTES) {
-                    return ImportResult.Failure(tooLarge())
-                }
-                String(bytes, Charsets.UTF_8)
-            } ?: return ImportResult.Failure(ImportError.Unreadable(detail = null))
-        } catch (t: Throwable) {
-            return ImportResult.Failure(ImportError.Unreadable(t.message ?: t.javaClass.simpleName))
+            reader.readText(uri)
+        } catch (e: BackupImportException) {
+            return ImportResult.Failure(e.error)
         }
 
         val entities = try {
@@ -116,22 +96,4 @@ sealed interface ImportResult {
         val tags: Int = 0,
     ) : ImportResult
     data class Failure(val error: ImportError) : ImportResult
-}
-
-private const val BYTES_PER_MEGABYTE: Long = 1024 * 1024
-private const val MAX_BACKUP_BYTES: Long = 50L * BYTES_PER_MEGABYTE
-
-private fun tooLarge() = ImportError.TooLarge(maxMegabytes = MAX_BACKUP_BYTES / BYTES_PER_MEGABYTE)
-
-private fun java.io.InputStream.readNBytesCapped(max: Long): ByteArray {
-    val out = java.io.ByteArrayOutputStream()
-    val buf = ByteArray(8 * 1024)
-    var total = 0L
-    while (total < max) {
-        val n = read(buf, 0, minOf(buf.size.toLong(), max - total).toInt())
-        if (n <= 0) break
-        out.write(buf, 0, n)
-        total += n
-    }
-    return out.toByteArray()
 }
