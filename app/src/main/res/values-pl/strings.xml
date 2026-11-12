@@ -535,6 +535,53 @@
     <string name="backup_import_success">Import zakończony. Wpisy: %1$d, skale: %2$d, tagi: %3$d, okna przypomnień: %4$d</string>
     <string name="backup_import_failed">Import nie powiódł się: %1$s</string>
 
+    <string name="backup_config_section">Konfiguracja</string>
+    <string name="backup_config_intro">Plik konfiguracji zawiera twoje skale, tagi, kategorie tagów i okna przypomnień, ale bez wpisów. Użyj go, aby skonfigurować inną instalację lub przywrócić swoje ustawienia. Import zachowuje wszystkie twoje wpisy.</string>
+    <string name="backup_config_export">Eksportuj konfigurację</string>
+    <string name="backup_config_import">Importuj konfigurację (zachowuje wpisy)</string>
+    <string name="backup_config_encrypt_title">Zaszyfruj konfigurację</string>
+    <string name="backup_config_encrypt_body">Wybierz hasło do zaszyfrowania tej konfiguracji. Nazwy tagów i skal mogą być osobiste, dlatego jest ona chroniona tak samo jak pełna kopia zapasowa. Do jej importu potrzebne będzie dokładnie to hasło. Hasło nie jest kodem PIN aplikacji. Jeśli je zapomnisz, nie da się go odzyskać.</string>
+    <string name="backup_config_decrypt_title">Odszyfruj konfigurację</string>
+    <string name="backup_config_decrypt_body">Wpisz hasło tego pliku konfiguracji lub kopii zapasowej. Zaimportowana zostanie tylko konfiguracja; twoje wpisy pozostaną bez zmian.</string>
+    <string name="backup_config_export_success">Wyeksportowano konfigurację: %1$s</string>
+    <string name="backup_config_import_success">Konfiguracja zaimportowana. Skale: %1$d, tagi: %2$d, okna przypomnień: %3$d. Twoje wpisy nie zostały zmienione.</string>
+    <string name="backup_config_import_failed">Import konfiguracji nie powiódł się: %1$s</string>
+    <string name="backup_config_only_label">Tylko konfiguracja</string>
+    <string name="backup_config_incompatible_title">Niezgodna konfiguracja</string>
+    <string name="backup_config_incompatible_version">Ta konfiguracja używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi zaimportować. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
+    <string name="backup_config_incompatible_data_loss">Ta konfiguracja jest niezgodna z twoimi danymi: jej import mógłby usunąć lub zmienić dane w istniejących wpisach. Nic nie zostało zmienione.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Skala „%2$s” jest używana w %1$d wpisie, ale brakuje jej w konfiguracji.</item>
+        <item quantity="few">Skala „%2$s” jest używana w %1$d wpisach, ale brakuje jej w konfiguracji.</item>
+        <item quantity="many">Skala „%2$s” jest używana w %1$d wpisach, ale brakuje jej w konfiguracji.</item>
+        <item quantity="other">Skala „%2$s” jest używana w %1$d wpisu, ale brakuje jej w konfiguracji.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisu.</item>
+        <item quantity="few">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisów.</item>
+        <item quantity="many">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisów.</item>
+        <item quantity="other">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisu.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisie.</item>
+        <item quantity="few">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisach.</item>
+        <item quantity="many">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisach.</item>
+        <item quantity="other">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisu.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Tag „%2$s” (%3$s) jest używany w %1$d wpisie, ale brakuje go w konfiguracji.</item>
+        <item quantity="few">Tag „%2$s” (%3$s) jest używany w %1$d wpisach, ale brakuje go w konfiguracji.</item>
+        <item quantity="many">Tag „%2$s” (%3$s) jest używany w %1$d wpisach, ale brakuje go w konfiguracji.</item>
+        <item quantity="other">Tag „%2$s” (%3$s) jest używany w %1$d wpisu, ale brakuje go w konfiguracji.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">I jeszcze %1$d problem.</item>
+        <item quantity="few">I jeszcze %1$d problemy.</item>
+        <item quantity="many">I jeszcze %1$d problemów.</item>
+        <item quantity="other">I jeszcze %1$d problemu.</item>
+    </plurals>
+
     <!-- Import errors -->
     <string name="import_error_too_large">Plik przekracza limit %1$d MB.</string>
     <string name="import_error_unreadable">Nie udało się odczytać pliku.</string>
@@ -544,4 +591,5 @@
     <string name="import_error_unsupported_version">Ta kopia używa formatu w wersji %1$d, którego ta aplikacja nie potrafi odczytać. Aktualizacja aplikacji może pomóc.</string>
     <string name="import_error_malformed">Plik kopii zapasowej jest uszkodzony (%1$s).</string>
     <string name="import_error_write_failed">Import przerwany podczas zapisywania danych (%1$s).</string>
+    <string name="import_error_config_only">To plik zawierający tylko konfigurację, bez wpisów do przywrócenia. Użyj zamiast tego opcji „Importuj konfigurację”.</string>
 </resources>

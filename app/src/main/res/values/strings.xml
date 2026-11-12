@@ -584,6 +584,53 @@
     <!-- %1$s is one of the import_error_* sentences. -->
     <string name="backup_import_failed">Import failed: %1$s</string>
 
+    <!-- Configuration-only export/import: the setup (scales, tags, tag categories, prompt windows) without any entries. -->
+    <string name="backup_config_section">Configuration</string>
+    <string name="backup_config_intro">A configuration file holds your scales, tags, tag categories, and prompt windows, but no entries. Use it to set up another install or to restore your setup. Importing one keeps all your entries.</string>
+    <string name="backup_config_export">Export configuration</string>
+    <string name="backup_config_import">Import configuration (keeps your entries)</string>
+    <string name="backup_config_encrypt_title">Encrypt configuration</string>
+    <string name="backup_config_encrypt_body">Choose a passphrase to encrypt this configuration. Tag and scale names can be personal, so it is protected like a full backup. You\'ll need this exact passphrase to import it. It is not your app PIN and cannot be recovered if you forget it.</string>
+    <string name="backup_config_decrypt_title">Decrypt configuration</string>
+    <string name="backup_config_decrypt_body">Enter the passphrase of this configuration file or backup. Only its configuration is imported; your entries are not changed.</string>
+    <!-- %1$s is a file name. -->
+    <string name="backup_config_export_success">Exported configuration %1$s</string>
+    <!-- Label: count pairs avoid needing a plural form for each noun. -->
+    <string name="backup_config_import_success">Configuration imported. Scales: %1$d, tags: %2$d, prompt windows: %3$d. Your entries were not changed.</string>
+    <!-- %1$s is one of the import_error_* sentences. -->
+    <string name="backup_config_import_failed">Configuration import failed: %1$s</string>
+    <!-- Shown under the file name of a configuration-only export in the list of backups. -->
+    <string name="backup_config_only_label">Configuration only</string>
+    <string name="backup_config_incompatible_title">Configuration not compatible</string>
+    <string name="backup_config_incompatible_version">This configuration uses format version %1$d, which this version of the app can\'t import. Update the app and try again. Nothing was changed.</string>
+    <string name="backup_config_incompatible_data_loss">This configuration is not compatible with your data: importing it could delete or change data in your existing entries. Nothing was changed.</string>
+    <!-- A bullet before one reason. %1$s is one backup_config_conflict_* sentence. -->
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <!-- Reasons an import would lose data. %1$d is a number of entries, %2$s a scale or tag name. -->
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">The scale \"%2$s\" is used by %1$d entry but is missing from the configuration.</item>
+        <item quantity="other">The scale \"%2$s\" is used by %1$d entries but is missing from the configuration.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">The configuration reverses the scale \"%2$s\", which would change the meaning of %1$d entry.</item>
+        <item quantity="other">The configuration reverses the scale \"%2$s\", which would change the meaning of %1$d entries.</item>
+    </plurals>
+    <!-- %3$d and %4$d are the lowest and highest values the configuration allows on the scale. -->
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">The configuration limits the scale \"%2$s\" to %3$d to %4$d, which doesn\'t fit the values already recorded in its %1$d entry.</item>
+        <item quantity="other">The configuration limits the scale \"%2$s\" to %3$d to %4$d, which doesn\'t fit the values already recorded in its %1$d entries.</item>
+    </plurals>
+    <!-- %3$s is the name of the tag's category. -->
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">The tag \"%2$s\" (%3$s) is used by %1$d entry but is missing from the configuration.</item>
+        <item quantity="other">The tag \"%2$s\" (%3$s) is used by %1$d entries but is missing from the configuration.</item>
+    </plurals>
+    <!-- Ends the list when more reasons were found than are shown. %1$d is how many are hidden. -->
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">And %1$d more problem.</item>
+        <item quantity="other">And %1$d more problems.</item>
+    </plurals>
+
     <!-- Reasons a backup import failed. %1$s detail strings are technical, shown as-is. -->
     <string name="import_error_too_large">The file is larger than the %1$d MB limit.</string>
     <string name="import_error_unreadable">Couldn\'t read the file.</string>
@@ -593,4 +640,5 @@
     <string name="import_error_unsupported_version">This backup uses format version %1$d, which this version of the app can\'t read. Updating the app may help.</string>
     <string name="import_error_malformed">The backup file is damaged (%1$s).</string>
     <string name="import_error_write_failed">Import stopped while saving data (%1$s).</string>
+    <string name="import_error_config_only">This is a configuration-only file, which has no entries to restore. Use Import configuration instead.</string>
 </resources>

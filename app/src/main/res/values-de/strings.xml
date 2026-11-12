@@ -480,6 +480,43 @@
     <string name="backup_import_success">Import abgeschlossen. Einträge: %1$d, Skalen: %2$d, Tags: %3$d, Erinnerungszeiten: %4$d</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
 
+    <string name="backup_config_section">Konfiguration</string>
+    <string name="backup_config_intro">Eine Konfigurationsdatei enthält deine Skalen, Tags, Tag-Kategorien und Erinnerungszeiten, aber keine Einträge. Nutze sie, um eine andere Installation einzurichten oder deine Einrichtung wiederherzustellen. Beim Import bleiben alle deine Einträge erhalten.</string>
+    <string name="backup_config_export">Konfiguration exportieren</string>
+    <string name="backup_config_import">Konfiguration importieren (Einträge bleiben erhalten)</string>
+    <string name="backup_config_encrypt_title">Konfiguration verschlüsseln</string>
+    <string name="backup_config_encrypt_body">Wähle eine Passphrase, um diese Konfiguration zu verschlüsseln. Namen von Tags und Skalen können persönlich sein, daher wird sie wie eine vollständige Sicherung geschützt. Du brauchst genau diese Passphrase zum Importieren. Sie ist nicht deine App-PIN und kann nicht wiederhergestellt werden, wenn du sie vergisst.</string>
+    <string name="backup_config_decrypt_title">Konfiguration entschlüsseln</string>
+    <string name="backup_config_decrypt_body">Gib die Passphrase dieser Konfigurationsdatei oder Sicherung ein. Nur die Konfiguration wird importiert; deine Einträge bleiben unverändert.</string>
+    <string name="backup_config_export_success">Konfiguration exportiert: %1$s</string>
+    <string name="backup_config_import_success">Konfiguration importiert. Skalen: %1$d, Tags: %2$d, Erinnerungszeiten: %3$d. Deine Einträge wurden nicht verändert.</string>
+    <string name="backup_config_import_failed">Import der Konfiguration fehlgeschlagen: %1$s</string>
+    <string name="backup_config_only_label">Nur Konfiguration</string>
+    <string name="backup_config_incompatible_title">Konfiguration nicht kompatibel</string>
+    <string name="backup_config_incompatible_version">Diese Konfiguration verwendet Formatversion %1$d, die diese App-Version nicht importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
+    <string name="backup_config_incompatible_data_loss">Diese Konfiguration ist nicht mit deinen Daten kompatibel: Der Import könnte Daten in deinen bestehenden Einträgen löschen oder verändern. Es wurde nichts verändert.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Die Skala „%2$s“ wird von %1$d Eintrag verwendet, fehlt aber in der Konfiguration.</item>
+        <item quantity="other">Die Skala „%2$s“ wird von %1$d Einträgen verwendet, fehlt aber in der Konfiguration.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Die Konfiguration kehrt die Skala „%2$s“ um, wodurch sich die Bedeutung von %1$d Eintrag ändern würde.</item>
+        <item quantity="other">Die Konfiguration kehrt die Skala „%2$s“ um, wodurch sich die Bedeutung von %1$d Einträgen ändern würde.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Die Konfiguration begrenzt die Skala „%2$s“ auf %3$d bis %4$d, was nicht zu den bereits erfassten Werten in %1$d Eintrag passt.</item>
+        <item quantity="other">Die Konfiguration begrenzt die Skala „%2$s“ auf %3$d bis %4$d, was nicht zu den bereits erfassten Werten in %1$d Einträgen passt.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Der Tag „%2$s“ (%3$s) wird von %1$d Eintrag verwendet, fehlt aber in der Konfiguration.</item>
+        <item quantity="other">Der Tag „%2$s“ (%3$s) wird von %1$d Einträgen verwendet, fehlt aber in der Konfiguration.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">Und %1$d weiteres Problem.</item>
+        <item quantity="other">Und %1$d weitere Probleme.</item>
+    </plurals>
+
     <!-- Import errors -->
     <string name="import_error_too_large">Die Datei überschreitet das Limit von %1$d MB.</string>
     <string name="import_error_unreadable">Die Datei konnte nicht gelesen werden.</string>
@@ -489,4 +526,5 @@
     <string name="import_error_unsupported_version">Diese Sicherung verwendet Formatversion %1$d, die diese App-Version nicht lesen kann. Ein App-Update könnte helfen.</string>
     <string name="import_error_malformed">Die Sicherungsdatei ist beschädigt (%1$s).</string>
     <string name="import_error_write_failed">Der Import wurde beim Speichern der Daten abgebrochen (%1$s).</string>
+    <string name="import_error_config_only">Dies ist eine reine Konfigurationsdatei ohne Einträge zum Wiederherstellen. Verwende stattdessen „Konfiguration importieren“.</string>
 </resources>

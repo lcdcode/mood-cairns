@@ -503,6 +503,48 @@
     <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
 
+    <string name="backup_config_section">Configuración</string>
+    <string name="backup_config_intro">Un archivo de configuración contiene tus escalas, etiquetas, categorías de etiquetas y franjas de aviso, pero ningún registro. Úsalo para preparar otra instalación o restaurar tu configuración. Al importarlo se conservan todos tus registros.</string>
+    <string name="backup_config_export">Exportar configuración</string>
+    <string name="backup_config_import">Importar configuración (conserva tus registros)</string>
+    <string name="backup_config_encrypt_title">Cifrar configuración</string>
+    <string name="backup_config_encrypt_body">Elige una frase de contraseña para cifrar esta configuración. Los nombres de etiquetas y escalas pueden ser personales, así que se protege igual que una copia completa. Necesitarás exactamente esta frase para importarla. No es el PIN de la app y no se puede recuperar si la olvidas.</string>
+    <string name="backup_config_decrypt_title">Descifrar configuración</string>
+    <string name="backup_config_decrypt_body">Introduce la frase de contraseña de este archivo de configuración o copia. Solo se importa su configuración; tus registros no cambian.</string>
+    <string name="backup_config_export_success">Configuración exportada: %1$s</string>
+    <string name="backup_config_import_success">Configuración importada. Escalas: %1$d, etiquetas: %2$d, franjas de aviso: %3$d. Tus registros no se han modificado.</string>
+    <string name="backup_config_import_failed">Error al importar la configuración: %1$s</string>
+    <string name="backup_config_only_label">Solo configuración</string>
+    <string name="backup_config_incompatible_title">Configuración no compatible</string>
+    <string name="backup_config_incompatible_version">Esta configuración usa la versión de formato %1$d, que esta versión de la app no puede importar. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
+    <string name="backup_config_incompatible_data_loss">Esta configuración no es compatible con tus datos: importarla podría eliminar o cambiar datos de tus registros existentes. No se ha cambiado nada.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">La escala \"%2$s\" se usa en %1$d registro, pero falta en la configuración.</item>
+        <item quantity="many">La escala \"%2$s\" se usa en %1$d registros, pero falta en la configuración.</item>
+        <item quantity="other">La escala \"%2$s\" se usa en %1$d registros, pero falta en la configuración.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registro.</item>
+        <item quantity="many">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registros.</item>
+        <item quantity="other">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registros.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registro.</item>
+        <item quantity="many">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registros.</item>
+        <item quantity="other">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registros.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registro, pero falta en la configuración.</item>
+        <item quantity="many">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registros, pero falta en la configuración.</item>
+        <item quantity="other">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registros, pero falta en la configuración.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">Y %1$d problema más.</item>
+        <item quantity="many">Y %1$d problemas más.</item>
+        <item quantity="other">Y %1$d problemas más.</item>
+    </plurals>
+
     <!-- Import errors -->
     <string name="import_error_too_large">El archivo supera el límite de %1$d MB.</string>
     <string name="import_error_unreadable">No se pudo leer el archivo.</string>
@@ -512,4 +554,5 @@
     <string name="import_error_unsupported_version">Esta copia usa la versión de formato %1$d, que esta versión de la app no puede leer. Actualizar la app puede ayudar.</string>
     <string name="import_error_malformed">El archivo de copia está dañado (%1$s).</string>
     <string name="import_error_write_failed">La importación se detuvo al guardar los datos (%1$s).</string>
+    <string name="import_error_config_only">Este es un archivo solo de configuración, sin registros que restaurar. Usa \"Importar configuración\" en su lugar.</string>
 </resources>

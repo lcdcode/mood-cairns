@@ -504,6 +504,53 @@
     <string name="backup_export_failed">Не удалось сохранить: %1$s</string>
     <string name="backup_import_success">Импорт успешно завершён. Записи: %1$d, шкалы: %2$d, теги: %3$d, интервалы напоминаний: %4$d</string>
     <string name="backup_import_failed">Не удалось импортировать данные: %1$s</string>
+
+    <string name="backup_config_section">Конфигурация</string>
+    <string name="backup_config_intro">Файл конфигурации содержит ваши шкалы, теги, категории тегов и интервалы напоминаний, но не записи. С его помощью можно настроить приложение на другом устройстве или восстановить свои настройки. При импорте все ваши записи сохраняются.</string>
+    <string name="backup_config_export">Экспорт конфигурации</string>
+    <string name="backup_config_import">Импорт конфигурации (записи сохранятся)</string>
+    <string name="backup_config_encrypt_title">Зашифровать конфигурацию</string>
+    <string name="backup_config_encrypt_body">Придумайте пароль для шифрования этой конфигурации. Названия тегов и шкал могут быть личными, поэтому она защищается так же, как полная резервная копия. Для импорта понадобится именно этот пароль. Это не PIN-код от входа в приложение. Если вы забудете этот пароль, восстановить его будет невозможно.</string>
+    <string name="backup_config_decrypt_title">Расшифровать конфигурацию</string>
+    <string name="backup_config_decrypt_body">Введите пароль этого файла конфигурации или резервной копии. Импортируется только конфигурация; ваши записи не изменятся.</string>
+    <string name="backup_config_export_success">Конфигурация сохранена: %1$s</string>
+    <string name="backup_config_import_success">Конфигурация импортирована. Шкалы: %1$d, теги: %2$d, интервалы напоминаний: %3$d. Ваши записи не изменены.</string>
+    <string name="backup_config_import_failed">Не удалось импортировать конфигурацию: %1$s</string>
+    <string name="backup_config_only_label">Только конфигурация</string>
+    <string name="backup_config_incompatible_title">Конфигурация несовместима</string>
+    <string name="backup_config_incompatible_version">Эта конфигурация использует формат версии %1$d, который текущая версия приложения не может импортировать. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
+    <string name="backup_config_incompatible_data_loss">Эта конфигурация несовместима с вашими данными: её импорт может удалить или изменить данные в существующих записях. Ничего не изменено.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Шкала «%2$s» используется в %1$d записи, но отсутствует в конфигурации.</item>
+        <item quantity="few">Шкала «%2$s» используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="many">Шкала «%2$s» используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="other">Шкала «%2$s» используется в %1$d записи, но отсутствует в конфигурации.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записи.</item>
+        <item quantity="few">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записей.</item>
+        <item quantity="many">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записей.</item>
+        <item quantity="other">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записи.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записи.</item>
+        <item quantity="few">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записях.</item>
+        <item quantity="many">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записях.</item>
+        <item quantity="other">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записи.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Тег «%2$s» (%3$s) используется в %1$d записи, но отсутствует в конфигурации.</item>
+        <item quantity="few">Тег «%2$s» (%3$s) используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="many">Тег «%2$s» (%3$s) используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="other">Тег «%2$s» (%3$s) используется в %1$d записи, но отсутствует в конфигурации.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">И ещё %1$d проблема.</item>
+        <item quantity="few">И ещё %1$d проблемы.</item>
+        <item quantity="many">И ещё %1$d проблем.</item>
+        <item quantity="other">И ещё %1$d проблемы.</item>
+    </plurals>
     <!-- Import errors -->
     <string name="import_error_too_large">Размер файла превышает ограничение в %1$d МБ.</string>
     <string name="import_error_unreadable">Не удалось прочитать выбранный файл.</string>
@@ -513,4 +560,5 @@
     <string name="import_error_unsupported_version">Этот бэкап использует формат версии %1$d, который текущая версия приложения не поддерживает. Попробуйте обновить приложение.</string>
     <string name="import_error_malformed">Файл резервной копии повреждён (%1$s).</string>
     <string name="import_error_write_failed">Импорт прерван при записи данных в память устройства (%1$s).</string>
+    <string name="import_error_config_only">Это файл только с конфигурацией, в нём нет записей для восстановления. Используйте вместо этого «Импорт конфигурации».</string>
 </resources>
