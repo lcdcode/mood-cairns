@@ -1,7 +1,10 @@
 New Features:
-- Polish translation
+- Polish language translation
 - New "Hourly" chart: averages your entries by hour of day to show time-of-day patterns
 - Zoom into the Raw chart to see each entry plotted at the time you logged it
 - Add your own Categories for Tags
+- Configuration-only export option
+- Custom colors for Scales
 Fixes:
 - The 7-day average is now centered on each day, so spikes no longer drag the days after them
+- Additional UI polish
