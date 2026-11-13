@@ -26,6 +26,7 @@
     <string name="common_continue">Continuar</string>
     <string name="common_deleting">Eliminando…</string>
     <string name="common_name_label">Nombre</string>
+    <string name="common_tags_label">Etiquetas</string>
     <string name="common_reorder">Reordenar</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -172,6 +173,13 @@
     <string name="scale_edit_lower_better">Cuanto más bajo, mejor</string>
     <string name="scale_edit_lower_better_hint">Escala inversa: el control deslizante va de mayor a menor y los gráficos la dibujan de modo que una mejora apunte hacia arriba.</string>
     <string name="scale_edit_color_label">Color</string>
+    <string name="scale_edit_color_custom">Color personalizado</string>
+    <string name="scale_edit_color_picker_title">Elige un color</string>
+    <string name="scale_edit_color_hex_label">Código hexadecimal</string>
+    <string name="scale_edit_color_panel_description">Saturación y brillo</string>
+    <string name="scale_edit_color_hue_description">Tono</string>
+    <string name="scale_edit_color_low_contrast_light">Puede que este color apenas se vea en modo claro.</string>
+    <string name="scale_edit_color_low_contrast_dark">Puede que este color apenas se vea en modo oscuro.</string>
     <string name="scale_edit_built_in_hint">Las escalas integradas no se pueden renombrar; aun así puedes ajustar el rango, el paso y el color.</string>
     <string name="scale_edit_delete">Eliminar escala</string>
     <string name="scale_edit_this_scale">esta escala</string>
@@ -195,11 +203,26 @@
     <!-- Tag list -->
     <string name="tag_list_title">Etiquetas</string>
     <string name="tag_list_empty">Aún no hay etiquetas.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d seleccionada</item>
+        <item quantity="many">%1$d seleccionadas</item>
+        <item quantity="other">%1$d seleccionadas</item>
+    </plurals>
+    <string name="tag_list_column_heading">Columna %1$d</string>
+    <string name="tag_list_add_category">Añadir categoría</string>
+    <string name="tag_category_delete_title">¿Eliminar categoría?</string>
+    <string name="tag_category_delete_body_empty">Se eliminará la categoría \"%1$s\". No tiene etiquetas.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Se eliminará la categoría \"%1$s\". Su etiqueta pasará a la categoría \"%3$s\".</item>
+        <item quantity="many">Se eliminará la categoría \"%1$s\". Sus %2$d etiquetas pasarán a la categoría \"%3$s\".</item>
+        <item quantity="other">Se eliminará la categoría \"%1$s\". Sus %2$d etiquetas pasarán a la categoría \"%3$s\".</item>
+    </plurals>
 
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Nueva etiqueta</string>
     <string name="tag_edit_title_edit">Editar etiqueta</string>
     <string name="tag_edit_category_label">Categoría</string>
+    <string name="tag_edit_column_label">Columna</string>
     <string name="tag_edit_delete">Eliminar etiqueta</string>
     <string name="tag_edit_this_tag">esta etiqueta</string>
     <string name="tag_edit_delete_title">¿Eliminar etiqueta?</string>
@@ -268,19 +291,25 @@
     <string name="charts_series_label">Serie</string>
     <string name="charts_mode_raw">Diario</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Media de %1$d día</item>
-        <item quantity="many">Media de %1$d días</item>
-        <item quantity="other">Media de %1$d días</item>
+        <item quantity="one">Media %1$d día</item>
+        <item quantity="many">Media %1$d días</item>
+        <item quantity="other">Media %1$d días</item>
     </plurals>
+    <string name="charts_mode_hourly">Por horas</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d registro · valores diarios sin procesar</item>
         <item quantity="many">%1$d registros · valores diarios sin procesar</item>
         <item quantity="other">%1$d registros · valores diarios sin procesar</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d registro · media móvil de %2$d días</item>
-        <item quantity="many">%1$d registros · media móvil de %2$d días</item>
-        <item quantity="other">%1$d registros · media móvil de %2$d días</item>
+        <item quantity="one">%1$d registro · media centrada de %2$d días</item>
+        <item quantity="many">%1$d registros · media centrada de %2$d días</item>
+        <item quantity="other">%1$d registros · media centrada de %2$d días</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d registro · media por hora del día</item>
+        <item quantity="many">%1$d registros · media por hora del día</item>
+        <item quantity="other">%1$d registros · media por hora del día</item>
     </plurals>
     <string name="charts_y_axis_label">Eje Y</string>
     <string name="charts_axis_autofit">Automático</string>
@@ -288,7 +317,6 @@
     <string name="charts_prompt_slots_label">Franjas de aviso</string>
     <string name="charts_slot_other">Otras</string>
     <string name="charts_scales_label">Escalas</string>
-    <string name="charts_tags_label">Etiquetas</string>
     <string name="charts_axis_caption_absolute" formatted="false">Eje vertical: posición dentro del rango de cada escala (100% = parte superior del rango; las escalas \"cuanto más bajo, mejor\" se invierten)</string>
     <string name="charts_axis_caption_values">Eje vertical: valores registrados</string>
     <string name="charts_axis_caption_single">Eje vertical: %1$s (%2$s)</string>
@@ -301,18 +329,31 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, cuanto más bajo, mejor)</string>
     <string name="charts_no_entries_day">No hay registros este día.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d registro en esta hora</item>
+        <item quantity="many">%1$d registros en esta hora</item>
+        <item quantity="other">%1$d registros en esta hora</item>
+    </plurals>
+    <string name="charts_hour_average">Media de %1$s: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d registro más</item>
+        <item quantity="many">+%1$d registros más</item>
+        <item quantity="other">+%1$d registros más</item>
+    </plurals>
 
     <!-- Charts help dialog -->
     <string name="charts_help_title">Cómo leer los gráficos</string>
     <string name="charts_help_dismiss">Entendido</string>
     <string name="charts_help_intro">Dos selectores cambian cómo se dibujan tus números. Nada de lo que elijas aquí cambia tus datos, solo el aspecto del gráfico.</string>
-    <string name="charts_help_series_title">Serie: %1$s o %2$s</string>
-    <string name="charts_help_raw_body">Muestra cada día exactamente como lo registraste. Úsalo para ver con precisión los cambios de un día a otro, aunque puede parecer irregular.</string>
+    <string name="charts_help_series_title">Serie: %1$s, %2$s o %3$s</string>
+    <string name="charts_help_raw_body">Muestra cada día exactamente como lo registraste; si un día tiene varios registros, se promedian. Úsalo para ver con precisión los cambios de un día a otro, aunque puede parecer irregular. Pellizca para ampliar: cuando solo se ven unos pocos días, cada registro aparece a la hora en que lo hiciste.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Sustituye cada día por la media del %1$d día que termina en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
-        <item quantity="many">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
-        <item quantity="other">Sustituye cada día por la media de los %1$d días que terminan en él. Así se suavizan los picos aislados y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="one">Sustituye cada día por una media ponderada del %1$d día centrado en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="many">Sustituye cada día por una media ponderada de los %1$d días centrados en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
+        <item quantity="other">Sustituye cada día por una media ponderada de los %1$d días centrados en él, en la que el día central cuenta más. Así se suavizan los picos aislados sin desplazarlos a los días siguientes, y es más fácil ver la tendencia general: si tu ánimo tiende a subir o a bajar.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Reúne todos los registros del periodo elegido en un solo día de 24 horas y muestra la media de cada hora, para que puedas ver patrones según la hora del día; por ejemplo, si las mañanas te cuestan más que las tardes. Las horas sin registros se omiten. Toca un punto para ver los registros que lo forman.</string>
     <string name="charts_help_axis_title">Eje Y: %1$s o %2$s</string>
     <string name="charts_help_autofit_body">Ajusta el eje vertical solo al rango que cubren realmente tus datos. Los cambios pequeños se ven con facilidad porque el gráfico ocupa todo el espacio, pero la línea no se mide frente al rango completo de la escala. Las etiquetas de la izquierda son tus valores registrados; cuando se muestra más de una escala, todas comparten ese mismo eje.</string>
     <string name="charts_help_absolute_body" formatted="false">Muestra cada línea frente al rango completo de su escala, de mínimo a máximo. Los cambios se ven más pequeños, pero las escalas quedan alineadas, así que puedes compararlas entre sí en el mismo gráfico. Las escalas marcadas como \"cuanto más bajo, mejor\" se dibujan invertidas, de modo que mejorar siempre apunta hacia arriba. Las etiquetas de la izquierda se leen como porcentajes porque cada línea se mide frente a su propio rango: 100% es la parte superior de ese rango, o la inferior en una escala marcada como \"cuanto más bajo, mejor\".</string>
@@ -436,6 +477,7 @@
     <string name="scale_edit_error_step_not_positive">El paso debe ser mayor que cero</string>
     <string name="scale_edit_error_range_not_step_multiple">El rango (%1$d) debe ser múltiplo del paso (%2$s)</string>
     <string name="scale_edit_error_default_not_number">El valor inicial debe ser un número</string>
+    <string name="scale_edit_error_hex_incomplete">Introduce 6 caracteres (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">El valor inicial debe estar entre %1$d y %2$d</string>
     <string name="scale_edit_error_default_off_step">El valor inicial debe coincidir con un paso de %1$s a partir de %2$d</string>
 
@@ -461,6 +503,50 @@
     <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
 
+    <string name="backup_config_section">Configuración</string>
+    <string name="backup_config_intro">Un archivo de configuración contiene tus escalas, etiquetas, categorías de etiquetas y franjas de aviso, pero ningún registro. Úsalo para preparar otra instalación o restaurar tu configuración. Al importarlo se conservan todos tus registros.</string>
+    <string name="backup_config_export">Exportar configuración</string>
+    <string name="backup_config_import">Importar configuración (conserva tus registros)</string>
+    <string name="backup_config_encrypt_title">Cifrar configuración</string>
+    <string name="backup_config_encrypt_body">Elige una frase de contraseña para cifrar esta configuración. Los nombres de etiquetas y escalas pueden ser personales, así que se protege igual que una copia completa. Necesitarás exactamente esta frase para importarla. No es el PIN de la app y no se puede recuperar si la olvidas.</string>
+    <string name="backup_config_decrypt_title">Descifrar configuración</string>
+    <string name="backup_config_decrypt_body">Introduce la frase de contraseña de este archivo de configuración o copia. Solo se importa su configuración; tus registros no cambian.</string>
+    <string name="backup_config_export_success">Configuración exportada: %1$s</string>
+    <string name="backup_config_import_success">Configuración importada. Escalas: %1$d, etiquetas: %2$d, franjas de aviso: %3$d. Tus registros no se han modificado.</string>
+    <string name="backup_config_import_failed">Error al importar la configuración: %1$s</string>
+    <string name="backup_config_import_partial">Configuración importada en parte. Escalas: %1$d, etiquetas: %2$d. No se pudieron actualizar las franjas de aviso (%3$s); revísalas en Ajustes. Tus registros no se han modificado.</string>
+    <string name="backup_config_only_label">Solo configuración</string>
+    <string name="backup_config_incompatible_title">Configuración no compatible</string>
+    <string name="backup_config_incompatible_version">Esta configuración usa la versión de formato %1$d, que esta versión de la app no puede importar. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
+    <string name="backup_config_incompatible_backup_version">Esta copia usa la versión de formato %1$d, de la que esta versión de la app no puede importar la configuración. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
+    <string name="backup_config_incompatible_data_loss">Esta configuración no es compatible con tus datos: importarla podría eliminar o cambiar datos de tus registros existentes. No se ha cambiado nada.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">La escala \"%2$s\" se usa en %1$d registro, pero falta en la configuración.</item>
+        <item quantity="many">La escala \"%2$s\" se usa en %1$d registros, pero falta en la configuración.</item>
+        <item quantity="other">La escala \"%2$s\" se usa en %1$d registros, pero falta en la configuración.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registro.</item>
+        <item quantity="many">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registros.</item>
+        <item quantity="other">La configuración invierte la escala \"%2$s\", lo que cambiaría el significado de %1$d registros.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registro.</item>
+        <item quantity="many">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registros.</item>
+        <item quantity="other">La configuración limita la escala \"%2$s\" de %3$d a %4$d, lo que no abarca los valores ya guardados en %1$d registros.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registro, pero falta en la configuración.</item>
+        <item quantity="many">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registros, pero falta en la configuración.</item>
+        <item quantity="other">La etiqueta \"%2$s\" (%3$s) se usa en %1$d registros, pero falta en la configuración.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">Y %1$d problema más.</item>
+        <item quantity="many">Y %1$d problemas más.</item>
+        <item quantity="other">Y %1$d problemas más.</item>
+    </plurals>
+
     <!-- Import errors -->
     <string name="import_error_too_large">El archivo supera el límite de %1$d MB.</string>
     <string name="import_error_unreadable">No se pudo leer el archivo.</string>
@@ -470,4 +556,5 @@
     <string name="import_error_unsupported_version">Esta copia usa la versión de formato %1$d, que esta versión de la app no puede leer. Actualizar la app puede ayudar.</string>
     <string name="import_error_malformed">El archivo de copia está dañado (%1$s).</string>
     <string name="import_error_write_failed">La importación se detuvo al guardar los datos (%1$s).</string>
+    <string name="import_error_config_only">Este es un archivo solo de configuración, sin registros que restaurar. Usa \"Importar configuración\" en su lugar.</string>
 </resources>

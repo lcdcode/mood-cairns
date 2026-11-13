@@ -27,8 +27,10 @@ data class TagEditUiState(
      * but [name] keeps the stored English name, so the tag stays recognized as built-in.
      */
     val nameIsDefault: Boolean = false,
-    val category: TagCategory = TagCategory.PLACE,
+    val categoryId: String = "",
     val sortOrder: Int = 0,
+    /** Zero-based; the picker shows it as 1..[Tag.MAX_COLUMNS]. */
+    val columnIndex: Int = 0,
     val loaded: Boolean = false,
     val saving: Boolean = false,
     val saved: Boolean = false,
@@ -47,16 +49,18 @@ class TagEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(TagEditUiState())
     val state: StateFlow<TagEditUiState> = _state.asStateFlow()
 
-    val categoryLabels: StateFlow<Map<TagCategory, String>> = repo.observeCategoryLabels()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+    val categories: StateFlow<List<TagCategory>> = repo.observeCategories()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     init {
         val id = savedState.get<Long>(ARG_TAG_ID)?.takeIf { it > 0L }
         if (id == null) {
-            val category = savedState.get<String>(ARG_CATEGORY)
-                ?.let { name -> TagCategory.entries.find { it.name == name } }
-                ?: TagCategory.PLACE
-            _state.update { it.copy(category = category, loaded = true) }
+            viewModelScope.launch {
+                val categoryId = savedState.get<String>(ARG_CATEGORY)?.takeIf { it.isNotBlank() }
+                    ?: repo.allCategories().firstOrNull()?.id
+                    ?: TagCategory.OTHER_ID
+                _state.update { it.copy(categoryId = categoryId, loaded = true) }
+            }
         } else {
             viewModelScope.launch {
                 val existing = repo.byId(id)
@@ -66,8 +70,9 @@ class TagEditViewModel @Inject constructor(
                             id = existing.id,
                             name = existing.name,
                             nameIsDefault = SeedNames.tagRes(existing.name) != null,
-                            category = existing.category,
+                            categoryId = existing.categoryId,
                             sortOrder = existing.sortOrder,
+                            columnIndex = existing.visibleColumn,
                             loaded = true,
                         )
                     }
@@ -85,7 +90,16 @@ class TagEditViewModel @Inject constructor(
 
     fun setName(v: String) =
         _state.update { it.copy(name = v, nameIsDefault = false, error = null) }
-    fun setCategory(c: TagCategory) = _state.update { it.copy(category = c, error = null) }
+    fun setCategory(categoryId: String) = _state.update {
+        it.copy(
+            categoryId = categoryId,
+            columnIndex = columnAfterCategoryChange(it.columnIndex, it.categoryId, categoryId),
+            error = null,
+        )
+    }
+
+    fun setColumn(columnIndex: Int) =
+        _state.update { it.copy(columnIndex = columnIndex.coerceIn(Tag.COLUMN_RANGE)) }
 
     fun save() {
         val cur = _state.value
@@ -97,12 +111,13 @@ class TagEditViewModel @Inject constructor(
 
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
-            val sortOrder = if (cur.id == 0L) repo.nextSortOrder(cur.category) else cur.sortOrder
+            val sortOrder = if (cur.id == 0L) repo.nextSortOrder(cur.categoryId) else cur.sortOrder
             val tag = Tag(
                 id = cur.id,
                 name = name,
-                category = cur.category,
+                categoryId = cur.categoryId,
                 sortOrder = sortOrder,
+                columnIndex = cur.columnIndex,
             )
             try {
                 repo.upsert(tag)

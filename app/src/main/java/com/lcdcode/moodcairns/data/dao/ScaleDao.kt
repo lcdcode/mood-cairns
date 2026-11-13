@@ -20,12 +20,32 @@ object ScaleSql {
     const val REFLECT_VALUES =
         "UPDATE entry_value SET value = MIN(MAX(:rangeSum - value, :newMin), :newMax) " +
             "WHERE scaleId = :scaleId"
+
+    /** Per used scale: how many entries record it and the extremes of their values. */
+    const val USAGE_STATS =
+        "SELECT scaleId, COUNT(DISTINCT entryId) AS entryCount, " +
+            "MIN(value) AS minValue, MAX(value) AS maxValue " +
+            "FROM entry_value GROUP BY scaleId"
 }
+
+/** A row of [ScaleSql.USAGE_STATS]. */
+data class ScaleUsageRow(
+    val scaleId: Long,
+    val entryCount: Int,
+    val minValue: Float,
+    val maxValue: Float,
+)
 
 @Dao
 interface ScaleDao {
     @Query("SELECT * FROM scale ORDER BY archived, sortOrder, name")
     fun observeAll(): Flow<List<Scale>>
+
+    @Query("SELECT * FROM scale ORDER BY archived, sortOrder, name")
+    suspend fun all(): List<Scale>
+
+    @Query(ScaleSql.USAGE_STATS)
+    suspend fun usageStats(): List<ScaleUsageRow>
 
     @Query("SELECT * FROM scale WHERE archived = 0 ORDER BY sortOrder, name")
     fun observeActive(): Flow<List<Scale>>

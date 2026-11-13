@@ -1,6 +1,6 @@
 package com.lcdcode.moodcairns.data.db
 
-import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -130,7 +130,7 @@ class MoodDbV4MigrationTest {
     fun moodSeeds_areAllInTheMoodCategory() {
         assertTrue(
             "SeedTags.moodTags must only hold MOOD tags",
-            SeedTags.moodTags.all { it.category == TagCategory.MOOD },
+            SeedTags.moodTags.all { it.categoryId == BuiltInTagCategory.MOOD.id },
         )
         assertTrue(
             "SeedTags.tags must contain every mood seed",
@@ -155,7 +155,7 @@ class MoodDbV4MigrationTest {
 
     @Test
     fun tagTable_isUnchangedInV4() {
-        // New TagCategory constants are stored as strings, so seeding moods must
+        // Category ids are stored as strings, so seeding moods must
         // not have altered the tag table's structure.
         assertEquals(
             createSqlFromSchema("3.json", "tag"),

@@ -5,24 +5,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
-import com.lcdcode.moodcairns.data.entity.TagCategoryLabel
 import com.lcdcode.moodcairns.ui.common.displayName
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -54,7 +55,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun TagListScreen(
     onBack: () -> Unit,
-    onAdd: (TagCategory) -> Unit,
+    onAdd: (categoryId: String) -> Unit,
     onEdit: (Long) -> Unit,
     viewModel: TagListViewModel = hiltViewModel(),
 ) {
@@ -62,7 +63,9 @@ fun TagListScreen(
     val haptic = LocalHapticFeedback.current
 
     var isDragging by remember { mutableStateOf(false) }
-    var renaming by rememberSaveable { mutableStateOf<TagCategory?>(null) }
+    var editingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var deletingId by rememberSaveable { mutableStateOf<String?>(null) }
+    var creating by rememberSaveable { mutableStateOf(false) }
     var lists by remember { mutableStateOf(state.byCategory) }
     LaunchedEffect(state.byCategory, isDragging) {
         if (!isDragging) lists = state.byCategory
@@ -72,16 +75,16 @@ fun TagListScreen(
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromKey = from.key as? String ?: return@rememberReorderableLazyListState
         val toKey = to.key as? String ?: return@rememberReorderableLazyListState
-        val categoryName = fromKey.substringBefore('/')
-        if (categoryName != toKey.substringBefore('/')) return@rememberReorderableLazyListState
-        val category = TagCategory.entries.find { it.name == categoryName }
-            ?: return@rememberReorderableLazyListState
-        val updated = lists[category].orEmpty().toMutableList()
-        val fromIdx = updated.indexOfFirst { tagKey(it) == fromKey }
-        val toIdx = updated.indexOfFirst { tagKey(it) == toKey }
+        // Tags only move within their own column; another column is a different group.
+        val group = fromKey.substringBeforeLast('/')
+        if (group != toKey.substringBeforeLast('/')) return@rememberReorderableLazyListState
+        val categoryId = group.substringBeforeLast('/')
+        val updated = lists[categoryId].orEmpty().toMutableList()
+        val fromIdx = updated.indexOfFirst { tagKey(categoryId, it) == fromKey }
+        val toIdx = updated.indexOfFirst { tagKey(categoryId, it) == toKey }
         if (fromIdx == -1 || toIdx == -1) return@rememberReorderableLazyListState
         updated.add(toIdx, updated.removeAt(fromIdx))
-        lists = lists + (category to updated)
+        lists = lists + (categoryId to updated)
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
     }
 
@@ -106,63 +109,166 @@ fun TagListScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            for (category in TagCategory.entries) {
-                val tags = lists[category].orEmpty()
-                item(key = "hdr/${category.name}") {
+            for (category in state.categories) {
+                val tags = lists[category.id].orEmpty()
+                item(key = "hdr/${category.id}") {
                     SectionHeader(
-                        text = category.displayName(state.categoryLabels),
-                        onRename = { renaming = category },
-                        onAdd = { onAdd(category) },
+                        text = category.displayName(),
+                        // Other is the catch-all for deleted categories: fixed name, no delete.
+                        onEdit = { editingId = category.id }
+                            .takeIf { category.id != TagCategory.OTHER_ID },
+                        onAdd = { onAdd(category.id) },
                     )
                 }
                 if (tags.isEmpty()) {
-                    item(key = "empty/${category.name}") {
-                        Text(
-                            stringResource(R.string.tag_list_empty),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                    item(key = "empty/${category.id}") { EmptyNote() }
+                }
+                val columns = tags.inColumns()
+                columns.forEachIndexed { column, columnTags ->
+                    // Single-column sections look as before; split ones get headings.
+                    if (columns.size > 1) {
+                        item(key = "col/${category.id}/$column") { ColumnHeading(column) }
+                        if (columnTags.isEmpty()) {
+                            item(key = "empty/${category.id}/$column") { EmptyNote() }
+                        }
+                    }
+                    items(columnTags, key = { tagKey(category.id, it) }) { tag ->
+                        ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
+                            val dragModifier = Modifier.draggableHandle(
+                                onDragStarted = { _ -> isDragging = true },
+                                onDragStopped = {
+                                    val columnIds = lists[category.id].orEmpty()
+                                        .filter { it.visibleColumn == column }
+                                        .map { it.id }
+                                    viewModel.onReorder(columnIds)
+                                    isDragging = false
+                                },
+                            )
+                            TagRow(
+                                tag = tag,
+                                onClick = { onEdit(tag.id) },
+                                dragHandleModifier = dragModifier,
+                            )
+                        }
                     }
                 }
-                items(tags, key = ::tagKey) { tag ->
-                    ReorderableItem(reorderableState, key = tagKey(tag)) { _ ->
-                        val dragModifier = Modifier.draggableHandle(
-                            onDragStarted = { _ -> isDragging = true },
-                            onDragStopped = {
-                                viewModel.onReorder(lists[tag.category].orEmpty().map { it.id })
-                                isDragging = false
-                            },
-                        )
-                        TagRow(
-                            tag = tag,
-                            onClick = { onEdit(tag.id) },
-                            dragHandleModifier = dragModifier,
-                        )
+            }
+            if (state.categories.isNotEmpty()) {
+                item(key = "add-category") {
+                    OutlinedButton(
+                        onClick = { creating = true },
+                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.tag_list_add_category))
                     }
                 }
             }
         }
     }
 
-    renaming?.let { category ->
-        val defaultName = stringResource(category.displayNameRes())
-        RenameCategoryDialog(
-            currentName = category.displayName(state.categoryLabels),
-            defaultName = defaultName,
-            onDismiss = { renaming = null },
+    CategoryDialogs(
+        state = state,
+        editingId = editingId,
+        deletingId = deletingId,
+        creating = creating,
+        onCloseEdit = { editingId = null },
+        onRequestDelete = { id ->
+            editingId = null
+            deletingId = id
+        },
+        onCloseDelete = { deletingId = null },
+        onCloseCreate = { creating = false },
+        onCreate = viewModel::createCategory,
+        onRename = viewModel::renameCategory,
+        onDelete = viewModel::deleteCategory,
+    )
+}
+
+/** Whichever category dialog is open: create, edit (rename or delete), or delete confirmation. */
+@Composable
+private fun CategoryDialogs(
+    state: TagListUiState,
+    editingId: String?,
+    deletingId: String?,
+    creating: Boolean,
+    onCloseEdit: () -> Unit,
+    onRequestDelete: (String) -> Unit,
+    onCloseDelete: () -> Unit,
+    onCloseCreate: () -> Unit,
+    onCreate: (name: String) -> Unit,
+    onRename: (categoryId: String, name: String, defaultName: String?) -> Unit,
+    onDelete: (categoryId: String) -> Unit,
+) {
+    if (creating) {
+        CategoryNameDialog(
+            title = stringResource(R.string.tag_list_add_category),
+            initialName = "",
+            defaultName = null,
+            onDismiss = onCloseCreate,
             onSave = { raw ->
-                viewModel.renameCategory(category, raw, defaultName)
-                renaming = null
+                onCreate(raw)
+                onCloseCreate()
+            },
+        )
+    }
+    state.categories.find { it.id == editingId }?.let { category ->
+        val defaultName = category.defaultName()
+        CategoryNameDialog(
+            title = category.displayName(),
+            initialName = category.displayName(),
+            defaultName = defaultName,
+            onDismiss = onCloseEdit,
+            onSave = { raw ->
+                onRename(category.id, raw, defaultName)
+                onCloseEdit()
+            },
+            onDelete = { onRequestDelete(category.id) },
+        )
+    }
+    state.categories.find { it.id == deletingId }?.let { category ->
+        DeleteCategoryDialog(
+            name = category.displayName(),
+            tagCount = state.byCategory[category.id].orEmpty().size,
+            otherName = stringResource(BuiltInTagCategory.OTHER.displayNameRes()),
+            onDismiss = onCloseDelete,
+            onConfirm = {
+                onDelete(category.id)
+                onCloseDelete()
             },
         )
     }
 }
 
-/** Stable LazyColumn key; '/' cannot appear in a category name so the prefix parses cleanly. */
-private fun tagKey(tag: Tag) = "${tag.category.name}/${tag.id}"
+/**
+ * Stable LazyColumn key "<section category id>/<column>/<tag id>". Column and tag id are
+ * numbers, so splitting at the last '/' twice works even if a category id contained one.
+ */
+private fun tagKey(sectionId: String, tag: Tag) = "$sectionId/${tag.visibleColumn}/${tag.id}"
 
 @Composable
-private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit) {
+private fun EmptyNote() {
+    Text(
+        stringResource(R.string.tag_list_empty),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+/** "Column 2" above a column's tags; [column] is zero-based. */
+@Composable
+private fun ColumnHeading(column: Int) {
+    Text(
+        stringResource(R.string.tag_list_column_heading, column + 1),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+    )
+}
+
+@Composable
+private fun SectionHeader(text: String, onEdit: (() -> Unit)?, onAdd: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -173,61 +279,17 @@ private fun SectionHeader(text: String, onRename: () -> Unit, onAdd: () -> Unit)
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).padding(top = 4.dp),
         )
-        IconButton(onClick = onRename) {
-            Icon(
-                Icons.Default.Edit,
-                contentDescription = stringResource(R.string.common_edit),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+        if (onEdit != null) {
+            IconButton(onClick = onEdit) {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.common_edit),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
         TextButton(onClick = onAdd) { Text(stringResource(R.string.common_add)) }
     }
-}
-
-/**
- * Renames a category using only shared strings, so no new translations are needed.
- * Saving a blank field, or the default name, restores the translated default.
- */
-@Composable
-private fun RenameCategoryDialog(
-    currentName: String,
-    defaultName: String,
-    onDismiss: () -> Unit,
-    onSave: (String) -> Unit,
-) {
-    var draft by rememberSaveable { mutableStateOf(currentName) }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(currentName) },
-        text = {
-            OutlinedTextField(
-                value = draft,
-                onValueChange = { new ->
-                    if (new.codePointCount(0, new.length) <= TagCategoryLabel.MAX_LENGTH) draft = new
-                },
-                label = { Text(stringResource(R.string.common_name_label)) },
-                placeholder = { Text(defaultName) },
-                singleLine = true,
-                trailingIcon = {
-                    if (draft.isNotEmpty()) {
-                        IconButton(onClick = { draft = "" }) {
-                            Icon(
-                                Icons.Default.Clear,
-                                contentDescription = stringResource(R.string.common_clear),
-                            )
-                        }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onSave(draft) }) { Text(stringResource(R.string.common_save)) }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
-        },
-    )
 }
 
 @Composable

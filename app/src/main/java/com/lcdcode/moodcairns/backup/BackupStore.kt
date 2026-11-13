@@ -12,7 +12,14 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class BackupFileInfo(val uri: Uri, val displayName: String, val createdAt: Long, val sizeBytes: Long)
+data class BackupFileInfo(
+    val uri: Uri,
+    val displayName: String,
+    val createdAt: Long,
+    val sizeBytes: Long,
+    /** True for a configuration-only export, which holds no entries. */
+    val isConfigOnly: Boolean = false,
+)
 
 /**
  * Writes JSON backups into MediaStore under Documents/MoodCairns/. This is a
@@ -67,9 +74,10 @@ class BackupStore @Inject constructor(
             MediaStore.MediaColumns.DATE_ADDED,
             MediaStore.MediaColumns.SIZE,
         )
+        val nameColumn = MediaStore.MediaColumns.DISPLAY_NAME
         val selection = "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND " +
-            "${MediaStore.MediaColumns.DISPLAY_NAME} LIKE ?"
-        val args = arrayOf(relativePath, "$FILE_PREFIX%.json")
+            "($nameColumn LIKE ? OR $nameColumn LIKE ?)"
+        val args = arrayOf(relativePath, "$FILE_PREFIX%.json", "$CONFIG_FILE_PREFIX%.json")
         val sort = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
         val result = mutableListOf<BackupFileInfo>()
@@ -81,11 +89,13 @@ class BackupStore @Inject constructor(
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idCol)
                 val uri = ContentUris.withAppendedId(collection, id)
+                val displayName = cursor.getString(nameCol)
                 result += BackupFileInfo(
                     uri = uri,
-                    displayName = cursor.getString(nameCol),
+                    displayName = displayName,
                     createdAt = cursor.getLong(dateCol) * 1000L,
                     sizeBytes = cursor.getLong(sizeCol),
+                    isConfigOnly = isConfigOnlyName(displayName),
                 )
             }
         }
@@ -96,9 +106,9 @@ class BackupStore @Inject constructor(
         return context.contentResolver.delete(uri, null, null) > 0
     }
 
-    /** Keep [keep] most-recent backups, delete the rest. */
+    /** Keep [keep] most-recent full backups, delete the rest. Config exports are left alone. */
     suspend fun trim(keep: Int): Int {
-        val all = list()
+        val all = list().filterNot { it.isConfigOnly }
         if (all.size <= keep) return 0
         val toDelete = all.drop(keep)
         var deleted = 0
@@ -106,18 +116,25 @@ class BackupStore @Inject constructor(
         return deleted
     }
 
-    fun suggestName(date: LocalDate = LocalDate.now()): String =
-        "$FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
-
-    fun suggestCsvName(date: LocalDate = LocalDate.now()): String =
-        "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
-
     companion object {
         const val MIME_JSON = "application/json"
         const val MIME_CSV = "text/csv"
         private const val FOLDER_NAME = "MoodCairns"
         private const val FILE_PREFIX = "mood-cairns-backup-"
+        private const val CONFIG_FILE_PREFIX = "mood-cairns-config-only-"
         private const val CSV_FILE_PREFIX = "mood-cairns-export-"
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+
+        fun suggestName(date: LocalDate = LocalDate.now()): String =
+            "$FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
+
+        fun suggestConfigName(date: LocalDate = LocalDate.now()): String =
+            "$CONFIG_FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
+
+        fun suggestCsvName(date: LocalDate = LocalDate.now()): String =
+            "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
+
+        fun isConfigOnlyName(displayName: String): Boolean =
+            displayName.startsWith(CONFIG_FILE_PREFIX)
     }
 }

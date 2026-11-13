@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -9,7 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lcdcode.moodcairns.data.entity.PromptSlot
-import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.about.AboutScreen
 import com.lcdcode.moodcairns.ui.backup.BackupScreen
 import com.lcdcode.moodcairns.ui.charts.ChartsScreen
@@ -41,8 +41,8 @@ object Routes {
     const val TAG_EDIT = "tag_edit"
     const val ABOUT = "about"
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
-    fun tagEdit(id: Long? = null, category: TagCategory? = null) =
-        "$TAG_EDIT?tagId=${id ?: 0L}&category=${category?.name ?: ""}"
+    fun tagEdit(id: Long? = null, categoryId: String? = null) =
+        "$TAG_EDIT?tagId=${id ?: 0L}&category=${Uri.encode(categoryId.orEmpty())}"
     fun windowEdit(id: Long? = null) = "$WINDOW_EDIT?windowId=${id ?: 0L}"
 
     fun entry(
@@ -142,7 +142,7 @@ fun AppNav(
         composable(Routes.TAGS) {
             TagListScreen(
                 onBack = { nav.popBackStack() },
-                onAdd = { category -> nav.navigate(Routes.tagEdit(category = category)) },
+                onAdd = { categoryId -> nav.navigate(Routes.tagEdit(categoryId = categoryId)) },
                 onEdit = { id -> nav.navigate(Routes.tagEdit(id)) },
             )
         }

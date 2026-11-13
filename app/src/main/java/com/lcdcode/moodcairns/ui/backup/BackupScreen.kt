@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
@@ -46,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
+import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import java.time.Instant
@@ -63,6 +66,10 @@ fun BackupScreen(
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { uri -> uri?.let(viewModel::requestImport) }
+
+    val configImportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let(viewModel::requestConfigImport) }
 
     val messageText = state.message?.asString()
     LaunchedEffect(messageText) {
@@ -92,7 +99,29 @@ fun BackupScreen(
                 onConfirm = viewModel::submitSecret,
                 onDismiss = viewModel::cancelPinPrompt,
             )
+            PinPromptMode.ExportConfig -> SecretDialog(
+                title = stringResource(R.string.backup_config_encrypt_title),
+                body = stringResource(R.string.backup_config_encrypt_body),
+                label = stringResource(R.string.backup_passphrase_label),
+                confirmLabel = stringResource(R.string.backup_passphrase_confirm_label),
+                minLength = BackupViewModel.MIN_PASSPHRASE_LEN,
+                onConfirm = viewModel::submitSecret,
+                onDismiss = viewModel::cancelPinPrompt,
+            )
+            PinPromptMode.ImportConfig -> SecretDialog(
+                title = stringResource(R.string.backup_config_decrypt_title),
+                body = stringResource(R.string.backup_config_decrypt_body),
+                label = stringResource(R.string.backup_passphrase_or_pin_label),
+                confirmLabel = null,
+                minLength = 0,
+                onConfirm = viewModel::submitSecret,
+                onDismiss = viewModel::cancelPinPrompt,
+            )
         }
+    }
+
+    state.configIssue?.let { issue ->
+        ConfigIssueDialog(issue = issue, onDismiss = viewModel::dismissConfigIssue)
     }
 
     Scaffold(
@@ -145,11 +174,20 @@ fun BackupScreen(
             OutlinedButton(
                 onClick = {
                     viewModel.noteFilePickerOpening()
-                    importLauncher.launch(arrayOf("application/json"))
+                    importLauncher.launch(arrayOf(BackupStore.MIME_JSON))
                 },
                 enabled = !state.busy,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.backup_import)) }
+
+            ConfigSection(
+                enabled = !state.busy,
+                onExport = viewModel::requestConfigExport,
+                onImport = {
+                    viewModel.noteFilePickerOpening()
+                    configImportLauncher.launch(arrayOf(BackupStore.MIME_JSON))
+                },
+            )
 
             Text(
                 stringResource(R.string.backup_existing_label),
@@ -183,6 +221,13 @@ private fun BackupRow(file: BackupFileInfo) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(file.displayName, style = MaterialTheme.typography.bodyLarge)
+            if (file.isConfigOnly) {
+                Text(
+                    stringResource(R.string.backup_config_only_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
             Text(
                 listOf(fmt.format(created), Formatter.formatShortFileSize(context, file.sizeBytes))
                     .joinToString(stringResource(R.string.common_list_separator)),
@@ -191,6 +236,50 @@ private fun BackupRow(file: BackupFileInfo) {
             )
         }
     }
+}
+
+@Composable
+private fun ConfigSection(enabled: Boolean, onExport: () -> Unit, onImport: () -> Unit) {
+    Text(
+        stringResource(R.string.backup_config_section),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.padding(top = 8.dp),
+    )
+    Text(
+        stringResource(R.string.backup_config_intro),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    OutlinedButton(
+        onClick = onExport,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(R.string.backup_config_export)) }
+    OutlinedButton(
+        onClick = onImport,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(R.string.backup_config_import)) }
+}
+
+@Composable
+private fun ConfigIssueDialog(issue: ConfigIssue, onDismiss: () -> Unit) {
+    val paragraphs = issue.toUiTexts().map { it.asString() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.backup_config_incompatible_title)) },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                paragraphs.forEach { Text(it, style = MaterialTheme.typography.bodyMedium) }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_ok)) }
+        },
+    )
 }
 
 @Composable

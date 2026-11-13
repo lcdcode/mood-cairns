@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.data.db
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 
 /**
  * SQL for the versioned migrations, kept as plain strings (no Android deps) so
@@ -40,6 +41,28 @@ internal object MoodDbMigrationSql {
     )
 
     /**
+     * Replaces tag_category_label with tag_category: the built-ins are seeded in their
+     * old fixed order and keep any custom name, except Other, which can no longer be
+     * renamed. tag.category already stores the built-in names, which become the
+     * category ids, so tag rows need no rewrite.
+     */
+    val V5_TO_V6: List<String> = listOf(
+        "CREATE TABLE IF NOT EXISTS `tag_category` (`id` TEXT NOT NULL, `label` TEXT, " +
+            "`sortOrder` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+    ) + SeedTagCategories.all.map { category ->
+        val label = if (category.id == TagCategory.OTHER_ID) {
+            "NULL"
+        } else {
+            "(SELECT label FROM tag_category_label WHERE category = '${category.id}')"
+        }
+        "INSERT OR IGNORE INTO tag_category (id, label, sortOrder) " +
+            "VALUES ('${category.id}', $label, ${category.sortOrder})"
+    } + listOf(
+        "DROP TABLE IF EXISTS `tag_category_label`",
+        "ALTER TABLE `tag` ADD COLUMN `columnIndex` INTEGER NOT NULL DEFAULT 0",
+    )
+
+    /**
      * INSERT OR IGNORE keeps the seeding idempotent: reruns and collisions with
      * user-created tags of the same name are silently skipped thanks to the
      * unique (name, category) index.
@@ -47,7 +70,7 @@ internal object MoodDbMigrationSql {
     fun seedTagInserts(tags: List<Tag>): List<String> = tags.map { tag ->
         val name = tag.name.replace("'", "''")
         "INSERT OR IGNORE INTO tag (name, category, sortOrder) " +
-            "VALUES ('$name', '${tag.category.name}', ${tag.sortOrder})"
+            "VALUES ('$name', '${tag.categoryId}', ${tag.sortOrder})"
     }
 }
 
@@ -94,5 +117,15 @@ val MIGRATION_3_4: Migration = object : Migration(3, 4) {
 val MIGRATION_4_5: Migration = object : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         MoodDbMigrationSql.V4_TO_V5.forEach(db::execSQL)
+    }
+}
+
+/**
+ * Turns tag categories into rows so users can add and delete them, and adds
+ * tag.columnIndex (default 0) for the upcoming column layout.
+ */
+val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        MoodDbMigrationSql.V5_TO_V6.forEach(db::execSQL)
     }
 }

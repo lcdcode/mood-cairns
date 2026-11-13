@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Polish, informal "ty". DRAFT pending native-speaker review.
+    - Second person stays in the present tense or imperative: Polish past tense and the
+      formal "Pan/Pani" are gendered. Text about the author avoids the gendered first
+      person ("brakowało mi", not "chciałem/chciałam").
+    - Plurals: one is exactly 1 (21 is many). few is 2-4, 22-24, … except 12-14;
+      many is 0, 5-21, 25-31, …, 12-14; other covers fractions (genitive singular).
+    - Day counts that do not drive a plural use the invariant adjective "N-dniowa".
+    - Quotes are „…”.
+    Source: values/strings.xml.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="widget_title">Zapisz nastrój</string>
+    <string name="widget_subtitle">Dotknij, aby otworzyć Mood Cairns</string>
+    <string name="widget_description">Szybki zapis nastroju</string>
+
+    <!-- Common -->
+    <string name="common_back">Wstecz</string>
+    <string name="common_cancel">Anuluj</string>
+    <string name="common_edit">Edytuj</string>
+    <string name="common_enable">Włącz</string>
+    <string name="common_loading">Wczytywanie…</string>
+    <string name="common_next">Dalej</string>
+    <string name="common_ok">OK</string>
+    <string name="common_save">Zapisz</string>
+    <string name="common_saving">Zapisywanie…</string>
+    <string name="common_all">Wszystkie</string>
+    <string name="common_clear">Wyczyść</string>
+    <string name="common_close">Zamknij</string>
+    <string name="common_delete">Usuń</string>
+    <string name="common_add">Dodaj</string>
+    <string name="common_continue">Kontynuuj</string>
+    <string name="common_deleting">Usuwanie…</string>
+    <string name="common_name_label">Nazwa</string>
+    <string name="common_tags_label">Tagi</string>
+    <string name="common_reorder">Zmień kolejność</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_date_range">%1$s – %2$s</string>
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">od %1$s do %2$s</string>
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <string name="common_value_in_range">%1$s (%2$s)</string>
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d s</item>
+        <item quantity="few">%1$d s</item>
+        <item quantity="many">%1$d s</item>
+        <item quantity="other">%1$d s</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d min</item>
+        <item quantity="few">%1$d min</item>
+        <item quantity="many">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+
+    <!-- Shared errors -->
+    <string name="error_save_failed">Nie udało się zapisać: %1$s</string>
+    <string name="error_delete_failed">Nie udało się usunąć: %1$s</string>
+    <string name="error_name_required">Podaj nazwę</string>
+    <string name="error_pins_mismatch">Kody PIN nie są zgodne</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">Kod PIN musi mieć co najmniej %1$d cyfrę</item>
+        <item quantity="few">Kod PIN musi mieć co najmniej %1$d cyfry</item>
+        <item quantity="many">Kod PIN musi mieć co najmniej %1$d cyfr</item>
+        <item quantity="other">Kod PIN musi mieć co najmniej %1$d cyfry</item>
+    </plurals>
+
+    <!-- Prompt slot names -->
+    <string name="enum_prompt_slot_morning">Ranek</string>
+    <string name="enum_prompt_slot_evening">Wieczór</string>
+    <string name="enum_prompt_slot_manual">Ręcznie</string>
+    <string name="enum_prompt_slot_custom">Własne</string>
+
+    <!-- Built-in scales, tags, and prompt windows -->
+    <string name="seed_scale_happiness">Szczęście</string>
+    <string name="seed_scale_anxiety">Niepokój</string>
+    <string name="seed_scale_stress">Stres</string>
+    <string name="seed_scale_boredom">Nuda</string>
+    <string name="seed_scale_pain">Ból</string>
+    <string name="seed_tag_home">Dom</string>
+    <string name="seed_tag_work">Praca</string>
+    <string name="seed_tag_school">Szkoła</string>
+    <string name="seed_tag_commute">Dojazd</string>
+    <string name="seed_tag_outdoors">Na zewnątrz</string>
+    <string name="seed_tag_travel">Podróże</string>
+    <string name="seed_tag_family">Rodzina</string>
+    <string name="seed_tag_friends">Przyjaciele</string>
+    <string name="seed_tag_partner">Partner</string>
+    <string name="seed_tag_coworkers">Współpracownicy</string>
+    <string name="seed_tag_alone">W samotności</string>
+    <string name="seed_tag_exercise">Ćwiczenia</string>
+    <string name="seed_tag_socializing">Spotkania towarzyskie</string>
+    <string name="seed_tag_reading">Czytanie</string>
+    <string name="seed_tag_gaming">Gry</string>
+    <string name="seed_tag_chores">Obowiązki domowe</string>
+    <string name="seed_tag_rest">Odpoczynek</string>
+    <string name="seed_tag_joy">Radość</string>
+    <string name="seed_tag_excited">Ekscytacja</string>
+    <string name="seed_tag_grateful">Wdzięczność</string>
+    <string name="seed_tag_content">Zadowolenie</string>
+    <string name="seed_tag_calm">Spokój</string>
+    <string name="seed_tag_surprise">Zaskoczenie</string>
+    <string name="seed_tag_frustrated">Frustracja</string>
+    <string name="seed_tag_lonely">Samotność</string>
+    <string name="seed_tag_sadness">Smutek</string>
+    <string name="seed_tag_fear">Strach</string>
+    <string name="seed_tag_anger">Złość</string>
+    <string name="seed_tag_disgust">Wstręt</string>
+    <string name="seed_window_morning">Ranek</string>
+    <string name="seed_window_evening">Wieczór</string>
+
+    <!-- Tag categories -->
+    <string name="enum_tag_category_place">Miejsca</string>
+    <string name="enum_tag_category_person">Ludzie</string>
+    <string name="enum_tag_category_activity">Czynności</string>
+    <string name="enum_tag_category_mood">Nastroje</string>
+    <string name="enum_tag_category_other">Inne</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">Przypomnienia o nastroju</string>
+    <string name="notif_channel_prompts_description">Delikatne przypomnienia, aby zapisać, jak się czujesz.</string>
+    <string name="notif_prompt_default_title">Czas na wpis</string>
+    <string name="notif_prompt_text">Zapisz, jak się czujesz</string>
+    <string name="notif_test_title">Powiadomienie testowe</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Zapisuj, jak się czujesz. Prywatnie.</string>
+    <string name="home_log_entry">Nowy wpis</string>
+    <string name="home_history">Historia</string>
+    <string name="home_charts">Wykresy</string>
+    <string name="home_backup">Kopia zapasowa i import</string>
+    <string name="home_scales">Zarządzaj skalami</string>
+    <string name="home_tags">Zarządzaj tagami</string>
+    <string name="home_settings">Ustawienia</string>
+    <string name="home_about">O aplikacji</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">Jak się czujesz?</string>
+    <string name="entry_title_edit">Edytuj wpis</string>
+    <string name="entry_no_scales">Brak skonfigurowanych skal. Dodaj skalę w sekcji „Zarządzaj skalami”.</string>
+    <string name="entry_note_label">Notatka (opcjonalnie)</string>
+    <string name="entry_prompt_slot_label">Okno przypomnienia</string>
+    <string name="entry_change_date_time">Zmień datę i godzinę…</string>
+    <string name="entry_slider_description_out_of">%1$s, wartość %2$s z %3$d</string>
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, wartość %2$s w zakresie od %3$d do %4$d</string>
+    <string name="entry_slider_description_lower_better">%1$s, im niżej, tym lepiej</string>
+
+    <!-- History screen -->
+    <string name="history_title">Historia</string>
+    <string name="history_add_past">Dodaj wcześniejszy wpis</string>
+    <string name="history_empty">Brak wpisów.</string>
+    <string name="history_no_matches">Brak wpisów pasujących do filtrów.</string>
+    <string name="history_delete_title">Usunąć wpis?</string>
+    <string name="history_delete_body">Ten wpis zostanie trwale usunięty.</string>
+    <string name="history_search_placeholder">Szukaj w notatkach…</string>
+    <string name="history_search">Szukaj</string>
+    <string name="history_clear_search">Wyczyść wyszukiwanie</string>
+    <string name="history_clear_all">Wyczyść wszystko</string>
+    <string name="history_pick_date">Wybierz datę</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">Skale</string>
+    <string name="scale_list_add">Dodaj skalę</string>
+    <string name="scale_list_empty">Brak skal.</string>
+    <string name="scale_list_section_active">Aktywne</string>
+    <string name="scale_list_section_archived">Zarchiwizowane</string>
+    <string name="scale_list_archive">Archiwizuj</string>
+    <string name="scale_list_unarchive">Przywróć z archiwum</string>
+    <string name="scale_list_step">stopniowanie co %1$s</string>
+    <string name="scale_list_default">domyślnie %1$s</string>
+    <string name="scale_list_lower_better">im niżej, tym lepiej</string>
+    <string name="scale_list_built_in">wbudowana</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">Nowa skala</string>
+    <string name="scale_edit_title_edit">Edytuj skalę</string>
+    <string name="scale_edit_min_label">Min.</string>
+    <string name="scale_edit_max_label">Maks.</string>
+    <string name="scale_edit_step_label">Stopniowanie</string>
+    <string name="scale_edit_default_label">Wartość domyślna</string>
+    <string name="scale_edit_default_hint">Od tej wartości zaczyna się suwak w nowym wpisie. Puste pole oznacza środek skali.</string>
+    <string name="scale_edit_lower_better">Im niżej, tym lepiej</string>
+    <string name="scale_edit_lower_better_hint">Skala odwrócona: suwak biegnie od wysokich do niskich wartości, a na wykresach poprawa jest skierowana w górę.</string>
+    <string name="scale_edit_color_label">Kolor</string>
+    <string name="scale_edit_color_custom">Własny kolor</string>
+    <string name="scale_edit_color_picker_title">Wybierz kolor</string>
+    <string name="scale_edit_color_hex_label">Kod szesnastkowy</string>
+    <string name="scale_edit_color_panel_description">Nasycenie i jasność</string>
+    <string name="scale_edit_color_hue_description">Odcień</string>
+    <string name="scale_edit_color_low_contrast_light">Ten kolor może być prawie niewidoczny w trybie jasnym.</string>
+    <string name="scale_edit_color_low_contrast_dark">Ten kolor może być prawie niewidoczny w trybie ciemnym.</string>
+    <string name="scale_edit_built_in_hint">Nazwy wbudowanych skal nie można zmienić, ale można dostosować zakres, stopniowanie i kolor.</string>
+    <string name="scale_edit_delete">Usuń skalę</string>
+    <string name="scale_edit_this_scale">ta skala</string>
+    <string name="scale_edit_remap_title">Przeliczyć zapisane wartości?</string>
+    <string name="scale_edit_remap_confirm">Przelicz</string>
+    <string name="scale_edit_remap_keep">Zachowaj wartości</string>
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d wpis zawiera dane na skali „%2$s”. Przeliczenie zastępuje każdą wartość v wartością (min + max) - v, aby wcześniejsze wpisy zachowały znaczenie przy nowym kierunku. Wybierz „%3$s”, jeśli chcesz zmienić tylko sposób wyświetlania skali.</item>
+        <item quantity="few">%1$d wpisy zawierają dane na skali „%2$s”. Przeliczenie zastępuje każdą wartość v wartością (min + max) - v, aby wcześniejsze wpisy zachowały znaczenie przy nowym kierunku. Wybierz „%3$s”, jeśli chcesz zmienić tylko sposób wyświetlania skali.</item>
+        <item quantity="many">%1$d wpisów zawiera dane na skali „%2$s”. Przeliczenie zastępuje każdą wartość v wartością (min + max) - v, aby wcześniejsze wpisy zachowały znaczenie przy nowym kierunku. Wybierz „%3$s”, jeśli chcesz zmienić tylko sposób wyświetlania skali.</item>
+        <item quantity="other">%1$d wpisu zawiera dane na skali „%2$s”. Przeliczenie zastępuje każdą wartość v wartością (min + max) - v, aby wcześniejsze wpisy zachowały znaczenie przy nowym kierunku. Wybierz „%3$s”, jeśli chcesz zmienić tylko sposób wyświetlania skali.</item>
+    </plurals>
+    <string name="scale_edit_delete_title">Usunąć skalę?</string>
+    <string name="scale_edit_delete_body">Skala „%1$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</string>
+    <string name="scale_edit_delete_body_unused">Żaden wpis nie używa jeszcze skali „%1$s”. Skala „%1$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</string>
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d wpis zawiera dane na skali „%2$s”. Skala „%2$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</item>
+        <item quantity="few">%1$d wpisy zawierają dane na skali „%2$s”. Skala „%2$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</item>
+        <item quantity="many">%1$d wpisów zawiera dane na skali „%2$s”. Skala „%2$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</item>
+        <item quantity="other">%1$d wpisu zawiera dane na skali „%2$s”. Skala „%2$s” i wszystkie zapisane na niej dane zostaną trwale usunięte. Tej operacji nie można cofnąć.</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">Tagi</string>
+    <string name="tag_list_empty">Brak tagów.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">Wybrano: %1$d</item>
+        <item quantity="few">Wybrano: %1$d</item>
+        <item quantity="many">Wybrano: %1$d</item>
+        <item quantity="other">Wybrano: %1$d</item>
+    </plurals>
+    <string name="tag_list_column_heading">Kolumna %1$d</string>
+    <string name="tag_list_add_category">Dodaj kategorię</string>
+    <string name="tag_category_delete_title">Usunąć kategorię?</string>
+    <string name="tag_category_delete_body_empty">Kategoria „%1$s” zostanie usunięta. Nie zawiera tagów.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Kategoria „%1$s” zostanie usunięta. Jej tag zostanie przeniesiony do kategorii „%3$s”.</item>
+        <item quantity="few">Kategoria „%1$s” zostanie usunięta. Jej %2$d tagi zostaną przeniesione do kategorii „%3$s”.</item>
+        <item quantity="many">Kategoria „%1$s” zostanie usunięta. Jej %2$d tagów zostanie przeniesionych do kategorii „%3$s”.</item>
+        <item quantity="other">Kategoria „%1$s” zostanie usunięta. Jej tagi (%2$d) zostaną przeniesione do kategorii „%3$s”.</item>
+    </plurals>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">Nowy tag</string>
+    <string name="tag_edit_title_edit">Edytuj tag</string>
+    <string name="tag_edit_category_label">Kategoria</string>
+    <string name="tag_edit_column_label">Kolumna</string>
+    <string name="tag_edit_delete">Usuń tag</string>
+    <string name="tag_edit_this_tag">ten tag</string>
+    <string name="tag_edit_delete_title">Usunąć tag?</string>
+    <string name="tag_edit_delete_body">Tag „%1$s” zostanie usunięty. Wpisy zachowają swoje dane, zostanie z nich usunięty tylko ten tag.</string>
+    <string name="tag_edit_delete_body_unused">Żaden wpis nie używa jeszcze tagu „%1$s”.</string>
+    <!-- Impersonal "oznaczono" avoids verb agreement with the count. -->
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">Tagiem „%2$s” oznaczono %1$d wpis. Wpisy zachowają swoje dane, zostanie z nich usunięty tylko ten tag.</item>
+        <item quantity="few">Tagiem „%2$s” oznaczono %1$d wpisy. Wpisy zachowają swoje dane, zostanie z nich usunięty tylko ten tag.</item>
+        <item quantity="many">Tagiem „%2$s” oznaczono %1$d wpisów. Wpisy zachowają swoje dane, zostanie z nich usunięty tylko ten tag.</item>
+        <item quantity="other">Tagiem „%2$s” oznaczono %1$d wpisu. Wpisy zachowają swoje dane, zostanie z nich usunięty tylko ten tag.</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">Nowe okno przypomnień</string>
+    <string name="window_edit_title_edit">Edytuj okno przypomnień</string>
+    <string name="window_edit_label_label">Nazwa</string>
+    <string name="window_edit_slot_label">Rodzaj okna</string>
+    <string name="window_edit_start">Początek: %1$s</string>
+    <string name="window_edit_end">Koniec: %1$s</string>
+    <string name="window_edit_enabled">Włączone</string>
+    <string name="window_edit_select_time">Wybierz godzinę</string>
+
+    <!-- Backup screen -->
+    <string name="backup_title">Kopia zapasowa i import</string>
+    <string name="backup_intro">Kopie zapasowe są szyfrowane algorytmem AES-GCM kluczem utworzonym z wybranego przez ciebie hasła i zapisywane w folderze Documents/MoodCairns. Syncthing lub dowolny menedżer plików może synchronizować je z innymi urządzeniami. Sama aplikacja niczego nie wysyła.</string>
+    <string name="backup_export">Eksportuj teraz</string>
+    <string name="backup_export_csv">Eksportuj niezaszyfrowany CSV</string>
+    <string name="backup_export_csv_warning">Plik CSV to zwykły tekst i NIE jest zaszyfrowany. Każdy, kto ma dostęp do twojego folderu Documents (kopie w chmurze, menedżery plików, inne aplikacje), może odczytać twoje wpisy. Aby ukryć tę opcję, wyłącz niebezpieczny eksport w ustawieniach.</string>
+    <string name="backup_import">Importuj z pliku (zastępuje wszystkie dane)</string>
+    <string name="backup_existing_label">Istniejące kopie</string>
+    <string name="backup_none">Jeszcze brak.</string>
+    <string name="backup_encrypt_title">Zaszyfruj kopię zapasową</string>
+    <string name="backup_encrypt_body">Wybierz hasło do zaszyfrowania tej kopii. Do jej przywrócenia potrzebne będzie dokładnie to hasło, nawet po ponownej instalacji. Hasło nie jest kodem PIN aplikacji. Jeśli je zapomnisz, nie da się go odzyskać.</string>
+    <string name="backup_passphrase_label">Hasło</string>
+    <string name="backup_passphrase_confirm_label">Potwierdź hasło</string>
+    <string name="backup_passphrase_mismatch">Hasła nie są zgodne</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">Co najmniej %1$d znak</item>
+        <item quantity="few">Co najmniej %1$d znaki</item>
+        <item quantity="many">Co najmniej %1$d znaków</item>
+        <item quantity="other">Co najmniej %1$d znaku</item>
+    </plurals>
+    <string name="backup_decrypt_title">Odszyfruj kopię zapasową</string>
+    <string name="backup_decrypt_body">Wpisz hasło użyte do zaszyfrowania tej kopii. W przypadku starszych kopii jest to kod PIN aplikacji ustawiony w chwili ich utworzenia.</string>
+    <string name="backup_passphrase_or_pin_label">Hasło lub kod PIN</string>
+
+    <!-- About screen -->
+    <string name="about_title">O aplikacji</string>
+    <string name="about_version">Wersja %1$s</string>
+    <string name="about_why_title">Dlaczego powstała ta aplikacja</string>
+    <string name="about_why_body">Mood Cairns powstało, bo brakowało mi dziennika nastroju ze wszystkimi potrzebnymi funkcjami i bez niczego zbędnego: bez natrętnego śledzenia, bez analityki, bez konta i bez zakupów przez Sklep Google Play. Twoje wpisy są przechowywane tylko na twoim urządzeniu. Aplikacja nie deklaruje żadnych uprawnień sieciowych i zawsze tak będzie.</string>
+    <string name="about_made_by">Autor: %1$s. Za darmo i z otwartym kodem źródłowym. Dziękuję!</string>
+    <string name="about_updates_title">Aktualizacje</string>
+    <string name="about_updates_body">&lt;b&gt;Użytkownicy F-Droid powinni otrzymywać aktualizacje automatycznie&lt;/b&gt;. Jeśli tak się nie dzieje albo Mood Cairns został pobrany z GitHuba, sprawdź aktualizacje przyciskiem poniżej i &lt;b&gt;pobierz najnowszy plik .apk&lt;/b&gt; z sekcji zasobów (Assets).</string>
+    <string name="about_get_latest">Pobierz najnowszą wersję</string>
+    <string name="about_get_latest_hint">Otwiera najnowsze wydanie na GitHubie w przeglądarce. Sama aplikacja nigdy nie łączy się z siecią.</string>
+    <string name="about_no_browser">Nie znaleziono przeglądarki do otwarcia strony.</string>
+    <string name="about_contact_title">Kontakt</string>
+    <string name="about_contact_body">Aby zgłosić problem lub zaproponować nową funkcję, najlepiej &lt;a href=\"%1$s\"&gt;utworzyć nowe zgłoszenie (issue) na GitHubie&lt;/a&gt;.</string>
+
+    <!-- Charts screen -->
+    <string name="charts_title">Wykresy</string>
+    <string name="charts_help_button">Pomoc dotycząca wykresów</string>
+    <string name="charts_no_data">Brak danych w tym zakresie.</string>
+    <string name="charts_date_range_label">Zakres dat</string>
+    <string name="charts_change_range">Zmień</string>
+    <string name="charts_select_range">Wybierz zakres</string>
+    <string name="charts_series_label">Seria</string>
+    <string name="charts_mode_raw">Dzienna</string>
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">Śr. %1$d dni</item>
+        <item quantity="few">Śr. %1$d dni</item>
+        <item quantity="many">Śr. %1$d dni</item>
+        <item quantity="other">Śr. %1$d dni</item>
+    </plurals>
+    <string name="charts_mode_hourly">Godzinowa</string>
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d wpis · surowe wartości dzienne</item>
+        <item quantity="few">%1$d wpisy · surowe wartości dzienne</item>
+        <item quantity="many">%1$d wpisów · surowe wartości dzienne</item>
+        <item quantity="other">%1$d wpisu · surowe wartości dzienne</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d wpis · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="few">%1$d wpisy · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="many">%1$d wpisów · wyśrodkowana średnia %2$d-dniowa</item>
+        <item quantity="other">%1$d wpisu · wyśrodkowana średnia %2$d-dniowa</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d wpis · średnie według godziny</item>
+        <item quantity="few">%1$d wpisy · średnie według godziny</item>
+        <item quantity="many">%1$d wpisów · średnie według godziny</item>
+        <item quantity="other">%1$d wpisu · średnie według godziny</item>
+    </plurals>
+    <string name="charts_y_axis_label">Oś pionowa</string>
+    <string name="charts_axis_autofit">Dopasowana</string>
+    <string name="charts_axis_absolute">Pełna</string>
+    <string name="charts_prompt_slots_label">Okna przypomnień</string>
+    <string name="charts_slot_other">Inne</string>
+    <string name="charts_scales_label">Skale</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Oś pionowa: położenie w zakresie każdej skali (100% = góra zakresu; skale „im niżej, tym lepiej” są odwrócone)</string>
+    <string name="charts_axis_caption_values">Oś pionowa: zapisane wartości</string>
+    <string name="charts_axis_caption_single">Oś pionowa: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">Oś pionowa: zapisane wartości, %1$d skala korzysta z jednej osi</item>
+        <item quantity="few">Oś pionowa: zapisane wartości, %1$d skale korzystają z jednej osi</item>
+        <item quantity="many">Oś pionowa: zapisane wartości, %1$d skal korzysta z jednej osi</item>
+        <item quantity="other">Oś pionowa: zapisane wartości, %1$d skali korzysta z jednej osi</item>
+    </plurals>
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, im niżej, tym lepiej)</string>
+    <string name="charts_no_entries_day">Brak wpisów w tym dniu.</string>
+    <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d wpis w tej godzinie</item>
+        <item quantity="few">%1$d wpisy w tej godzinie</item>
+        <item quantity="many">%1$d wpisów w tej godzinie</item>
+        <item quantity="other">%1$d wpisu w tej godzinie</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s, średnio: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d kolejny wpis</item>
+        <item quantity="few">+%1$d kolejne wpisy</item>
+        <item quantity="many">+%1$d kolejnych wpisów</item>
+        <item quantity="other">+%1$d kolejnego wpisu</item>
+    </plurals>
+
+    <!-- Charts help dialog -->
+    <string name="charts_help_title">Jak czytać wykresy</string>
+    <string name="charts_help_dismiss">Rozumiem</string>
+    <string name="charts_help_intro">Dwa przełączniki zmieniają sposób rysowania twoich wartości. Wybór tutaj nie zmienia danych, tylko wygląd wykresu.</string>
+    <string name="charts_help_series_title">Seria: %1$s, %2$s lub %3$s</string>
+    <string name="charts_help_raw_body">Pokazuje każdy dzień dokładnie tak, jak został zapisany; kilka wpisów z jednego dnia jest uśrednianych. Pozwala zobaczyć dokładne zmiany z dnia na dzień, choć wykres może wyglądać na poszarpany. Rozsuń palce, aby przybliżyć: gdy widać tylko kilka dni, każdy wpis pojawia się o godzinie, o której go dodano.</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="few">Zastępuje każdy dzień średnią ważoną z %1$d dni wyśrodkowanych na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="many">Zastępuje każdy dzień średnią ważoną z %1$d dni wyśrodkowanych na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+        <item quantity="other">Zastępuje każdy dzień średnią ważoną z %1$d dnia wyśrodkowanego na tym dniu, w której środkowy dzień liczy się najbardziej. Wygładza to pojedyncze skoki bez przesuwania ich na kolejne dni, dzięki czemu ogólny trend (czy wartości rosną, czy spadają) jest lepiej widoczny.</item>
+    </plurals>
+    <string name="charts_help_hourly_body">Zbiera wszystkie wpisy z wybranego okresu w jednej dobie i pokazuje średnią dla każdej godziny, dzięki czemu widać wzorce w ciągu dnia, np. czy poranki są trudniejsze niż wieczory. Godziny bez wpisów są pomijane. Dotknij punktu, aby zobaczyć tworzące go wpisy.</string>
+    <string name="charts_help_axis_title">Oś pionowa: %1$s czy %2$s</string>
+    <string name="charts_help_autofit_body">Przybliża oś pionową do zakresu, który faktycznie zajmują twoje dane. Drobne zmiany są dobrze widoczne, bo wykres wypełnia całą przestrzeń, ale linia nie jest odnoszona do pełnego zakresu skali. Etykiety po lewej to zapisane wartości. Gdy na wykresie jest kilka skal, wszystkie korzystają z tej jednej osi.</string>
+    <string name="charts_help_absolute_body" formatted="false">Pokazuje każdą linię względem pełnego zakresu jej skali, od minimum do maksimum. Zmiany wyglądają na mniejsze, ale różne skale się wyrównują, więc można je porównywać na jednym wykresie. Skale oznaczone „im niżej, tym lepiej” są tu odwrócone, aby poprawa zawsze była skierowana w górę. Etykiety po lewej są w procentach, bo każda linia jest mierzona względem własnego zakresu: 100% to góra tego zakresu, a w przypadku skali „im niżej, tym lepiej” jego dół.</string>
+
+    <!-- Data store upgrade -->
+    <string name="migrating_title">Aktualizowanie magazynu danych…</string>
+    <string name="migrating_body">Twoje wpisy są przenoszone do zaszyfrowanej bazy danych. Nie zamykaj aplikacji.</string>
+    <string name="migration_failed_title">Aktualizacja nie powiodła się</string>
+    <string name="migration_failed_body">Oryginalne dane nadal są na urządzeniu. Otwórz aplikację ponownie, aby spróbować jeszcze raz, a jeśli problem nie zniknie, odinstaluj ją i przywróć dane z kopii zapasowej.</string>
+
+    <!-- Biometric unlock prompt -->
+    <string name="biometric_prompt_title">Odblokuj Mood Cairns</string>
+    <string name="biometric_prompt_subtitle">Potwierdź tożsamość, aby kontynuować</string>
+    <string name="biometric_prompt_use_pin">Użyj kodu PIN</string>
+
+    <!-- No-PIN warning -->
+    <string name="no_pin_warning_title_setup">Kontynuować bez kodu PIN?</string>
+    <string name="no_pin_warning_title_remove">Usunąć kod PIN?</string>
+    <string name="no_pin_warning_body">Bez kodu PIN każdy, kto może użyć tego odblokowanego urządzenia, może otworzyć Mood Cairns i odczytać wszystkie twoje wpisy. Dane nadal są zaszyfrowane na urządzeniu, ale chroni je tylko bezpieczny magazyn kluczy urządzenia: dodatkowa ochrona kodem PIN zostanie usunięta, a odblokowanie biometryczne wyłączone. Kod PIN można ponownie ustawić w dowolnej chwili w ustawieniach.</string>
+    <string name="no_pin_warning_accept">Akceptuj i kontynuuj</string>
+
+    <!-- App language picker -->
+    <string name="language_app_language">Język aplikacji</string>
+    <string name="language_system_default">Język systemu</string>
+    <string name="language_system_untranslated">%1$s (brak tłumaczenia, używany jest angielski)</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_section_language">Język</string>
+    <string name="settings_section_prompt_windows">Okna przypomnień</string>
+    <string name="settings_add_window">Dodaj okno</string>
+    <string name="settings_window_summary">%1$s – %2$s · %3$s</string>
+    <string name="settings_section_security">Zabezpieczenia</string>
+    <string name="settings_auto_lock_label">Automatyczna blokada w tle</string>
+    <string name="settings_auto_lock_immediate">Natychmiast</string>
+    <string name="settings_biometric_unlock">Odblokowanie biometryczne</string>
+    <string name="settings_change_pin">Zmień kod PIN</string>
+    <string name="settings_lock_now">Zablokuj teraz</string>
+    <string name="settings_set_pin">Ustaw kod PIN</string>
+    <string name="settings_no_pin_explanation">Nie ustawiono kodu PIN. Twoje dane są zaszyfrowane na tym urządzeniu, ale chroni je tylko magazyn kluczy urządzenia, a nie kod PIN. Bez kodu PIN niedostępne są automatyczna blokada, odblokowanie biometryczne i „Zablokuj teraz”.</string>
+    <string name="settings_section_danger_zone">Strefa zagrożenia</string>
+    <string name="settings_allow_unsafe_exports">Zezwalaj na niebezpieczny eksport</string>
+    <string name="settings_allow_unsafe_exports_summary">Włącza niezaszyfrowany eksport CSV w sekcji „Kopia zapasowa i import”. Domyślnie wyłączone.</string>
+    <string name="settings_unsafe_exports_dialog_title">Zezwolić na niebezpieczny eksport?</string>
+    <string name="settings_unsafe_exports_dialog_body">Dodaje opcję eksportu danych do niezaszyfrowanego pliku CSV w pamięci współdzielonej. Ten plik to zwykły tekst bez hasła: usługi kopii zapasowych w chmurze, menedżery plików i wszystkie inne aplikacje z dostępem do pamięci współdzielonej będą mogły odczytać wszystkie twoje wpisy.\n\nWłącz tę opcję tylko wtedy, gdy rozumiesz i akceptujesz to ryzyko.</string>
+    <string name="settings_allow_screenshots">Zezwalaj na zrzuty ekranu</string>
+    <plurals name="settings_allow_screenshots_summary">
+        <item quantity="one">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minutę. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
+        <item quantity="few">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minuty. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
+        <item quantity="many">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minut. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
+        <item quantity="other">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minuty. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
+    </plurals>
+    <string name="settings_screenshots_allowed_until">Dozwolone do %1$s</string>
+    <string name="settings_screenshots_dialog_title">Zezwolić na zrzuty ekranu?</string>
+    <plurals name="settings_screenshots_dialog_body">
+        <item quantity="one">Przez następną %1$d minutę zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minucie lub po zablokowaniu aplikacji.</item>
+        <item quantity="few">Przez następne %1$d minuty zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minutach lub po zablokowaniu aplikacji.</item>
+        <item quantity="many">Przez następne %1$d minut zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minutach lub po zablokowaniu aplikacji.</item>
+        <item quantity="other">Przez następne %1$d minuty zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minuty lub po zablokowaniu aplikacji.</item>
+    </plurals>
+    <string name="settings_section_diagnostics">Diagnostyka</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">Powiadomienie testowe (pojawi się za około %1$d sekundę)</item>
+        <item quantity="few">Powiadomienie testowe (pojawi się za około %1$d sekundy)</item>
+        <item quantity="many">Powiadomienie testowe (pojawi się za około %1$d sekund)</item>
+        <item quantity="other">Powiadomienie testowe (pojawi się za około %1$d sekundy)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_title">Zablokowano</string>
+    <string name="lock_subtitle">Wpisz kod PIN, aby kontynuować</string>
+    <string name="lock_pin_label">Kod PIN</string>
+    <string name="lock_unlock">Odblokuj</string>
+    <string name="lock_use_biometric">Użyj biometrii</string>
+    <string name="lock_try_again_in">Spróbuj ponownie za %1$s</string>
+    <string name="lock_locked_for">Zablokowano (%1$s)</string>
+    <string name="lock_error_wrong_pin">Nieprawidłowy kod PIN</string>
+    <string name="lock_error_too_many_attempts">Zbyt wiele prób</string>
+    <string name="lock_error_unlock_failed">Nie udało się odblokować: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_title">Ustaw kod PIN</string>
+    <string name="set_pin_intro">Twoje wpisy nigdy nie opuszczają urządzenia. Kod PIN i odblokowanie biometryczne sprawiają, że należą tylko do Ciebie.</string>
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">Kod PIN (%1$d–%2$d cyfr)</item>
+        <item quantity="few">Kod PIN (%1$d–%2$d cyfr)</item>
+        <item quantity="many">Kod PIN (%1$d–%2$d cyfr)</item>
+        <item quantity="other">Kod PIN (%1$d–%2$d cyfr)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">Potwierdź kod PIN</string>
+    <string name="set_pin_save">Zapisz kod PIN</string>
+    <string name="set_pin_continue_without">Kontynuuj bez kodu PIN</string>
+    <string name="set_pin_error_failed">Nie udało się ustawić kodu PIN: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">Nie udało się kontynuować bez kodu PIN: %1$s</string>
+
+    <!-- Change PIN screen -->
+    <string name="change_pin_title_change">Zmień kod PIN</string>
+    <string name="change_pin_title_set">Ustaw kod PIN</string>
+    <string name="change_pin_action_change">Zmień kod PIN</string>
+    <string name="change_pin_action_set">Ustaw kod PIN</string>
+    <string name="change_pin_action_remove">Usuń kod PIN</string>
+    <string name="change_pin_current_label">Obecny kod PIN</string>
+    <string name="change_pin_new_label">Nowy kod PIN</string>
+    <string name="change_pin_confirm_label">Potwierdź nowy kod PIN</string>
+    <string name="change_pin_remove_hint">Pozostaw pola nowego kodu PIN puste, aby usunąć kod PIN.</string>
+    <string name="change_pin_error_current_required">Wpisz obecny kod PIN, aby go usunąć</string>
+    <string name="change_pin_error_wrong_current">Obecny kod PIN jest nieprawidłowy</string>
+    <string name="change_pin_error_locked">Aplikacja jest zablokowana. Odblokuj ją i spróbuj ponownie</string>
+    <string name="change_pin_error_failed">Nie udało się zmienić kodu PIN: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">Nowy kod PIN musi mieć co najmniej %1$d cyfrę</item>
+        <item quantity="few">Nowy kod PIN musi mieć co najmniej %1$d cyfry</item>
+        <item quantity="many">Nowy kod PIN musi mieć co najmniej %1$d cyfr</item>
+        <item quantity="other">Nowy kod PIN musi mieć co najmniej %1$d cyfry</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">Zbyt wiele prób. Spróbuj ponownie za %1$d sekundę.</item>
+        <item quantity="few">Zbyt wiele prób. Spróbuj ponownie za %1$d sekundy.</item>
+        <item quantity="many">Zbyt wiele prób. Spróbuj ponownie za %1$d sekund.</item>
+        <item quantity="other">Zbyt wiele prób. Spróbuj ponownie za %1$d sekundy.</item>
+    </plurals>
+
+    <!-- Scale editor errors -->
+    <string name="scale_edit_error_not_found">Nie znaleziono skali</string>
+    <string name="scale_edit_error_numbers_required">Wpisz liczby dla min., maks. i stopniowania</string>
+    <string name="scale_edit_error_min_not_below_max">Minimum musi być mniejsze niż maksimum</string>
+    <string name="scale_edit_error_step_not_positive">Stopniowanie musi być większe od zera</string>
+    <string name="scale_edit_error_range_not_step_multiple">Zakres (%1$d) musi być wielokrotnością stopniowania (%2$s)</string>
+    <string name="scale_edit_error_default_not_number">Wartość domyślna musi być liczbą</string>
+    <string name="scale_edit_error_hex_incomplete">Wpisz 6 znaków (0-9, A-F)</string>
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Wartość domyślna musi mieścić się w zakresie od %1$d do %2$d</string>
+    <string name="scale_edit_error_default_off_step">Wartość domyślna musi wypadać na stopniowaniu %1$s, licząc od %2$d</string>
+
+    <!-- Tag editor errors -->
+    <string name="tag_edit_error_not_found">Nie znaleziono tagu</string>
+    <string name="tag_edit_error_name_taken">Tag „%1$s” już istnieje w tej kategorii</string>
+
+    <!-- Prompt window editor errors -->
+    <string name="window_edit_error_not_found">Nie znaleziono okna przypomnień</string>
+    <string name="window_edit_error_label_required">Podaj nazwę</string>
+    <string name="window_edit_error_start_not_before_end">Początek musi być wcześniej niż koniec</string>
+
+    <!-- Backup messages -->
+    <string name="backup_error_unsafe_exports_disabled">Niebezpieczny eksport jest wyłączony</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">Hasło musi mieć co najmniej %1$d znak</item>
+        <item quantity="few">Hasło musi mieć co najmniej %1$d znaki</item>
+        <item quantity="many">Hasło musi mieć co najmniej %1$d znaków</item>
+        <item quantity="other">Hasło musi mieć co najmniej %1$d znaku</item>
+    </plurals>
+    <string name="backup_export_success">Wyeksportowano: %1$s</string>
+    <string name="backup_export_csv_success">Wyeksportowano: %1$s (bez szyfrowania)</string>
+    <string name="backup_export_failed">Eksport nie powiódł się: %1$s</string>
+    <string name="backup_import_success">Import zakończony. Wpisy: %1$d, skale: %2$d, tagi: %3$d, okna przypomnień: %4$d</string>
+    <string name="backup_import_failed">Import nie powiódł się: %1$s</string>
+
+    <string name="backup_config_section">Konfiguracja</string>
+    <string name="backup_config_intro">Plik konfiguracji zawiera twoje skale, tagi, kategorie tagów i okna przypomnień, ale bez wpisów. Użyj go, aby skonfigurować inną instalację lub przywrócić swoje ustawienia. Import zachowuje wszystkie twoje wpisy.</string>
+    <string name="backup_config_export">Eksportuj konfigurację</string>
+    <string name="backup_config_import">Importuj konfigurację (zachowuje wpisy)</string>
+    <string name="backup_config_encrypt_title">Zaszyfruj konfigurację</string>
+    <string name="backup_config_encrypt_body">Wybierz hasło do zaszyfrowania tej konfiguracji. Nazwy tagów i skal mogą być osobiste, dlatego jest ona chroniona tak samo jak pełna kopia zapasowa. Do jej importu potrzebne będzie dokładnie to hasło. Hasło nie jest kodem PIN aplikacji. Jeśli je zapomnisz, nie da się go odzyskać.</string>
+    <string name="backup_config_decrypt_title">Odszyfruj konfigurację</string>
+    <string name="backup_config_decrypt_body">Wpisz hasło tego pliku konfiguracji lub kopii zapasowej. Zaimportowana zostanie tylko konfiguracja; twoje wpisy pozostaną bez zmian.</string>
+    <string name="backup_config_export_success">Wyeksportowano konfigurację: %1$s</string>
+    <string name="backup_config_import_success">Konfiguracja zaimportowana. Skale: %1$d, tagi: %2$d, okna przypomnień: %3$d. Twoje wpisy nie zostały zmienione.</string>
+    <string name="backup_config_import_failed">Import konfiguracji nie powiódł się: %1$s</string>
+    <string name="backup_config_import_partial">Konfiguracja zaimportowana częściowo. Skale: %1$d, tagi: %2$d. Nie udało się zaktualizować okien przypomnień (%3$s), sprawdź je w Ustawieniach. Twoje wpisy nie zostały zmienione.</string>
+    <string name="backup_config_only_label">Tylko konfiguracja</string>
+    <string name="backup_config_incompatible_title">Niezgodna konfiguracja</string>
+    <string name="backup_config_incompatible_version">Ta konfiguracja używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi zaimportować. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
+    <string name="backup_config_incompatible_backup_version">Ta kopia używa formatu w wersji %1$d, z którego ta wersja aplikacji nie potrafi zaimportować konfiguracji. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
+    <string name="backup_config_incompatible_data_loss">Ta konfiguracja jest niezgodna z twoimi danymi: jej import mógłby usunąć lub zmienić dane w istniejących wpisach. Nic nie zostało zmienione.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Skala „%2$s” jest używana w %1$d wpisie, ale brakuje jej w konfiguracji.</item>
+        <item quantity="few">Skala „%2$s” jest używana w %1$d wpisach, ale brakuje jej w konfiguracji.</item>
+        <item quantity="many">Skala „%2$s” jest używana w %1$d wpisach, ale brakuje jej w konfiguracji.</item>
+        <item quantity="other">Skala „%2$s” jest używana w %1$d wpisu, ale brakuje jej w konfiguracji.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisu.</item>
+        <item quantity="few">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisów.</item>
+        <item quantity="many">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisów.</item>
+        <item quantity="other">Konfiguracja odwraca skalę „%2$s”, co zmieniłoby znaczenie %1$d wpisu.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisie.</item>
+        <item quantity="few">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisach.</item>
+        <item quantity="many">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisach.</item>
+        <item quantity="other">Konfiguracja ogranicza skalę „%2$s” do zakresu od %3$d do %4$d, który nie obejmuje wartości zapisanych już w %1$d wpisu.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Tag „%2$s” (%3$s) jest używany w %1$d wpisie, ale brakuje go w konfiguracji.</item>
+        <item quantity="few">Tag „%2$s” (%3$s) jest używany w %1$d wpisach, ale brakuje go w konfiguracji.</item>
+        <item quantity="many">Tag „%2$s” (%3$s) jest używany w %1$d wpisach, ale brakuje go w konfiguracji.</item>
+        <item quantity="other">Tag „%2$s” (%3$s) jest używany w %1$d wpisu, ale brakuje go w konfiguracji.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">I jeszcze %1$d problem.</item>
+        <item quantity="few">I jeszcze %1$d problemy.</item>
+        <item quantity="many">I jeszcze %1$d problemów.</item>
+        <item quantity="other">I jeszcze %1$d problemu.</item>
+    </plurals>
+
+    <!-- Import errors -->
+    <string name="import_error_too_large">Plik przekracza limit %1$d MB.</string>
+    <string name="import_error_unreadable">Nie udało się odczytać pliku.</string>
+    <string name="import_error_unreadable_detail">Nie udało się odczytać pliku (%1$s).</string>
+    <string name="import_error_not_a_backup">Ten plik nie jest kopią zapasową Mood Cairns.</string>
+    <string name="import_error_wrong_secret">Nie udało się odszyfrować kopii. Hasło jest nieprawidłowe lub plik jest uszkodzony.</string>
+    <string name="import_error_unsupported_version">Ta kopia używa formatu w wersji %1$d, którego ta aplikacja nie potrafi odczytać. Aktualizacja aplikacji może pomóc.</string>
+    <string name="import_error_malformed">Plik kopii zapasowej jest uszkodzony (%1$s).</string>
+    <string name="import_error_write_failed">Import przerwany podczas zapisywania danych (%1$s).</string>
+    <string name="import_error_config_only">To plik zawierający tylko konfigurację, bez wpisów do przywrócenia. Użyj zamiast tego opcji „Importuj konfigurację”.</string>
+</resources>

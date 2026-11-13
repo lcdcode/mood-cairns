@@ -33,6 +33,7 @@
     <string name="common_continue">Продолжить</string>
     <string name="common_deleting">Удаление…</string>
     <string name="common_name_label">Название</string>
+    <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Изменить порядок</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -168,10 +169,17 @@
     <string name="scale_edit_max_label">Макс.</string>
     <string name="scale_edit_step_label">Шаг</string>
     <string name="scale_edit_default_label">Начальное значение</string>
-    <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкал.</string>
+    <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкалы.</string>
     <string name="scale_edit_lower_better">Меньше — лучше</string>
     <string name="scale_edit_lower_better_hint">Инвертировать шкалу: меньшие значения будут считаться улучшением состояния, а на графиках тренд поползет вверх.</string>
     <string name="scale_edit_color_label">Цвет</string>
+    <string name="scale_edit_color_custom">Свой цвет</string>
+    <string name="scale_edit_color_picker_title">Выберите цвет</string>
+    <string name="scale_edit_color_hex_label">HEX-код</string>
+    <string name="scale_edit_color_panel_description">Насыщенность и яркость</string>
+    <string name="scale_edit_color_hue_description">Оттенок</string>
+    <string name="scale_edit_color_low_contrast_light">В светлой теме этот цвет может быть почти не виден.</string>
+    <string name="scale_edit_color_low_contrast_dark">В тёмной теме этот цвет может быть почти не виден.</string>
     <string name="scale_edit_built_in_hint">Встроенные шкалы нельзя переименовать, но можно изменить их диапазон, шаг ползунка и цвет.</string>
     <string name="scale_edit_delete">Удалить шкалу</string>
     <string name="scale_edit_this_scale">эта шкала</string>
@@ -196,10 +204,27 @@
     <!-- Tag list -->
     <string name="tag_list_title">Теги</string>
     <string name="tag_list_empty">Тегов пока нет.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">Выбрано: %1$d</item>
+        <item quantity="few">Выбрано: %1$d</item>
+        <item quantity="many">Выбрано: %1$d</item>
+        <item quantity="other">Выбрано: %1$d</item>
+    </plurals>
+    <string name="tag_list_column_heading">Столбец %1$d</string>
+    <string name="tag_list_add_category">Добавить категорию</string>
+    <string name="tag_category_delete_title">Удалить категорию?</string>
+    <string name="tag_category_delete_body_empty">Категория «%1$s» будет удалена. В ней нет тегов.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Категория «%1$s» будет удалена. Её %2$d тег будет перенесён в категорию «%3$s».</item>
+        <item quantity="few">Категория «%1$s» будет удалена. Её %2$d тега будут перенесены в категорию «%3$s».</item>
+        <item quantity="many">Категория «%1$s» будет удалена. Её %2$d тегов будут перенесены в категорию «%3$s».</item>
+        <item quantity="other">Категория «%1$s» будет удалена. Её теги (%2$d) будут перенесены в категорию «%3$s».</item>
+    </plurals>
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Новый тег</string>
     <string name="tag_edit_title_edit">Изменить тег</string>
     <string name="tag_edit_category_label">Категория</string>
+    <string name="tag_edit_column_label">Столбец</string>
     <string name="tag_edit_delete">Удалить тег</string>
     <string name="tag_edit_this_tag">этот тег</string>
     <string name="tag_edit_delete_title">Удалить тег?</string>
@@ -266,11 +291,12 @@
     <string name="charts_series_label">Отображение</string>
     <string name="charts_mode_raw">По дням</string>
     <plurals name="charts_mode_rolling">
-        <item quantity="one">Среднее за %1$d день</item>
-        <item quantity="few">Среднее за %1$d дня</item>
-        <item quantity="many">Среднее за %1$d дней</item>
-        <item quantity="other">Среднее за %1$d дня</item>
+        <item quantity="one">Ср. за %1$d дн.</item>
+        <item quantity="few">Ср. за %1$d дн.</item>
+        <item quantity="many">Ср. за %1$d дн.</item>
+        <item quantity="other">Ср. за %1$d дн.</item>
     </plurals>
+    <string name="charts_mode_hourly">По часам</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d запись · исходные значения по дням</item>
         <item quantity="few">%1$d записи · исходные значения по дням</item>
@@ -278,10 +304,16 @@
         <item quantity="other">%1$d записи · исходные значения по дням</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d запись · скользящее среднее за %2$d дн.</item>
-        <item quantity="few">%1$d записи · скользящее среднее за %2$d дн.</item>
-        <item quantity="many">%1$d записей · скользящее среднее за %2$d дн.</item>
-        <item quantity="other">%1$d записи · скользящее среднее за %2$d дн.</item>
+        <item quantity="one">%1$d запись · центрированное среднее за %2$d дн.</item>
+        <item quantity="few">%1$d записи · центрированное среднее за %2$d дн.</item>
+        <item quantity="many">%1$d записей · центрированное среднее за %2$d дн.</item>
+        <item quantity="other">%1$d записи · центрированное среднее за %2$d дн.</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d запись · среднее по часам суток</item>
+        <item quantity="few">%1$d записи · среднее по часам суток</item>
+        <item quantity="many">%1$d записей · среднее по часам суток</item>
+        <item quantity="other">%1$d записи · среднее по часам суток</item>
     </plurals>
     <string name="charts_y_axis_label">Ось Y</string>
     <string name="charts_axis_autofit">Авто</string>
@@ -289,7 +321,6 @@
     <string name="charts_prompt_slots_label">Интервалы напоминаний</string>
     <string name="charts_slot_other">Другие</string>
     <string name="charts_scales_label">Шкалы</string>
-    <string name="charts_tags_label">Теги</string>
     <string name="charts_axis_caption_absolute" formatted="false">Вертикальная ось: положение в пределах диапазона каждой шкалы (100% = верх диапазона; шкалы с пометкой «меньше — лучше» перевёрнуты)</string>
     <string name="charts_axis_caption_values">Вертикальная ось: записанные значения</string>
     <string name="charts_axis_caption_single">Вертикальная ось: %1$s (%2$s)</string>
@@ -303,18 +334,33 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, меньше — лучше)</string>
     <string name="charts_no_entries_day">В этот день записей нет.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d запись за этот час</item>
+        <item quantity="few">%1$d записи за этот час</item>
+        <item quantity="many">%1$d записей за этот час</item>
+        <item quantity="other">%1$d записи за этот час</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s, в среднем: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">Ещё %1$d запись</item>
+        <item quantity="few">Ещё %1$d записи</item>
+        <item quantity="many">Ещё %1$d записей</item>
+        <item quantity="other">Ещё %1$d записи</item>
+    </plurals>
     <!-- Charts help dialog -->
     <string name="charts_help_title">Как читать графики</string>
     <string name="charts_help_dismiss">Понятно</string>
     <string name="charts_help_intro">Два переключателя меняют то, как отображаются ваши значения. Выбор здесь не меняет сами данные, только внешний вид графика.</string>
-    <string name="charts_help_series_title">Отображение: %1$s или %2$s</string>
-    <string name="charts_help_raw_body">Показывает каждый день точно так, как он был записан. Удобно, чтобы видеть резкие изменения от дня к дню, но график может выглядеть неровным.</string>
+    <string name="charts_help_series_title">Отображение: %1$s, %2$s или %3$s</string>
+    <string name="charts_help_raw_body">Показывает каждый день точно так, как он был записан; если за день несколько записей, они усредняются. Удобно, чтобы видеть резкие изменения от дня к дню, но график может выглядеть неровным. Разведите пальцы, чтобы приблизить: когда на экране всего несколько дней, каждая запись отображается в то время, когда она была сделана.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Каждый день заменяется средним за период в %1$d дн., который заканчивается этим днём. Так сглаживаются отдельные всплески, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
-        <item quantity="few">Каждый день заменяется средним за период в %1$d дн., который заканчивается этим днём. Так сглаживаются отдельные всплески, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
-        <item quantity="many">Каждый день заменяется средним за период в %1$d дн., который заканчивается этим днём. Так сглаживаются отдельные всплески, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
-        <item quantity="other">Каждый день заменяется средним за период в %1$d дн., который заканчивается этим днём. Так сглаживаются отдельные всплески, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
+        <item quantity="one">Каждый день заменяется взвешенным средним за период в %1$d дн. с центром на этом дне, причём средний день учитывается сильнее всего. Так сглаживаются отдельные всплески без сдвига на последующие дни, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
+        <item quantity="few">Каждый день заменяется взвешенным средним за период в %1$d дн. с центром на этом дне, причём средний день учитывается сильнее всего. Так сглаживаются отдельные всплески без сдвига на последующие дни, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
+        <item quantity="many">Каждый день заменяется взвешенным средним за период в %1$d дн. с центром на этом дне, причём средний день учитывается сильнее всего. Так сглаживаются отдельные всплески без сдвига на последующие дни, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
+        <item quantity="other">Каждый день заменяется взвешенным средним за период в %1$d дн. с центром на этом дне, причём средний день учитывается сильнее всего. Так сглаживаются отдельные всплески без сдвига на последующие дни, и общую тенденцию (растёт показатель или снижается) видно лучше.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Собирает все записи за выбранный период в одни 24-часовые сутки и показывает среднее за каждый час, чтобы были видны закономерности в течение дня: например, тяжелее ли даются утра, чем вечера. Часы без записей пропускаются. Нажмите на точку, чтобы увидеть записи, из которых она состоит.</string>
     <string name="charts_help_axis_title">Ось Y: %1$s или %2$s</string>
     <string name="charts_help_autofit_body">Масштабирует вертикальную ось только до того диапазона, который действительно занимают ваши данные. Небольшие изменения хорошо видны, потому что график заполняет всё пространство, но линия не соотносится с полным диапазоном шкалы. Подписи слева показывают записанные значения; если выбрано несколько шкал, все они используют эту одну ось.</string>
     <string name="charts_help_absolute_body" formatted="false">Показывает каждую линию относительно полного диапазона её шкалы, от минимума до максимума. Изменения выглядят меньше, зато разные шкалы выравниваются, и их можно наглядно сравнивать на одном графике. Шкалы с пометкой «меньше — лучше» здесь перевёрнуты, чтобы улучшение состояния всегда было направлено вверх. Подписи слева указаны в процентах, потому что каждая линия измеряется относительно своего диапазона: 100% соответствует верху диапазона, а для шкалы «меньше — лучше» соответствует его нижней точке.</string>
@@ -435,6 +481,7 @@
     <string name="scale_edit_error_step_not_positive">Шаг должен быть больше нуля</string>
     <string name="scale_edit_error_range_not_step_multiple">Диапазон (%1$d) должен делиться без остатка на шаг (%2$s)</string>
     <string name="scale_edit_error_default_not_number">Начальное значение должно быть числом</string>
+    <string name="scale_edit_error_hex_incomplete">Введите 6 символов (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Начальное значение должно быть в пределах от %1$d до %2$d</string>
     <string name="scale_edit_error_default_off_step">Начальное значение должно соответствовать шагу %1$s от %2$d</string>
     <!-- Tag editor errors -->
@@ -457,6 +504,55 @@
     <string name="backup_export_failed">Не удалось сохранить: %1$s</string>
     <string name="backup_import_success">Импорт успешно завершён. Записи: %1$d, шкалы: %2$d, теги: %3$d, интервалы напоминаний: %4$d</string>
     <string name="backup_import_failed">Не удалось импортировать данные: %1$s</string>
+
+    <string name="backup_config_section">Конфигурация</string>
+    <string name="backup_config_intro">Файл конфигурации содержит ваши шкалы, теги, категории тегов и интервалы напоминаний, но не записи. С его помощью можно настроить приложение на другом устройстве или восстановить свои настройки. При импорте все ваши записи сохраняются.</string>
+    <string name="backup_config_export">Экспорт конфигурации</string>
+    <string name="backup_config_import">Импорт конфигурации (записи сохранятся)</string>
+    <string name="backup_config_encrypt_title">Зашифровать конфигурацию</string>
+    <string name="backup_config_encrypt_body">Придумайте пароль для шифрования этой конфигурации. Названия тегов и шкал могут быть личными, поэтому она защищается так же, как полная резервная копия. Для импорта понадобится именно этот пароль. Это не PIN-код от входа в приложение. Если вы забудете этот пароль, восстановить его будет невозможно.</string>
+    <string name="backup_config_decrypt_title">Расшифровать конфигурацию</string>
+    <string name="backup_config_decrypt_body">Введите пароль этого файла конфигурации или резервной копии. Импортируется только конфигурация; ваши записи не изменятся.</string>
+    <string name="backup_config_export_success">Конфигурация сохранена: %1$s</string>
+    <string name="backup_config_import_success">Конфигурация импортирована. Шкалы: %1$d, теги: %2$d, интервалы напоминаний: %3$d. Ваши записи не изменены.</string>
+    <string name="backup_config_import_failed">Не удалось импортировать конфигурацию: %1$s</string>
+    <string name="backup_config_import_partial">Конфигурация импортирована частично. Шкалы: %1$d, теги: %2$d. Не удалось обновить интервалы напоминаний (%3$s), проверьте их в настройках. Ваши записи не изменены.</string>
+    <string name="backup_config_only_label">Только конфигурация</string>
+    <string name="backup_config_incompatible_title">Конфигурация несовместима</string>
+    <string name="backup_config_incompatible_version">Эта конфигурация использует формат версии %1$d, который текущая версия приложения не может импортировать. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
+    <string name="backup_config_incompatible_backup_version">Этот бэкап использует формат версии %1$d, из которого текущая версия приложения не может импортировать конфигурацию. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
+    <string name="backup_config_incompatible_data_loss">Эта конфигурация несовместима с вашими данными: её импорт может удалить или изменить данные в существующих записях. Ничего не изменено.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Шкала «%2$s» используется в %1$d записи, но отсутствует в конфигурации.</item>
+        <item quantity="few">Шкала «%2$s» используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="many">Шкала «%2$s» используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="other">Шкала «%2$s» используется в %1$d записи, но отсутствует в конфигурации.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записи.</item>
+        <item quantity="few">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записей.</item>
+        <item quantity="many">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записей.</item>
+        <item quantity="other">Конфигурация меняет направление шкалы «%2$s» на обратное, что изменит смысл %1$d записи.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записи.</item>
+        <item quantity="few">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записях.</item>
+        <item quantity="many">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записях.</item>
+        <item quantity="other">Конфигурация ограничивает шкалу «%2$s» диапазоном от %3$d до %4$d, в который не попадают значения, уже сохранённые в %1$d записи.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Тег «%2$s» (%3$s) используется в %1$d записи, но отсутствует в конфигурации.</item>
+        <item quantity="few">Тег «%2$s» (%3$s) используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="many">Тег «%2$s» (%3$s) используется в %1$d записях, но отсутствует в конфигурации.</item>
+        <item quantity="other">Тег «%2$s» (%3$s) используется в %1$d записи, но отсутствует в конфигурации.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">И ещё %1$d проблема.</item>
+        <item quantity="few">И ещё %1$d проблемы.</item>
+        <item quantity="many">И ещё %1$d проблем.</item>
+        <item quantity="other">И ещё %1$d проблемы.</item>
+    </plurals>
     <!-- Import errors -->
     <string name="import_error_too_large">Размер файла превышает ограничение в %1$d МБ.</string>
     <string name="import_error_unreadable">Не удалось прочитать выбранный файл.</string>
@@ -466,4 +562,5 @@
     <string name="import_error_unsupported_version">Этот бэкап использует формат версии %1$d, который текущая версия приложения не поддерживает. Попробуйте обновить приложение.</string>
     <string name="import_error_malformed">Файл резервной копии повреждён (%1$s).</string>
     <string name="import_error_write_failed">Импорт прерван при записи данных в память устройства (%1$s).</string>
+    <string name="import_error_config_only">Это файл только с конфигурацией, в нём нет записей для восстановления. Используйте вместо этого «Импорт конфигурации».</string>
 </resources>

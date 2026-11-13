@@ -72,8 +72,9 @@ class LegacyMigrator @Inject constructor(
 
         LegacyDatabaseMigration.deleteLegacy(context)
 
-        // clearAllTables() above also wiped the seed tags the fresh v2 DB was
-        // created with; legacy databases have no tags, so re-seed the defaults.
+        // clearAllTables() above also wiped the seed tags and categories the fresh DB
+        // was created with; legacy databases have neither, so re-seed the defaults.
+        moodHolder.tagCategoryDao().insertAllIgnore(SeedTagCategories.all)
         moodHolder.tagDao().insertAllIgnore(SeedTags.tags)
 
         if (BuildConfig.DEBUG) Log.i(tag, "migration complete, legacy file removed")

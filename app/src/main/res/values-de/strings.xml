@@ -27,6 +27,7 @@
     <string name="common_continue">Weiter</string>
     <string name="common_deleting">Wird gelöscht…</string>
     <string name="common_name_label">Name</string>
+    <string name="common_tags_label">Tags</string>
     <string name="common_reorder">Neu anordnen</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
@@ -106,7 +107,7 @@
 
     <!-- Notifications -->
     <string name="notif_channel_prompts_name">Stimmungserinnerungen</string>
-    <string name="notif_channel_prompts_description">Sanfte Erinnerungszeitraum, deine Stimmung festzuhalten.</string>
+    <string name="notif_channel_prompts_description">Sanfte Erinnerungen, deine Stimmung festzuhalten.</string>
     <string name="notif_prompt_default_title">Zeit für einen Eintrag</string>
     <string name="notif_prompt_text">Trage ein, wie du dich fühlst</string>
     <string name="notif_test_title">Testbenachrichtigung</string>
@@ -170,6 +171,13 @@
     <string name="scale_edit_lower_better">Niedriger ist besser</string>
     <string name="scale_edit_lower_better_hint">Umgekehrte Skala: Der Schieberegler läuft von hoch nach niedrig, und Diagramme zeichnen sie so, dass eine Verbesserung nach oben zeigt.</string>
     <string name="scale_edit_color_label">Farbe</string>
+    <string name="scale_edit_color_custom">Eigene Farbe</string>
+    <string name="scale_edit_color_picker_title">Farbe wählen</string>
+    <string name="scale_edit_color_hex_label">Hex-Code</string>
+    <string name="scale_edit_color_panel_description">Sättigung und Helligkeit</string>
+    <string name="scale_edit_color_hue_description">Farbton</string>
+    <string name="scale_edit_color_low_contrast_light">Diese Farbe ist im hellen Modus möglicherweise kaum sichtbar.</string>
+    <string name="scale_edit_color_low_contrast_dark">Diese Farbe ist im dunklen Modus möglicherweise kaum sichtbar.</string>
     <string name="scale_edit_built_in_hint">Integrierte Skalen können nicht umbenannt werden; Bereich, Schritt und Farbe lassen sich trotzdem anpassen.</string>
     <string name="scale_edit_delete">Skala löschen</string>
     <string name="scale_edit_this_scale">diese Skala</string>
@@ -191,11 +199,24 @@
     <!-- Tag list -->
     <string name="tag_list_title">Tags</string>
     <string name="tag_list_empty">Noch keine Tags.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d ausgewählt</item>
+        <item quantity="other">%1$d ausgewählt</item>
+    </plurals>
+    <string name="tag_list_column_heading">Spalte %1$d</string>
+    <string name="tag_list_add_category">Kategorie hinzufügen</string>
+    <string name="tag_category_delete_title">Kategorie löschen?</string>
+    <string name="tag_category_delete_body_empty">Die Kategorie „%1$s“ wird gelöscht. Sie enthält keine Tags.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Die Kategorie „%1$s“ wird gelöscht. Ihr Tag wird in die Kategorie „%3$s“ verschoben.</item>
+        <item quantity="other">Die Kategorie „%1$s“ wird gelöscht. Ihre %2$d Tags werden in die Kategorie „%3$s“ verschoben.</item>
+    </plurals>
 
     <!-- Tag editor -->
     <string name="tag_edit_title_new">Neuer Tag</string>
     <string name="tag_edit_title_edit">Tag bearbeiten</string>
     <string name="tag_edit_category_label">Kategorie</string>
+    <string name="tag_edit_column_label">Spalte</string>
     <string name="tag_edit_delete">Tag löschen</string>
     <string name="tag_edit_this_tag">diesen Tag</string>
     <string name="tag_edit_delete_title">Tag löschen?</string>
@@ -265,13 +286,18 @@
         <item quantity="one">Ø %1$d Tag</item>
         <item quantity="other">Ø %1$d Tage</item>
     </plurals>
+    <string name="charts_mode_hourly">Stündlich</string>
     <plurals name="charts_summary_raw">
         <item quantity="one">%1$d Eintrag · tägliche Rohwerte</item>
         <item quantity="other">%1$d Einträge · tägliche Rohwerte</item>
     </plurals>
     <plurals name="charts_summary_rolling">
-        <item quantity="one">%1$d Eintrag · gleitender %2$d-Tage-Durchschnitt</item>
-        <item quantity="other">%1$d Einträge · gleitender %2$d-Tage-Durchschnitt</item>
+        <item quantity="one">%1$d Eintrag · zentrierter %2$d-Tage-Durchschnitt</item>
+        <item quantity="other">%1$d Einträge · zentrierter %2$d-Tage-Durchschnitt</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d Eintrag · nach Tageszeit gemittelt</item>
+        <item quantity="other">%1$d Einträge · nach Tageszeit gemittelt</item>
     </plurals>
     <string name="charts_y_axis_label">Y-Achse</string>
     <string name="charts_axis_autofit">Automatisch</string>
@@ -279,7 +305,6 @@
     <string name="charts_prompt_slots_label">Erinnerungszeiten</string>
     <string name="charts_slot_other">Sonstige</string>
     <string name="charts_scales_label">Skalen</string>
-    <string name="charts_tags_label">Tags</string>
     <string name="charts_axis_caption_absolute" formatted="false">Vertikale Achse: Position im Bereich der jeweiligen Skala (100&#160;% = oberes Ende; „niedriger ist besser“-Skalen sind umgekehrt)</string>
     <string name="charts_axis_caption_values">Vertikale Achse: erfasste Werte</string>
     <string name="charts_axis_caption_single">Vertikale Achse: %1$s (%2$s)</string>
@@ -291,17 +316,28 @@
     <string name="charts_legend_lower_better">%1$s (%2$s, niedriger ist besser)</string>
     <string name="charts_no_entries_day">Keine Einträge an diesem Tag.</string>
     <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s - %2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d Eintrag in dieser Stunde</item>
+        <item quantity="other">%1$d Einträge in dieser Stunde</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s im Schnitt: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">+%1$d weiterer Eintrag</item>
+        <item quantity="other">+%1$d weitere Einträge</item>
+    </plurals>
 
     <!-- Charts help dialog -->
     <string name="charts_help_title">Diagramme lesen</string>
     <string name="charts_help_dismiss">Verstanden</string>
     <string name="charts_help_intro">Zwei Schalter ändern, wie deine Werte dargestellt werden. Nichts davon ändert deine Daten, nur das Aussehen des Diagramms.</string>
-    <string name="charts_help_series_title">Reihe: %1$s oder %2$s</string>
-    <string name="charts_help_raw_body">Zeigt jeden Tag genau so, wie du ihn eingetragen hast. Gut für präzise Veränderungen von Tag zu Tag, kann aber unruhig wirken.</string>
+    <string name="charts_help_series_title">Reihe: %1$s, %2$s oder %3$s</string>
+    <string name="charts_help_raw_body">Zeigt jeden Tag genau so, wie du ihn eingetragen hast; mehrere Einträge an einem Tag werden gemittelt. Gut für präzise Veränderungen von Tag zu Tag, kann aber unruhig wirken. Zoome mit zwei Fingern hinein: Sobald nur noch wenige Tage zu sehen sind, erscheint jeder Eintrag zu der Uhrzeit, zu der du ihn gemacht hast.</string>
     <plurals name="charts_help_rolling_body">
-        <item quantity="one">Ersetzt jeden Tag durch den Durchschnitt des %1$d Tages, der mit ihm endet. Das glättet einzelne Ausreißer, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
-        <item quantity="other">Ersetzt jeden Tag durch den Durchschnitt der %1$d Tage, die mit ihm enden. Das glättet einzelne Ausreißer, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
+        <item quantity="one">Ersetzt jeden Tag durch einen gewichteten Durchschnitt des %1$d Tages um ihn herum, wobei der mittlere Tag am stärksten zählt. Das glättet einzelne Ausreißer, ohne sie auf spätere Tage zu verschieben, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
+        <item quantity="other">Ersetzt jeden Tag durch einen gewichteten Durchschnitt der %1$d Tage um ihn herum, wobei der mittlere Tag am stärksten zählt. Das glättet einzelne Ausreißer, ohne sie auf spätere Tage zu verschieben, sodass der Gesamttrend (ob deine Stimmung eher steigt oder fällt) leichter zu erkennen ist.</item>
     </plurals>
+    <string name="charts_help_hourly_body">Legt alle Einträge im gewählten Zeitraum auf einen einzigen 24-Stunden-Tag und zeigt den Durchschnitt jeder Stunde. So erkennst du Muster im Tagesverlauf, etwa ob Vormittage schwerer fallen als Abende. Stunden ohne Einträge werden übersprungen. Tippe auf einen Punkt, um die Einträge dahinter zu sehen.</string>
     <string name="charts_help_axis_title">Y-Achse: %1$s oder %2$s</string>
     <string name="charts_help_autofit_body">Zoomt die vertikale Achse auf den Bereich, den deine Daten tatsächlich abdecken. Kleine Veränderungen sind gut sichtbar, weil das Diagramm den Platz ausfüllt, aber die Linie wird nicht am vollen Bereich der Skala gemessen. Die Beschriftungen links sind deine erfassten Werte; werden mehrere Skalen dargestellt, teilen sie sich diese eine Achse.</string>
     <string name="charts_help_absolute_body" formatted="false">Zeigt jede Linie im vollen Bereich ihrer Skala, vom Minimum bis zum Maximum. Veränderungen wirken kleiner, aber die Skalen liegen übereinander, sodass du sie im selben Diagramm vergleichen kannst. Als „niedriger ist besser“ markierte Skalen werden hier umgekehrt gezeichnet, damit besser immer nach oben zeigt. Die Beschriftungen links sind Prozentwerte, weil jede Linie an ihrem eigenen Bereich gemessen wird: 100&#160;% ist das obere Ende dieses Bereichs, bei einer als „niedriger ist besser“ markierten Skala das untere.</string>
@@ -419,6 +455,7 @@
     <string name="scale_edit_error_step_not_positive">Der Schritt muss größer als null sein</string>
     <string name="scale_edit_error_range_not_step_multiple">Der Bereich (%1$d) muss ein Vielfaches des Schritts (%2$s) sein</string>
     <string name="scale_edit_error_default_not_number">Der Startwert muss eine Zahl sein</string>
+    <string name="scale_edit_error_hex_incomplete">6 Zeichen eingeben (0-9, A-F)</string>
     <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Der Startwert muss zwischen %1$d und %2$d liegen</string>
     <string name="scale_edit_error_default_off_step">Der Startwert muss in Schritten von %1$s ab %2$d liegen</string>
 
@@ -443,6 +480,45 @@
     <string name="backup_import_success">Import abgeschlossen. Einträge: %1$d, Skalen: %2$d, Tags: %3$d, Erinnerungszeiten: %4$d</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
 
+    <string name="backup_config_section">Konfiguration</string>
+    <string name="backup_config_intro">Eine Konfigurationsdatei enthält deine Skalen, Tags, Tag-Kategorien und Erinnerungszeiten, aber keine Einträge. Nutze sie, um eine andere Installation einzurichten oder deine Einrichtung wiederherzustellen. Beim Import bleiben alle deine Einträge erhalten.</string>
+    <string name="backup_config_export">Konfiguration exportieren</string>
+    <string name="backup_config_import">Konfiguration importieren (Einträge bleiben erhalten)</string>
+    <string name="backup_config_encrypt_title">Konfiguration verschlüsseln</string>
+    <string name="backup_config_encrypt_body">Wähle eine Passphrase, um diese Konfiguration zu verschlüsseln. Namen von Tags und Skalen können persönlich sein, daher wird sie wie eine vollständige Sicherung geschützt. Du brauchst genau diese Passphrase zum Importieren. Sie ist nicht deine App-PIN und kann nicht wiederhergestellt werden, wenn du sie vergisst.</string>
+    <string name="backup_config_decrypt_title">Konfiguration entschlüsseln</string>
+    <string name="backup_config_decrypt_body">Gib die Passphrase dieser Konfigurationsdatei oder Sicherung ein. Nur die Konfiguration wird importiert; deine Einträge bleiben unverändert.</string>
+    <string name="backup_config_export_success">Konfiguration exportiert: %1$s</string>
+    <string name="backup_config_import_success">Konfiguration importiert. Skalen: %1$d, Tags: %2$d, Erinnerungszeiten: %3$d. Deine Einträge wurden nicht verändert.</string>
+    <string name="backup_config_import_failed">Import der Konfiguration fehlgeschlagen: %1$s</string>
+    <string name="backup_config_import_partial">Konfiguration teilweise importiert. Skalen: %1$d, Tags: %2$d. Die Erinnerungszeiten konnten nicht aktualisiert werden (%3$s), prüfe sie daher in den Einstellungen. Deine Einträge wurden nicht verändert.</string>
+    <string name="backup_config_only_label">Nur Konfiguration</string>
+    <string name="backup_config_incompatible_title">Konfiguration nicht kompatibel</string>
+    <string name="backup_config_incompatible_version">Diese Konfiguration verwendet Formatversion %1$d, die diese App-Version nicht importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
+    <string name="backup_config_incompatible_backup_version">Diese Sicherung verwendet Formatversion %1$d, aus der diese App-Version keine Konfiguration importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
+    <string name="backup_config_incompatible_data_loss">Diese Konfiguration ist nicht mit deinen Daten kompatibel: Der Import könnte Daten in deinen bestehenden Einträgen löschen oder verändern. Es wurde nichts verändert.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Die Skala „%2$s“ wird von %1$d Eintrag verwendet, fehlt aber in der Konfiguration.</item>
+        <item quantity="other">Die Skala „%2$s“ wird von %1$d Einträgen verwendet, fehlt aber in der Konfiguration.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Die Konfiguration kehrt die Skala „%2$s“ um, wodurch sich die Bedeutung von %1$d Eintrag ändern würde.</item>
+        <item quantity="other">Die Konfiguration kehrt die Skala „%2$s“ um, wodurch sich die Bedeutung von %1$d Einträgen ändern würde.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Die Konfiguration begrenzt die Skala „%2$s“ auf %3$d bis %4$d, was nicht zu den bereits erfassten Werten in %1$d Eintrag passt.</item>
+        <item quantity="other">Die Konfiguration begrenzt die Skala „%2$s“ auf %3$d bis %4$d, was nicht zu den bereits erfassten Werten in %1$d Einträgen passt.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Der Tag „%2$s“ (%3$s) wird von %1$d Eintrag verwendet, fehlt aber in der Konfiguration.</item>
+        <item quantity="other">Der Tag „%2$s“ (%3$s) wird von %1$d Einträgen verwendet, fehlt aber in der Konfiguration.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">Und %1$d weiteres Problem.</item>
+        <item quantity="other">Und %1$d weitere Probleme.</item>
+    </plurals>
+
     <!-- Import errors -->
     <string name="import_error_too_large">Die Datei überschreitet das Limit von %1$d MB.</string>
     <string name="import_error_unreadable">Die Datei konnte nicht gelesen werden.</string>
@@ -452,4 +528,5 @@
     <string name="import_error_unsupported_version">Diese Sicherung verwendet Formatversion %1$d, die diese App-Version nicht lesen kann. Ein App-Update könnte helfen.</string>
     <string name="import_error_malformed">Die Sicherungsdatei ist beschädigt (%1$s).</string>
     <string name="import_error_write_failed">Der Import wurde beim Speichern der Daten abgebrochen (%1$s).</string>
+    <string name="import_error_config_only">Dies ist eine reine Konfigurationsdatei ohne Einträge zum Wiederherstellen. Verwende stattdessen „Konfiguration importieren“.</string>
 </resources>

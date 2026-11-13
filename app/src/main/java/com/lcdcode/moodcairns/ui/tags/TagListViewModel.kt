@@ -14,8 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class TagListUiState(
-    val byCategory: Map<TagCategory, List<Tag>> = emptyMap(),
-    val categoryLabels: Map<TagCategory, String> = emptyMap(),
+    val categories: List<TagCategory> = emptyList(),
+    /** Tags keyed by category id (see [groupedByCategory]), each sorted by column. */
+    val byCategory: Map<String, List<Tag>> = emptyMap(),
 )
 
 @HiltViewModel
@@ -24,16 +25,35 @@ class TagListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<TagListUiState> =
-        combine(repo.observeAll(), repo.observeCategoryLabels()) { all, labels ->
-            TagListUiState(byCategory = all.groupBy { it.category }, categoryLabels = labels)
+        combine(repo.observeAll(), repo.observeCategories()) { all, categories ->
+            val byCategory = all.groupedByCategory(categories)
+                .mapValues { (_, tags) -> tags.sortedBy { it.visibleColumn } }
+            TagListUiState(categories = categories, byCategory = byCategory)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TagListUiState())
 
     fun onReorder(orderedIds: List<Long>) = viewModelScope.launch {
         repo.reorder(orderedIds)
     }
 
-    fun renameCategory(category: TagCategory, raw: String, defaultName: String) =
-        viewModelScope.launch {
-            repo.setCategoryLabel(category, categoryLabelToStore(raw, defaultName))
-        }
+    /**
+     * [defaultName] is the built-in's translated name, or null for a user category.
+     * The dialogs never offer Other or a blank user name; these guards keep a stray
+     * call from reaching the repository's checks, which would crash the app.
+     */
+    fun renameCategory(categoryId: String, raw: String, defaultName: String?) {
+        if (categoryId == TagCategory.OTHER_ID || isMissingCategoryName(raw, defaultName)) return
+        val toStore = if (defaultName == null) raw else categoryLabelToStore(raw, defaultName)
+        viewModelScope.launch { repo.renameCategory(categoryId, toStore) }
+    }
+
+    fun createCategory(raw: String) {
+        if (isMissingCategoryName(raw, defaultName = null)) return
+        viewModelScope.launch { repo.createCategory(raw) }
+    }
+
+    /** Deletes the category; its tags move to Other. */
+    fun deleteCategory(categoryId: String) {
+        if (categoryId == TagCategory.OTHER_ID) return
+        viewModelScope.launch { repo.deleteCategory(categoryId) }
+    }
 }

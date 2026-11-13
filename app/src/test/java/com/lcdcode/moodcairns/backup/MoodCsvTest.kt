@@ -7,7 +7,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
-import com.lcdcode.moodcairns.data.entity.TagCategory
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -127,8 +127,8 @@ class MoodCsvTest {
             entry(
                 1, "2026-01-01T08:00:00Z",
                 tags = listOf(
-                    Tag(id = 1, name = "Home", category = TagCategory.PLACE),
-                    Tag(id = 2, name = "Family", category = TagCategory.PERSON),
+                    Tag(id = 1, name = "Home", categoryId = BuiltInTagCategory.PLACE.id),
+                    Tag(id = 2, name = "Family", categoryId = BuiltInTagCategory.PERSON.id),
                 ),
             ),
         )
@@ -142,7 +142,9 @@ class MoodCsvTest {
         val entries = listOf(
             entry(
                 1, "2026-01-01T08:00:00Z",
-                tags = listOf(Tag(id = 1, name = "work, late shift", category = TagCategory.ACTIVITY)),
+                tags = listOf(
+                    Tag(id = 1, name = "work, late shift", categoryId = BuiltInTagCategory.ACTIVITY.id),
+                ),
             ),
         )
         val csv = MoodCsv.build(emptyList(), emptyList(), entries)

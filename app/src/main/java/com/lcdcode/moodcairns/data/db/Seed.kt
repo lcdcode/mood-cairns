@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.data.db
 
+import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
@@ -26,40 +27,50 @@ internal object SeedTags {
      * neutral pivot. Users can reorder from the Tags screen.
      */
     val moodTags: List<Tag> = listOf(
-        Tag(name = "Joy",         category = TagCategory.MOOD,     sortOrder = 0),
-        Tag(name = "Excited",     category = TagCategory.MOOD,     sortOrder = 1),
-        Tag(name = "Grateful",    category = TagCategory.MOOD,     sortOrder = 2),
-        Tag(name = "Content",     category = TagCategory.MOOD,     sortOrder = 3),
-        Tag(name = "Calm",        category = TagCategory.MOOD,     sortOrder = 4),
-        Tag(name = "Surprise",    category = TagCategory.MOOD,     sortOrder = 5),
-        Tag(name = "Frustrated",  category = TagCategory.MOOD,     sortOrder = 6),
-        Tag(name = "Lonely",      category = TagCategory.MOOD,     sortOrder = 7),
-        Tag(name = "Sadness",     category = TagCategory.MOOD,     sortOrder = 8),
-        Tag(name = "Fear",        category = TagCategory.MOOD,     sortOrder = 9),
-        Tag(name = "Anger",       category = TagCategory.MOOD,     sortOrder = 10),
-        Tag(name = "Disgust",     category = TagCategory.MOOD,     sortOrder = 11),
+        Tag(name = "Joy",         categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 0),
+        Tag(name = "Excited",     categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 1),
+        Tag(name = "Grateful",    categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 2),
+        Tag(name = "Content",     categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 3),
+        Tag(name = "Calm",        categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 4),
+        Tag(name = "Surprise",    categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 5),
+        Tag(name = "Frustrated",  categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 6),
+        Tag(name = "Lonely",      categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 7),
+        Tag(name = "Sadness",     categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 8),
+        Tag(name = "Fear",        categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 9),
+        Tag(name = "Anger",       categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 10),
+        Tag(name = "Disgust",     categoryId = BuiltInTagCategory.MOOD.id,     sortOrder = 11),
     )
 
-    /** Every seeded tag. TagCategory.OTHER is deliberately left empty. */
+    /** Every seeded tag. Other is deliberately left empty. */
     val tags: List<Tag> = listOf(
-        Tag(name = "Home",        category = TagCategory.PLACE,    sortOrder = 0),
-        Tag(name = "Work",        category = TagCategory.PLACE,    sortOrder = 1),
-        Tag(name = "School",      category = TagCategory.PLACE,    sortOrder = 2),
-        Tag(name = "Commute",     category = TagCategory.PLACE,    sortOrder = 3),
-        Tag(name = "Outdoors",    category = TagCategory.PLACE,    sortOrder = 4),
-        Tag(name = "Travel",      category = TagCategory.PLACE,    sortOrder = 5),
-        Tag(name = "Family",      category = TagCategory.PERSON,   sortOrder = 0),
-        Tag(name = "Friends",     category = TagCategory.PERSON,   sortOrder = 1),
-        Tag(name = "Partner",     category = TagCategory.PERSON,   sortOrder = 2),
-        Tag(name = "Coworkers",   category = TagCategory.PERSON,   sortOrder = 3),
-        Tag(name = "Alone",       category = TagCategory.PERSON,   sortOrder = 4),
-        Tag(name = "Exercise",    category = TagCategory.ACTIVITY, sortOrder = 0),
-        Tag(name = "Socializing", category = TagCategory.ACTIVITY, sortOrder = 1),
-        Tag(name = "Reading",     category = TagCategory.ACTIVITY, sortOrder = 2),
-        Tag(name = "Gaming",      category = TagCategory.ACTIVITY, sortOrder = 3),
-        Tag(name = "Chores",      category = TagCategory.ACTIVITY, sortOrder = 4),
-        Tag(name = "Rest",        category = TagCategory.ACTIVITY, sortOrder = 5),
+        Tag(name = "Home",        categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 0),
+        Tag(name = "Work",        categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 1),
+        Tag(name = "School",      categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 2),
+        Tag(name = "Commute",     categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 3),
+        Tag(name = "Outdoors",    categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 4),
+        Tag(name = "Travel",      categoryId = BuiltInTagCategory.PLACE.id,    sortOrder = 5),
+        Tag(name = "Family",      categoryId = BuiltInTagCategory.PERSON.id,   sortOrder = 0),
+        Tag(name = "Friends",     categoryId = BuiltInTagCategory.PERSON.id,   sortOrder = 1),
+        Tag(name = "Partner",     categoryId = BuiltInTagCategory.PERSON.id,   sortOrder = 2),
+        Tag(name = "Coworkers",   categoryId = BuiltInTagCategory.PERSON.id,   sortOrder = 3),
+        Tag(name = "Alone",       categoryId = BuiltInTagCategory.PERSON.id,   sortOrder = 4),
+        Tag(name = "Exercise",    categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 0),
+        Tag(name = "Socializing", categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 1),
+        Tag(name = "Reading",     categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 2),
+        Tag(name = "Gaming",      categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 3),
+        Tag(name = "Chores",      categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 4),
+        Tag(name = "Rest",        categoryId = BuiltInTagCategory.ACTIVITY.id, sortOrder = 5),
     ) + moodTags
+}
+
+/**
+ * The built-in categories in their default order, with no custom names. Seeded on
+ * fresh installs, by MIGRATION_5_6, and when importing a backup that predates them.
+ */
+internal object SeedTagCategories {
+    val all: List<TagCategory> = BuiltInTagCategory.entries.map { builtIn ->
+        TagCategory(id = builtIn.id, label = null, sortOrder = builtIn.ordinal)
+    }
 }
 
 /** Plain ARGB literals rather than android.graphics.Color, so JVM tests can load this. */

@@ -56,8 +56,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,6 +69,7 @@ import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.data.entity.PromptWindow
 import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
+import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.SkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.SlotChip
 import com.lcdcode.moodcairns.ui.common.allOrClearLabel
@@ -77,11 +80,14 @@ import com.lcdcode.moodcairns.ui.common.displayNameRes
 import com.lcdcode.moodcairns.ui.common.formatValueWithRange
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import com.lcdcode.moodcairns.ui.common.slotLabel
-import com.lcdcode.moodcairns.ui.tags.orderedByCategory
+import com.lcdcode.moodcairns.ui.tags.TagFilterPanel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+
+/** Most of the screen height the open tag filter may take before it scrolls. */
+private const val TAG_PANEL_MAX_SCREEN_FRACTION = 0.4f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,6 +147,7 @@ fun HistoryScreen(
                 onSlotSelect = { viewModel.setSlotFilter(it) },
                 selectedDate = state.dateFilter,
                 onDateSelect = { viewModel.setDateFilter(it) },
+                categories = state.categories,
                 tags = state.tags,
                 selectedTagIds = state.tagFilter,
                 onTagToggle = { viewModel.toggleTagFilter(it) },
@@ -340,6 +347,7 @@ private fun FilterBar(
     onSlotSelect: (PromptSlot?) -> Unit,
     selectedDate: LocalDate?,
     onDateSelect: (LocalDate?) -> Unit,
+    categories: List<TagCategory>,
     tags: List<Tag>,
     selectedTagIds: Set<Long>,
     onTagToggle: (Long) -> Unit,
@@ -470,59 +478,16 @@ private fun FilterBar(
             }
         }
 
-        if (tags.isNotEmpty()) {
-            val tagScrollState = rememberScrollState()
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier.horizontalScroll(tagScrollState),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    val noTagsSelected = selectedTagIds.isEmpty()
-                    FilterChip(
-                        selected = noTagsSelected,
-                        onClick = onTagClear,
-                        label = { Text(allOrClearLabel(noTagsSelected)) },
-                    )
-                    tags.orderedByCategory().forEach { tag ->
-                        FilterChip(
-                            selected = tag.id in selectedTagIds,
-                            onClick = { onTagToggle(tag.id) },
-                            label = { Text(tag.displayName()) },
-                        )
-                    }
-                }
-                if (tagScrollState.canScrollBackward) {
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colorStops = arrayOf(
-                                        0f to surface,
-                                        0.08f to Color.Transparent,
-                                        1f to Color.Transparent,
-                                    ),
-                                ),
-                            ),
-                    )
-                }
-                if (tagScrollState.canScrollForward) {
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .background(
-                                Brush.horizontalGradient(
-                                    colorStops = arrayOf(
-                                        0f to Color.Transparent,
-                                        0.92f to Color.Transparent,
-                                        1f to surface,
-                                    ),
-                                ),
-                            ),
-                    )
-                }
-            }
-        }
+        // The filter bar doesn't scroll, so cap the open tag list and let it scroll
+        // inside that height, leaving room for the entries below.
+        TagFilterPanel(
+            categories = categories,
+            tags = tags,
+            selectedTagIds = selectedTagIds,
+            onToggle = onTagToggle,
+            onClear = onTagClear,
+            maxChipsHeight = tagPanelMaxHeight(),
+        )
     }
 
     if (showDatePicker) {
@@ -556,3 +521,7 @@ private fun FilterBar(
         }
     }
 }
+
+@Composable
+private fun tagPanelMaxHeight(): Dp =
+    (LocalConfiguration.current.screenHeightDp * TAG_PANEL_MAX_SCREEN_FRACTION).dp
