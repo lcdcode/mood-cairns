@@ -72,9 +72,9 @@ of the built-in scales and tags, comes from Android string resources, and dates,
 times, and numbers follow each language's conventions. The language can be set in
 Settings → Language, or on first launch, independently of the phone's language.
 
-The app currently ships in English, Spanish, and German. Translations are welcome as
-pull requests; [TRANSLATING.md](TRANSLATING.md) explains how, and partial translations
-are fine.
+In addition to English, the app currently ships in German, Polish, Russian, Spanish, and Ukrainian.
+Translations are welcome as pull requests; [TRANSLATING.md](TRANSLATING.md) explains how, 
+and partial translations are fine.
 
 ## Contact
 
@@ -122,7 +122,8 @@ app/build/outputs/apk/debug/mood-cairns-x.x.x-debug.apk
 This is what's used for personal-use installs — it's signed with the standard
 debug keystore but installs under the real `com.lcdcode.moodcairns` application id.
 
-**NOTE:** If using your own build, you will need to uninstall any other version first - YOU WILL LOSE ANY DATA YOU HAVE LOGGED ALREADY.
+**NOTE:** If using your own build, you will need to uninstall any other version first - 
+      YOU WILL LOSE ANY DATA YOU HAVE LOGGED ALREADY, so back up first.
 
 ### Useful Gradle tasks
 
