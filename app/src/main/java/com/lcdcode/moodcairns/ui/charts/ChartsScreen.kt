@@ -103,7 +103,7 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 
 /** Raw swaps daily means for individual entries once this many days or fewer are on screen. */
-private const val ENTRY_DETAIL_MAX_VISIBLE_DAYS = 3f
+private const val ENTRY_DETAIL_MAX_VISIBLE_DAYS = 5f
 
 /** Deepest zoom, as the x span left on screen: 6 hours on either axis. */
 private const val MIN_VISIBLE_HOURS = 6
