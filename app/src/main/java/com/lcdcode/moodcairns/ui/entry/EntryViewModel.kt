@@ -149,7 +149,7 @@ class EntryViewModel @Inject constructor(
         _state.update { it.copy(values = it.values + (scaleId to value)) }
     }
 
-    fun setNote(note: String) = _state.update { it.copy(note = note) }
+    fun setNote(note: String) = _state.update { it.copy(note = clampNote(note)) }
 
     fun toggleTag(tagId: Long) = _state.update {
         val selected = it.selectedTagIds
@@ -209,6 +209,11 @@ class EntryViewModel @Inject constructor(
         const val ARG_FROM_NOTIFICATION = "fromNotification"
     }
 }
+
+/** Hard cap for note text; keeps entries and charts lightweight. */
+internal const val MAX_NOTE_CHARS = 2000
+
+internal fun clampNote(raw: String): String = raw.take(MAX_NOTE_CHARS)
 
 /**
  * Resolves the slot picker selection to a value that maps onto an actual chip.
