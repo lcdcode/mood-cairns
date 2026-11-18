@@ -64,6 +64,22 @@ class ConfigImportPlannerTest {
     }
 
     @Test
+    fun builtInScaleMissingFromOlderFile_isKept_evenWhenUsed() {
+        val sleep = scale(6, "Sleep", builtIn = true)
+        val happiness = scale(1, "Happiness", builtIn = true)
+        val local = local(
+            scales = listOf(happiness, sleep),
+            scaleUsage = mapOf(6L to usage(4, 5f, 8f)),
+        )
+
+        val changes = plan(incoming(scales = listOf(scale(9, "Happiness"))), local)
+            .applied().scales
+
+        assertEquals(emptyList<Long>(), changes.deleteIds)
+        assertEquals(listOf(1L), changes.updates.map { it.id })
+    }
+
+    @Test
     fun usedScaleWithFlippedDirection_isRefused() {
         val stress = scale(5, "Stress")
         val local = local(scales = listOf(stress), scaleUsage = mapOf(5L to usage(2, 1f, 9f)))

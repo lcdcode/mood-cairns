@@ -127,7 +127,7 @@ internal fun ScaleDto.toEntity() = Scale(
     id = id, name = name, minValue = minValue, maxValue = maxValue,
     step = step, colorArgb = colorArgb, isBuiltIn = isBuiltIn,
     archived = archived, sortOrder = sortOrder, inverted = inverted,
-    defaultValue = defaultValue,
+    defaultValue = defaultValue, oncePerDay = oncePerDay,
 )
 
 /** Throws on an unknown slot or an unparseable time. */

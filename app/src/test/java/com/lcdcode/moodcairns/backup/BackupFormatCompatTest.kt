@@ -162,6 +162,37 @@ class BackupFormatCompatTest {
     }
 
     @Test
+    fun scaleWithoutOncePerDayKey_defaultsToFalse() {
+        val preSleepScale = """
+            {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
+             "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4,
+             "inverted": false, "defaultValue": null}
+        """.trimIndent()
+
+        val parsed = json.decodeFromString(ScaleDto.serializer(), preSleepScale)
+
+        assertFalse(parsed.oncePerDay)
+        assertFalse(parsed.toEntity().oncePerDay)
+    }
+
+    @Test
+    fun oncePerDayScale_roundTripsToEntity() {
+        val original = ScaleDto(
+            id = 6, name = "Sleep", minValue = 0, maxValue = 12, step = 0.5f,
+            colorArgb = 0x7B68D9, isBuiltIn = true, archived = false, sortOrder = 5,
+            defaultValue = 7.5f, oncePerDay = true,
+        )
+
+        val decoded = json.decodeFromString(
+            ScaleDto.serializer(),
+            json.encodeToString(ScaleDto.serializer(), original),
+        )
+
+        assertEquals(original, decoded)
+        assertTrue(decoded.toEntity().oncePerDay)
+    }
+
+    @Test
     fun v2File_roundTripsTagsAndLinks() {
         val original = BackupFile(
             schemaVersion = BackupFile.CURRENT_VERSION,

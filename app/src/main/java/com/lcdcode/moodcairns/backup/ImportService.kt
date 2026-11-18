@@ -52,6 +52,8 @@ class ImportService @Inject constructor(
                 val entryDao = moodDb.entryDao()
                 val tagDao = moodDb.tagDao()
                 for (s in entities.scales) scaleDao.insert(s)
+                // Backups made before Sleep existed lack it.
+                scaleDao.insertSleepScaleIfMissing()
                 // Tags keep their original ids (like scales) so entry_tag links
                 // need no remapping. v1 backups predate tags entirely; seed the
                 // defaults so those users are not left with an empty tag list.
