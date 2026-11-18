@@ -74,8 +74,10 @@ class LegacyMigrator @Inject constructor(
 
         // clearAllTables() above also wiped the seed tags and categories the fresh DB
         // was created with; legacy databases have neither, so re-seed the defaults.
+        // Legacy scales are copied verbatim and predate Sleep, so append it too.
         moodHolder.tagCategoryDao().insertAllIgnore(SeedTagCategories.all)
         moodHolder.tagDao().insertAllIgnore(SeedTags.tags)
+        moodHolder.scaleDao().insertSleepScaleIfMissing()
 
         if (BuildConfig.DEBUG) Log.i(tag, "migration complete, legacy file removed")
         return verify

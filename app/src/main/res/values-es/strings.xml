@@ -68,6 +68,7 @@
     <string name="seed_scale_stress">Estrés</string>
     <string name="seed_scale_boredom">Aburrimiento</string>
     <string name="seed_scale_pain">Dolor</string>
+    <string name="seed_scale_sleep">Sueño</string>
     <string name="seed_tag_home">Casa</string>
     <string name="seed_tag_work">Trabajo</string>
     <string name="seed_tag_school">Escuela</string>

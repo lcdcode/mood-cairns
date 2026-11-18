@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui.scales
 
+import com.lcdcode.moodcairns.data.db.Seed
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -124,6 +125,9 @@ class ScaleColorTest {
 
     private companion object {
         val PRESETS = ScaleEditUiState.PALETTE
+
+        /** WCAG 2.1 SC 1.4.11 minimum for meaningful graphics. */
+        const val WCAG_GRAPHICS_CONTRAST = 3.0
     }
 
     @Test
@@ -170,5 +174,17 @@ class ScaleColorTest {
         assertTrue(isCompleteHex("6BAA75"))
         assertFalse(isCompleteHex("6BAA7"))
         assertFalse(isCompleteHex(""))
+    }
+
+    @Test
+    fun sleepSeedColor_isReadableOnBothThemes() {
+        for (tone in ThemeTone.entries) {
+            val ratio = contrastRatio(Seed.SLEEP_COLOR_ARGB, tone.backgroundArgb)
+            assertTrue(
+                "$tone contrast $ratio below $WCAG_GRAPHICS_CONTRAST",
+                ratio >= WCAG_GRAPHICS_CONTRAST,
+            )
+        }
+        assertEquals(emptyList<ThemeTone>(), lowContrastThemes(Seed.SLEEP_COLOR_ARGB))
     }
 }

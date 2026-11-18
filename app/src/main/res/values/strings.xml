@@ -93,6 +93,7 @@
     <string name="seed_scale_stress">Stress</string>
     <string name="seed_scale_boredom">Boredom</string>
     <string name="seed_scale_pain">Pain</string>
+    <string name="seed_scale_sleep">Sleep</string>
     <!-- Tags, category Places -->
     <string name="seed_tag_home">Home</string>
     <string name="seed_tag_work">Work</string>

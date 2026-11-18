@@ -75,6 +75,7 @@
     <string name="seed_scale_stress">Стресс / Напряжение</string>
     <string name="seed_scale_boredom">Апатия / Скука</string>
     <string name="seed_scale_pain">Боль</string>
+    <string name="seed_scale_sleep">Сон</string>
     <string name="seed_tag_home">Дом</string>
     <string name="seed_tag_work">Работа</string>
     <string name="seed_tag_school">Учёба</string>

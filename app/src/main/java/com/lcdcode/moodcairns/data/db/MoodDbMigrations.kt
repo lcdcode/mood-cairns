@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.data.db
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.lcdcode.moodcairns.data.entity.Scale
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 
@@ -61,6 +62,29 @@ internal object MoodDbMigrationSql {
         "DROP TABLE IF EXISTS `tag_category_label`",
         "ALTER TABLE `tag` ADD COLUMN `columnIndex` INTEGER NOT NULL DEFAULT 0",
     )
+
+    /** Adds scale.oncePerDay and seeds the built-in Sleep scale after every existing one. */
+    val V6_TO_V7: List<String> = listOf(
+        "ALTER TABLE `scale` ADD COLUMN `oncePerDay` INTEGER NOT NULL DEFAULT 0",
+        seedScaleInsert(Seed.sleepScale),
+    )
+
+    /**
+     * Appends [scale] after the existing scales. INSERT OR IGNORE plus the unique name
+     * index skips it when the user already has a scale of that name, leaving theirs as is.
+     */
+    fun seedScaleInsert(scale: Scale): String {
+        val name = scale.name.replace("'", "''")
+        val defaultValue = scale.defaultValue?.toString() ?: "NULL"
+        return "INSERT OR IGNORE INTO scale (name, minValue, maxValue, step, colorArgb, " +
+            "isBuiltIn, archived, sortOrder, inverted, defaultValue, oncePerDay) " +
+            "VALUES ('$name', ${scale.minValue}, ${scale.maxValue}, ${scale.step}, " +
+            "${scale.colorArgb}, ${scale.isBuiltIn.toSqlInt()}, ${scale.archived.toSqlInt()}, " +
+            "(SELECT COALESCE(MAX(sortOrder), -1) + 1 FROM scale), " +
+            "${scale.inverted.toSqlInt()}, $defaultValue, ${scale.oncePerDay.toSqlInt()})"
+    }
+
+    private fun Boolean.toSqlInt(): Int = if (this) 1 else 0
 
     /**
      * INSERT OR IGNORE keeps the seeding idempotent: reruns and collisions with
@@ -127,5 +151,15 @@ val MIGRATION_4_5: Migration = object : Migration(4, 5) {
 val MIGRATION_5_6: Migration = object : Migration(5, 6) {
     override fun migrate(db: SupportSQLiteDatabase) {
         MoodDbMigrationSql.V5_TO_V6.forEach(db::execSQL)
+    }
+}
+
+/**
+ * Adds scale.oncePerDay (default off) and seeds the built-in Sleep scale, unless the
+ * user already has a scale named Sleep.
+ */
+val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        MoodDbMigrationSql.V6_TO_V7.forEach(db::execSQL)
     }
 }

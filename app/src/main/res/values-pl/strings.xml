@@ -78,6 +78,7 @@
     <string name="seed_scale_stress">Stres</string>
     <string name="seed_scale_boredom">Nuda</string>
     <string name="seed_scale_pain">Ból</string>
+    <string name="seed_scale_sleep">Sen</string>
     <string name="seed_tag_home">Dom</string>
     <string name="seed_tag_work">Praca</string>
     <string name="seed_tag_school">Szkoła</string>

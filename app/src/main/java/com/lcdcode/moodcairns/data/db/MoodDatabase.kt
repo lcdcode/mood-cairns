@@ -25,7 +25,7 @@ import com.lcdcode.moodcairns.data.entity.TagCategory
         Scale::class, Entry::class, EntryValue::class, Tag::class, EntryTag::class,
         TagCategory::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

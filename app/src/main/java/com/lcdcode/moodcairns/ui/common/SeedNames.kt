@@ -28,6 +28,7 @@ object SeedNames {
         "Stress" to R.string.seed_scale_stress,
         "Boredom" to R.string.seed_scale_boredom,
         "Pain" to R.string.seed_scale_pain,
+        "Sleep" to R.string.seed_scale_sleep,
     )
 
     private val tags: Map<String, Int> = mapOf(
