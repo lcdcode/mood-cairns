@@ -136,6 +136,7 @@
     <string name="entry_slider_description_out_of">%1$s, valor %2$s de %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, valor %2$s en el rango de %3$d a %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s, cuanto más bajo, mejor</string>
+    <string name="entry_once_per_day_reask_hint">Déjalo en %1$s para que se te vuelva a preguntar más tarde.</string>
 
     <!-- History screen -->
     <string name="history_title">Historial</string>

@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
@@ -169,11 +170,20 @@ fun EntryScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            state.scales.forEach { scale ->
+            val locale = currentLocale()
+            state.askedScales.forEach { scale ->
                 ScaleSlider(
                     scale = scale,
-                    value = state.values[scale.id] ?: scale.initialSliderValue(),
+                    value = state.values[scale.id] ?: state.startValue(scale),
                     onValueChange = { viewModel.setValue(scale.id, it) },
+                    hint = if (state.isReasked(scale)) {
+                        stringResource(
+                            R.string.entry_once_per_day_reask_hint,
+                            formatScaleValue(scale.minValue.toFloat(), locale),
+                        )
+                    } else {
+                        null
+                    },
                 )
             }
 
@@ -411,6 +421,7 @@ private fun ScaleSlider(
     scale: Scale,
     value: Float,
     onValueChange: (Float) -> Unit,
+    hint: String? = null,
 ) {
     val accent = Color(scale.colorArgb)
     val locale = currentLocale()
@@ -467,6 +478,13 @@ private fun ScaleSlider(
                 modifier = Modifier.semantics {
                     contentDescription = sliderDescription
                 },
+            )
+        }
+        hint?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

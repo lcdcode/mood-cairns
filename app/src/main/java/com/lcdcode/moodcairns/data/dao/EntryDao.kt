@@ -16,6 +16,26 @@ import com.lcdcode.moodcairns.data.entity.Tag
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
+/** SQL shared with the JVM tests (same pattern as ScaleSql), so the two cannot drift. */
+object EntrySql {
+    /**
+     * Per scale logged on any entry in [from, toExclusive) other than excludeEntryId:
+     * whether any of those values is above the scale's minimum. A once-per-day scale
+     * logged only at its minimum may mean "not logged yet", so it is asked again.
+     */
+    const val SCALE_DAY_STATUS_BETWEEN =
+        "SELECT ev.scaleId AS scaleId, MAX(ev.value) > s.minValue AS answered " +
+            "FROM entry_value ev " +
+            "JOIN entry e ON e.id = ev.entryId " +
+            "JOIN scale s ON s.id = ev.scaleId " +
+            "WHERE e.recordedAt >= :from AND e.recordedAt < :toExclusive " +
+            "AND e.id != :excludeEntryId " +
+            "GROUP BY ev.scaleId, s.minValue"
+}
+
+/** A row of [EntrySql.SCALE_DAY_STATUS_BETWEEN]. */
+data class ScaleDayStatusRow(val scaleId: Long, val answered: Boolean)
+
 data class EntryWithValues(
     @Embedded val entry: Entry,
     @Relation(parentColumn = "id", entityColumn = "entryId")
@@ -47,6 +67,13 @@ interface EntryDao {
 
     @Query("SELECT MIN(recordedAt) FROM entry")
     fun observeEarliestRecordedAt(): Flow<Instant?>
+
+    @Query(EntrySql.SCALE_DAY_STATUS_BETWEEN)
+    fun observeScaleDayStatusBetween(
+        from: Instant,
+        toExclusive: Instant,
+        excludeEntryId: Long,
+    ): Flow<List<ScaleDayStatusRow>>
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertEntry(entry: Entry): Long

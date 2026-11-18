@@ -1,0 +1,84 @@
+package com.lcdcode.moodcairns.ui.entry
+
+import com.lcdcode.moodcairns.data.entity.Scale
+import com.lcdcode.moodcairns.data.repo.DayScaleLog
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+/**
+ * Pins where a once-per-day slider starts: at the minimum when its day was logged only
+ * at the minimum, so scrolling past a re-asked Sleep keeps meaning "ask me later".
+ */
+class OncePerDayStartTest {
+
+    private val happiness = Scale(
+        id = 1, name = "Happiness", minValue = 1, maxValue = 10, colorArgb = 0,
+        defaultValue = 5f,
+    )
+    private val sleep = Scale(
+        id = 6, name = "Sleep", minValue = 0, maxValue = 12, step = 0.5f, colorArgb = 0,
+        defaultValue = 7.5f, oncePerDay = true,
+    )
+    private val deferredDay = DayScaleLog(deferred = setOf(6L))
+
+    private fun newEntry(log: DayScaleLog?) = EntryUiState(
+        scales = listOf(happiness, sleep),
+        values = mapOf(1L to 5f, 6L to 7.5f),
+        elsewhereThatDay = log,
+    )
+
+    @Test
+    fun deferredDay_startsSleepAtMinimum_andLeavesRegularScales() {
+        val state = newEntry(deferredDay).withOncePerDayStarts()
+
+        assertEquals(mapOf(1L to 5f, 6L to 0f), state.values)
+    }
+
+    @Test
+    fun freshDayOrLoading_startsSleepAtItsDefault() {
+        assertEquals(7.5f, newEntry(DayScaleLog()).withOncePerDayStarts().values[6L])
+        assertEquals(7.5f, newEntry(null).withOncePerDayStarts().values[6L])
+    }
+
+    @Test
+    fun changingToAFreshDay_restoresTheDefault() {
+        val onDeferredDay = newEntry(deferredDay).withOncePerDayStarts()
+
+        val movedDay = onDeferredDay.copy(elsewhereThatDay = DayScaleLog()).withOncePerDayStarts()
+
+        assertEquals(7.5f, movedDay.values[6L])
+    }
+
+    @Test
+    fun touchedSlider_isNeverReset() {
+        val touched = newEntry(deferredDay).copy(
+            values = mapOf(1L to 5f, 6L to 9f),
+            touchedScaleIds = setOf(6L),
+        )
+
+        assertEquals(9f, touched.withOncePerDayStarts().values[6L])
+    }
+
+    @Test
+    fun editedEntry_isLeftAlone() {
+        val editing = newEntry(deferredDay).copy(editingId = 42L, values = mapOf(1L to 3f))
+
+        assertEquals(mapOf(1L to 3f), editing.withOncePerDayStarts().values)
+        assertEquals(0f, editing.startValue(sleep))
+    }
+
+    @Test
+    fun reaskHint_showsOnlyForAOncePerDayScaleOnADeferredDay() {
+        assertEquals(true, newEntry(deferredDay).isReasked(sleep))
+        assertEquals(false, newEntry(DayScaleLog(answered = setOf(1L))).isReasked(sleep))
+        assertEquals(false, newEntry(null).isReasked(sleep))
+        assertEquals(false, newEntry(DayScaleLog(deferred = setOf(1L))).isReasked(happiness))
+    }
+
+    @Test
+    fun regularScale_alwaysStartsAtItsDefault() {
+        val regularInDeferredSet = DayScaleLog(deferred = setOf(1L))
+
+        assertEquals(5f, happiness.startValue(regularInDeferredSet.deferred))
+    }
+}

@@ -176,6 +176,7 @@
     <!-- For scales where a lower value is the better outcome. %1$s is one of the
          descriptions above. -->
     <string name="entry_slider_description_lower_better">%1$s, lower is better</string>
+    <string name="entry_once_per_day_reask_hint">Leave at %1$s to be asked again later.</string>
 
     <!-- History screen -->
     <string name="history_title">History</string>
