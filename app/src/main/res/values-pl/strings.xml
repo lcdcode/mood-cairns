@@ -172,6 +172,7 @@
     <string name="scale_list_default">domyślnie %1$s</string>
     <string name="scale_list_lower_better">im niżej, tym lepiej</string>
     <string name="scale_list_built_in">wbudowana</string>
+    <string name="scale_list_once_per_day">raz dziennie</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Nowa skala</string>
@@ -183,6 +184,8 @@
     <string name="scale_edit_default_hint">Od tej wartości zaczyna się suwak w nowym wpisie. Puste pole oznacza środek skali.</string>
     <string name="scale_edit_lower_better">Im niżej, tym lepiej</string>
     <string name="scale_edit_lower_better_hint">Skala odwrócona: suwak biegnie od wysokich do niskich wartości, a na wykresach poprawa jest skierowana w górę.</string>
+    <string name="scale_edit_once_per_day">Raz dziennie</string>
+    <string name="scale_edit_once_per_day_hint">Pytanie pojawia się, dopóki dany dzień nie ma wartości powyżej minimum; zapisanie minimum oznacza, że pytanie wróci. Na wykresach rysowana jako punkty połączone linią, bez cieniowania.</string>
     <string name="scale_edit_color_label">Kolor</string>
     <string name="scale_edit_color_custom">Własny kolor</string>
     <string name="scale_edit_color_picker_title">Wybierz kolor</string>

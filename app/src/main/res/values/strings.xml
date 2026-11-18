@@ -204,6 +204,7 @@
     <string name="scale_list_default">default %1$s</string>
     <string name="scale_list_lower_better">lower is better</string>
     <string name="scale_list_built_in">built-in</string>
+    <string name="scale_list_once_per_day">once per day</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">New scale</string>
@@ -215,6 +216,8 @@
     <string name="scale_edit_default_hint">Where the slider starts for a new entry. Blank uses the midpoint.</string>
     <string name="scale_edit_lower_better">Lower is better</string>
     <string name="scale_edit_lower_better_hint">Inverse scale: the slider runs high to low, and charts draw it so improvement points up.</string>
+    <string name="scale_edit_once_per_day">Once per day</string>
+    <string name="scale_edit_once_per_day_hint">Asked until that day has a value above the minimum, so logging the minimum means you are asked again. Charted as dots joined by a line, without shading.</string>
     <string name="scale_edit_color_label">Color</string>
     <string name="scale_edit_color_custom">Custom color</string>
     <string name="scale_edit_color_picker_title">Choose a color</string>

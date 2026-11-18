@@ -172,6 +172,7 @@
     <string name="scale_list_default">початкове %1$s</string>
     <string name="scale_list_lower_better">що нижче, то краще</string>
     <string name="scale_list_built_in">вбудована</string>
+    <string name="scale_list_once_per_day">раз на день</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Нова шкала</string>
@@ -183,6 +184,8 @@
     <string name="scale_edit_default_hint">З цього значення починається повзунок у новому записі. Якщо залишити порожнім, повзунок почнеться з середини.</string>
     <string name="scale_edit_lower_better">Що нижче, то краще</string>
     <string name="scale_edit_lower_better_hint">Обернена шкала: повзунок іде від більшого до меншого, а на графіках покращення спрямоване вгору.</string>
+    <string name="scale_edit_once_per_day">Раз на день</string>
+    <string name="scale_edit_once_per_day_hint">Запитується, доки за цей день немає значення понад мінімум; якщо записати мінімум, питання з’явиться знову. На графіках показується точками, з’єднаними лінією, без заливки.</string>
     <string name="scale_edit_color_label">Колір</string>
     <string name="scale_edit_color_custom">Власний колір</string>
     <string name="scale_edit_color_picker_title">Виберіть колір</string>

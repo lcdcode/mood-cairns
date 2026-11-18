@@ -160,6 +160,7 @@
     <string name="scale_list_default">Start %1$s</string>
     <string name="scale_list_lower_better">niedriger ist besser</string>
     <string name="scale_list_built_in">integriert</string>
+    <string name="scale_list_once_per_day">einmal täglich</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Neue Skala</string>
@@ -171,6 +172,8 @@
     <string name="scale_edit_default_hint">Hier beginnt der Schieberegler bei einem neuen Eintrag. Leer lassen für die Mitte.</string>
     <string name="scale_edit_lower_better">Niedriger ist besser</string>
     <string name="scale_edit_lower_better_hint">Umgekehrte Skala: Der Schieberegler läuft von hoch nach niedrig, und Diagramme zeichnen sie so, dass eine Verbesserung nach oben zeigt.</string>
+    <string name="scale_edit_once_per_day">Einmal täglich</string>
+    <string name="scale_edit_once_per_day_hint">Wird abgefragt, bis der Tag einen Wert über dem Minimum hat; trägst du das Minimum ein, wirst du erneut gefragt. In Diagrammen als Punkte mit Verbindungslinie gezeichnet, ohne Schattierung.</string>
     <string name="scale_edit_color_label">Farbe</string>
     <string name="scale_edit_color_custom">Eigene Farbe</string>
     <string name="scale_edit_color_picker_title">Farbe wählen</string>

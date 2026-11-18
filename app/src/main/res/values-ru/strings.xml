@@ -163,6 +163,7 @@
     <string name="scale_list_default">по умолчанию: %1$s</string>
     <string name="scale_list_lower_better">меньше — лучше</string>
     <string name="scale_list_built_in">встроенная</string>
+    <string name="scale_list_once_per_day">раз в день</string>
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Новая шкала</string>
     <string name="scale_edit_title_edit">Изменить шкалу</string>
@@ -173,6 +174,8 @@
     <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкалы.</string>
     <string name="scale_edit_lower_better">Меньше — лучше</string>
     <string name="scale_edit_lower_better_hint">Инвертировать шкалу: меньшие значения будут считаться улучшением состояния, а на графиках тренд поползет вверх.</string>
+    <string name="scale_edit_once_per_day">Раз в день</string>
+    <string name="scale_edit_once_per_day_hint">Спрашивается, пока за этот день нет значения выше минимума; если записать минимум, вопрос появится снова. На графиках отображается точками, соединёнными линией, без заливки.</string>
     <string name="scale_edit_color_label">Цвет</string>
     <string name="scale_edit_color_custom">Свой цвет</string>
     <string name="scale_edit_color_picker_title">Выберите цвет</string>

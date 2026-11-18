@@ -155,24 +155,19 @@ fun ScaleEditScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        stringResource(R.string.scale_edit_lower_better),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        stringResource(R.string.scale_edit_lower_better_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(checked = state.inverted, onCheckedChange = viewModel::setInverted)
-            }
+            SwitchRow(
+                title = stringResource(R.string.scale_edit_lower_better),
+                hint = stringResource(R.string.scale_edit_lower_better_hint),
+                checked = state.inverted,
+                onCheckedChange = viewModel::setInverted,
+            )
+
+            SwitchRow(
+                title = stringResource(R.string.scale_edit_once_per_day),
+                hint = stringResource(R.string.scale_edit_once_per_day_hint),
+                checked = state.oncePerDay,
+                onCheckedChange = viewModel::setOncePerDay,
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -357,4 +352,28 @@ private fun ColorSwatch(argb: Int, isSelected: Boolean, onSelect: (Int) -> Unit)
             )
             .clickable { onSelect(argb) },
     ) {}
+}
+
+@Composable
+private fun SwitchRow(
+    title: String,
+    hint: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                hint,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
 }

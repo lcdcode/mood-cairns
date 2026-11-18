@@ -162,6 +162,7 @@
     <string name="scale_list_default">inicio %1$s</string>
     <string name="scale_list_lower_better">cuanto más bajo, mejor</string>
     <string name="scale_list_built_in">integrada</string>
+    <string name="scale_list_once_per_day">una vez al día</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Nueva escala</string>
@@ -173,6 +174,8 @@
     <string name="scale_edit_default_hint">Dónde empieza el control deslizante en un registro nuevo. Si lo dejas vacío, empieza en el punto medio.</string>
     <string name="scale_edit_lower_better">Cuanto más bajo, mejor</string>
     <string name="scale_edit_lower_better_hint">Escala inversa: el control deslizante va de mayor a menor y los gráficos la dibujan de modo que una mejora apunte hacia arriba.</string>
+    <string name="scale_edit_once_per_day">Una vez al día</string>
+    <string name="scale_edit_once_per_day_hint">Se pregunta hasta que ese día tenga un valor por encima del mínimo; si registras el mínimo, se te volverá a preguntar. Se dibuja como puntos unidos por una línea, sin sombreado.</string>
     <string name="scale_edit_color_label">Color</string>
     <string name="scale_edit_color_custom">Color personalizado</string>
     <string name="scale_edit_color_picker_title">Elige un color</string>
