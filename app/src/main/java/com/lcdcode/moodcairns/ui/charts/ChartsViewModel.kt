@@ -275,8 +275,18 @@ class ChartsViewModel @Inject constructor(
         val entriesByDay = inRange.groupBy({ it.dayIndex }, { it.row })
         val entriesByHour = inRange.groupBy({ it.local.hour }, { it.row })
 
+        // Every row, filtered or not: hiding the entry with the real answer must not
+        // turn a placeholder minimum back into a plotted value.
+        val allValuesByDay = rows.map { row ->
+            val day = row.entry.recordedAt.atZone(zone).toLocalDate().toEpochDay() - startDay
+            day.toInt() to row.values
+        }
         val series = scaleList.map { scale ->
-            buildSeries(scale, located, inRange, days, effectiveStart)
+            val samples = allValuesByDay.flatMap { (day, values) ->
+                values.filter { it.scaleId == scale.id }.map { day to it.value }
+            }
+            val answeredDays = daysAnsweredAboveMinimum(scale, samples)
+            buildSeries(scale, located, inRange, days, effectiveStart, answeredDays)
         }
 
         return ChartsUiState(
@@ -310,8 +320,11 @@ class ChartsViewModel @Inject constructor(
         inRange: List<LocatedRow>,
         days: Int,
         startDate: LocalDate,
+        answeredDays: Set<Int>,
     ): ScaleSeries {
-        fun valueOf(row: LocatedRow) = row.row.values.firstOrNull { it.scaleId == scale.id }?.value
+        fun valueOf(row: LocatedRow): Float? =
+            row.row.values.firstOrNull { it.scaleId == scale.id }?.value
+                ?.takeUnless { isSupersededMinimum(it, row.dayIndex, scale, answeredDays) }
 
         // Indexed with the average's padding days on both sides of the range.
         val pad = ROLLING_AVERAGE_HALF_WINDOW
@@ -333,7 +346,8 @@ class ChartsViewModel @Inject constructor(
         val entries = inRange.mapNotNull { row ->
             valueOf(row)?.let { EntryPoint(minuteX(row.local, startDate), it) }
         }
-        val hourly = hourlyMeans(
+        val hourly = hourlyPointsFor(
+            scale,
             inRange.mapNotNull { row -> valueOf(row)?.let { row.local.hour to it } },
         )
         return ScaleSeries(

@@ -362,6 +362,8 @@
     <string name="charts_help_axis_title">Eje Y: %1$s o %2$s</string>
     <string name="charts_help_autofit_body">Ajusta el eje vertical solo al rango que cubren realmente tus datos. Los cambios pequeños se ven con facilidad porque el gráfico ocupa todo el espacio, pero la línea no se mide frente al rango completo de la escala. Las etiquetas de la izquierda son tus valores registrados; cuando se muestra más de una escala, todas comparten ese mismo eje.</string>
     <string name="charts_help_absolute_body" formatted="false">Muestra cada línea frente al rango completo de su escala, de mínimo a máximo. Los cambios se ven más pequeños, pero las escalas quedan alineadas, así que puedes compararlas entre sí en el mismo gráfico. Las escalas marcadas como \"cuanto más bajo, mejor\" se dibujan invertidas, de modo que mejorar siempre apunta hacia arriba. Las etiquetas de la izquierda se leen como porcentajes porque cada línea se mide frente a su propio rango: 100% es la parte superior de ese rango, o la inferior en una escala marcada como \"cuanto más bajo, mejor\".</string>
+    <string name="charts_help_once_per_day_title">Escalas de una vez al día</string>
+    <string name="charts_help_once_per_day_body">Las escalas como Sueño se registran una vez al día, así que cada día se marca con un punto, unidos por una línea sin sombreado debajo. No aparecen en %1$s, porque la hora del registro no dice nada sobre ellas. Si un día tiene tanto el mínimo como un valor mayor, solo se dibuja el mayor, ya que el mínimo puede significar simplemente que aún no se había registrado.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Actualizando el almacén de datos…</string>

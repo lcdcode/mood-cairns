@@ -438,6 +438,8 @@
     <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
     <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
     <string name="charts_help_absolute_body" formatted="false">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
+    <string name="charts_help_once_per_day_title">Once-per-day scales</string>
+    <string name="charts_help_once_per_day_body">Scales like Sleep are logged once per day, so each day is marked with a dot, joined by a line without the shading below it. They are left out of %1$s, since the hour you logged them says nothing about them. If a day has both the minimum and a higher value, only the higher one is drawn, since the minimum may just mean it was not logged yet.</string>
 
     <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
     <string name="migrating_title">Upgrading data store…</string>

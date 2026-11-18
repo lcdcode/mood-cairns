@@ -387,6 +387,8 @@
     <string name="charts_help_axis_title">Oś pionowa: %1$s czy %2$s</string>
     <string name="charts_help_autofit_body">Przybliża oś pionową do zakresu, który faktycznie zajmują twoje dane. Drobne zmiany są dobrze widoczne, bo wykres wypełnia całą przestrzeń, ale linia nie jest odnoszona do pełnego zakresu skali. Etykiety po lewej to zapisane wartości. Gdy na wykresie jest kilka skal, wszystkie korzystają z tej jednej osi.</string>
     <string name="charts_help_absolute_body" formatted="false">Pokazuje każdą linię względem pełnego zakresu jej skali, od minimum do maksimum. Zmiany wyglądają na mniejsze, ale różne skale się wyrównują, więc można je porównywać na jednym wykresie. Skale oznaczone „im niżej, tym lepiej” są tu odwrócone, aby poprawa zawsze była skierowana w górę. Etykiety po lewej są w procentach, bo każda linia jest mierzona względem własnego zakresu: 100% to góra tego zakresu, a w przypadku skali „im niżej, tym lepiej” jego dół.</string>
+    <string name="charts_help_once_per_day_title">Skale raz dziennie</string>
+    <string name="charts_help_once_per_day_body">Skale takie jak Sen są zapisywane raz dziennie, dlatego każdy dzień jest oznaczony punktem, a punkty łączy linia bez cieniowania pod nią. Nie ma ich w trybie %1$s, bo godzina wpisu nic o nich nie mówi. Jeśli dany dzień ma zarówno minimum, jak i wyższą wartość, rysowana jest tylko wyższa, bo minimum może oznaczać po prostu brak wpisu.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Aktualizowanie magazynu danych…</string>

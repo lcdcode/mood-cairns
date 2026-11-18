@@ -85,7 +85,9 @@ import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.cartesian.Zoom
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -111,6 +113,9 @@ private const val MIN_VISIBLE_MINUTES = MIN_VISIBLE_HOURS * MINUTES_PER_HOUR
 
 /** Entries the Hourly tapped-point card lists at first, and adds per "+N more" tap. */
 private const val HOURLY_CARD_PAGE_SIZE = 10
+
+/** Diameter of a once-per-day scale's dots; big enough to stand out on top of its line. */
+private const val POINT_SERIES_DOT_DP = 8f
 
 // One major x step per hour on both axes. Kept as stable instances because
 // rememberCartesianChart keys on them.
@@ -511,22 +516,31 @@ private fun ChartArea(
     val nonEmpty = series.filter { plotPoints(it, mode, showEntries).isNotEmpty() }
     val modelProducer = remember { CartesianChartModelProducer() }
 
-    LaunchedEffect(nonEmpty, mode, showEntries, absoluteY) {
-        if (nonEmpty.isEmpty()) return@LaunchedEffect
+    val segments = remember(nonEmpty, mode, showEntries) {
+        plotSegments(nonEmpty, mode, showEntries)
+    }
+
+    LaunchedEffect(segments, absoluteY) {
+        if (segments.isEmpty()) return@LaunchedEffect
         modelProducer.runTransaction {
             lineSeries {
-                nonEmpty.forEach { s ->
-                    val pts = plotPoints(s, mode, showEntries)
+                segments.forEach { segment ->
                     series(
-                        x = pts.map { it.x },
-                        y = pts.map { p -> if (absoluteY) normalize(p.value, s.scale) else p.value },
+                        x = segment.points.map { it.x },
+                        y = segment.points.map { p ->
+                            if (absoluteY) normalize(p.value, segment.scale) else p.value
+                        },
                     )
                 }
             }
         }
     }
 
-    val lines = nonEmpty.map { s -> rememberLine(Color(s.scale.colorArgb)) }
+    // One style per scale, repeated for each run a once-per-day scale is split into.
+    val lineByScaleId = nonEmpty.associate { s ->
+        s.scale.id to rememberLine(Color(s.scale.colorArgb), s.scale.oncePerDay)
+    }
+    val lines = segments.map { lineByScaleId.getValue(it.scale.id) }
 
     // Pin the x range to the selected window (or the whole 0-23h day) so points draw
     // at their true position rather than getting auto-scaled to span the data
@@ -915,6 +929,12 @@ private fun ChartsHelpDialog(onDismiss: () -> Unit) {
                 HelpSection(stringResource(R.string.charts_help_axis_title, autoFit, absolute))
                 HelpEntry(autoFit, stringResource(R.string.charts_help_autofit_body))
                 HelpEntry(absolute, stringResource(R.string.charts_help_absolute_body))
+
+                HelpSection(stringResource(R.string.charts_help_once_per_day_title))
+                Text(
+                    stringResource(R.string.charts_help_once_per_day_body, hourly),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         },
         confirmButton = {
@@ -965,10 +985,26 @@ private fun HelpEntry(term: String, explanation: String) {
     }
 }
 
+/**
+ * A shaded line, or for [dotted] a line with a dot per value and no shading under it
+ * (Vico shades by default), which marks each day's single value.
+ */
 @Composable
-private fun rememberLine(color: Color): LineCartesianLayer.Line {
-    val fill = LineCartesianLayer.LineFill.single(fill(color))
-    return remember(color) { LineCartesianLayer.Line(fill = fill) }
+private fun rememberLine(color: Color, dotted: Boolean): LineCartesianLayer.Line {
+    val dot = rememberShapeComponent(fill = fill(color), shape = CorneredShape.Pill)
+    return remember(color, dotted, dot) {
+        if (dotted) {
+            LineCartesianLayer.Line(
+                fill = LineCartesianLayer.LineFill.single(fill(color)),
+                areaFill = null,
+                pointProvider = LineCartesianLayer.PointProvider.single(
+                    LineCartesianLayer.Point(dot, sizeDp = POINT_SERIES_DOT_DP),
+                ),
+            )
+        } else {
+            LineCartesianLayer.Line(fill = LineCartesianLayer.LineFill.single(fill(color)))
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

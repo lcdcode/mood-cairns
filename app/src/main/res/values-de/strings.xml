@@ -346,6 +346,8 @@
     <string name="charts_help_axis_title">Y-Achse: %1$s oder %2$s</string>
     <string name="charts_help_autofit_body">Zoomt die vertikale Achse auf den Bereich, den deine Daten tatsächlich abdecken. Kleine Veränderungen sind gut sichtbar, weil das Diagramm den Platz ausfüllt, aber die Linie wird nicht am vollen Bereich der Skala gemessen. Die Beschriftungen links sind deine erfassten Werte; werden mehrere Skalen dargestellt, teilen sie sich diese eine Achse.</string>
     <string name="charts_help_absolute_body" formatted="false">Zeigt jede Linie im vollen Bereich ihrer Skala, vom Minimum bis zum Maximum. Veränderungen wirken kleiner, aber die Skalen liegen übereinander, sodass du sie im selben Diagramm vergleichen kannst. Als „niedriger ist besser“ markierte Skalen werden hier umgekehrt gezeichnet, damit besser immer nach oben zeigt. Die Beschriftungen links sind Prozentwerte, weil jede Linie an ihrem eigenen Bereich gemessen wird: 100&#160;% ist das obere Ende dieses Bereichs, bei einer als „niedriger ist besser“ markierten Skala das untere.</string>
+    <string name="charts_help_once_per_day_title">Einmal täglich erfasste Skalen</string>
+    <string name="charts_help_once_per_day_body">Skalen wie Schlaf werden einmal täglich erfasst, daher bekommt jeder Tag einen Punkt; die Punkte sind durch eine Linie ohne Schattierung darunter verbunden. In %1$s fehlen sie, weil die Uhrzeit des Eintrags bei ihnen nichts aussagt. Hat ein Tag sowohl das Minimum als auch einen höheren Wert, wird nur der höhere gezeichnet, da das Minimum auch bedeuten kann, dass noch nichts eingetragen war.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Datenspeicher wird aktualisiert…</string>
