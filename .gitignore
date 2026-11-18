@@ -15,6 +15,7 @@ local.keystore
 /app/release/
 /app/build/
 sign-release.sh
+/release
 
 # Gradle / build
 build/

@@ -150,6 +150,7 @@
     <string name="history_clear_search">Borrar búsqueda</string>
     <string name="history_clear_all">Limpiar todo</string>
     <string name="history_pick_date">Elegir fecha</string>
+    <string name="history_long_press_hint">Mantén pulsado un registro para editarlo o eliminarlo.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Escalas</string>

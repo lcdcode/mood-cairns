@@ -152,6 +152,7 @@
     <string name="history_clear_search">Очистить поиск</string>
     <string name="history_clear_all">Сбросить все</string>
     <string name="history_pick_date">Выбрать дату</string>
+    <string name="history_long_press_hint">Нажмите и удерживайте запись, чтобы изменить или удалить её.</string>
     <!-- Scale list -->
     <string name="scale_list_title">Шкалы</string>
     <string name="scale_list_add">Добавить шкалу</string>

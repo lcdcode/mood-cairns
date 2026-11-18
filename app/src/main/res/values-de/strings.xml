@@ -148,6 +148,7 @@
     <string name="history_clear_search">Suche leeren</string>
     <string name="history_clear_all">Alle zurücksetzen</string>
     <string name="history_pick_date">Datum wählen</string>
+    <string name="history_long_press_hint">Halte einen Eintrag gedrückt, um ihn zu bearbeiten oder zu löschen.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Skalen</string>

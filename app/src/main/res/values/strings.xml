@@ -190,6 +190,7 @@
     <string name="history_clear_search">Clear search</string>
     <string name="history_clear_all">Clear all</string>
     <string name="history_pick_date">Pick date</string>
+    <string name="history_long_press_hint">Press and hold on an entry to edit or delete.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Scales</string>

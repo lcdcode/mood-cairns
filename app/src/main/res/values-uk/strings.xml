@@ -160,6 +160,7 @@
     <string name="history_clear_search">Очистити пошук</string>
     <string name="history_clear_all">Скинути все</string>
     <string name="history_pick_date">Вибрати дату</string>
+    <string name="history_long_press_hint">Натисніть і утримуйте запис, щоб редагувати або видалити його.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Шкали</string>

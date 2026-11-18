@@ -160,6 +160,7 @@
     <string name="history_clear_search">Wyczyść wyszukiwanie</string>
     <string name="history_clear_all">Wyczyść wszystko</string>
     <string name="history_pick_date">Wybierz datę</string>
+    <string name="history_long_press_hint">Przytrzymaj wpis, aby go edytować lub usunąć.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Skale</string>
