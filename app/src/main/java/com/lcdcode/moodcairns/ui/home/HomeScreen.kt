@@ -2,10 +2,16 @@ package com.lcdcode.moodcairns.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -20,10 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
+
+private val ScreenPadding = 16.dp
+private val ButtonSpacing = 12.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,50 +54,71 @@ fun HomeScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(
-                stringResource(R.string.home_tagline),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Button(onClick = onLogNow, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_log_entry))
-            }
-            if (journalEnabled) {
-                FilledTonalButton(onClick = onOpenJournal, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.home_open_journal))
+        // The buttons scroll on short screens while About stays pinned to the bottom. A
+        // weighted spacer would collapse inside a scrolling column, hence the nesting.
+        Column(Modifier.padding(padding).fillMaxSize().padding(ScreenPadding)) {
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(ButtonSpacing),
+            ) {
+                Text(
+                    stringResource(R.string.home_tagline),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                ButtonPair {
+                    Button(onClick = onLogNow, modifier = pairedButton()) {
+                        PairedLabel(stringResource(R.string.home_log_mood))
+                    }
+                    OutlinedButton(onClick = onHistory, modifier = pairedButton()) {
+                        PairedLabel(stringResource(R.string.home_mood_history))
+                    }
                 }
-                OutlinedButton(onClick = onJournalHistory, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.journal_history_title))
+                if (journalEnabled) {
+                    ButtonPair {
+                        FilledTonalButton(onClick = onOpenJournal, modifier = pairedButton()) {
+                            PairedLabel(stringResource(R.string.home_open_journal))
+                        }
+                        OutlinedButton(onClick = onJournalHistory, modifier = pairedButton()) {
+                            PairedLabel(stringResource(R.string.journal_history_title))
+                        }
+                    }
+                }
+                OutlinedButton(onClick = onCharts, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.home_charts))
+                }
+                OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.home_backup))
+                }
+                OutlinedButton(onClick = onScales, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.home_scales))
+                }
+                OutlinedButton(onClick = onTags, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.home_tags))
+                }
+                OutlinedButton(onClick = onSettings, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.home_settings))
                 }
             }
-            OutlinedButton(onClick = onHistory, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_history))
-            }
-            OutlinedButton(onClick = onCharts, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_charts))
-            }
-            OutlinedButton(onClick = onBackup, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_backup))
-            }
-            OutlinedButton(onClick = onScales, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_scales))
-            }
-            OutlinedButton(onClick = onTags, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_tags))
-            }
-            OutlinedButton(onClick = onSettings, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.home_settings))
-            }
-            Spacer(modifier = Modifier.weight(1f))
             TextButton(onClick = onAbout, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(stringResource(R.string.home_about))
             }
         }
     }
+}
+
+/** Two equal-width buttons; if one label wraps, both grow to the same height. */
+@Composable
+private fun ButtonPair(content: @Composable RowScope.() -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(ButtonSpacing),
+        content = content,
+    )
+}
+
+private fun RowScope.pairedButton(): Modifier = Modifier.weight(1f).fillMaxHeight()
+
+@Composable
+private fun PairedLabel(text: String) {
+    Text(text, textAlign = TextAlign.Center)
 }

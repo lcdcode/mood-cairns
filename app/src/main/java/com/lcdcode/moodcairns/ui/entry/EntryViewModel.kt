@@ -15,6 +15,7 @@ import com.lcdcode.moodcairns.data.repo.EntryRepository
 import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import com.lcdcode.moodcairns.data.repo.TagRepository
+import com.lcdcode.moodcairns.settings.JournalSettings
 import com.lcdcode.moodcairns.ui.common.UiText
 import com.lcdcode.moodcairns.ui.common.takeWholeChars
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -49,6 +51,8 @@ data class EntryUiState(
     // the value round-trips on save instead of being silently dropped.
     val extraWindow: PromptWindow? = null,
     val saving: Boolean = false,
+    /** Set by "Save & open journal": after saving, go to the journal page for this entry's day. */
+    val openJournalAfterSave: Boolean = false,
     val savedId: Long? = null,
     val editingId: Long? = null,
     val editLoaded: Boolean = false,
@@ -82,7 +86,10 @@ class EntryViewModel @Inject constructor(
     private val entries: EntryRepository,
     private val promptWindows: PromptWindowRepository,
     private val tags: TagRepository,
+    journalSettings: JournalSettings,
 ) : ViewModel() {
+
+    val journalEnabled: StateFlow<Boolean> = journalSettings.enabled
 
     private val editingId: Long? = savedState.get<Long>(ARG_ENTRY_ID)?.takeIf { it > 0 }
     private val fromNotification: Boolean = savedState.get<Boolean>(ARG_FROM_NOTIFICATION) ?: false
@@ -212,10 +219,10 @@ class EntryViewModel @Inject constructor(
 
     fun setRecordedAt(instant: Instant) = _state.update { it.copy(recordedAt = instant) }
 
-    fun save() {
+    fun save(openJournal: Boolean = false) {
         val cur = _state.value
         if (cur.saving) return
-        _state.update { it.copy(saving = true, error = null) }
+        _state.update { it.copy(saving = true, error = null, openJournalAfterSave = openJournal) }
         // Hidden once-per-day sliders still hold their default; never save those.
         val askedIds = cur.askedScales.mapTo(HashSet()) { it.id }
         val hiddenIds = cur.scales.filter { it.id !in askedIds }.mapTo(HashSet()) { it.id }
@@ -314,6 +321,10 @@ internal fun EntryUiState.withOncePerDayStarts(): EntryUiState {
 internal const val MAX_NOTE_CHARS = 2000
 
 internal fun clampNote(raw: String): String = raw.takeWholeChars(MAX_NOTE_CHARS)
+
+/** The journal page that belongs with a mood entry: the local calendar day it was recorded. */
+internal fun journalDayOf(recordedAt: Instant, zone: ZoneId): LocalDate =
+    recordedAt.atZone(zone).toLocalDate()
 
 /**
  * Resolves the slot picker selection to a value that maps onto an actual chip.

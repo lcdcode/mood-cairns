@@ -218,6 +218,11 @@ fun AppNav(
             EntryScreen(
                 onBack = { nav.popBackStack() },
                 onSaved = { nav.popBackStack(Routes.HOME, inclusive = false) },
+                // Back from the journal then lands on Home, as after a plain save.
+                onSavedOpenJournal = { day ->
+                    nav.popBackStack(Routes.HOME, inclusive = false)
+                    nav.navigate(Routes.journal(day))
+                },
             )
         }
     }
