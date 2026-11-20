@@ -154,6 +154,12 @@
     <string name="journal_format_table">Wstaw tabelę</string>
     <string name="journal_table_column">Kolumna %1$d</string>
 
+    <!-- Historia dziennika -->
+    <string name="journal_history_title">Historia dziennika</string>
+    <string name="journal_history_search_hint">Szukaj w dzienniku…</string>
+    <string name="journal_history_empty">W dzienniku nie ma jeszcze stron.</string>
+    <string name="journal_history_no_matches">Żadna strona nie pasuje do wyszukiwania.</string>
+
     <!-- Entry screen -->
     <string name="entry_title_new">Jak się czujesz?</string>
     <string name="entry_title_edit">Edytuj wpis</string>

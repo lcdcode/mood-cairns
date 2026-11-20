@@ -179,6 +179,12 @@
     <string name="journal_format_table">Insert table</string>
     <string name="journal_table_column">Column %1$d</string>
 
+    <!-- Journal history. journal_history_title is also the Home screen button label. -->
+    <string name="journal_history_title">Journal history</string>
+    <string name="journal_history_search_hint">Search journal…</string>
+    <string name="journal_history_empty">No journal pages yet.</string>
+    <string name="journal_history_no_matches">No pages match your search.</string>
+
     <!-- Entry screen -->
     <string name="entry_title_new">How are you?</string>
     <string name="entry_title_edit">Edit entry</string>

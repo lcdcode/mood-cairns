@@ -37,6 +37,7 @@ fun HomeScreen(
     onSettings: () -> Unit,
     onAbout: () -> Unit,
     onOpenJournal: () -> Unit,
+    onJournalHistory: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val journalEnabled by viewModel.journalEnabled.collectAsStateWithLifecycle()
@@ -60,6 +61,9 @@ fun HomeScreen(
             if (journalEnabled) {
                 FilledTonalButton(onClick = onOpenJournal, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.home_open_journal))
+                }
+                OutlinedButton(onClick = onJournalHistory, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.journal_history_title))
                 }
             }
             OutlinedButton(onClick = onHistory, modifier = Modifier.fillMaxWidth()) {

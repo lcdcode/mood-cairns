@@ -17,6 +17,7 @@ import com.lcdcode.moodcairns.ui.charts.ChartsScreen
 import com.lcdcode.moodcairns.ui.entry.EntryScreen
 import com.lcdcode.moodcairns.ui.history.HistoryScreen
 import com.lcdcode.moodcairns.ui.home.HomeScreen
+import com.lcdcode.moodcairns.ui.journal.JournalHistoryScreen
 import com.lcdcode.moodcairns.ui.journal.JournalScreen
 import com.lcdcode.moodcairns.ui.journal.JournalViewModel
 import com.lcdcode.moodcairns.ui.scales.ScaleEditScreen
@@ -46,6 +47,7 @@ object Routes {
     const val ABOUT = "about"
     const val LICENSES = "licenses"
     const val JOURNAL = "journal"
+    const val JOURNAL_HISTORY = "journal_history"
 
     /** Today's page when [day] is null. */
     fun journal(day: LocalDate? = null) =
@@ -96,6 +98,7 @@ fun AppNav(
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onAbout = { nav.navigate(Routes.ABOUT) },
                 onOpenJournal = { nav.navigate(Routes.journal()) },
+                onJournalHistory = { nav.navigate(Routes.JOURNAL_HISTORY) },
             )
         }
 
@@ -109,6 +112,13 @@ fun AppNav(
             ),
         ) {
             JournalScreen(onBack = { nav.popBackStack() })
+        }
+
+        composable(Routes.JOURNAL_HISTORY) {
+            JournalHistoryScreen(
+                onBack = { nav.popBackStack() },
+                onOpenDay = { nav.navigate(Routes.journal(it)) },
+            )
         }
 
         composable(Routes.ABOUT) {

@@ -154,6 +154,12 @@
     <string name="journal_format_table">Вставити таблицю</string>
     <string name="journal_table_column">Стовпець %1$d</string>
 
+    <!-- Історія щоденника -->
+    <string name="journal_history_title">Історія щоденника</string>
+    <string name="journal_history_search_hint">Пошук у щоденнику…</string>
+    <string name="journal_history_empty">У щоденнику ще немає сторінок.</string>
+    <string name="journal_history_no_matches">Немає сторінок, що відповідають запиту.</string>
+
     <!-- Entry screen -->
     <string name="entry_title_new">Як ви почуваєтеся?</string>
     <string name="entry_title_edit">Редагувати запис</string>

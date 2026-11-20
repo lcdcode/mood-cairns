@@ -147,6 +147,12 @@
     <string name="journal_format_checklist">Список задач</string>
     <string name="journal_format_table">Вставить таблицу</string>
     <string name="journal_table_column">Столбец %1$d</string>
+
+    <!-- История дневника -->
+    <string name="journal_history_title">История дневника</string>
+    <string name="journal_history_search_hint">Поиск по дневнику…</string>
+    <string name="journal_history_empty">В дневнике пока нет страниц.</string>
+    <string name="journal_history_no_matches">Нет страниц, соответствующих запросу.</string>
     <!-- Entry screen -->
     <string name="entry_title_new">Как вы себя чувствуете?</string>
     <string name="entry_title_edit">Изменить запись</string>

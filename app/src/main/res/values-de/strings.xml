@@ -142,6 +142,12 @@
     <string name="journal_format_table">Tabelle einfügen</string>
     <string name="journal_table_column">Spalte %1$d</string>
 
+    <!-- Tagebuchverlauf -->
+    <string name="journal_history_title">Tagebuchverlauf</string>
+    <string name="journal_history_search_hint">Tagebuch durchsuchen…</string>
+    <string name="journal_history_empty">Noch keine Tagebuchseiten.</string>
+    <string name="journal_history_no_matches">Keine Seiten passen zu deiner Suche.</string>
+
     <!-- Entry screen -->
     <string name="entry_title_new">Wie geht es dir?</string>
     <string name="entry_title_edit">Eintrag bearbeiten</string>
