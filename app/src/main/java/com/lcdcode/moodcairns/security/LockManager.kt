@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.security
 
 import android.util.Log
 import com.lcdcode.moodcairns.BuildConfig
+import com.lcdcode.moodcairns.data.db.JournalDatabaseHolder
 import com.lcdcode.moodcairns.data.db.LegacyMigrator
 import com.lcdcode.moodcairns.data.db.MoodDatabaseHolder
 import com.lcdcode.moodcairns.data.db.ScheduleDatabase
@@ -62,6 +63,7 @@ class LockManager @Inject constructor(
     private val repo: LockRepository,
     private val scheduleDb: ScheduleDatabase,
     private val moodHolder: MoodDatabaseHolder,
+    private val journalHolder: JournalDatabaseHolder,
     private val migrator: LegacyMigrator,
     private val screenCaptureGate: ScreenCaptureGate,
 ) {
@@ -153,6 +155,7 @@ class LockManager @Inject constructor(
         dbKey?.fill(0)
         dbKey = null
         moodHolder.close()
+        journalHolder.close()
         _state.value = LockState.Locked
     }
 
@@ -180,7 +183,7 @@ class LockManager @Inject constructor(
         )
         repo.clearLockoutState()
         dbKey = key
-        moodHolder.open(key)
+        openDatabases(key)
         if (repo.biometricEnabled) repo.saveBiometricDbKey(key)
         seedNewDatabases()
         _state.value = LockState.Unlocked
@@ -198,7 +201,7 @@ class LockManager @Inject constructor(
         repo.saveNoPinDbKey(key)
         repo.clearLockoutState()
         dbKey = key
-        moodHolder.open(key)
+        openDatabases(key)
         seedNewDatabases()
         _state.value = LockState.Unlocked
     }
@@ -407,7 +410,7 @@ class LockManager @Inject constructor(
 
     private fun finishUnlock(key: ByteArray) {
         dbKey = key
-        moodHolder.open(key)
+        openDatabases(key)
         // Opportunistically populate the biometric key so the next session can
         // use the fast path; safe because we hold the DB key in memory now.
         // Skipped in no-PIN mode, where biometric gates nothing.
@@ -431,6 +434,16 @@ class LockManager @Inject constructor(
         } else {
             _state.value = LockState.Unlocked
         }
+    }
+
+    /**
+     * Opens every encrypted database for the session. The journal key is derived from the DB
+     * key each time, never stored, so the journal follows the mood DB through every unlock
+     * path. Both open regardless of the journal setting, which only hides the UI.
+     */
+    private fun openDatabases(key: ByteArray) {
+        moodHolder.open(key)
+        journalHolder.open(JournalKey.derive(key))
     }
 
     /**
