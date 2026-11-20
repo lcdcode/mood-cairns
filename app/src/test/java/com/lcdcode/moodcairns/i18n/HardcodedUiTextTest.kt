@@ -34,6 +34,7 @@ class HardcodedUiTextTest {
             "notifications/NotificationChannels.kt",
             "notifications/PromptAlarmReceiver.kt",
             "ui/about/AboutScreen.kt",
+            "ui/about/LicensesScreen.kt",
             "ui/backup/BackupScreen.kt",
             "ui/charts/ChartAxis.kt",
             "ui/charts/ChartsScreen.kt",

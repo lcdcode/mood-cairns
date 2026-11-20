@@ -304,6 +304,11 @@
     <string name="about_contact_title">Kontakt</string>
     <string name="about_contact_body">Aby zgłosić problem lub zaproponować nową funkcję, najlepiej &lt;a href=\"%1$s\"&gt;utworzyć nowe zgłoszenie (issue) na GitHubie&lt;/a&gt;.</string>
 
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Licencje open source</string>
+    <string name="licenses_original_language">Teksty licencji są dokumentami prawnymi i są wyświetlane w oryginalnej wersji angielskiej.</string>
+    <string name="licenses_load_failed">Nie udało się wczytać tekstów licencji.</string>
+
     <!-- Charts screen -->
     <string name="charts_title">Wykresy</string>
     <string name="charts_help_button">Pomoc dotycząca wykresów</string>

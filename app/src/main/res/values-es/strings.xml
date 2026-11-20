@@ -287,6 +287,11 @@
     <string name="about_contact_title">Contacto</string>
     <string name="about_contact_body">La mejor forma de contactarme para pedir cambios o funciones nuevas es &lt;a href=\"%1$s\"&gt;abrir un issue en GitHub&lt;/a&gt;.</string>
 
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Licencias de código abierto</string>
+    <string name="licenses_original_language">Los textos de las licencias son documentos legales y se muestran en su versión original en inglés.</string>
+    <string name="licenses_load_failed">No se pudieron cargar los textos de las licencias.</string>
+
     <!-- Charts screen -->
     <string name="charts_title">Gráficos</string>
     <string name="charts_help_button">Ayuda con los gráficos</string>

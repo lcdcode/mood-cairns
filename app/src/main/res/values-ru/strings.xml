@@ -287,6 +287,11 @@
     <string name="about_no_browser">На устройстве не найден браузер для открытия страницы.</string>
     <string name="about_contact_title">Обратная связь</string>
     <string name="about_contact_body">Чтобы предложить новую функцию или сообщить об ошибке, пожалуйста, &lt;a href=\"%1$s\"&gt;создайте новое обращение (issue) на GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Лицензии открытого ПО</string>
+    <string name="licenses_original_language">Тексты лицензий являются юридическими документами и приводятся на языке оригинала (английском).</string>
+    <string name="licenses_load_failed">Не удалось загрузить тексты лицензий.</string>
     <!-- Charts screen -->
     <string name="charts_title">Графики</string>
     <string name="charts_help_button">Справка</string>

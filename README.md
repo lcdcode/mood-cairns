@@ -174,3 +174,7 @@ app/src/main/java/com/moodcairns/
 ## License
 
 GPL-3.0-only — see [LICENSE](LICENSE).
+
+Bundled third-party components and their licenses are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), which is also shown in the app under
+About > Open-source licenses. The build fails if a runtime dependency is missing from it.

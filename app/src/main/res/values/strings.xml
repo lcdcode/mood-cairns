@@ -354,6 +354,12 @@
     <!-- %1$s is the issue tracker URL; keep it inside href. -->
     <string name="about_contact_body">The best way to contact me for changes or feature requests is to &lt;a href=\"%1$s\"&gt;open a new issue on GitHub&lt;/a&gt;.</string>
 
+    <!-- Open-source licenses screen. The title is also the button label on the About screen.
+         The license texts themselves are legal documents and stay in English. -->
+    <string name="licenses_title">Open-source licenses</string>
+    <string name="licenses_original_language">License texts are legal documents and are shown in their original English.</string>
+    <string name="licenses_load_failed">Could not load the license texts.</string>
+
     <!-- Charts screen -->
     <string name="charts_title">Charts</string>
     <string name="charts_help_button">Help with charts</string>

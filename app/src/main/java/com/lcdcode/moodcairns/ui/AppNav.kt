@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.ui.about.AboutScreen
+import com.lcdcode.moodcairns.ui.about.LicensesScreen
 import com.lcdcode.moodcairns.ui.backup.BackupScreen
 import com.lcdcode.moodcairns.ui.charts.ChartsScreen
 import com.lcdcode.moodcairns.ui.entry.EntryScreen
@@ -40,6 +41,7 @@ object Routes {
     const val TAGS = "tags"
     const val TAG_EDIT = "tag_edit"
     const val ABOUT = "about"
+    const val LICENSES = "licenses"
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
     fun tagEdit(id: Long? = null, categoryId: String? = null) =
         "$TAG_EDIT?tagId=${id ?: 0L}&category=${Uri.encode(categoryId.orEmpty())}"
@@ -89,7 +91,14 @@ fun AppNav(
         }
 
         composable(Routes.ABOUT) {
-            AboutScreen(onBack = { nav.popBackStack() })
+            AboutScreen(
+                onBack = { nav.popBackStack() },
+                onLicenses = { nav.navigate(Routes.LICENSES) },
+            )
+        }
+
+        composable(Routes.LICENSES) {
+            LicensesScreen(onBack = { nav.popBackStack() })
         }
 
         composable(Routes.CHARTS) {
