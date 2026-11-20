@@ -117,8 +117,8 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Registra cómo te sientes, en privado.</string>
-    <string name="home_log_entry">Nuevo registro</string>
-    <string name="home_history">Ver historial</string>
+    <string name="home_log_mood">Registrar ánimo</string>
+    <string name="home_mood_history">Historial de ánimo</string>
     <string name="home_open_journal">Abrir diario</string>
     <string name="home_charts">Gráficos</string>
     <string name="home_backup">Copia de seguridad</string>
@@ -153,6 +153,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">¿Cómo estás?</string>
     <string name="entry_title_edit">Editar registro</string>
+    <string name="entry_save_open_journal">Guardar y abrir diario</string>
     <string name="entry_no_scales">No hay escalas configuradas. Añade una desde Gestionar escalas.</string>
     <string name="entry_note_label">Nota (opcional)</string>
     <string name="entry_prompt_slot_label">Franja de aviso</string>

@@ -115,8 +115,8 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Trage privat ein, wie du dich fühlst.</string>
-    <string name="home_log_entry">Neuer Eintrag</string>
-    <string name="home_history">Verlauf ansehen</string>
+    <string name="home_log_mood">Stimmung eintragen</string>
+    <string name="home_mood_history">Stimmungsverlauf</string>
     <string name="home_open_journal">Tagebuch öffnen</string>
     <string name="home_charts">Diagramme</string>
     <string name="home_backup">Sicherung &amp; Import</string>
@@ -151,6 +151,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">Wie geht es dir?</string>
     <string name="entry_title_edit">Eintrag bearbeiten</string>
+    <string name="entry_save_open_journal">Speichern &amp; Tagebuch öffnen</string>
     <string name="entry_no_scales">Keine Skalen eingerichtet. Füge unter „Skalen verwalten“ eine hinzu.</string>
     <string name="entry_note_label">Notiz (optional)</string>
     <string name="entry_prompt_slot_label">Erinnerungszeitraum</string>

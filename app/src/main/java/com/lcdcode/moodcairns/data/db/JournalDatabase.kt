@@ -14,7 +14,7 @@ import com.lcdcode.moodcairns.data.entity.JournalDocFts
  */
 @Database(
     entities = [JournalDoc::class, JournalDocFts::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

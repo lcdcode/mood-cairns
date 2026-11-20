@@ -93,7 +93,7 @@ class JournalHistoryViewModel @Inject constructor(
     }
 
     private fun rowOf(meta: JournalDocMeta) =
-        JournalHistoryRow(meta.day, HighlightedText(journalPreview(meta.preview)))
+        JournalHistoryRow(meta.day, HighlightedText(meta.preview))
 
     private fun rowOf(result: JournalSearchRow) =
         JournalHistoryRow(result.day, snippetPreview(result.snippet))

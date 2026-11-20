@@ -31,6 +31,7 @@ class JournalDatabaseHolder @Inject constructor(
         journalKey.fill(0)
         db = Room.databaseBuilder(context, JournalDatabase::class.java, JournalDatabase.NAME)
             .openHelperFactory(factory)
+            .addMigrations(JOURNAL_MIGRATION_1_2)
             .build()
     }
 

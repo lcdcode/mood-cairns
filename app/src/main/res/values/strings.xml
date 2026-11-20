@@ -151,8 +151,8 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Log how you\'re feeling, privately.</string>
-    <string name="home_log_entry">Log entry</string>
-    <string name="home_history">View history</string>
+    <string name="home_log_mood">Log mood</string>
+    <string name="home_mood_history">Mood history</string>
     <string name="home_open_journal">Open journal</string>
     <string name="home_charts">Charts</string>
     <string name="home_backup">Backup &amp; import</string>
@@ -188,6 +188,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">How are you?</string>
     <string name="entry_title_edit">Edit entry</string>
+    <string name="entry_save_open_journal">Save &amp; open journal</string>
     <string name="entry_no_scales">No scales configured. Add one from Manage scales.</string>
     <string name="entry_note_label">Note (optional)</string>
     <string name="entry_prompt_slot_label">Prompt slot</string>

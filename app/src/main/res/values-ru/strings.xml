@@ -121,8 +121,8 @@
     <string name="notif_test_title">Тестовое уведомление</string>
     <!-- Home screen -->
     <string name="home_tagline">Записывайте, как вы себя чувствуете. Конфиденциально.</string>
-    <string name="home_log_entry">Новая запись</string>
-    <string name="home_history">История</string>
+    <string name="home_log_mood">Записать настроение</string>
+    <string name="home_mood_history">История настроения</string>
     <string name="home_open_journal">Открыть дневник</string>
     <string name="home_charts">Графики</string>
     <string name="home_backup">Резервные копии и импорт</string>
@@ -156,6 +156,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">Как вы себя чувствуете?</string>
     <string name="entry_title_edit">Изменить запись</string>
+    <string name="entry_save_open_journal">Сохранить и открыть дневник</string>
     <string name="entry_no_scales">Шкалы не настроены. Добавьте шкалу в разделе «Управление шкалами».</string>
     <string name="entry_note_label">Заметка (необязательно)</string>
     <string name="entry_prompt_slot_label">Интервал напоминания</string>

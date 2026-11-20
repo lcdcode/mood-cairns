@@ -127,8 +127,8 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Записуйте, як ви почуваєтеся. Конфіденційно.</string>
-    <string name="home_log_entry">Новий запис</string>
-    <string name="home_history">Історія</string>
+    <string name="home_log_mood">Записати настрій</string>
+    <string name="home_mood_history">Історія настрою</string>
     <string name="home_open_journal">Відкрити щоденник</string>
     <string name="home_charts">Графіки</string>
     <string name="home_backup">Резервні копії та імпорт</string>
@@ -163,6 +163,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">Як ви почуваєтеся?</string>
     <string name="entry_title_edit">Редагувати запис</string>
+    <string name="entry_save_open_journal">Зберегти й відкрити щоденник</string>
     <string name="entry_no_scales">Шкали не налаштовано. Додайте шкалу в розділі «Керування шкалами».</string>
     <string name="entry_note_label">Нотатка (опціонально)</string>
     <string name="entry_prompt_slot_label">Вікно нагадування</string>

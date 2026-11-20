@@ -127,8 +127,8 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Zapisuj, jak się czujesz. Prywatnie.</string>
-    <string name="home_log_entry">Nowy wpis</string>
-    <string name="home_history">Historia</string>
+    <string name="home_log_mood">Zapisz nastrój</string>
+    <string name="home_mood_history">Historia nastroju</string>
     <string name="home_open_journal">Otwórz dziennik</string>
     <string name="home_charts">Wykresy</string>
     <string name="home_backup">Kopia zapasowa i import</string>
@@ -163,6 +163,7 @@
     <!-- Entry screen -->
     <string name="entry_title_new">Jak się czujesz?</string>
     <string name="entry_title_edit">Edytuj wpis</string>
+    <string name="entry_save_open_journal">Zapisz i otwórz dziennik</string>
     <string name="entry_no_scales">Brak skonfigurowanych skal. Dodaj skalę w sekcji „Zarządzaj skalami”.</string>
     <string name="entry_note_label">Notatka (opcjonalnie)</string>
     <string name="entry_prompt_slot_label">Okno przypomnienia</string>
