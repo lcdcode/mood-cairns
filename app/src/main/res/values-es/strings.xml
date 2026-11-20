@@ -119,12 +119,27 @@
     <string name="home_tagline">Registra cómo te sientes, en privado.</string>
     <string name="home_log_entry">Nuevo registro</string>
     <string name="home_history">Ver historial</string>
+    <string name="home_open_journal">Abrir diario</string>
     <string name="home_charts">Gráficos</string>
     <string name="home_backup">Copia de seguridad</string>
     <string name="home_scales">Gestionar escalas</string>
     <string name="home_tags">Gestionar etiquetas</string>
     <string name="home_settings">Ajustes</string>
     <string name="home_about">Acerca de</string>
+
+    <!-- Editor del diario -->
+    <string name="journal_placeholder">Escribe sobre tu día…</string>
+    <string name="journal_empty_read">Todavía no hay nada escrito para este día.</string>
+    <string name="journal_load_failed">No se pudo abrir esta página del diario.</string>
+    <string name="journal_show_read">Vista de lectura</string>
+    <string name="journal_show_edit">Editar</string>
+    <string name="journal_format_bold">Negrita</string>
+    <string name="journal_format_italic">Cursiva</string>
+    <string name="journal_format_heading">Título</string>
+    <string name="journal_format_bullet_list">Lista con viñetas</string>
+    <string name="journal_format_numbered_list">Lista numerada</string>
+    <string name="journal_format_quote">Cita</string>
+    <string name="journal_format_code">Código</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">¿Cómo estás?</string>

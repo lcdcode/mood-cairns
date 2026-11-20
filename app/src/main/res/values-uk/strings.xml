@@ -129,12 +129,27 @@
     <string name="home_tagline">Записуйте, як ви почуваєтеся. Конфіденційно.</string>
     <string name="home_log_entry">Новий запис</string>
     <string name="home_history">Історія</string>
+    <string name="home_open_journal">Відкрити щоденник</string>
     <string name="home_charts">Графіки</string>
     <string name="home_backup">Резервні копії та імпорт</string>
     <string name="home_scales">Керування шкалами</string>
     <string name="home_tags">Керування тегами</string>
     <string name="home_settings">Налаштування</string>
     <string name="home_about">Про застосунок</string>
+
+    <!-- Редактор щоденника -->
+    <string name="journal_placeholder">Напишіть про свій день…</string>
+    <string name="journal_empty_read">За цей день ще нічого не написано.</string>
+    <string name="journal_load_failed">Не вдалося відкрити цю сторінку щоденника.</string>
+    <string name="journal_show_read">Режим читання</string>
+    <string name="journal_show_edit">Редагувати</string>
+    <string name="journal_format_bold">Жирний</string>
+    <string name="journal_format_italic">Курсив</string>
+    <string name="journal_format_heading">Заголовок</string>
+    <string name="journal_format_bullet_list">Маркований список</string>
+    <string name="journal_format_numbered_list">Нумерований список</string>
+    <string name="journal_format_quote">Цитата</string>
+    <string name="journal_format_code">Код</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Як ви почуваєтеся?</string>

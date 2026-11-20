@@ -18,6 +18,12 @@ class ClampNoteTest {
     }
 
     @Test
+    fun `emoji straddling the limit is not split`() {
+        val note = "a".repeat(MAX_NOTE_CHARS - 1) + "😀"
+        assertEquals("a".repeat(MAX_NOTE_CHARS - 1), clampNote(note))
+    }
+
+    @Test
     fun `empty note stays empty`() {
         assertEquals("", clampNote(""))
     }

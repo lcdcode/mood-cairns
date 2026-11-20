@@ -123,12 +123,27 @@
     <string name="home_tagline">Записывайте, как вы себя чувствуете. Конфиденциально.</string>
     <string name="home_log_entry">Новая запись</string>
     <string name="home_history">История</string>
+    <string name="home_open_journal">Открыть дневник</string>
     <string name="home_charts">Графики</string>
     <string name="home_backup">Резервные копии и импорт</string>
     <string name="home_scales">Управление шкалами</string>
     <string name="home_tags">Управление тегами</string>
     <string name="home_settings">Настройки</string>
     <string name="home_about">О приложении</string>
+
+    <!-- Редактор дневника -->
+    <string name="journal_placeholder">Напишите о своём дне…</string>
+    <string name="journal_empty_read">За этот день пока ничего не написано.</string>
+    <string name="journal_load_failed">Не удалось открыть эту страницу дневника.</string>
+    <string name="journal_show_read">Режим чтения</string>
+    <string name="journal_show_edit">Редактировать</string>
+    <string name="journal_format_bold">Жирный</string>
+    <string name="journal_format_italic">Курсив</string>
+    <string name="journal_format_heading">Заголовок</string>
+    <string name="journal_format_bullet_list">Маркированный список</string>
+    <string name="journal_format_numbered_list">Нумерованный список</string>
+    <string name="journal_format_quote">Цитата</string>
+    <string name="journal_format_code">Код</string>
     <!-- Entry screen -->
     <string name="entry_title_new">Как вы себя чувствуете?</string>
     <string name="entry_title_edit">Изменить запись</string>

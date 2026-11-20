@@ -16,6 +16,7 @@ import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.data.repo.ScaleRepository
 import com.lcdcode.moodcairns.data.repo.TagRepository
 import com.lcdcode.moodcairns.ui.common.UiText
+import com.lcdcode.moodcairns.ui.common.takeWholeChars
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -312,7 +313,7 @@ internal fun EntryUiState.withOncePerDayStarts(): EntryUiState {
 /** Hard cap for note text; keeps entries and charts lightweight. */
 internal const val MAX_NOTE_CHARS = 2000
 
-internal fun clampNote(raw: String): String = raw.take(MAX_NOTE_CHARS)
+internal fun clampNote(raw: String): String = raw.takeWholeChars(MAX_NOTE_CHARS)
 
 /**
  * Resolves the slot picker selection to a value that maps onto an actual chip.

@@ -153,12 +153,27 @@
     <string name="home_tagline">Log how you\'re feeling, privately.</string>
     <string name="home_log_entry">Log entry</string>
     <string name="home_history">View history</string>
+    <string name="home_open_journal">Open journal</string>
     <string name="home_charts">Charts</string>
     <string name="home_backup">Backup &amp; import</string>
     <string name="home_scales">Manage scales</string>
     <string name="home_tags">Manage tags</string>
     <string name="home_settings">Settings</string>
     <string name="home_about">About</string>
+
+    <!-- Journal editor. The format_* strings are spoken labels for the formatting toolbar buttons. -->
+    <string name="journal_placeholder">Write about your day…</string>
+    <string name="journal_empty_read">Nothing written for this day yet.</string>
+    <string name="journal_load_failed">Could not open this journal page.</string>
+    <string name="journal_show_read">Reading view</string>
+    <string name="journal_show_edit">Edit</string>
+    <string name="journal_format_bold">Bold</string>
+    <string name="journal_format_italic">Italic</string>
+    <string name="journal_format_heading">Heading</string>
+    <string name="journal_format_bullet_list">Bulleted list</string>
+    <string name="journal_format_numbered_list">Numbered list</string>
+    <string name="journal_format_quote">Quote</string>
+    <string name="journal_format_code">Code</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">How are you?</string>

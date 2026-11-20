@@ -43,6 +43,7 @@ class HardcodedUiTextTest {
             "ui/entry/EntryScreen.kt",
             "ui/history/HistoryScreen.kt",
             "ui/home/HomeScreen.kt",
+            "ui/journal/JournalScreen.kt",
             "ui/journal/MarkdownRender.kt",
             "ui/lock/Biometrics.kt",
             "ui/lock/LockScreen.kt",

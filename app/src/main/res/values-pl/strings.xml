@@ -129,12 +129,27 @@
     <string name="home_tagline">Zapisuj, jak się czujesz. Prywatnie.</string>
     <string name="home_log_entry">Nowy wpis</string>
     <string name="home_history">Historia</string>
+    <string name="home_open_journal">Otwórz dziennik</string>
     <string name="home_charts">Wykresy</string>
     <string name="home_backup">Kopia zapasowa i import</string>
     <string name="home_scales">Zarządzaj skalami</string>
     <string name="home_tags">Zarządzaj tagami</string>
     <string name="home_settings">Ustawienia</string>
     <string name="home_about">O aplikacji</string>
+
+    <!-- Edytor dziennika -->
+    <string name="journal_placeholder">Napisz o swoim dniu…</string>
+    <string name="journal_empty_read">Na ten dzień nic jeszcze nie napisano.</string>
+    <string name="journal_load_failed">Nie udało się otworzyć tej strony dziennika.</string>
+    <string name="journal_show_read">Widok do czytania</string>
+    <string name="journal_show_edit">Edytuj</string>
+    <string name="journal_format_bold">Pogrubienie</string>
+    <string name="journal_format_italic">Kursywa</string>
+    <string name="journal_format_heading">Nagłówek</string>
+    <string name="journal_format_bullet_list">Lista punktowana</string>
+    <string name="journal_format_numbered_list">Lista numerowana</string>
+    <string name="journal_format_quote">Cytat</string>
+    <string name="journal_format_code">Kod</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Jak się czujesz?</string>

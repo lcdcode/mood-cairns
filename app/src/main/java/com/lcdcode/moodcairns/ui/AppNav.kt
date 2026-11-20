@@ -17,6 +17,8 @@ import com.lcdcode.moodcairns.ui.charts.ChartsScreen
 import com.lcdcode.moodcairns.ui.entry.EntryScreen
 import com.lcdcode.moodcairns.ui.history.HistoryScreen
 import com.lcdcode.moodcairns.ui.home.HomeScreen
+import com.lcdcode.moodcairns.ui.journal.JournalScreen
+import com.lcdcode.moodcairns.ui.journal.JournalViewModel
 import com.lcdcode.moodcairns.ui.scales.ScaleEditScreen
 import com.lcdcode.moodcairns.ui.scales.ScaleListScreen
 import com.lcdcode.moodcairns.ui.settings.ChangePinScreen
@@ -24,6 +26,7 @@ import com.lcdcode.moodcairns.ui.settings.PromptWindowEditScreen
 import com.lcdcode.moodcairns.ui.settings.SettingsScreen
 import com.lcdcode.moodcairns.ui.tags.TagEditScreen
 import com.lcdcode.moodcairns.ui.tags.TagListScreen
+import java.time.LocalDate
 
 data class NotificationEntryArgs(val slot: String, val windowId: Long?)
 
@@ -42,6 +45,11 @@ object Routes {
     const val TAG_EDIT = "tag_edit"
     const val ABOUT = "about"
     const val LICENSES = "licenses"
+    const val JOURNAL = "journal"
+
+    /** Today's page when [day] is null. */
+    fun journal(day: LocalDate? = null) =
+        "$JOURNAL?${JournalViewModel.ARG_DAY}=${day?.toString().orEmpty()}"
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
     fun tagEdit(id: Long? = null, categoryId: String? = null) =
         "$TAG_EDIT?tagId=${id ?: 0L}&category=${Uri.encode(categoryId.orEmpty())}"
@@ -87,7 +95,20 @@ fun AppNav(
                 onCharts = { nav.navigate(Routes.CHARTS) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onAbout = { nav.navigate(Routes.ABOUT) },
+                onOpenJournal = { nav.navigate(Routes.journal()) },
             )
+        }
+
+        composable(
+            route = "${Routes.JOURNAL}?${JournalViewModel.ARG_DAY}={${JournalViewModel.ARG_DAY}}",
+            arguments = listOf(
+                navArgument(JournalViewModel.ARG_DAY) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) {
+            JournalScreen(onBack = { nav.popBackStack() })
         }
 
         composable(Routes.ABOUT) {
