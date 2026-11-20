@@ -488,6 +488,10 @@
     <string name="settings_lock_now">Lock now</string>
     <string name="settings_set_pin">Set PIN</string>
     <string name="settings_no_pin_explanation">No PIN set. Your data is encrypted on this device but protected only by your device\'s keystore, not by a PIN. Auto-lock, biometric unlock, and lock-now are unavailable without a PIN.</string>
+    <!-- Journal settings. Turning the journal off only hides it; nothing is deleted. -->
+    <string name="settings_section_journal">Journal</string>
+    <string name="settings_journal_enabled">Enable journal</string>
+    <string name="settings_journal_enabled_summary">Adds a private journal with one page per day. Turning this off only hides the journal; everything you have written is kept.</string>
     <string name="settings_section_danger_zone">Danger zone</string>
     <string name="settings_allow_unsafe_exports">Allow unsafe exports</string>
     <string name="settings_allow_unsafe_exports_summary">Enables an unencrypted CSV export under Backup &amp; import. Off by default.</string>

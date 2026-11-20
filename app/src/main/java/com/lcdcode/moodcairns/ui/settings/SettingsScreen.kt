@@ -206,6 +206,32 @@ fun SettingsScreen(
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+            item { SectionHeader(stringResource(R.string.settings_section_journal)) }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.settings_journal_enabled),
+                        modifier = Modifier.weight(1f),
+                    )
+                    // Hiding never deletes anything, so no confirmation either way.
+                    Switch(
+                        checked = state.journalEnabled,
+                        onCheckedChange = viewModel::setJournalEnabled,
+                    )
+                }
+            }
+            item {
+                Text(
+                    stringResource(R.string.settings_journal_enabled_summary),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader(stringResource(R.string.settings_section_danger_zone)) }
             item {
                 Row(

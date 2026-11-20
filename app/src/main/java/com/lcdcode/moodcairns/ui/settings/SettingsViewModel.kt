@@ -7,6 +7,7 @@ import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.ScreenCaptureGate
+import com.lcdcode.moodcairns.settings.JournalSettings
 import com.lcdcode.moodcairns.work.PromptScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ data class SettingsUiState(
     val biometricEnabled: Boolean = true,
     val pinSet: Boolean = true,
     val allowUnsafeExports: Boolean = false,
+    val journalEnabled: Boolean = JournalSettings.DEFAULT_ENABLED,
     /** Remaining screen-capture opt-out in ms, or 0 when screenshots are blocked. */
     val screenshotsRemainingMs: Long = 0L,
     val loaded: Boolean = false,
@@ -36,6 +38,7 @@ class SettingsViewModel @Inject constructor(
     private val lockManager: LockManager,
     private val promptScheduler: PromptScheduler,
     private val screenCaptureGate: ScreenCaptureGate,
+    private val journalSettings: JournalSettings,
 ) : ViewModel() {
 
     private val lockState = MutableStateFlow(
@@ -46,8 +49,10 @@ class SettingsViewModel @Inject constructor(
         windowsRepo.observeAll(),
         lockState,
         screenCaptureGate.allowedUntil,
-    ) { windows, lock, _ ->
+        journalSettings.enabled,
+    ) { windows, lock, _, journalEnabled ->
         SettingsUiState(
+            journalEnabled = journalEnabled,
             screenshotsRemainingMs = screenCaptureGate.remainingMs(),
             windows = windows,
             lockTimeoutMs = lock.first,
@@ -94,6 +99,8 @@ class SettingsViewModel @Inject constructor(
         lockRepo.allowUnsafeExports = enabled
         lockState.update { it.copy(third = it.third + 1) }
     }
+
+    fun setJournalEnabled(enabled: Boolean) = journalSettings.setEnabled(enabled)
 
     fun setScreenshotsAllowed(enabled: Boolean) {
         if (enabled) screenCaptureGate.allowTemporarily() else screenCaptureGate.revoke()

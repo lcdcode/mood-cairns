@@ -409,6 +409,9 @@
     <string name="settings_lock_now">Заблокировать сейчас</string>
     <string name="settings_set_pin">Установить PIN-код</string>
     <string name="settings_no_pin_explanation">PIN-код не установлен. Ваши данные зашифрованы на устройстве, но защищены только системным хранилищем ключей. Без PIN-кода недоступны автоблокировка, биометрический вход и мгновенная блокировка.</string>
+    <string name="settings_section_journal">Дневник</string>
+    <string name="settings_journal_enabled">Включить дневник</string>
+    <string name="settings_journal_enabled_summary">Добавляет личный дневник: одна страница на каждый день. Отключение только скрывает дневник, всё написанное сохраняется.</string>
     <string name="settings_section_danger_zone">Опасная зона</string>
     <string name="settings_allow_unsafe_exports">Разрешить небезопасный экспорт</string>
     <string name="settings_allow_unsafe_exports_summary">Включает экспорт в незашифрованный CSV в разделе «Резервное копирование». По умолчанию выключено.</string>

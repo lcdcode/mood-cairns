@@ -431,6 +431,9 @@
     <string name="settings_lock_now">Заблокувати зараз</string>
     <string name="settings_set_pin">Встановити PIN-код</string>
     <string name="settings_no_pin_explanation">PIN-код не встановлено. Ваші дані зашифровано на цьому пристрої, але захищено лише сховищем ключів пристрою, а не PIN-кодом. Без PIN-коду недоступні автоблокування, біометричне розблокування та «Заблокувати зараз».</string>
+    <string name="settings_section_journal">Щоденник</string>
+    <string name="settings_journal_enabled">Увімкнути щоденник</string>
+    <string name="settings_journal_enabled_summary">Додає особистий щоденник: одна сторінка на кожен день. Вимкнення лише приховує щоденник, усе написане зберігається.</string>
     <string name="settings_section_danger_zone">Небезпечна зона</string>
     <string name="settings_allow_unsafe_exports">Дозволити небезпечний експорт</string>
     <string name="settings_allow_unsafe_exports_summary">Вмикає експорт у CSV без шифрування в розділі «Резервні копії та імпорт». За замовчуванням вимкнено.</string>

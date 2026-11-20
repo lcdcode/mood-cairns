@@ -391,6 +391,9 @@
     <string name="settings_lock_now">Jetzt sperren</string>
     <string name="settings_set_pin">PIN festlegen</string>
     <string name="settings_no_pin_explanation">Keine PIN festgelegt. Deine Daten sind auf diesem Gerät verschlüsselt, aber nur durch den Schlüsselspeicher des Geräts geschützt, nicht durch eine PIN. Automatische Sperre, biometrische Entsperrung und „Jetzt sperren“ sind ohne PIN nicht verfügbar.</string>
+    <string name="settings_section_journal">Tagebuch</string>
+    <string name="settings_journal_enabled">Tagebuch aktivieren</string>
+    <string name="settings_journal_enabled_summary">Fügt ein privates Tagebuch mit einer Seite pro Tag hinzu. Beim Ausschalten wird das Tagebuch nur ausgeblendet; alles Geschriebene bleibt erhalten.</string>
     <string name="settings_section_danger_zone">Gefahrenbereich</string>
     <string name="settings_allow_unsafe_exports">Unsichere Exporte erlauben</string>
     <string name="settings_allow_unsafe_exports_summary">Aktiviert einen unverschlüsselten CSV-Export unter „Sicherung &amp; Import“. Standardmäßig deaktiviert.</string>

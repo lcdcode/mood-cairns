@@ -432,6 +432,9 @@
     <string name="settings_lock_now">Zablokuj teraz</string>
     <string name="settings_set_pin">Ustaw kod PIN</string>
     <string name="settings_no_pin_explanation">Nie ustawiono kodu PIN. Twoje dane są zaszyfrowane na tym urządzeniu, ale chroni je tylko magazyn kluczy urządzenia, a nie kod PIN. Bez kodu PIN niedostępne są automatyczna blokada, odblokowanie biometryczne i „Zablokuj teraz”.</string>
+    <string name="settings_section_journal">Dziennik</string>
+    <string name="settings_journal_enabled">Włącz dziennik</string>
+    <string name="settings_journal_enabled_summary">Dodaje prywatny dziennik z jedną stroną na każdy dzień. Wyłączenie tylko ukrywa dziennik; wszystko, co napisano, zostaje zachowane.</string>
     <string name="settings_section_danger_zone">Strefa zagrożenia</string>
     <string name="settings_allow_unsafe_exports">Zezwalaj na niebezpieczny eksport</string>
     <string name="settings_allow_unsafe_exports_summary">Włącza niezaszyfrowany eksport CSV w sekcji „Kopia zapasowa i import”. Domyślnie wyłączone.</string>
