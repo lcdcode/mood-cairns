@@ -21,6 +21,7 @@ kotlinxSerialization = "1.7.3"
 reorderable = "2.4.3"
 sqliteJdbc = "3.46.1.0"
 sqlcipher = "4.6.1"
+commonmark = "0.32.0"
 junit = "4.13.2"
 
 [libraries]
@@ -62,6 +63,7 @@ reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.r
 
 sqlite-jdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqliteJdbc" }
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
+commonmark = { group = "org.commonmark", name = "commonmark", version.ref = "commonmark" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]

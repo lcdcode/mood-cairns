@@ -213,6 +213,9 @@ dependencies {
 
     implementation(libs.reorderable)
 
+    // Pure-Java Markdown parser (BSD-2). No Android resources, so the compileSdk 34 cap is safe.
+    implementation(libs.commonmark)
+
     testImplementation(libs.junit)
     testImplementation(libs.sqlite.jdbc)
 }

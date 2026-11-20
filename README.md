@@ -88,6 +88,7 @@ Just open an issue and I will usually respond within 3 business days.
   AlarmManager for the actual prompt fires (WorkManager's delayed work isn't
   reliable enough under Doze)
 - Vico for charts
+- commonmark-java for parsing journal Markdown (rendered by the app's own Compose code)
 - AndroidX Security Crypto (`EncryptedSharedPreferences`) for PIN material
 - `kotlinx.serialization` for the backup JSON envelope
 
