@@ -140,6 +140,9 @@
     <string name="journal_format_numbered_list">Lista numerada</string>
     <string name="journal_format_quote">Cita</string>
     <string name="journal_format_code">Código</string>
+    <string name="journal_format_checklist">Lista de tareas</string>
+    <string name="journal_format_table">Insertar tabla</string>
+    <string name="journal_table_column">Columna %1$d</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">¿Cómo estás?</string>

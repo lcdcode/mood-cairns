@@ -21,9 +21,10 @@ internal enum class InlineMarker(val char: Char, val width: Int) {
     }
 }
 
-internal enum class LinePrefix { BULLET, NUMBERED, QUOTE, HEADING }
+internal enum class LinePrefix { BULLET, NUMBERED, TASK, QUOTE, HEADING }
 
 private const val BULLET_MARKER = "- "
+private const val TASK_MARKER = "- [ ] "
 private const val QUOTE_MARKER = "> "
 private const val MAX_CYCLED_HEADING_LEVEL = 3
 
@@ -126,10 +127,23 @@ private fun rewriteLines(
                 }
             }
         }
+        LinePrefix.TASK -> {
+            val removing = targetLines.all { it.innerKind == LinePrefix.TASK }
+            lines.mapIndexed { i, line ->
+                when {
+                    i !in targets -> line
+                    removing -> line.copy(inner = "")
+                    line.innerKind == LinePrefix.TASK -> line // keep its checked state
+                    else -> line.copy(inner = TASK_MARKER)
+                }
+            }
+        }
     }
 }
 
-private val LINE_STRUCTURE = Regex("""^([ \t]*)(> ?)?(#{1,6} |[-*+] |\d{1,9}[.)] )?(.*)$""")
+private val LINE_STRUCTURE =
+    Regex("""^([ \t]*)(> ?)?(#{1,6} |[-*+] \[[ xX]] |[-*+] |\d{1,9}[.)] )?(.*)$""")
+private val TASK_INNER = Regex("""[-*+] \[[ xX]] """)
 
 private data class ParsedLine(
     val indent: String,
@@ -144,6 +158,7 @@ private data class ParsedLine(
         inner.isEmpty() -> null
         inner.startsWith("#") -> LinePrefix.HEADING
         inner[0].isDigit() -> LinePrefix.NUMBERED
+        TASK_INNER.matches(inner) -> LinePrefix.TASK
         else -> LinePrefix.BULLET
     }
 
@@ -235,3 +250,66 @@ private fun runInside(text: String, start: Int, end: Int, ch: Char): Int {
     while (end - trail - 1 >= start + lead && text[end - trail - 1] == ch) trail++
     return minOf(lead, trail)
 }
+
+/**
+ * Flips the checklist box whose state character is at [markerOffset] (` ` <-> `x`). Returns
+ * null when the offset no longer points into a `[ ]`/`[x]`, e.g. after the text changed.
+ */
+internal fun toggleTaskAt(text: String, markerOffset: Int): String? {
+    if (markerOffset !in 1 until text.length - 1) return null
+    if (text[markerOffset - 1] != '[' || text[markerOffset + 1] != ']') return null
+    val flipped = when (text[markerOffset]) {
+        ' ' -> 'x'
+        'x', 'X' -> ' '
+        else -> return null
+    }
+    return buildString(text.length) {
+        append(text, 0, markerOffset)
+        append(flipped)
+        append(text, markerOffset + 1, text.length)
+    }
+}
+
+/**
+ * Inserts an empty table after the selection, with one column per [headers] entry, set off
+ * by blank lines so Markdown reads it as a table. The first header is selected, ready to be
+ * typed over.
+ */
+internal fun insertTableTemplate(
+    text: String,
+    selStart: Int,
+    selEnd: Int,
+    headers: List<String>,
+): EditResult {
+    require(headers.isNotEmpty()) { "A table needs at least one column" }
+    val at = maxOf(selStart, selEnd).coerceIn(0, text.length)
+    val before = text.substring(0, at)
+    val after = text.substring(at)
+    val lead = when {
+        before.isEmpty() || before.endsWith("\n\n") -> ""
+        before.endsWith("\n") -> "\n"
+        else -> "\n\n"
+    }
+    val trail = when {
+        after.isEmpty() || after.startsWith("\n\n") -> ""
+        after.startsWith("\n") -> "\n"
+        else -> "\n\n"
+    }
+    val table = listOf(
+        tableRow(headers),
+        tableRow(headers.map { TABLE_DIVIDER_CELL }),
+        tableRow(headers.map { "" }),
+    ).joinToString("\n")
+    val firstHeaderStart = at + lead.length + TABLE_ROW_PREFIX.length
+    return EditResult(
+        text = before + lead + table + trail + after,
+        selStart = firstHeaderStart,
+        selEnd = firstHeaderStart + headers.first().length,
+    )
+}
+
+private const val TABLE_ROW_PREFIX = "| "
+private const val TABLE_DIVIDER_CELL = "---"
+
+private fun tableRow(cells: List<String>): String =
+    cells.joinToString(separator = " | ", prefix = TABLE_ROW_PREFIX, postfix = " |")

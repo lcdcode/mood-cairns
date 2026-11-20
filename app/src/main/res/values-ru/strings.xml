@@ -144,6 +144,9 @@
     <string name="journal_format_numbered_list">Нумерованный список</string>
     <string name="journal_format_quote">Цитата</string>
     <string name="journal_format_code">Код</string>
+    <string name="journal_format_checklist">Список задач</string>
+    <string name="journal_format_table">Вставить таблицу</string>
+    <string name="journal_table_column">Столбец %1$d</string>
     <!-- Entry screen -->
     <string name="entry_title_new">Как вы себя чувствуете?</string>
     <string name="entry_title_edit">Изменить запись</string>

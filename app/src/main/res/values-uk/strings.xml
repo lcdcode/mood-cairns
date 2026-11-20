@@ -150,6 +150,9 @@
     <string name="journal_format_numbered_list">Нумерований список</string>
     <string name="journal_format_quote">Цитата</string>
     <string name="journal_format_code">Код</string>
+    <string name="journal_format_checklist">Список завдань</string>
+    <string name="journal_format_table">Вставити таблицю</string>
+    <string name="journal_table_column">Стовпець %1$d</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Як ви почуваєтеся?</string>

@@ -20,7 +20,8 @@ class ThirdPartyNoticesTest {
         ?.readText()
         ?: error("THIRD_PARTY_NOTICES.md not found from ${File(".").absolutePath}")
 
-    private val flattened: String = notices.replace("\\.", ".").split(Regex("\\s+")).joinToString(" ")
+    private val flattened: String =
+        notices.replace("\\.", ".").split(Regex("\\s+")).joinToString(" ")
 
     @Test
     fun `required notices are present`() {
@@ -37,7 +38,7 @@ class ThirdPartyNoticesTest {
 
     private fun allBlocks(block: MdBlock): List<MdBlock> = listOf(block) + when (block) {
         is MdBlock.Quote -> block.blocks.flatMap(::allBlocks)
-        is MdBlock.ListBlock -> block.items.flatten().flatMap(::allBlocks)
+        is MdBlock.ListBlock -> block.items.flatMap { it.blocks }.flatMap(::allBlocks)
         else -> emptyList()
     }
 

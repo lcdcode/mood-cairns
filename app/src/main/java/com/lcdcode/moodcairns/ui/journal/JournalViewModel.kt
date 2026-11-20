@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.data.repo.JournalRepository
+import com.lcdcode.moodcairns.markdown.MdTask
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +62,11 @@ class JournalViewModel @Inject constructor(
     fun setBody(raw: String) = _state.update { it.copy(body = clampJournalBody(raw)) }
 
     fun toggleReadMode() = _state.update { it.copy(readMode = !it.readMode) }
+
+    /** Ticks or unticks a checklist box from the read view; saved like any other edit. */
+    fun toggleTask(task: MdTask) = _state.update { current ->
+        toggleTaskAt(current.body, task.markerOffset)?.let { current.copy(body = it) } ?: current
+    }
 
     fun flush() {
         saveScope.launch { saveIfChanged() }

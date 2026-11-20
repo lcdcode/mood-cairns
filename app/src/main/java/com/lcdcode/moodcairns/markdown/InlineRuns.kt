@@ -5,6 +5,7 @@ data class StyledRun(
     val text: String,
     val bold: Boolean = false,
     val italic: Boolean = false,
+    val strikethrough: Boolean = false,
     val code: Boolean = false,
     val linkDestination: String? = null,
 )
@@ -12,6 +13,7 @@ data class StyledRun(
 private data class RunStyle(
     val bold: Boolean = false,
     val italic: Boolean = false,
+    val strikethrough: Boolean = false,
     val linkDestination: String? = null,
 )
 
@@ -34,6 +36,8 @@ private fun appendRuns(inlines: List<MdInline>, style: RunStyle, out: MutableLis
             is MdInline.Code -> out.appendText(inline.value, style, code = true)
             is MdInline.Bold -> appendRuns(inline.children, style.copy(bold = true), out)
             is MdInline.Italic -> appendRuns(inline.children, style.copy(italic = true), out)
+            is MdInline.Strikethrough ->
+                appendRuns(inline.children, style.copy(strikethrough = true), out)
             is MdInline.Link ->
                 appendRuns(inline.children, style.copy(linkDestination = inline.destination), out)
             MdInline.HardBreak, MdInline.SoftBreak -> out.appendText("\n", style, code = false)
@@ -43,7 +47,14 @@ private fun appendRuns(inlines: List<MdInline>, style: RunStyle, out: MutableLis
 
 private fun MutableList<StyledRun>.appendText(text: String, style: RunStyle, code: Boolean) {
     if (text.isEmpty()) return
-    val run = StyledRun(text, style.bold, style.italic, code, style.linkDestination)
+    val run = StyledRun(
+        text = text,
+        bold = style.bold,
+        italic = style.italic,
+        strikethrough = style.strikethrough,
+        code = code,
+        linkDestination = style.linkDestination,
+    )
     val previous = lastOrNull()
     if (previous != null && previous.copy(text = run.text) == run) {
         this[lastIndex] = previous.copy(text = previous.text + text)

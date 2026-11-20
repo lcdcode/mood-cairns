@@ -18,12 +18,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
+import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FormatBold
 import androidx.compose.material.icons.filled.FormatItalic
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.CircularProgressIndicator
@@ -60,11 +62,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.markdown.MarkdownParser
+import com.lcdcode.moodcairns.markdown.MdTask
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 
 private val PagePadding = 16.dp
 private const val TITLE_DATE_SKELETON = "yMMMEd"
+private const val TABLE_TEMPLATE_COLUMNS = 2
 
 private enum class FormatAction(val icon: ImageVector, @StringRes val label: Int) {
     BOLD(Icons.Default.FormatBold, R.string.journal_format_bold),
@@ -72,11 +76,14 @@ private enum class FormatAction(val icon: ImageVector, @StringRes val label: Int
     HEADING(Icons.Default.Title, R.string.journal_format_heading),
     BULLETS(Icons.AutoMirrored.Filled.FormatListBulleted, R.string.journal_format_bullet_list),
     NUMBERS(Icons.Default.FormatListNumbered, R.string.journal_format_numbered_list),
+    CHECKLIST(Icons.Default.Checklist, R.string.journal_format_checklist),
     QUOTE(Icons.Default.FormatQuote, R.string.journal_format_quote),
     CODE(Icons.Default.Code, R.string.journal_format_code),
+    TABLE(Icons.Default.TableChart, R.string.journal_format_table),
     ;
 
-    fun apply(value: TextFieldValue): EditResult {
+    /** [tableHeaders] are the localized placeholder headers used by [TABLE]. */
+    fun apply(value: TextFieldValue, tableHeaders: List<String>): EditResult {
         val text = value.text
         val start = value.selection.start
         val end = value.selection.end
@@ -87,7 +94,9 @@ private enum class FormatAction(val icon: ImageVector, @StringRes val label: Int
             HEADING -> toggleLinePrefix(text, start, end, LinePrefix.HEADING)
             BULLETS -> toggleLinePrefix(text, start, end, LinePrefix.BULLET)
             NUMBERS -> toggleLinePrefix(text, start, end, LinePrefix.NUMBERED)
+            CHECKLIST -> toggleLinePrefix(text, start, end, LinePrefix.TASK)
             QUOTE -> toggleLinePrefix(text, start, end, LinePrefix.QUOTE)
+            TABLE -> insertTableTemplate(text, start, end, tableHeaders)
         }
     }
 }
@@ -102,9 +111,15 @@ fun JournalScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val dateFormat = rememberSkeletonDateFormat(TITLE_DATE_SKELETON)
 
-    // Selection lives here, not in the ViewModel; re-seeded from the ViewModel's body once
-    // the page has loaded and after configuration changes.
-    var field by remember(state.loaded) { mutableStateOf(TextFieldValue(viewModel.state.value.body)) }
+    // Selection lives here, not in the ViewModel. Re-seeded from the ViewModel's body once the
+    // page has loaded, after configuration changes, and when switching back from the read
+    // view, where ticking a checkbox changes the body.
+    var field by remember(state.loaded, state.readMode) {
+        mutableStateOf(TextFieldValue(viewModel.state.value.body))
+    }
+    val tableHeaders = (1..TABLE_TEMPLATE_COLUMNS).map {
+        stringResource(R.string.journal_table_column, it)
+    }
 
     fun applyEdit(result: EditResult) {
         if (result.text.length > MAX_JOURNAL_BODY_CHARS) return
@@ -150,7 +165,7 @@ fun JournalScreen(
         },
         bottomBar = {
             if (state.loaded && !state.readMode) {
-                FormattingToolbar(onAction = { applyEdit(it.apply(field)) })
+                FormattingToolbar(onAction = { applyEdit(it.apply(field, tableHeaders)) })
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -159,7 +174,7 @@ fun JournalScreen(
             when {
                 state.loadFailed -> CenteredMessage(stringResource(R.string.journal_load_failed))
                 !state.loaded -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-                state.readMode -> ReadView(state.body)
+                state.readMode -> ReadView(state.body, onToggleTask = viewModel::toggleTask)
                 else -> Editor(
                     value = field,
                     onValueChange = { new ->
@@ -181,7 +196,10 @@ fun JournalScreen(
 private fun ReadModeToggle(readMode: Boolean, onToggle: () -> Unit) {
     IconButton(onClick = onToggle) {
         if (readMode) {
-            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.journal_show_edit))
+            Icon(
+                Icons.Default.Edit,
+                contentDescription = stringResource(R.string.journal_show_edit),
+            )
         } else {
             Icon(
                 Icons.Default.Visibility,
@@ -219,14 +237,14 @@ private fun Editor(value: TextFieldValue, onValueChange: (TextFieldValue) -> Uni
 }
 
 @Composable
-private fun ReadView(body: String) {
+private fun ReadView(body: String, onToggleTask: (MdTask) -> Unit) {
     if (body.isBlank()) {
         CenteredMessage(stringResource(R.string.journal_empty_read))
         return
     }
     val blocks = remember(body) { MarkdownParser.parse(body) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PagePadding)) {
-        SelectionContainer { MarkdownView(blocks) }
+        SelectionContainer { MarkdownView(blocks, onToggleTask = onToggleTask) }
     }
 }
 

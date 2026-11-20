@@ -43,6 +43,14 @@ class InlineRunsTest {
     }
 
     @Test
+    fun `strikethrough combines with other styles`() {
+        assertEquals(
+            listOf(StyledRun("x", italic = true, strikethrough = true)),
+            flattenInlines(listOf(MdInline.Strikethrough(listOf(Italic(listOf(Text("x"))))))),
+        )
+    }
+
+    @Test
     fun `code inside bold keeps both`() {
         assertEquals(
             listOf(StyledRun("x", bold = true, code = true)),

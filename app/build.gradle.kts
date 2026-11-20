@@ -231,6 +231,9 @@ dependencies {
 
     // Pure-Java Markdown parser (BSD-2). No Android resources, so the compileSdk 34 cap is safe.
     implementation(libs.commonmark)
+    implementation(libs.commonmark.ext.gfm.tables)
+    implementation(libs.commonmark.ext.gfm.strikethrough)
+    implementation(libs.commonmark.ext.task.list.items)
 
     testImplementation(libs.junit)
     testImplementation(libs.sqlite.jdbc)

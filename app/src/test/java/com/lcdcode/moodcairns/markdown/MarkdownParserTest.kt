@@ -37,20 +37,38 @@ class MarkdownParserTest {
     @Test
     fun `nested emphasis maps to bold and italic`() {
         assertEquals(
-            listOf(paragraph(Text("a "), Bold(listOf(Text("b "), Italic(listOf(Text("c"))))), Text(" d"))),
+            listOf(
+                paragraph(
+                    Text("a "),
+                    Bold(listOf(Text("b "), Italic(listOf(Text("c"))))),
+                    Text(" d"),
+                ),
+            ),
             MarkdownParser.parse("a **b *c*** d"),
         )
     }
 
     @Test
     fun `inline code keeps its literal`() {
-        assertEquals(listOf(paragraph(Text("run "), Code("ls -la"))), MarkdownParser.parse("run `ls -la`"))
+        assertEquals(
+            listOf(paragraph(Text("run "), Code("ls -la"))),
+            MarkdownParser.parse("run `ls -la`"),
+        )
     }
 
     @Test
     fun `bullet list items hold their blocks`() {
         assertEquals(
-            listOf(ListBlock(false, 1, listOf(listOf(paragraph(Text("one"))), listOf(paragraph(Text("two")))))),
+            listOf(
+                ListBlock(
+                    false,
+                    1,
+                    listOf(
+                        MdListItem(listOf(paragraph(Text("one")))),
+                        MdListItem(listOf(paragraph(Text("two")))),
+                    ),
+                ),
+            ),
             MarkdownParser.parse("- one\n- two"),
         )
     }
@@ -67,8 +85,11 @@ class MarkdownParserTest {
     fun `nested list sits inside its parent item`() {
         val outer = MarkdownParser.parse("- a\n  - b").single() as ListBlock
         assertEquals(
-            listOf(paragraph(Text("a")), ListBlock(false, 1, listOf(listOf(paragraph(Text("b")))))),
-            outer.items.single(),
+            listOf(
+                paragraph(Text("a")),
+                ListBlock(false, 1, listOf(MdListItem(listOf(paragraph(Text("b")))))),
+            ),
+            outer.items.single().blocks,
         )
     }
 
@@ -119,8 +140,14 @@ class MarkdownParserTest {
 
     @Test
     fun `line breaks are distinguished`() {
-        assertEquals(listOf(paragraph(Text("a"), SoftBreak, Text("b"))), MarkdownParser.parse("a\nb"))
-        assertEquals(listOf(paragraph(Text("a"), HardBreak, Text("b"))), MarkdownParser.parse("a  \nb"))
+        assertEquals(
+            listOf(paragraph(Text("a"), SoftBreak, Text("b"))),
+            MarkdownParser.parse("a\nb"),
+        )
+        assertEquals(
+            listOf(paragraph(Text("a"), HardBreak, Text("b"))),
+            MarkdownParser.parse("a  \nb"),
+        )
     }
 
     @Test
@@ -169,7 +196,7 @@ class MarkdownParserTest {
     private fun blockDepth(blocks: List<MdBlock>): Int = blocks.maxOfOrNull { block ->
         when (block) {
             is Quote -> 1 + blockDepth(block.blocks)
-            is ListBlock -> 1 + (block.items.maxOfOrNull(::blockDepth) ?: 0)
+            is ListBlock -> 1 + (block.items.maxOfOrNull { blockDepth(it.blocks) } ?: 0)
             else -> 0
         }
     } ?: 0

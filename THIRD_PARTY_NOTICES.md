@@ -191,6 +191,9 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 ### commonmark-java
 
+Includes the core parser and the GFM tables, GFM strikethrough and task list items
+extensions, which share this license. <https://github.com/commonmark/commonmark-java>
+
 Maven groups: `org.commonmark`
 
 Copyright (c) 2015, Atlassian Pty Ltd
