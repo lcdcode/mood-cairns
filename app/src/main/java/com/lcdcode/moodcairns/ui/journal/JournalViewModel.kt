@@ -82,7 +82,7 @@ class JournalViewModel @Inject constructor(
         val day = _state.value.day
         try {
             val body = repo.load(day)?.body.orEmpty()
-            val readMode = opensInReadMode(day, LocalDate.now(), body)
+            val readMode = opensInReadMode(body)
             _state.update {
                 it.copy(body = body, savedBody = body, loaded = true, readMode = readMode)
             }

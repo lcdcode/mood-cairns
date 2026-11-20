@@ -25,12 +25,8 @@ internal fun resolveJournalDay(arg: String?, today: LocalDate): LocalDate {
     }
 }
 
-/**
- * Past days with text open for reading; today and empty days open for writing, since
- * that is what the user most likely came to do.
- */
-internal fun opensInReadMode(day: LocalDate, today: LocalDate, body: String): Boolean =
-    day != today && body.isNotBlank()
+/** Pages that already have text open for reading; empty pages open ready for writing. */
+internal fun opensInReadMode(body: String): Boolean = body.isNotBlank()
 
 data class JournalUiState(
     val day: LocalDate,

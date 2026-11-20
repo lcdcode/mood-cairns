@@ -41,14 +41,14 @@ class JournalStateTest {
     }
 
     @Test
-    fun `past days with text open for reading`() {
-        assertTrue(opensInReadMode(yesterday, today, "went hiking"))
+    fun `pages with text open for reading, including today`() {
+        assertTrue(opensInReadMode("went hiking"))
     }
 
     @Test
-    fun `today and empty days open for writing`() {
-        assertFalse(opensInReadMode(today, today, "already started"))
-        assertFalse(opensInReadMode(yesterday, today, "  \n"))
+    fun `empty pages open for writing`() {
+        assertFalse(opensInReadMode(""))
+        assertFalse(opensInReadMode("  \n"))
     }
 
     @Test
