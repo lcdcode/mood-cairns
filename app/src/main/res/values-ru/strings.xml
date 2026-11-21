@@ -166,7 +166,7 @@
     <string name="entry_slider_description_lower_better">%1$s (меньше — лучше)</string>
     <string name="entry_once_per_day_reask_hint">Оставьте %1$s, чтобы вас спросили ещё раз позже.</string>
     <!-- History screen -->
-    <string name="history_title">История</string>
+    <string name="history_mood_title">История настроения</string>
     <string name="history_add_past">Добавить прошлую запись</string>
     <string name="history_empty">Записей пока нет.</string>
     <string name="history_no_matches">Нет записей, соответствующих фильтрам.</string>

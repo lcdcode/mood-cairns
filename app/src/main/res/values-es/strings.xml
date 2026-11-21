@@ -164,7 +164,7 @@
     <string name="entry_once_per_day_reask_hint">Déjalo en %1$s para que se te vuelva a preguntar más tarde.</string>
 
     <!-- History screen -->
-    <string name="history_title">Historial</string>
+    <string name="history_mood_title">Historial de ánimo</string>
     <string name="history_add_past">Añadir un registro anterior</string>
     <string name="history_empty">Aún no hay registros.</string>
     <string name="history_no_matches">Ningún registro coincide con los filtros actuales.</string>

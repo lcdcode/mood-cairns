@@ -174,7 +174,7 @@
     <string name="entry_once_per_day_reask_hint">Залиште %1$s, щоб вас запитали ще раз пізніше.</string>
 
     <!-- History screen -->
-    <string name="history_title">Історія</string>
+    <string name="history_mood_title">Історія настрою</string>
     <string name="history_add_past">Додати минулий запис</string>
     <string name="history_empty">Записів поки немає.</string>
     <string name="history_no_matches">Немає записів, що відповідають фільтрам.</string>

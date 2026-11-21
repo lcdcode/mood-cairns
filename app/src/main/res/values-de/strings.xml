@@ -162,7 +162,7 @@
     <string name="entry_once_per_day_reask_hint">Bei %1$s lassen, um später erneut gefragt zu werden.</string>
 
     <!-- History screen -->
-    <string name="history_title">Verlauf</string>
+    <string name="history_mood_title">Stimmungsverlauf</string>
     <string name="history_add_past">Früheren Eintrag hinzufügen</string>
     <string name="history_empty">Noch keine Einträge.</string>
     <string name="history_no_matches">Keine Einträge entsprechen den aktuellen Filtern.</string>

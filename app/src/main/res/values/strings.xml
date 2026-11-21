@@ -205,7 +205,7 @@
     <string name="entry_once_per_day_reask_hint">Leave at %1$s to be asked again later.</string>
 
     <!-- History screen -->
-    <string name="history_title">History</string>
+    <string name="history_mood_title">Mood history</string>
     <string name="history_add_past">Add past entry</string>
     <string name="history_empty">No entries yet.</string>
     <string name="history_no_matches">No entries match the current filters.</string>

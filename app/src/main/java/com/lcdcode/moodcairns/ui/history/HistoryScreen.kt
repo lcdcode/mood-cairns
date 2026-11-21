@@ -104,7 +104,7 @@ fun HistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.history_title)) },
+                title = { Text(stringResource(R.string.history_mood_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(

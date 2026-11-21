@@ -174,7 +174,7 @@
     <string name="entry_once_per_day_reask_hint">Zostaw %1$s, aby pytanie wróciło później.</string>
 
     <!-- History screen -->
-    <string name="history_title">Historia</string>
+    <string name="history_mood_title">Historia nastroju</string>
     <string name="history_add_past">Dodaj wcześniejszy wpis</string>
     <string name="history_empty">Brak wpisów.</string>
     <string name="history_no_matches">Brak wpisów pasujących do filtrów.</string>
