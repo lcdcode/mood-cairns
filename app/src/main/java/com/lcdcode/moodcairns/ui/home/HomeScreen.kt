@@ -66,19 +66,19 @@ fun HomeScreen(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 ButtonPair {
-                    Button(onClick = onLogNow, modifier = pairedButton()) {
+                    Button(onClick = onLogNow, modifier = Modifier.weight(1f).fillMaxHeight()) {
                         PairedLabel(stringResource(R.string.home_log_mood))
                     }
-                    OutlinedButton(onClick = onHistory, modifier = pairedButton()) {
+                    OutlinedButton(onClick = onHistory, modifier = Modifier.weight(1f).fillMaxHeight()) {
                         PairedLabel(stringResource(R.string.home_mood_history))
                     }
                 }
                 if (journalEnabled) {
                     ButtonPair {
-                        FilledTonalButton(onClick = onOpenJournal, modifier = pairedButton()) {
+                        FilledTonalButton(onClick = onOpenJournal, modifier = Modifier.weight(1f).fillMaxHeight()) {
                             PairedLabel(stringResource(R.string.home_open_journal))
                         }
-                        OutlinedButton(onClick = onJournalHistory, modifier = pairedButton()) {
+                        OutlinedButton(onClick = onJournalHistory, modifier = Modifier.weight(1f).fillMaxHeight()) {
                             PairedLabel(stringResource(R.string.journal_history_title))
                         }
                     }
@@ -115,8 +115,6 @@ private fun ButtonPair(content: @Composable RowScope.() -> Unit) {
         content = content,
     )
 }
-
-private fun RowScope.pairedButton(): Modifier = Modifier.weight(1f).fillMaxHeight()
 
 @Composable
 private fun PairedLabel(text: String) {

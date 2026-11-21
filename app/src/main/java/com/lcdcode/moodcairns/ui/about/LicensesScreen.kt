@@ -21,7 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -51,8 +54,9 @@ private sealed interface NoticesState {
 @Composable
 fun LicensesScreen(onBack: () -> Unit) {
     val assets = LocalContext.current.assets
-    val notices by produceState<NoticesState>(NoticesState.Loading, assets) {
-        value = withContext(Dispatchers.IO) { loadNotices(assets) }
+    var notices by remember(assets) { mutableStateOf<NoticesState>(NoticesState.Loading) }
+    LaunchedEffect(assets) {
+        notices = withContext(Dispatchers.IO) { loadNotices(assets) }
     }
 
     Scaffold(
