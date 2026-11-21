@@ -12,6 +12,13 @@ import java.time.LocalDate
 
 /** SQL shared with the JVM tests so the two cannot drift. */
 object JournalSql {
+    /**
+     * Longest page the editor accepts: about 16,000 English words. SQLite itself has no
+     * practical limit; this keeps editing responsive and rows far below Android's 2 MB
+     * cursor window. Restores refuse longer pages rather than cutting them.
+     */
+    const val MAX_BODY_CHARS = 100_000
+
     /** Length of the stored plain-text preview; the list shows up to three lines of it. */
     const val PREVIEW_CHARS = 240
 

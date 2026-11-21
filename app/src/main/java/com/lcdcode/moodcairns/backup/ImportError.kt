@@ -12,6 +12,10 @@ sealed interface ImportError {
     data object WrongSecretOrCorrupt : ImportError
     /** A configuration-only file was picked for a full restore; it has no entries. */
     data object ConfigOnlyFile : ImportError
+    /** A journal backup was picked for a mood or configuration import. */
+    data object JournalFile : ImportError
+    /** A mood backup or configuration file was picked for a journal restore. */
+    data object NotAJournalBackup : ImportError
     /** [fromConfigFile] tells a configuration file's version from a full backup's. */
     data class UnsupportedVersion(
         val found: Int,

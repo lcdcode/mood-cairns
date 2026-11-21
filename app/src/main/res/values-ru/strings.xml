@@ -543,6 +543,7 @@
     <string name="backup_export_success">Успешно сохранено: %1$s</string>
     <string name="backup_export_csv_success">Успешно сохранено в CSV: %1$s (без шифрования)</string>
     <string name="backup_export_failed">Не удалось сохранить: %1$s</string>
+    <string name="backup_error_export_too_large">Не сохранено: копия превысила бы %1$d МБ, максимальный размер, который приложение может восстановить.</string>
     <string name="backup_import_success">Импорт успешно завершён. Записи: %1$d, шкалы: %2$d, теги: %3$d, интервалы напоминаний: %4$d</string>
     <string name="backup_import_failed">Не удалось импортировать данные: %1$s</string>
 
@@ -559,6 +560,23 @@
     <string name="backup_config_import_failed">Не удалось импортировать конфигурацию: %1$s</string>
     <string name="backup_config_import_partial">Конфигурация импортирована частично. Шкалы: %1$d, теги: %2$d. Не удалось обновить интервалы напоминаний (%3$s), проверьте их в настройках. Ваши записи не изменены.</string>
     <string name="backup_config_only_label">Только конфигурация</string>
+    <string name="backup_journal_section">Дневник</string>
+    <string name="backup_journal_intro">Дневник сохраняется отдельно от данных о настроении, в собственном зашифрованном файле. Восстановление заменяет все страницы дневника и никогда не затрагивает данные о настроении.</string>
+    <string name="backup_journal_export">Экспортировать дневник</string>
+    <string name="backup_journal_import">Восстановить дневник (заменяет все страницы)</string>
+    <string name="backup_journal_encrypt_title">Зашифровать копию дневника</string>
+    <string name="backup_journal_encrypt_body">Придумайте пароль для шифрования этой копии дневника. Он понадобится для восстановления, даже после переустановки. Это не PIN-код приложения, и его нельзя восстановить, если вы его забудете.</string>
+    <string name="backup_journal_decrypt_title">Восстановить дневник</string>
+    <string name="backup_journal_decrypt_body">Восстановление заменит все страницы дневника страницами из этой копии. Данные о настроении не изменятся. Введите пароль, которым она зашифрована.</string>
+    <string name="backup_journal_export_success">Дневник сохранён: %1$s</string>
+    <string name="backup_journal_import_failed">Не удалось восстановить дневник: %1$s</string>
+    <string name="backup_journal_label">Дневник</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Дневник восстановлен: %1$d страница</item>
+        <item quantity="few">Дневник восстановлен: %1$d страницы</item>
+        <item quantity="many">Дневник восстановлен: %1$d страниц</item>
+        <item quantity="other">Дневник восстановлен: %1$d страницы</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Конфигурация несовместима</string>
     <string name="backup_config_incompatible_version">Эта конфигурация использует формат версии %1$d, который текущая версия приложения не может импортировать. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
     <string name="backup_config_incompatible_backup_version">Этот бэкап использует формат версии %1$d, из которого текущая версия приложения не может импортировать конфигурацию. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
@@ -604,4 +622,6 @@
     <string name="import_error_malformed">Файл резервной копии повреждён (%1$s).</string>
     <string name="import_error_write_failed">Импорт прерван при записи данных в память устройства (%1$s).</string>
     <string name="import_error_config_only">Это файл только с конфигурацией, в нём нет записей для восстановления. Используйте вместо этого «Импорт конфигурации».</string>
+    <string name="import_error_journal_file">Это копия дневника. Восстановите её кнопкой «Восстановить дневник» в разделе «Дневник».</string>
+    <string name="import_error_not_journal">Это не копия дневника. Резервные копии настроения и файлы конфигурации импортируются в своих разделах.</string>
 </resources>

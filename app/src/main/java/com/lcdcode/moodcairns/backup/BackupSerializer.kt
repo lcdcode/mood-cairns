@@ -1,6 +1,5 @@
 package com.lcdcode.moodcairns.backup
 
-import android.util.Base64
 import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.data.dao.EntryWithValues
 import com.lcdcode.moodcairns.data.dao.PromptWindowDao
@@ -30,6 +29,7 @@ class BackupSerializer @Inject constructor(
 
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
     private val contents = BackupContentsDecoder(json)
+    private val envelopes = EnvelopeCodec(json)
 
     /** Encrypted JSON of every scale, window, tag, category, and entry. */
     suspend fun exportJson(passphrase: CharArray): String {
@@ -62,28 +62,11 @@ class BackupSerializer @Inject constructor(
     }
 
     /**
-     * AES-GCM encrypt [plaintext] with a key freshly derived from [passphrase] + a random
-     * salt, and serialize the envelope. The salt/iter are carried in the envelope so any
-     * install - including a fresh one - can decrypt given the same passphrase.
+     * Encrypts [plaintext] into an envelope, refusing (with [BackupTooLargeException]) one
+     * too large for import to read back.
      */
-    private fun encryptEnvelope(plaintext: String, passphrase: CharArray): String {
-        val salt = BackupCrypto.newSalt()
-        val iter = BackupCrypto.PBKDF2_ITERATIONS
-        val key = BackupCrypto.deriveKey(passphrase, salt, iter)
-        try {
-            val encrypted = BackupCrypto.encrypt(key, plaintext.toByteArray(Charsets.UTF_8))
-            val envelope = EncryptedBackup(
-                kdf = BackupCrypto.KDF_ALGORITHM,
-                iter = iter,
-                salt = b64(salt),
-                iv = b64(encrypted.iv),
-                ciphertext = b64(encrypted.ciphertext),
-            )
-            return json.encodeToString(EncryptedBackup.serializer(), envelope)
-        } finally {
-            key.fill(0)
-        }
-    }
+    private fun encryptEnvelope(plaintext: String, passphrase: CharArray): String =
+        envelopes.encrypt(plaintext, passphrase).also(BackupSizeLimit::requireImportable)
 
     /**
      * Decrypt [raw] as a full backup using [secret] and the salt/iter carried inside the
@@ -104,39 +87,7 @@ class BackupSerializer @Inject constructor(
         contents.forConfigImport(decryptToObject(raw, secret))
 
     private fun decryptToObject(raw: String, secret: CharArray) =
-        contents.parseObject(String(decryptEnvelope(raw, secret), Charsets.UTF_8))
-
-    private fun decryptEnvelope(raw: String, secret: CharArray): ByteArray {
-        val envelope = runCatching {
-            json.decodeFromString(EncryptedBackup.serializer(), raw)
-        }.getOrNull() ?: fail(ImportError.NotABackup)
-
-        if (envelope.kdf != BackupCrypto.KDF_ALGORITHM) {
-            fail(ImportError.Malformed("Unsupported backup KDF ${envelope.kdf}"))
-        }
-        if (envelope.iter <= 0) {
-            fail(ImportError.Malformed("Backup envelope is missing KDF iterations"))
-        }
-
-        val salt = decodeField(envelope.salt, "salt")
-        val iv = decodeField(envelope.iv, "IV")
-        val ct = decodeField(envelope.ciphertext, "ciphertext")
-
-        val key = BackupCrypto.deriveKey(secret, salt, envelope.iter)
-        return try {
-            BackupCrypto.decrypt(key, iv, ct)
-        } catch (_: Throwable) {
-            fail(ImportError.WrongSecretOrCorrupt)
-        } finally {
-            key.fill(0)
-        }
-    }
-
-    private fun decodeField(value: String, fieldName: String): ByteArray =
-        runCatching { Base64.decode(value, Base64.NO_WRAP) }.getOrNull()
-            ?: fail(ImportError.Malformed("Backup envelope $fieldName is malformed"))
-
-    private fun fail(error: ImportError): Nothing = throw BackupImportException(error)
+        contents.parseObject(String(envelopes.decrypt(raw, secret), Charsets.UTF_8))
 
     fun toEntities(file: BackupFile): BackupEntities {
         val categories = resolveCategories(file)
@@ -170,8 +121,6 @@ class BackupSerializer @Inject constructor(
 
     private fun appVersion(): String =
         runCatching { BuildConfig.VERSION_NAME }.getOrDefault("unknown")
-
-    private fun b64(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
 
     private fun toDto(s: Scale) = ScaleDto(
         id = s.id, name = s.name, minValue = s.minValue, maxValue = s.maxValue,

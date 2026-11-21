@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
+import com.lcdcode.moodcairns.backup.BackupKind
 import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
@@ -71,6 +73,15 @@ fun BackupScreen(
         ActivityResultContracts.OpenDocument(),
     ) { uri -> uri?.let(viewModel::requestConfigImport) }
 
+    val journalImportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let(viewModel::requestJournalImport) }
+
+    fun pickBackupFile(launch: (Array<String>) -> Unit) {
+        viewModel.noteFilePickerOpening()
+        launch(arrayOf(BackupStore.MIME_JSON))
+    }
+
     val messageText = state.message?.asString()
     LaunchedEffect(messageText) {
         messageText?.let {
@@ -79,46 +90,7 @@ fun BackupScreen(
         }
     }
 
-    state.pinPrompt?.let { prompt ->
-        when (prompt.mode) {
-            PinPromptMode.Export -> SecretDialog(
-                title = stringResource(R.string.backup_encrypt_title),
-                body = stringResource(R.string.backup_encrypt_body),
-                label = stringResource(R.string.backup_passphrase_label),
-                confirmLabel = stringResource(R.string.backup_passphrase_confirm_label),
-                minLength = BackupViewModel.MIN_PASSPHRASE_LEN,
-                onConfirm = viewModel::submitSecret,
-                onDismiss = viewModel::cancelPinPrompt,
-            )
-            PinPromptMode.Import -> SecretDialog(
-                title = stringResource(R.string.backup_decrypt_title),
-                body = stringResource(R.string.backup_decrypt_body),
-                label = stringResource(R.string.backup_passphrase_or_pin_label),
-                confirmLabel = null,
-                minLength = 0,
-                onConfirm = viewModel::submitSecret,
-                onDismiss = viewModel::cancelPinPrompt,
-            )
-            PinPromptMode.ExportConfig -> SecretDialog(
-                title = stringResource(R.string.backup_config_encrypt_title),
-                body = stringResource(R.string.backup_config_encrypt_body),
-                label = stringResource(R.string.backup_passphrase_label),
-                confirmLabel = stringResource(R.string.backup_passphrase_confirm_label),
-                minLength = BackupViewModel.MIN_PASSPHRASE_LEN,
-                onConfirm = viewModel::submitSecret,
-                onDismiss = viewModel::cancelPinPrompt,
-            )
-            PinPromptMode.ImportConfig -> SecretDialog(
-                title = stringResource(R.string.backup_config_decrypt_title),
-                body = stringResource(R.string.backup_config_decrypt_body),
-                label = stringResource(R.string.backup_passphrase_or_pin_label),
-                confirmLabel = null,
-                minLength = 0,
-                onConfirm = viewModel::submitSecret,
-                onDismiss = viewModel::cancelPinPrompt,
-            )
-        }
-    }
+    state.pinPrompt?.let { prompt -> PassphraseDialog(prompt.mode, viewModel) }
 
     state.configIssue?.let { issue ->
         ConfigIssueDialog(issue = issue, onDismiss = viewModel::dismissConfigIssue)
@@ -142,73 +114,126 @@ fun BackupScreen(
             SnackbarHost(snackbar) { data -> Snackbar(snackbarData = data) }
         },
     ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp),
+        // One scrolling list: the action sections no longer squeeze the file list.
+        LazyColumn(
+            modifier = Modifier.padding(padding).fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                stringResource(R.string.backup_intro),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Button(
-                onClick = viewModel::requestExport,
-                enabled = !state.busy,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.backup_export)) }
-
-            if (state.allowUnsafeExports) {
-                OutlinedButton(
-                    onClick = viewModel::requestCsvExport,
-                    enabled = !state.busy,
-                    modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.backup_export_csv)) }
+            item {
                 Text(
-                    stringResource(R.string.backup_export_csv_warning),
+                    stringResource(R.string.backup_intro),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-
-            OutlinedButton(
-                onClick = {
-                    viewModel.noteFilePickerOpening()
-                    importLauncher.launch(arrayOf(BackupStore.MIME_JSON))
-                },
-                enabled = !state.busy,
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(R.string.backup_import)) }
-
-            ConfigSection(
-                enabled = !state.busy,
-                onExport = viewModel::requestConfigExport,
-                onImport = {
-                    viewModel.noteFilePickerOpening()
-                    configImportLauncher.launch(arrayOf(BackupStore.MIME_JSON))
-                },
-            )
-
-            Text(
-                stringResource(R.string.backup_existing_label),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-
-            if (state.files.isEmpty()) {
-                Text(
-                    stringResource(R.string.backup_none),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            } else {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(state.files, key = { it.uri }) { file ->
-                        BackupRow(file)
-                    }
+            }
+            item {
+                Button(
+                    onClick = viewModel::requestExport,
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.backup_export)) }
+            }
+            if (state.allowUnsafeExports) {
+                item {
+                    OutlinedButton(
+                        onClick = viewModel::requestCsvExport,
+                        enabled = !state.busy,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(stringResource(R.string.backup_export_csv)) }
                 }
+                item {
+                    Text(
+                        stringResource(R.string.backup_export_csv_warning),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+            item {
+                OutlinedButton(
+                    onClick = { pickBackupFile(importLauncher::launch) },
+                    enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.backup_import)) }
+            }
+            item {
+                ActionSection(
+                    title = stringResource(R.string.backup_config_section),
+                    intro = stringResource(R.string.backup_config_intro),
+                    exportLabel = stringResource(R.string.backup_config_export),
+                    importLabel = stringResource(R.string.backup_config_import),
+                    enabled = !state.busy,
+                    onExport = viewModel::requestConfigExport,
+                    onImport = { pickBackupFile(configImportLauncher::launch) },
+                )
+            }
+            if (state.journalEnabled) {
+                item {
+                    ActionSection(
+                        title = stringResource(R.string.backup_journal_section),
+                        intro = stringResource(R.string.backup_journal_intro),
+                        exportLabel = stringResource(R.string.backup_journal_export),
+                        importLabel = stringResource(R.string.backup_journal_import),
+                        enabled = !state.busy,
+                        onExport = viewModel::requestJournalExport,
+                        onImport = { pickBackupFile(journalImportLauncher::launch) },
+                    )
+                }
+            }
+            item {
+                Text(
+                    stringResource(R.string.backup_existing_label),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+            if (state.files.isEmpty()) {
+                item {
+                    Text(
+                        stringResource(R.string.backup_none),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                items(state.files, key = { it.uri }) { file -> BackupRow(file) }
             }
         }
     }
+}
+
+@Composable
+private fun PassphraseDialog(mode: PinPromptMode, viewModel: BackupViewModel) {
+    val (title, body) = when (mode) {
+        PinPromptMode.Export -> R.string.backup_encrypt_title to R.string.backup_encrypt_body
+        PinPromptMode.Import -> R.string.backup_decrypt_title to R.string.backup_decrypt_body
+        PinPromptMode.ExportConfig ->
+            R.string.backup_config_encrypt_title to R.string.backup_config_encrypt_body
+        PinPromptMode.ImportConfig ->
+            R.string.backup_config_decrypt_title to R.string.backup_config_decrypt_body
+        PinPromptMode.ExportJournal ->
+            R.string.backup_journal_encrypt_title to R.string.backup_journal_encrypt_body
+        PinPromptMode.ImportJournal ->
+            R.string.backup_journal_decrypt_title to R.string.backup_journal_decrypt_body
+    }
+    // New passphrases need confirming and a minimum length; imports accept whatever the
+    // file was encrypted with, including the short PINs of very old backups.
+    SecretDialog(
+        title = stringResource(title),
+        body = stringResource(body),
+        label = stringResource(
+            if (mode.isExport) R.string.backup_passphrase_label
+            else R.string.backup_passphrase_or_pin_label,
+        ),
+        confirmLabel = if (mode.isExport) {
+            stringResource(R.string.backup_passphrase_confirm_label)
+        } else {
+            null
+        },
+        minLength = if (mode.isExport) BackupViewModel.MIN_PASSPHRASE_LEN else 0,
+        onConfirm = viewModel::submitSecret,
+        onDismiss = viewModel::cancelPinPrompt,
+    )
 }
 
 @Composable
@@ -218,12 +243,17 @@ private fun BackupRow(file: BackupFileInfo) {
     val created = Instant.ofEpochMilli(file.createdAt)
         .atZone(ZoneId.systemDefault())
         .toLocalDateTime()
+    val kindLabel = when (file.kind) {
+        BackupKind.Mood -> null
+        BackupKind.Config -> R.string.backup_config_only_label
+        BackupKind.Journal -> R.string.backup_journal_label
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(file.displayName, style = MaterialTheme.typography.bodyLarge)
-            if (file.isConfigOnly) {
+            if (kindLabel != null) {
                 Text(
-                    stringResource(R.string.backup_config_only_label),
+                    stringResource(kindLabel),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -238,28 +268,39 @@ private fun BackupRow(file: BackupFileInfo) {
     }
 }
 
+/** A titled group with an explanation and an export and an import button. */
 @Composable
-private fun ConfigSection(enabled: Boolean, onExport: () -> Unit, onImport: () -> Unit) {
-    Text(
-        stringResource(R.string.backup_config_section),
-        style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = 8.dp),
-    )
-    Text(
-        stringResource(R.string.backup_config_intro),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-    OutlinedButton(
-        onClick = onExport,
-        enabled = enabled,
-        modifier = Modifier.fillMaxWidth(),
-    ) { Text(stringResource(R.string.backup_config_export)) }
-    OutlinedButton(
-        onClick = onImport,
-        enabled = enabled,
-        modifier = Modifier.fillMaxWidth(),
-    ) { Text(stringResource(R.string.backup_config_import)) }
+private fun ActionSection(
+    title: String,
+    intro: String,
+    exportLabel: String,
+    importLabel: String,
+    enabled: Boolean,
+    onExport: () -> Unit,
+    onImport: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+        Text(
+            intro,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        OutlinedButton(
+            onClick = onExport,
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(exportLabel) }
+        OutlinedButton(
+            onClick = onImport,
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+        ) { Text(importLabel) }
+    }
 }
 
 @Composable

@@ -17,6 +17,8 @@ class ImportErrorTextTest {
             ImportError.NotABackup,
             ImportError.WrongSecretOrCorrupt,
             ImportError.ConfigOnlyFile,
+            ImportError.JournalFile,
+            ImportError.NotAJournalBackup,
             ImportError.UnsupportedVersion(found = 9),
             ImportError.Malformed(detail = "bad salt"),
             ImportError.WriteFailed(detail = "disk full"),

@@ -1,15 +1,12 @@
 package com.lcdcode.moodcairns.ui.journal
 
+import com.lcdcode.moodcairns.data.dao.JournalSql
 import com.lcdcode.moodcairns.ui.common.UiText
 import com.lcdcode.moodcairns.ui.common.takeWholeChars
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-/**
- * About 16,000 English words per day. SQLite itself has no practical limit; this keeps the
- * editor responsive and each row far below Android's 2 MB cursor window.
- */
-internal const val MAX_JOURNAL_BODY_CHARS = 100_000
+internal const val MAX_JOURNAL_BODY_CHARS = JournalSql.MAX_BODY_CHARS
 
 internal const val AUTOSAVE_INTERVAL_MS = 30_000L
 

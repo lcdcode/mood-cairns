@@ -518,6 +518,7 @@
     <string name="backup_export_success">Exportiert: %1$s</string>
     <string name="backup_export_csv_success">Exportiert: %1$s (unverschlüsselt)</string>
     <string name="backup_export_failed">Export fehlgeschlagen: %1$s</string>
+    <string name="backup_error_export_too_large">Nicht gespeichert: Diese Sicherung wäre größer als %1$d MB, das Maximum, das die App wiederherstellen kann.</string>
     <string name="backup_import_success">Import abgeschlossen. Einträge: %1$d, Skalen: %2$d, Tags: %3$d, Erinnerungszeiten: %4$d</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
 
@@ -534,6 +535,21 @@
     <string name="backup_config_import_failed">Import der Konfiguration fehlgeschlagen: %1$s</string>
     <string name="backup_config_import_partial">Konfiguration teilweise importiert. Skalen: %1$d, Tags: %2$d. Die Erinnerungszeiten konnten nicht aktualisiert werden (%3$s), prüfe sie daher in den Einstellungen. Deine Einträge wurden nicht verändert.</string>
     <string name="backup_config_only_label">Nur Konfiguration</string>
+    <string name="backup_journal_section">Tagebuch</string>
+    <string name="backup_journal_intro">Dein Tagebuch wird getrennt von deinen Stimmungen in einer eigenen verschlüsselten Datei gesichert. Das Wiederherstellen ersetzt alle Tagebuchseiten und ändert nie deine Stimmungsdaten.</string>
+    <string name="backup_journal_export">Tagebuch exportieren</string>
+    <string name="backup_journal_import">Tagebuch wiederherstellen (ersetzt alle Seiten)</string>
+    <string name="backup_journal_encrypt_title">Tagebuchsicherung verschlüsseln</string>
+    <string name="backup_journal_encrypt_body">Wähle eine Passphrase, um diese Tagebuchsicherung zu verschlüsseln. Du brauchst genau diese Passphrase zum Wiederherstellen, auch nach einer Neuinstallation. Sie ist nicht deine App-PIN und kann nicht wiederhergestellt werden, wenn du sie vergisst.</string>
+    <string name="backup_journal_decrypt_title">Tagebuch wiederherstellen</string>
+    <string name="backup_journal_decrypt_body">Beim Wiederherstellen werden alle Seiten deines Tagebuchs durch die Seiten dieser Sicherung ersetzt. Deine Stimmungsdaten bleiben unverändert. Gib die Passphrase ein, mit der sie verschlüsselt wurde.</string>
+    <string name="backup_journal_export_success">Tagebuch exportiert: %1$s</string>
+    <string name="backup_journal_import_failed">Wiederherstellen des Tagebuchs fehlgeschlagen: %1$s</string>
+    <string name="backup_journal_label">Tagebuch</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Tagebuch wiederhergestellt: %1$d Seite</item>
+        <item quantity="other">Tagebuch wiederhergestellt: %1$d Seiten</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Konfiguration nicht kompatibel</string>
     <string name="backup_config_incompatible_version">Diese Konfiguration verwendet Formatversion %1$d, die diese App-Version nicht importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
     <string name="backup_config_incompatible_backup_version">Diese Sicherung verwendet Formatversion %1$d, aus der diese App-Version keine Konfiguration importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
@@ -570,4 +586,6 @@
     <string name="import_error_malformed">Die Sicherungsdatei ist beschädigt (%1$s).</string>
     <string name="import_error_write_failed">Der Import wurde beim Speichern der Daten abgebrochen (%1$s).</string>
     <string name="import_error_config_only">Dies ist eine reine Konfigurationsdatei ohne Einträge zum Wiederherstellen. Verwende stattdessen „Konfiguration importieren“.</string>
+    <string name="import_error_journal_file">Dies ist eine Tagebuchsicherung. Stelle sie im Bereich „Tagebuch“ mit „Tagebuch wiederherstellen“ wieder her.</string>
+    <string name="import_error_not_journal">Dies ist keine Tagebuchsicherung. Stimmungssicherungen und Konfigurationsdateien werden in ihren eigenen Bereichen importiert.</string>
 </resources>

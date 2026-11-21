@@ -573,6 +573,7 @@
     <string name="backup_export_success">Wyeksportowano: %1$s</string>
     <string name="backup_export_csv_success">Wyeksportowano: %1$s (bez szyfrowania)</string>
     <string name="backup_export_failed">Eksport nie powiódł się: %1$s</string>
+    <string name="backup_error_export_too_large">Nie zapisano: ta kopia przekroczyłaby %1$d MB, czyli maksimum, które aplikacja może przywrócić.</string>
     <string name="backup_import_success">Import zakończony. Wpisy: %1$d, skale: %2$d, tagi: %3$d, okna przypomnień: %4$d</string>
     <string name="backup_import_failed">Import nie powiódł się: %1$s</string>
 
@@ -589,6 +590,23 @@
     <string name="backup_config_import_failed">Import konfiguracji nie powiódł się: %1$s</string>
     <string name="backup_config_import_partial">Konfiguracja zaimportowana częściowo. Skale: %1$d, tagi: %2$d. Nie udało się zaktualizować okien przypomnień (%3$s), sprawdź je w Ustawieniach. Twoje wpisy nie zostały zmienione.</string>
     <string name="backup_config_only_label">Tylko konfiguracja</string>
+    <string name="backup_journal_section">Dziennik</string>
+    <string name="backup_journal_intro">Dziennik jest zapisywany osobno od nastrojów, we własnym zaszyfrowanym pliku. Przywrócenie kopii dziennika zastępuje wszystkie jego strony i nigdy nie zmienia danych o nastroju.</string>
+    <string name="backup_journal_export">Eksportuj dziennik</string>
+    <string name="backup_journal_import">Przywróć dziennik (zastępuje wszystkie strony)</string>
+    <string name="backup_journal_encrypt_title">Zaszyfruj kopię dziennika</string>
+    <string name="backup_journal_encrypt_body">Wybierz hasło do zaszyfrowania tej kopii dziennika. Będzie ono potrzebne do jej przywrócenia, także po ponownej instalacji. To nie jest kod PIN aplikacji i nie da się go odzyskać, jeśli je zapomnisz.</string>
+    <string name="backup_journal_decrypt_title">Przywróć dziennik</string>
+    <string name="backup_journal_decrypt_body">Przywrócenie zastąpi wszystkie strony dziennika stronami z tej kopii. Dane o nastroju nie zostaną zmienione. Wpisz hasło, którym ją zaszyfrowano.</string>
+    <string name="backup_journal_export_success">Wyeksportowano dziennik: %1$s</string>
+    <string name="backup_journal_import_failed">Nie udało się przywrócić dziennika: %1$s</string>
+    <string name="backup_journal_label">Dziennik</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Przywrócono dziennik: %1$d strona</item>
+        <item quantity="few">Przywrócono dziennik: %1$d strony</item>
+        <item quantity="many">Przywrócono dziennik: %1$d stron</item>
+        <item quantity="other">Przywrócono dziennik: %1$d strony</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Niezgodna konfiguracja</string>
     <string name="backup_config_incompatible_version">Ta konfiguracja używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi zaimportować. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
     <string name="backup_config_incompatible_backup_version">Ta kopia używa formatu w wersji %1$d, z którego ta wersja aplikacji nie potrafi zaimportować konfiguracji. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
@@ -635,4 +653,6 @@
     <string name="import_error_malformed">Plik kopii zapasowej jest uszkodzony (%1$s).</string>
     <string name="import_error_write_failed">Import przerwany podczas zapisywania danych (%1$s).</string>
     <string name="import_error_config_only">To plik zawierający tylko konfigurację, bez wpisów do przywrócenia. Użyj zamiast tego opcji „Importuj konfigurację”.</string>
+    <string name="import_error_journal_file">To kopia dziennika. Przywróć ją opcją „Przywróć dziennik” w sekcji Dziennik.</string>
+    <string name="import_error_not_journal">To nie jest kopia dziennika. Kopie nastrojów i pliki konfiguracji importuje się w ich własnych sekcjach.</string>
 </resources>

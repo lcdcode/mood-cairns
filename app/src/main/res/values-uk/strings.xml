@@ -573,6 +573,7 @@
     <string name="backup_export_success">Експортовано: %1$s</string>
     <string name="backup_export_csv_success">Експортовано: %1$s (без шифрування)</string>
     <string name="backup_export_failed">Не вдалося експортувати: %1$s</string>
+    <string name="backup_error_export_too_large">Не збережено: копія перевищила б %1$d МБ, максимальний розмір, який застосунок може відновити.</string>
     <string name="backup_import_success">Імпорт завершено. Записи: %1$d, шкали: %2$d, теги: %3$d, вікна нагадувань: %4$d</string>
     <string name="backup_import_failed">Не вдалося імпортувати: %1$s</string>
 
@@ -589,6 +590,23 @@
     <string name="backup_config_import_failed">Не вдалося імпортувати конфігурацію: %1$s</string>
     <string name="backup_config_import_partial">Конфігурацію імпортовано частково. Шкали: %1$d, теги: %2$d. Не вдалося оновити вікна нагадувань (%3$s), перевірте їх у налаштуваннях. Ваші записи не змінено.</string>
     <string name="backup_config_only_label">Лише конфігурація</string>
+    <string name="backup_journal_section">Щоденник</string>
+    <string name="backup_journal_intro">Щоденник зберігається окремо від даних про настрій, у власному зашифрованому файлі. Відновлення замінює всі сторінки щоденника й ніколи не змінює дані про настрій.</string>
+    <string name="backup_journal_export">Експортувати щоденник</string>
+    <string name="backup_journal_import">Відновити щоденник (замінює всі сторінки)</string>
+    <string name="backup_journal_encrypt_title">Зашифрувати копію щоденника</string>
+    <string name="backup_journal_encrypt_body">Виберіть парольну фразу для шифрування цієї копії щоденника. Саме вона знадобиться для відновлення, навіть після перевстановлення. Це не PIN-код застосунку, і її неможливо відновити, якщо ви її забудете.</string>
+    <string name="backup_journal_decrypt_title">Відновити щоденник</string>
+    <string name="backup_journal_decrypt_body">Відновлення замінить усі сторінки щоденника сторінками з цієї копії. Дані про настрій не зміняться. Введіть парольну фразу, якою її зашифровано.</string>
+    <string name="backup_journal_export_success">Щоденник експортовано: %1$s</string>
+    <string name="backup_journal_import_failed">Не вдалося відновити щоденник: %1$s</string>
+    <string name="backup_journal_label">Щоденник</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Щоденник відновлено: %1$d сторінка</item>
+        <item quantity="few">Щоденник відновлено: %1$d сторінки</item>
+        <item quantity="many">Щоденник відновлено: %1$d сторінок</item>
+        <item quantity="other">Щоденник відновлено: %1$d сторінки</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Конфігурація несумісна</string>
     <string name="backup_config_incompatible_version">Ця конфігурація використовує формат версії %1$d, який ця версія застосунку не може імпортувати. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
     <string name="backup_config_incompatible_backup_version">Ця копія використовує формат версії %1$d, з якого ця версія застосунку не може імпортувати конфігурацію. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
@@ -635,4 +653,6 @@
     <string name="import_error_malformed">Файл резервної копії пошкоджено (%1$s).</string>
     <string name="import_error_write_failed">Імпорт перервано під час збереження даних (%1$s).</string>
     <string name="import_error_config_only">Це файл лише з конфігурацією, у ньому немає записів для відновлення. Натомість скористайтеся «Імпортувати конфігурацію».</string>
+    <string name="import_error_journal_file">Це копія щоденника. Відновіть її кнопкою «Відновити щоденник» у розділі «Щоденник».</string>
+    <string name="import_error_not_journal">Це не копія щоденника. Резервні копії настрою та файли конфігурації імпортуються у своїх розділах.</string>
 </resources>

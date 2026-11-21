@@ -541,6 +541,7 @@
     <string name="backup_export_success">Exportado: %1$s</string>
     <string name="backup_export_csv_success">Exportado: %1$s (sin cifrar)</string>
     <string name="backup_export_failed">Error al exportar: %1$s</string>
+    <string name="backup_error_export_too_large">No se guardó: esta copia superaría los %1$d MB, el máximo que la app puede restaurar.</string>
     <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
 
@@ -557,6 +558,22 @@
     <string name="backup_config_import_failed">Error al importar la configuración: %1$s</string>
     <string name="backup_config_import_partial">Configuración importada en parte. Escalas: %1$d, etiquetas: %2$d. No se pudieron actualizar las franjas de aviso (%3$s); revísalas en Ajustes. Tus registros no se han modificado.</string>
     <string name="backup_config_only_label">Solo configuración</string>
+    <string name="backup_journal_section">Diario personal</string>
+    <string name="backup_journal_intro">Tu diario personal se guarda por separado de tus estados de ánimo, en su propio archivo cifrado. Restaurarlo reemplaza todas las páginas del diario y nunca cambia tus datos de ánimo.</string>
+    <string name="backup_journal_export">Exportar diario</string>
+    <string name="backup_journal_import">Restaurar diario (reemplaza todas las páginas)</string>
+    <string name="backup_journal_encrypt_title">Cifrar copia del diario</string>
+    <string name="backup_journal_encrypt_body">Elige una frase de contraseña para cifrar esta copia del diario. Necesitarás exactamente esta frase para restaurarla, incluso en una instalación nueva. No es el PIN de la app y no se puede recuperar si la olvidas.</string>
+    <string name="backup_journal_decrypt_title">Restaurar diario</string>
+    <string name="backup_journal_decrypt_body">Restaurar reemplaza todas las páginas de tu diario por las de esta copia. Tus datos de ánimo no cambian. Introduce la frase de contraseña con la que se cifró.</string>
+    <string name="backup_journal_export_success">Diario exportado: %1$s</string>
+    <string name="backup_journal_import_failed">No se pudo restaurar el diario: %1$s</string>
+    <string name="backup_journal_label">Diario</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Diario restaurado: %1$d página</item>
+        <item quantity="many">Diario restaurado: %1$d páginas</item>
+        <item quantity="other">Diario restaurado: %1$d páginas</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Configuración no compatible</string>
     <string name="backup_config_incompatible_version">Esta configuración usa la versión de formato %1$d, que esta versión de la app no puede importar. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
     <string name="backup_config_incompatible_backup_version">Esta copia usa la versión de formato %1$d, de la que esta versión de la app no puede importar la configuración. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
@@ -598,4 +615,6 @@
     <string name="import_error_malformed">El archivo de copia está dañado (%1$s).</string>
     <string name="import_error_write_failed">La importación se detuvo al guardar los datos (%1$s).</string>
     <string name="import_error_config_only">Este es un archivo solo de configuración, sin registros que restaurar. Usa \"Importar configuración\" en su lugar.</string>
+    <string name="import_error_journal_file">Esta es una copia del diario. Restáurala con \"Restaurar diario\" en la sección Diario personal.</string>
+    <string name="import_error_not_journal">Esta no es una copia del diario. Las copias de ánimo y los archivos de configuración se importan en sus propias secciones.</string>
 </resources>

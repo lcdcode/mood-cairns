@@ -12,13 +12,15 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** What an encrypted file in the backup folder holds, told apart by its name. */
+enum class BackupKind { Mood, Config, Journal }
+
 data class BackupFileInfo(
     val uri: Uri,
     val displayName: String,
     val createdAt: Long,
     val sizeBytes: Long,
-    /** True for a configuration-only export, which holds no entries. */
-    val isConfigOnly: Boolean = false,
+    val kind: BackupKind = BackupKind.Mood,
 )
 
 /**
@@ -76,8 +78,14 @@ class BackupStore @Inject constructor(
         )
         val nameColumn = MediaStore.MediaColumns.DISPLAY_NAME
         val selection = "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND " +
-            "($nameColumn LIKE ? OR $nameColumn LIKE ?)"
-        val args = arrayOf(relativePath, "$FILE_PREFIX%.json", "$CONFIG_FILE_PREFIX%.json")
+            "($nameColumn LIKE ? OR $nameColumn LIKE ? OR $nameColumn LIKE ?)"
+        // Only encrypted .json files; plaintext exports (CSV, Markdown zip) are not listed.
+        val args = arrayOf(
+            relativePath,
+            "$FILE_PREFIX%.json",
+            "$CONFIG_FILE_PREFIX%.json",
+            "$JOURNAL_FILE_PREFIX%.json",
+        )
         val sort = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
         val result = mutableListOf<BackupFileInfo>()
@@ -95,7 +103,7 @@ class BackupStore @Inject constructor(
                     displayName = displayName,
                     createdAt = cursor.getLong(dateCol) * 1000L,
                     sizeBytes = cursor.getLong(sizeCol),
-                    isConfigOnly = isConfigOnlyName(displayName),
+                    kind = classifyBackupName(displayName),
                 )
             }
         }
@@ -106,9 +114,9 @@ class BackupStore @Inject constructor(
         return context.contentResolver.delete(uri, null, null) > 0
     }
 
-    /** Keep [keep] most-recent full backups, delete the rest. Config exports are left alone. */
+    /** Keep [keep] most-recent mood backups, delete the rest. Other kinds are left alone. */
     suspend fun trim(keep: Int): Int {
-        val all = list().filterNot { it.isConfigOnly }
+        val all = list().filter { it.kind == BackupKind.Mood }
         if (all.size <= keep) return 0
         val toDelete = all.drop(keep)
         var deleted = 0
@@ -123,6 +131,7 @@ class BackupStore @Inject constructor(
         private const val FILE_PREFIX = "mood-cairns-backup-"
         private const val CONFIG_FILE_PREFIX = "mood-cairns-config-only-"
         private const val CSV_FILE_PREFIX = "mood-cairns-export-"
+        private const val JOURNAL_FILE_PREFIX = "mood-cairns-journal-"
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
         fun suggestName(date: LocalDate = LocalDate.now()): String =
@@ -134,7 +143,13 @@ class BackupStore @Inject constructor(
         fun suggestCsvName(date: LocalDate = LocalDate.now()): String =
             "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
 
-        fun isConfigOnlyName(displayName: String): Boolean =
-            displayName.startsWith(CONFIG_FILE_PREFIX)
+        fun suggestJournalName(date: LocalDate = LocalDate.now()): String =
+            "$JOURNAL_FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
+
+        fun classifyBackupName(displayName: String): BackupKind = when {
+            displayName.startsWith(CONFIG_FILE_PREFIX) -> BackupKind.Config
+            displayName.startsWith(JOURNAL_FILE_PREFIX) -> BackupKind.Journal
+            else -> BackupKind.Mood
+        }
     }
 }

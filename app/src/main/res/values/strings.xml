@@ -623,6 +623,8 @@
     <string name="backup_export_success">Exported %1$s</string>
     <string name="backup_export_csv_success">Exported %1$s (unencrypted)</string>
     <string name="backup_export_failed">Export failed: %1$s</string>
+    <!-- %1$d is the size limit in megabytes (50). Shown when an export is refused because it could not be restored. -->
+    <string name="backup_error_export_too_large">Not saved: this backup would be larger than %1$d MB, the most the app can restore.</string>
     <!-- Label: count pairs avoid needing a plural form for each noun. -->
     <string name="backup_import_success">Import complete. Entries: %1$d, scales: %2$d, tags: %3$d, prompt windows: %4$d</string>
     <!-- %1$s is one of the import_error_* sentences. -->
@@ -647,6 +649,22 @@
     <string name="backup_config_import_partial">Configuration partly imported. Scales: %1$d, tags: %2$d. Updating the prompt windows failed (%3$s), so check them in Settings. Your entries were not changed.</string>
     <!-- Shown under the file name of a configuration-only export in the list of backups. -->
     <string name="backup_config_only_label">Configuration only</string>
+    <!-- Journal backups: a separate encrypted file. Restoring replaces all journal pages and never touches mood data. -->
+    <string name="backup_journal_section">Journal</string>
+    <string name="backup_journal_intro">Your journal is backed up separately from your moods, in its own encrypted file. Restoring a journal backup replaces all journal pages and never changes your mood data.</string>
+    <string name="backup_journal_export">Export journal</string>
+    <string name="backup_journal_import">Restore journal (replaces all pages)</string>
+    <string name="backup_journal_encrypt_title">Encrypt journal backup</string>
+    <string name="backup_journal_encrypt_body">Choose a passphrase to encrypt this journal backup. You\'ll need this exact passphrase to restore it, even on a fresh install. It is not your app PIN and cannot be recovered if you forget it.</string>
+    <string name="backup_journal_decrypt_title">Restore journal</string>
+    <string name="backup_journal_decrypt_body">Restoring replaces every page in your journal with the pages in this backup. Your mood data is not changed. Enter the passphrase used to encrypt it.</string>
+    <string name="backup_journal_export_success">Exported journal %1$s</string>
+    <string name="backup_journal_import_failed">Journal restore failed: %1$s</string>
+    <string name="backup_journal_label">Journal</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Journal restored: %1$d page</item>
+        <item quantity="other">Journal restored: %1$d pages</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Configuration not compatible</string>
     <string name="backup_config_incompatible_version">This configuration uses format version %1$d, which this version of the app can\'t import. Update the app and try again. Nothing was changed.</string>
     <!-- Like backup_config_incompatible_version, when the picked file is a full backup. -->
@@ -689,4 +707,6 @@
     <string name="import_error_malformed">The backup file is damaged (%1$s).</string>
     <string name="import_error_write_failed">Import stopped while saving data (%1$s).</string>
     <string name="import_error_config_only">This is a configuration-only file, which has no entries to restore. Use Import configuration instead.</string>
+    <string name="import_error_journal_file">This is a journal backup. Restore it with Restore journal in the Journal section.</string>
+    <string name="import_error_not_journal">This is not a journal backup. Mood backups and configuration files are imported in their own sections.</string>
 </resources>
