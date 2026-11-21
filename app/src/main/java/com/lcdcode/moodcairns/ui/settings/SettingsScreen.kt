@@ -255,7 +255,7 @@ fun SettingsScreen(
             }
             item {
                 Text(
-                    stringResource(R.string.settings_allow_unsafe_exports_summary),
+                    stringResource(R.string.settings_unsafe_exports_summary_plaintext),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -314,7 +314,7 @@ private fun UnsafeExportWarningDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.settings_unsafe_exports_dialog_title)) },
-        text = { Text(stringResource(R.string.settings_unsafe_exports_dialog_body)) },
+        text = { Text(stringResource(R.string.settings_unsafe_exports_dialog_body_plaintext)) },
         confirmButton = {
             TextButton(onClick = onConfirm) { Text(stringResource(R.string.common_enable)) }
         },

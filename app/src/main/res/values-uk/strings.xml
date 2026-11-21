@@ -461,9 +461,9 @@
     <string name="settings_journal_enabled_summary">Додає особистий щоденник: одна сторінка на кожен день. Вимкнення лише приховує щоденник, усе написане зберігається.</string>
     <string name="settings_section_danger_zone">Небезпечна зона</string>
     <string name="settings_allow_unsafe_exports">Дозволити небезпечний експорт</string>
-    <string name="settings_allow_unsafe_exports_summary">Вмикає експорт у CSV без шифрування в розділі «Резервні копії та імпорт». За замовчуванням вимкнено.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Вмикає експорт без шифрування в розділі «Резервні копії та імпорт»: CSV-файл із записами та файли Markdown зі щоденником. За замовчуванням вимкнено.</string>
     <string name="settings_unsafe_exports_dialog_title">Дозволити небезпечний експорт?</string>
-    <string name="settings_unsafe_exports_dialog_body">З’явиться можливість експортувати дані в незашифрований CSV-файл у спільному сховищі. Цей файл містить звичайний текст без парольної фрази: хмарні сервіси резервного копіювання, файлові менеджери та будь-які інші застосунки з доступом до спільного сховища зможуть прочитати всі ваші записи.\n\nВмикайте цю функцію, лише якщо розумієте й приймаєте цей ризик.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">З’явиться можливість експортувати записи в незашифрований CSV-файл, а щоденник у незашифровані файли Markdown у спільному сховищі. Ці файли містять звичайний текст без парольної фрази: хмарні сервіси резервного копіювання, файлові менеджери та будь-які інші застосунки з доступом до спільного сховища зможуть прочитати всі ваші записи й сторінки щоденника.\n\nВмикайте цю функцію, лише якщо розумієте й приймаєте цей ризик.</string>
     <string name="settings_allow_screenshots">Дозволити знімки екрана</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Тимчасово дозволяє знімки й запис екрана на %1$d хвилину. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
@@ -601,6 +601,12 @@
     <string name="backup_journal_export_success">Щоденник експортовано: %1$s</string>
     <string name="backup_journal_import_failed">Не вдалося відновити щоденник: %1$s</string>
     <string name="backup_journal_label">Щоденник</string>
+    <string name="backup_journal_markdown_warning">Експорт у Markdown містить звичайний текст і НЕ зашифрований. Усе, що може читати вашу папку Documents (хмарні резервні копії, файлові менеджери, інші застосунки), зможе прочитати ваш щоденник. Щоб приховати ці варіанти, вимкніть небезпечний експорт у налаштуваннях.</string>
+    <string name="backup_journal_markdown_all">Експортувати всі сторінки в Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Експортувати один день у Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Виберіть день для експорту</string>
+    <string name="backup_journal_markdown_export">Експортувати</string>
+    <string name="backup_journal_markdown_empty">Немає сторінок щоденника для експорту.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Щоденник відновлено: %1$d сторінка</item>
         <item quantity="few">Щоденник відновлено: %1$d сторінки</item>

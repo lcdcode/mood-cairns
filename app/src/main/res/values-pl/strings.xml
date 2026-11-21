@@ -462,9 +462,9 @@
     <string name="settings_journal_enabled_summary">Dodaje prywatny dziennik z jedną stroną na każdy dzień. Wyłączenie tylko ukrywa dziennik; wszystko, co napisano, zostaje zachowane.</string>
     <string name="settings_section_danger_zone">Strefa zagrożenia</string>
     <string name="settings_allow_unsafe_exports">Zezwalaj na niebezpieczny eksport</string>
-    <string name="settings_allow_unsafe_exports_summary">Włącza niezaszyfrowany eksport CSV w sekcji „Kopia zapasowa i import”. Domyślnie wyłączone.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Włącza niezaszyfrowany eksport w sekcji „Kopia zapasowa i import”: plik CSV z wpisami i pliki Markdown z dziennikiem. Domyślnie wyłączone.</string>
     <string name="settings_unsafe_exports_dialog_title">Zezwolić na niebezpieczny eksport?</string>
-    <string name="settings_unsafe_exports_dialog_body">Dodaje opcję eksportu danych do niezaszyfrowanego pliku CSV w pamięci współdzielonej. Ten plik to zwykły tekst bez hasła: usługi kopii zapasowych w chmurze, menedżery plików i wszystkie inne aplikacje z dostępem do pamięci współdzielonej będą mogły odczytać wszystkie twoje wpisy.\n\nWłącz tę opcję tylko wtedy, gdy rozumiesz i akceptujesz to ryzyko.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Dodaje opcje eksportu wpisów do niezaszyfrowanego pliku CSV oraz dziennika do niezaszyfrowanych plików Markdown w pamięci współdzielonej. Te pliki to zwykły tekst bez hasła: usługi kopii zapasowych w chmurze, menedżery plików i wszystkie inne aplikacje z dostępem do pamięci współdzielonej będą mogły odczytać wszystkie twoje wpisy i strony dziennika.\n\nWłącz tę opcję tylko wtedy, gdy rozumiesz i akceptujesz to ryzyko.</string>
     <string name="settings_allow_screenshots">Zezwalaj na zrzuty ekranu</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minutę. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
@@ -601,6 +601,12 @@
     <string name="backup_journal_export_success">Wyeksportowano dziennik: %1$s</string>
     <string name="backup_journal_import_failed">Nie udało się przywrócić dziennika: %1$s</string>
     <string name="backup_journal_label">Dziennik</string>
+    <string name="backup_journal_markdown_warning">Eksport Markdown to zwykły tekst i NIE jest zaszyfrowany. Każdy, kto ma dostęp do twojego folderu Documents (kopie w chmurze, menedżery plików, inne aplikacje), może odczytać twój dziennik. Aby ukryć te opcje, wyłącz niebezpieczny eksport w ustawieniach.</string>
+    <string name="backup_journal_markdown_all">Eksportuj wszystkie strony do Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Eksportuj jeden dzień do Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Wybierz dzień do eksportu</string>
+    <string name="backup_journal_markdown_export">Eksportuj</string>
+    <string name="backup_journal_markdown_empty">Nie ma stron dziennika do wyeksportowania.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Przywrócono dziennik: %1$d strona</item>
         <item quantity="few">Przywrócono dziennik: %1$d strony</item>

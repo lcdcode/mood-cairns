@@ -520,9 +520,9 @@
     <string name="settings_journal_enabled_summary">Adds a private journal with one page per day. Turning this off only hides the journal; everything you have written is kept.</string>
     <string name="settings_section_danger_zone">Danger zone</string>
     <string name="settings_allow_unsafe_exports">Allow unsafe exports</string>
-    <string name="settings_allow_unsafe_exports_summary">Enables an unencrypted CSV export under Backup &amp; import. Off by default.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Enables unencrypted exports under Backup &amp; import: a CSV of your entries and Markdown files of your journal. Off by default.</string>
     <string name="settings_unsafe_exports_dialog_title">Allow unsafe exports?</string>
-    <string name="settings_unsafe_exports_dialog_body">This adds an option to export your data as an unencrypted CSV file to shared storage. That file is plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries.\n\nOnly enable this if you understand and accept that danger.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">This adds options to export your entries as an unencrypted CSV file and your journal as unencrypted Markdown files to shared storage. Those files are plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries and journal pages.\n\nOnly enable this if you understand and accept that danger.</string>
     <string name="settings_allow_screenshots">Allow screenshots</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Temporarily allows screenshots and screen recording for %1$d minute. The lock screen stays protected. Off by default.</item>
@@ -661,6 +661,13 @@
     <string name="backup_journal_export_success">Exported journal %1$s</string>
     <string name="backup_journal_import_failed">Journal restore failed: %1$s</string>
     <string name="backup_journal_label">Journal</string>
+    <!-- Plaintext Markdown export of the journal, shown only while unsafe exports are allowed in Settings. -->
+    <string name="backup_journal_markdown_warning">Markdown exports are plain text and NOT encrypted. Anyone or anything that can read your Documents folder - cloud backup, file managers, other apps - can read your journal. Disable unsafe exports in Settings to hide these options.</string>
+    <string name="backup_journal_markdown_all">Export all pages as Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Export one day as Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Choose a day to export</string>
+    <string name="backup_journal_markdown_export">Export</string>
+    <string name="backup_journal_markdown_empty">There are no journal pages to export.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Journal restored: %1$d page</item>
         <item quantity="other">Journal restored: %1$d pages</item>

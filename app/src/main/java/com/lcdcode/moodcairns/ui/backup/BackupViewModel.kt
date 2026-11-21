@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui.backup
 
+import android.database.SQLException
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,8 @@ import com.lcdcode.moodcairns.backup.JournalBackupExporter
 import com.lcdcode.moodcairns.backup.JournalBackupFormat
 import com.lcdcode.moodcairns.backup.JournalImportResult
 import com.lcdcode.moodcairns.backup.JournalImportService
+import com.lcdcode.moodcairns.backup.JournalMarkdown
+import com.lcdcode.moodcairns.backup.JournalMarkdownExporter
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.settings.JournalSettings
@@ -30,6 +33,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.time.LocalDate
 import javax.inject.Inject
 
 data class BackupUiState(
@@ -41,6 +46,8 @@ data class BackupUiState(
     /** Shown as a dialog: the reasons need more room than a snackbar. */
     val configIssue: ConfigIssue? = null,
     val journalEnabled: Boolean = JournalSettings.DEFAULT_ENABLED,
+    /** Days offered by the "export one day as Markdown" picker; null while it is closed. */
+    val journalDayPicker: List<LocalDate>? = null,
 )
 
 /** What a passphrase dialog exports or imports. */
@@ -66,6 +73,7 @@ class BackupViewModel @Inject constructor(
     private val configImporter: ConfigImportService,
     private val journalExporter: JournalBackupExporter,
     private val journalImporter: JournalImportService,
+    private val markdownExporter: JournalMarkdownExporter,
     private val lockManager: LockManager,
     private val lockRepo: LockRepository,
     journalSettings: JournalSettings,
@@ -118,6 +126,87 @@ class BackupViewModel @Inject constructor(
         }
         _ui.update { it.copy(busy = true, message = null) }
         runCsvExport()
+    }
+
+    /** Plaintext zip of every journal page, one YYYY-MM-DD.md per day. */
+    fun requestJournalMarkdownZip() {
+        if (!unsafeExportsAllowed()) return
+        _ui.update { it.copy(busy = true, message = null) }
+        runPlaintextExport {
+            if (markdownExporter.days().isEmpty()) return@runPlaintextExport null
+            val name = BackupStore.suggestJournalMarkdownName()
+            store.writeStream(name, JournalMarkdown.MIME_ZIP) { out ->
+                markdownExporter.exportAll(out)
+            }
+            name
+        }
+    }
+
+    /** Opens the day picker, offering only days that have a page. */
+    fun requestJournalMarkdownDayPicker() {
+        if (!unsafeExportsAllowed()) return
+        viewModelScope.launch {
+            val days = withContext(Dispatchers.Default) { markdownExporter.days() }
+            _ui.update {
+                if (days.isEmpty()) {
+                    it.copy(message = UiText.Res(R.string.backup_journal_markdown_empty))
+                } else {
+                    it.copy(journalDayPicker = days)
+                }
+            }
+        }
+    }
+
+    fun dismissJournalDayPicker() = _ui.update { it.copy(journalDayPicker = null) }
+
+    /** Plaintext YYYY-MM-DD.md of one day's page. */
+    fun exportJournalMarkdownDay(day: LocalDate) {
+        _ui.update { it.copy(journalDayPicker = null) }
+        if (!unsafeExportsAllowed()) return
+        _ui.update { it.copy(busy = true, message = null) }
+        runPlaintextExport {
+            val content = markdownExporter.pageMarkdown(day) ?: return@runPlaintextExport null
+            val name = JournalMarkdown.fileName(day)
+            store.writeBackup(name, content, JournalMarkdown.MIME_MARKDOWN)
+            name
+        }
+    }
+
+    /**
+     * Re-checks the Settings gate for plaintext exports, so a stale screen cannot bypass it.
+     * Shows why when the gate is closed.
+     */
+    private fun unsafeExportsAllowed(): Boolean {
+        if (lockRepo.allowUnsafeExports) return true
+        _ui.update {
+            it.copy(message = UiText.Res(R.string.backup_error_unsafe_exports_disabled))
+        }
+        return false
+    }
+
+    /** Runs [export] off the UI thread; it returns the written file name, or null if empty. */
+    private fun runPlaintextExport(export: suspend () -> String?) = viewModelScope.launch {
+        val text = try {
+            val name = withContext(Dispatchers.Default) { export() }
+            if (name == null) {
+                UiText.Res(R.string.backup_journal_markdown_empty)
+            } else {
+                UiText.Res(R.string.backup_export_csv_success, listOf(name))
+            }
+        } catch (e: IOException) {
+            plaintextExportFailed(e)
+        } catch (e: IllegalStateException) {
+            plaintextExportFailed(e) // MediaStore refused the file, or the app locked.
+        } catch (e: SQLException) {
+            plaintextExportFailed(e)
+        }
+        _ui.update { it.copy(busy = false, message = text) }
+        refresh()
+    }
+
+    private fun plaintextExportFailed(cause: Exception): UiText {
+        Log.w(TAG, "Markdown export failed", cause)
+        return UiText.withDetail(R.string.backup_export_failed, cause)
     }
 
     /**

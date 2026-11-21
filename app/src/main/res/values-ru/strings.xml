@@ -439,9 +439,9 @@
     <string name="settings_journal_enabled_summary">Добавляет личный дневник: одна страница на каждый день. Отключение только скрывает дневник, всё написанное сохраняется.</string>
     <string name="settings_section_danger_zone">Опасная зона</string>
     <string name="settings_allow_unsafe_exports">Разрешить небезопасный экспорт</string>
-    <string name="settings_allow_unsafe_exports_summary">Включает экспорт в незашифрованный CSV в разделе «Резервное копирование». По умолчанию выключено.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Включает незашифрованный экспорт в разделе «Резервное копирование»: CSV-файл с записями и файлы Markdown с дневником. По умолчанию выключено.</string>
     <string name="settings_unsafe_exports_dialog_title">Разрешить небезопасный экспорт?</string>
-    <string name="settings_unsafe_exports_dialog_body">Появится возможность экспортировать данные в незашифрованный CSV-файл. Этот файл содержит обычный текст и не защищен паролем: любые программы с доступом к хранилищу (облачные диски, файловые менеджеры) смогут прочесть ваши личные записи.\n\nВключайте эту функцию, только если полностью понимаете и принимаете этот риск.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Появится возможность экспортировать записи в незашифрованный CSV-файл, а дневник в незашифрованные файлы Markdown. Эти файлы содержат обычный текст и не защищены паролем: любые программы с доступом к хранилищу (облачные диски, файловые менеджеры) смогут прочесть ваши записи и страницы дневника.\n\nВключайте эту функцию, только если полностью понимаете и принимаете этот риск.</string>
     <string name="settings_allow_screenshots">Разрешить скриншоты</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Временно разрешает скриншоты и запись экрана на %1$d минуту. Экран блокировки остаётся защищённым. По умолчанию выключено.</item>
@@ -571,6 +571,12 @@
     <string name="backup_journal_export_success">Дневник сохранён: %1$s</string>
     <string name="backup_journal_import_failed">Не удалось восстановить дневник: %1$s</string>
     <string name="backup_journal_label">Дневник</string>
+    <string name="backup_journal_markdown_warning">Экспорт в Markdown содержит обычный текст и НЕ защищен шифрованием. Любые программы с доступом к вашей папке Documents (облачные диски, файловые менеджеры) смогут прочесть ваш дневник. Чтобы скрыть эти кнопки, отключите небезопасный экспорт в настройках.</string>
+    <string name="backup_journal_markdown_all">Экспортировать все страницы в Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Экспортировать один день в Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Выберите день для экспорта</string>
+    <string name="backup_journal_markdown_export">Экспортировать</string>
+    <string name="backup_journal_markdown_empty">Нет страниц дневника для экспорта.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Дневник восстановлен: %1$d страница</item>
         <item quantity="few">Дневник восстановлен: %1$d страницы</item>

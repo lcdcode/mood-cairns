@@ -437,9 +437,9 @@
     <string name="settings_journal_enabled_summary">Añade un diario personal privado con una página por día. Al desactivarlo, el diario solo se oculta; todo lo que hayas escrito se conserva.</string>
     <string name="settings_section_danger_zone">Zona de peligro</string>
     <string name="settings_allow_unsafe_exports">Permitir exportaciones no seguras</string>
-    <string name="settings_allow_unsafe_exports_summary">Activa una exportación CSV sin cifrar en Copia de seguridad. Desactivado de forma predeterminada.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Activa exportaciones sin cifrar en Copia de seguridad: un CSV de tus registros y archivos Markdown de tu diario personal. Desactivado de forma predeterminada.</string>
     <string name="settings_unsafe_exports_dialog_title">¿Permitir exportaciones no seguras?</string>
-    <string name="settings_unsafe_exports_dialog_body">Esto añade una opción para exportar tus datos como un archivo CSV sin cifrar al almacenamiento compartido. Ese archivo es texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Esto añade opciones para exportar tus registros como un archivo CSV sin cifrar y tu diario personal como archivos Markdown sin cifrar al almacenamiento compartido. Esos archivos son texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros y páginas del diario.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
     <string name="settings_allow_screenshots">Permitir capturas de pantalla</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Permite temporalmente capturas y grabaciones de pantalla durante %1$d minuto. La pantalla de bloqueo sigue protegida. Desactivado de forma predeterminada.</item>
@@ -569,6 +569,12 @@
     <string name="backup_journal_export_success">Diario exportado: %1$s</string>
     <string name="backup_journal_import_failed">No se pudo restaurar el diario: %1$s</string>
     <string name="backup_journal_label">Diario</string>
+    <string name="backup_journal_markdown_warning">Las exportaciones Markdown son texto plano y NO están cifradas. Cualquier persona o aplicación que pueda leer tu carpeta Documents (copias en la nube, gestores de archivos, otras apps) puede leer tu diario. Desactiva las exportaciones no seguras en Ajustes para ocultar estas opciones.</string>
+    <string name="backup_journal_markdown_all">Exportar todas las páginas en Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Exportar un día en Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Elige un día para exportar</string>
+    <string name="backup_journal_markdown_export">Exportar</string>
+    <string name="backup_journal_markdown_empty">No hay páginas del diario para exportar.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Diario restaurado: %1$d página</item>
         <item quantity="many">Diario restaurado: %1$d páginas</item>

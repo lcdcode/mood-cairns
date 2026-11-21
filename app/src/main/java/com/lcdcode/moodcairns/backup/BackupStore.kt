@@ -147,6 +147,7 @@ class BackupStore @Inject constructor(
         private const val CONFIG_FILE_PREFIX = "mood-cairns-config-only-"
         private const val CSV_FILE_PREFIX = "mood-cairns-export-"
         private const val JOURNAL_FILE_PREFIX = "mood-cairns-journal-"
+        private const val JOURNAL_MARKDOWN_PREFIX = "mood-cairns-journal-markdown-"
         private const val JOURNAL_EXTENSION = JournalBackupFormat.FILE_EXTENSION
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
         private const val WRITE_BUFFER_BYTES = 64 * 1024
@@ -162,6 +163,10 @@ class BackupStore @Inject constructor(
 
         fun suggestJournalName(date: LocalDate = LocalDate.now()): String =
             "$JOURNAL_FILE_PREFIX${FILE_DATE_FMT.format(date)}.$JOURNAL_EXTENSION"
+
+        /** Plaintext Markdown zip; .zip is never listed with the encrypted backups. */
+        fun suggestJournalMarkdownName(date: LocalDate = LocalDate.now()): String =
+            "$JOURNAL_MARKDOWN_PREFIX${FILE_DATE_FMT.format(date)}.zip"
 
         fun classifyBackupName(displayName: String): BackupKind = when {
             displayName.startsWith(CONFIG_FILE_PREFIX) -> BackupKind.Config

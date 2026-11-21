@@ -421,9 +421,9 @@
     <string name="settings_journal_enabled_summary">Fügt ein privates Tagebuch mit einer Seite pro Tag hinzu. Beim Ausschalten wird das Tagebuch nur ausgeblendet; alles Geschriebene bleibt erhalten.</string>
     <string name="settings_section_danger_zone">Gefahrenbereich</string>
     <string name="settings_allow_unsafe_exports">Unsichere Exporte erlauben</string>
-    <string name="settings_allow_unsafe_exports_summary">Aktiviert einen unverschlüsselten CSV-Export unter „Sicherung &amp; Import“. Standardmäßig deaktiviert.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Aktiviert unverschlüsselte Exporte unter „Sicherung &amp; Import“: eine CSV-Datei deiner Einträge und Markdown-Dateien deines Tagebuchs. Standardmäßig deaktiviert.</string>
     <string name="settings_unsafe_exports_dialog_title">Unsichere Exporte erlauben?</string>
-    <string name="settings_unsafe_exports_dialog_body">Damit kannst du deine Daten als unverschlüsselte CSV-Datei in den gemeinsamen Speicher exportieren. Diese Datei ist reiner Text ohne Passphrase: Cloud-Sicherungsdienste, Dateimanager und jede andere App, die den gemeinsamen Speicher lesen kann, können alle deine Einträge lesen.\n\nAktiviere dies nur, wenn du dieses Risiko verstehst und in Kauf nimmst.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Damit kannst du deine Einträge als unverschlüsselte CSV-Datei und dein Tagebuch als unverschlüsselte Markdown-Dateien in den gemeinsamen Speicher exportieren. Diese Dateien sind reiner Text ohne Passphrase: Cloud-Sicherungsdienste, Dateimanager und jede andere App, die den gemeinsamen Speicher lesen kann, können alle deine Einträge und Tagebuchseiten lesen.\n\nAktiviere dies nur, wenn du dieses Risiko verstehst und in Kauf nimmst.</string>
     <string name="settings_allow_screenshots">Screenshots erlauben</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Erlaubt Screenshots und Bildschirmaufnahmen vorübergehend für %1$d Minute. Der Sperrbildschirm bleibt geschützt. Standardmäßig deaktiviert.</item>
@@ -546,6 +546,12 @@
     <string name="backup_journal_export_success">Tagebuch exportiert: %1$s</string>
     <string name="backup_journal_import_failed">Wiederherstellen des Tagebuchs fehlgeschlagen: %1$s</string>
     <string name="backup_journal_label">Tagebuch</string>
+    <string name="backup_journal_markdown_warning">Markdown-Exporte sind reiner Text und NICHT verschlüsselt. Alles, was deinen Documents-Ordner lesen kann (Cloud-Sicherungen, Dateimanager, andere Apps), kann dein Tagebuch lesen. Deaktiviere unsichere Exporte in den Einstellungen, um diese Optionen auszublenden.</string>
+    <string name="backup_journal_markdown_all">Alle Seiten als Markdown exportieren (.zip)</string>
+    <string name="backup_journal_markdown_day">Einen Tag als Markdown exportieren (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Tag zum Exportieren wählen</string>
+    <string name="backup_journal_markdown_export">Exportieren</string>
+    <string name="backup_journal_markdown_empty">Es gibt keine Tagebuchseiten zum Exportieren.</string>
     <plurals name="backup_journal_import_success">
         <item quantity="one">Tagebuch wiederhergestellt: %1$d Seite</item>
         <item quantity="other">Tagebuch wiederhergestellt: %1$d Seiten</item>

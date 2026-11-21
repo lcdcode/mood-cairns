@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,12 +29,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,6 +59,7 @@ import com.lcdcode.moodcairns.backup.BackupStore
 import com.lcdcode.moodcairns.ui.common.asString
 import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
 /** Picker filter for formats without a dependable MIME type. */
@@ -100,6 +106,14 @@ fun BackupScreen(
 
     state.configIssue?.let { issue ->
         ConfigIssueDialog(issue = issue, onDismiss = viewModel::dismissConfigIssue)
+    }
+
+    state.journalDayPicker?.let { days ->
+        JournalDayPickerDialog(
+            days = days,
+            onExport = viewModel::exportJournalMarkdownDay,
+            onDismiss = viewModel::dismissJournalDayPicker,
+        )
     }
 
     Scaffold(
@@ -185,7 +199,15 @@ fun BackupScreen(
                         onExport = viewModel::requestJournalExport,
                         // Journal backups are binary (.mcj), which pickers type unreliably.
                         onImport = { pickBackupFile(journalImportLauncher::launch, ANY_FILE) },
-                    )
+                    ) {
+                        if (state.allowUnsafeExports) {
+                            JournalMarkdownExports(
+                                enabled = !state.busy,
+                                onExportAll = viewModel::requestJournalMarkdownZip,
+                                onExportDay = viewModel::requestJournalMarkdownDayPicker,
+                            )
+                        }
+                    }
                 }
             }
             item {
@@ -275,7 +297,7 @@ private fun BackupRow(file: BackupFileInfo) {
     }
 }
 
-/** A titled group with an explanation and an export and an import button. */
+/** A titled group with an explanation, an export and an import button, and [extra]. */
 @Composable
 private fun ActionSection(
     title: String,
@@ -285,6 +307,7 @@ private fun ActionSection(
     enabled: Boolean,
     onExport: () -> Unit,
     onImport: () -> Unit,
+    extra: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
@@ -307,6 +330,79 @@ private fun ActionSection(
             enabled = enabled,
             modifier = Modifier.fillMaxWidth(),
         ) { Text(importLabel) }
+        extra()
+    }
+}
+
+/** Plaintext Markdown exports, shown only while unsafe exports are allowed in Settings. */
+@Composable
+private fun JournalMarkdownExports(
+    enabled: Boolean,
+    onExportAll: () -> Unit,
+    onExportDay: () -> Unit,
+) {
+    Text(
+        stringResource(R.string.backup_journal_markdown_warning),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error,
+    )
+    OutlinedButton(
+        onClick = onExportAll,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(R.string.backup_journal_markdown_all)) }
+    OutlinedButton(
+        onClick = onExportDay,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) { Text(stringResource(R.string.backup_journal_markdown_day)) }
+}
+
+/** A date picker that only allows days with a journal page; starts on the newest. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun JournalDayPickerDialog(
+    days: List<LocalDate>,
+    onExport: (LocalDate) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val allowedDays = remember(days) { days.toHashSet() }
+    val selectable = remember(allowedDays) {
+        val years = allowedDays.mapTo(HashSet()) { it.year }
+        object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) =
+                pickerMillisToDay(utcTimeMillis) in allowedDays
+
+            override fun isSelectableYear(year: Int) = year in years
+        }
+    }
+    val pickerState = rememberDatePickerState(
+        initialSelectedDateMillis = dayToPickerMillis(days.max()),
+        selectableDates = selectable,
+    )
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    pickerState.selectedDateMillis?.let { onExport(pickerMillisToDay(it)) }
+                },
+                enabled = pickerState.selectedDateMillis != null,
+            ) { Text(stringResource(R.string.backup_journal_markdown_export)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
+        },
+    ) {
+        DatePicker(
+            state = pickerState,
+            title = {
+                Text(
+                    stringResource(R.string.backup_journal_markdown_pick_day),
+                    modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp),
+                )
+            },
+        )
     }
 }
 
