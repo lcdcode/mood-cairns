@@ -3,7 +3,9 @@ package com.lcdcode.moodcairns.backup
 import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,6 +38,24 @@ class BackupFileReader @Inject constructor(
 
         if (BackupSizeLimit.exceeds(bytes.size.toLong())) throw BackupImportException(tooLarge())
         return String(bytes, Charsets.UTF_8)
+    }
+
+    /**
+     * A stream over [uri] with no size cap, for formats read in constant memory (journal
+     * backups). Throws [BackupImportException] when the file cannot be opened.
+     */
+    fun openStream(uri: Uri): InputStream {
+        val stream = try {
+            context.contentResolver.openInputStream(uri)
+        } catch (e: FileNotFoundException) {
+            throw BackupImportException(ImportError.Unreadable(e.message))
+        } catch (e: SecurityException) {
+            throw BackupImportException(ImportError.Unreadable(e.message))
+        }
+        return BufferedInputStream(
+            stream ?: throw BackupImportException(ImportError.Unreadable(detail = null)),
+            READ_BUFFER_BYTES,
+        )
     }
 
     private companion object {

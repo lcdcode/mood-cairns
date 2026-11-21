@@ -12,7 +12,7 @@ class BackupStoreNamesTest {
     fun fileNames_distinguishEachKindOfExport() {
         assertEquals("mood-cairns-backup-2026-11-12.json", BackupStore.suggestName(day))
         assertEquals("mood-cairns-config-only-2026-11-12.json", BackupStore.suggestConfigName(day))
-        assertEquals("mood-cairns-journal-2026-11-12.json", BackupStore.suggestJournalName(day))
+        assertEquals("mood-cairns-journal-2026-11-12.mcj", BackupStore.suggestJournalName(day))
         assertEquals("mood-cairns-export-2026-11-12.csv", BackupStore.suggestCsvName(day))
     }
 
@@ -38,7 +38,7 @@ class BackupStoreNamesTest {
         )
         assertEquals(
             BackupKind.Journal,
-            BackupStore.classifyBackupName("mood-cairns-journal-2026-11-12 (1).json"),
+            BackupStore.classifyBackupName("mood-cairns-journal-2026-11-12 (1).mcj"),
         )
     }
 }

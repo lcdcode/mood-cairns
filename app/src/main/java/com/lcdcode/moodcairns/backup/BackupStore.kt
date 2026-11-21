@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.BufferedOutputStream
+import java.io.OutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -39,6 +41,17 @@ class BackupStore @Inject constructor(
         name: String,
         content: String,
         mimeType: String = MIME_JSON,
+    ): Uri = writeStream(name, mimeType) { out -> out.write(content.toByteArray(Charsets.UTF_8)) }
+
+    /**
+     * Creates [name] and lets [write] stream its contents, so large exports never need to
+     * fit in memory. The file stays hidden (pending) until [write] finishes and is deleted
+     * if it fails, so a half-written backup is never left behind.
+     */
+    suspend fun writeStream(
+        name: String,
+        mimeType: String,
+        write: suspend (OutputStream) -> Unit,
     ): Uri {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
@@ -52,10 +65,12 @@ class BackupStore @Inject constructor(
             ?: error("Failed to create backup entry in MediaStore")
 
         try {
-            resolver.openOutputStream(uri, "w")?.use { out ->
-                out.write(content.toByteArray(Charsets.UTF_8))
+            val output = resolver.openOutputStream(uri, "w")
+                ?: error("Failed to open MediaStore output for $uri")
+            BufferedOutputStream(output, WRITE_BUFFER_BYTES).use { out ->
+                write(out)
                 out.flush()
-            } ?: error("Failed to open MediaStore output for $uri")
+            }
 
             val done = ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }
             resolver.update(uri, done, null, null)
@@ -79,12 +94,12 @@ class BackupStore @Inject constructor(
         val nameColumn = MediaStore.MediaColumns.DISPLAY_NAME
         val selection = "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND " +
             "($nameColumn LIKE ? OR $nameColumn LIKE ? OR $nameColumn LIKE ?)"
-        // Only encrypted .json files; plaintext exports (CSV, Markdown zip) are not listed.
+        // Only encrypted backups; plaintext exports (CSV, Markdown zip) are not listed.
         val args = arrayOf(
             relativePath,
             "$FILE_PREFIX%.json",
             "$CONFIG_FILE_PREFIX%.json",
-            "$JOURNAL_FILE_PREFIX%.json",
+            "$JOURNAL_FILE_PREFIX%.$JOURNAL_EXTENSION",
         )
         val sort = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
@@ -132,7 +147,9 @@ class BackupStore @Inject constructor(
         private const val CONFIG_FILE_PREFIX = "mood-cairns-config-only-"
         private const val CSV_FILE_PREFIX = "mood-cairns-export-"
         private const val JOURNAL_FILE_PREFIX = "mood-cairns-journal-"
+        private const val JOURNAL_EXTENSION = JournalBackupFormat.FILE_EXTENSION
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+        private const val WRITE_BUFFER_BYTES = 64 * 1024
 
         fun suggestName(date: LocalDate = LocalDate.now()): String =
             "$FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
@@ -144,7 +161,7 @@ class BackupStore @Inject constructor(
             "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
 
         fun suggestJournalName(date: LocalDate = LocalDate.now()): String =
-            "$JOURNAL_FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
+            "$JOURNAL_FILE_PREFIX${FILE_DATE_FMT.format(date)}.$JOURNAL_EXTENSION"
 
         fun classifyBackupName(displayName: String): BackupKind = when {
             displayName.startsWith(CONFIG_FILE_PREFIX) -> BackupKind.Config

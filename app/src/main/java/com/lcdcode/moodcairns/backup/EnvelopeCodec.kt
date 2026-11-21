@@ -43,6 +43,8 @@ internal class EnvelopeCodec(private val json: Json) {
      * tampered data).
      */
     fun decrypt(raw: String, secret: CharArray): ByteArray {
+        // Journal backups are a binary format with their own restore; name the mix-up.
+        if (raw.startsWith(JournalBackupFormat.MAGIC_TEXT)) fail(ImportError.JournalFile)
         val envelope = runCatching {
             json.decodeFromString(EncryptedBackup.serializer(), raw)
         }.getOrNull() ?: fail(ImportError.NotABackup)

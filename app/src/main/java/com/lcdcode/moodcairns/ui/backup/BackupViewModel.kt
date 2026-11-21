@@ -14,7 +14,8 @@ import com.lcdcode.moodcairns.backup.ConfigImportService
 import com.lcdcode.moodcairns.backup.CsvExporter
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
-import com.lcdcode.moodcairns.backup.JournalBackupSerializer
+import com.lcdcode.moodcairns.backup.JournalBackupExporter
+import com.lcdcode.moodcairns.backup.JournalBackupFormat
 import com.lcdcode.moodcairns.backup.JournalImportResult
 import com.lcdcode.moodcairns.backup.JournalImportService
 import com.lcdcode.moodcairns.security.LockManager
@@ -63,7 +64,7 @@ class BackupViewModel @Inject constructor(
     private val store: BackupStore,
     private val importer: ImportService,
     private val configImporter: ConfigImportService,
-    private val journalSerializer: JournalBackupSerializer,
+    private val journalExporter: JournalBackupExporter,
     private val journalImporter: JournalImportService,
     private val lockManager: LockManager,
     private val lockRepo: LockRepository,
@@ -206,24 +207,26 @@ class BackupViewModel @Inject constructor(
             // PBKDF2 (600k rounds) + AES + file write; off the UI thread so a
             // large export can't freeze or ANR-crash the app on slow devices.
             withContext(Dispatchers.Default) {
-                val (json, name, success) = when (payload) {
-                    BackupPayload.Mood -> Triple(
-                        serializer.exportJson(passphrase),
-                        BackupStore.suggestName(),
-                        R.string.backup_export_success,
-                    )
-                    BackupPayload.Config -> Triple(
-                        serializer.exportConfigJson(passphrase),
-                        BackupStore.suggestConfigName(),
-                        R.string.backup_config_export_success,
-                    )
-                    BackupPayload.Journal -> Triple(
-                        journalSerializer.exportJson(passphrase),
-                        BackupStore.suggestJournalName(),
-                        R.string.backup_journal_export_success,
-                    )
+                val (name, success) = when (payload) {
+                    BackupPayload.Mood -> {
+                        val name = BackupStore.suggestName()
+                        store.writeBackup(name, serializer.exportJson(passphrase))
+                        name to R.string.backup_export_success
+                    }
+                    BackupPayload.Config -> {
+                        val name = BackupStore.suggestConfigName()
+                        store.writeBackup(name, serializer.exportConfigJson(passphrase))
+                        name to R.string.backup_config_export_success
+                    }
+                    BackupPayload.Journal -> {
+                        // Streamed straight to the file: no size limit, constant memory.
+                        val name = BackupStore.suggestJournalName()
+                        store.writeStream(name, JournalBackupFormat.MIME_TYPE) { out ->
+                            journalExporter.export(passphrase, out)
+                        }
+                        name to R.string.backup_journal_export_success
+                    }
                 }
-                store.writeBackup(name, json)
                 UiText.Res(success, listOf(name))
             }
         } catch (e: BackupTooLargeException) {

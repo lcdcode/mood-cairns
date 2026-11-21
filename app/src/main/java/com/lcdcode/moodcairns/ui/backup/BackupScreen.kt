@@ -56,6 +56,9 @@ import com.lcdcode.moodcairns.ui.common.rememberSkeletonDateFormat
 import java.time.Instant
 import java.time.ZoneId
 
+/** Picker filter for formats without a dependable MIME type. */
+private const val ANY_FILE = "*/*"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackupScreen(
@@ -77,9 +80,12 @@ fun BackupScreen(
         ActivityResultContracts.OpenDocument(),
     ) { uri -> uri?.let(viewModel::requestJournalImport) }
 
-    fun pickBackupFile(launch: (Array<String>) -> Unit) {
+    fun pickBackupFile(
+        launch: (Array<String>) -> Unit,
+        mimeType: String = BackupStore.MIME_JSON,
+    ) {
         viewModel.noteFilePickerOpening()
-        launch(arrayOf(BackupStore.MIME_JSON))
+        launch(arrayOf(mimeType))
     }
 
     val messageText = state.message?.asString()
@@ -177,7 +183,8 @@ fun BackupScreen(
                         importLabel = stringResource(R.string.backup_journal_import),
                         enabled = !state.busy,
                         onExport = viewModel::requestJournalExport,
-                        onImport = { pickBackupFile(journalImportLauncher::launch) },
+                        // Journal backups are binary (.mcj), which pickers type unreliably.
+                        onImport = { pickBackupFile(journalImportLauncher::launch, ANY_FILE) },
                     )
                 }
             }

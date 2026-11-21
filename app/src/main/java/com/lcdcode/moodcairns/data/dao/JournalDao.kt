@@ -40,6 +40,10 @@ object JournalSql {
             "FROM journal_fts JOIN journal_doc d ON d.id = journal_fts.rowid " +
             "WHERE journal_fts MATCH :query ORDER BY d.day DESC"
 
+    /** ISO days sort chronologically as text, so day > :afterDay walks forward in time. */
+    const val DOCS_AFTER =
+        "SELECT * FROM journal_doc WHERE day > :afterDay ORDER BY day ASC LIMIT :limit"
+
     const val UPDATE_BODY_BY_DAY =
         "UPDATE journal_doc SET body = :body, preview = :preview, updatedAt = :updatedAt " +
             "WHERE day = :day"
@@ -73,14 +77,12 @@ interface JournalDao {
     @Query(JournalSql.SEARCH)
     suspend fun search(query: String): List<JournalSearchRow>
 
-    @Query("SELECT * FROM journal_doc ORDER BY day ASC")
-    suspend fun allDocs(): List<JournalDoc>
+    /** Up to [limit] pages after [afterDay] ("" for the first), oldest first: keyset paging. */
+    @Query(JournalSql.DOCS_AFTER)
+    suspend fun docsAfter(afterDay: String, limit: Int): List<JournalDoc>
 
     @Insert
     suspend fun insert(doc: JournalDoc): Long
-
-    @Insert
-    suspend fun insertAll(docs: List<JournalDoc>)
 
     @Query(JournalSql.UPDATE_BODY_BY_DAY)
     suspend fun updateBodyByDay(
@@ -118,12 +120,5 @@ interface JournalDao {
                 ),
             )
         }
-    }
-
-    /** Replaces every page (backup restore); previews are recomputed, never trusted. */
-    @Transaction
-    suspend fun replaceAll(docs: List<JournalDoc>) {
-        deleteAll()
-        insertAll(docs.map { it.copy(preview = JournalSql.previewOf(it.body)) })
     }
 }

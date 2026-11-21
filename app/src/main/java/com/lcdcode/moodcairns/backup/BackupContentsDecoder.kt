@@ -26,14 +26,12 @@ internal class BackupContentsDecoder(private val json: Json) {
 
     /** A full backup to restore. A configuration file is refused: it has no entries. */
     fun forFullRestore(contents: JsonObject): BackupFile {
-        if (isJournalFile(contents)) fail(ImportError.JournalFile)
         if (isConfigFile(contents)) fail(ImportError.ConfigOnlyFile)
         return decodeBackupFile(contents)
     }
 
     /** The setup in a configuration file, or in a full backup with its entries ignored. */
     fun forConfigImport(contents: JsonObject): ConfigEntities = when {
-        isJournalFile(contents) -> fail(ImportError.JournalFile)
         isConfigFile(contents) -> toConfigEntities(decodeConfigFile(contents))
         ConfigFile.ENTRIES_KEY in contents -> toConfigEntities(decodeBackupFile(contents))
         else -> fail(ImportError.NotABackup)

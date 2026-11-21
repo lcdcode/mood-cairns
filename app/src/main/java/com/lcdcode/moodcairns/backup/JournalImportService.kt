@@ -15,27 +15,38 @@ sealed interface JournalImportResult {
 @Singleton
 class JournalImportService @Inject constructor(
     private val reader: BackupFileReader,
-    private val serializer: JournalBackupSerializer,
     private val repo: JournalRepository,
 ) {
     /**
-     * Reads, decrypts and fully validates the file before writing anything, then replaces
-     * all pages in one transaction: a failure leaves the current journal as it was.
+     * Streams the file into the database inside one transaction: pages are decrypted,
+     * validated and inserted one at a time, so memory stays small however big the backup
+     * is. Any failure (wrong passphrase, damage, a truncated file) rolls the transaction
+     * back and leaves the current journal exactly as it was.
      */
-    suspend fun importReplace(uri: Uri, secret: CharArray): JournalImportResult {
-        val docs = try {
-            serializer.parse(reader.readText(uri), secret)
-        } catch (e: BackupImportException) {
-            return JournalImportResult.Failure(e.error)
+    suspend fun importReplace(uri: Uri, secret: CharArray): JournalImportResult = try {
+        reader.openStream(uri).use { input ->
+            // Reads the header and metadata: a wrong passphrase or file fails here, before
+            // the transaction starts.
+            JournalBackupReader(input, secret).use { backup ->
+                val validator = JournalPageValidator()
+                var pages = 0
+                repo.replaceAll { insert ->
+                    while (true) {
+                        val page = backup.nextPage() ?: break
+                        insert(validator.toDoc(page))
+                        pages++
+                    }
+                    backup.requireComplete()
+                }
+                JournalImportResult.Success(days = pages)
+            }
         }
-        return try {
-            repo.replaceAll(docs)
-            JournalImportResult.Success(days = docs.size)
-        } catch (e: IllegalStateException) {
-            writeFailed(e) // The journal database closed (app locked) before the write.
-        } catch (e: SQLException) {
-            writeFailed(e)
-        }
+    } catch (e: BackupImportException) {
+        JournalImportResult.Failure(e.error)
+    } catch (e: IllegalStateException) {
+        writeFailed(e) // The journal database closed (app locked) during the restore.
+    } catch (e: SQLException) {
+        writeFailed(e)
     }
 
     private fun writeFailed(cause: Exception) = JournalImportResult.Failure(
