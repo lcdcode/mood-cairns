@@ -411,6 +411,13 @@
     <string name="biometric_prompt_title">Разблокировать Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Подтвердите личность для входа</string>
     <string name="biometric_prompt_use_pin">Ввести PIN-код</string>
+    <string name="biometric_enroll_prompt_title">Включить биометрическую разблокировку</string>
+    <string name="biometric_enroll_prompt_subtitle">Подтвердите, чтобы разблокировать Mood Cairns с помощью биометрии</string>
+    <string name="biometric_offer_title">Биометрическая разблокировка</string>
+    <string name="biometric_offer_body_upgrade">Биометрическая разблокировка теперь защищена аппаратными средствами безопасности вашего устройства. Включите её снова, чтобы продолжить ею пользоваться.</string>
+    <string name="biometric_offer_body_setup">Разблокировать Mood Cairns с помощью биометрии вместо PIN-кода? Это можно изменить позже в настройках.</string>
+    <string name="biometric_offer_body_invalidated">Биометрическая разблокировка отключена, потому что изменились биометрические данные или блокировка экрана этого устройства. Если вы этого не делали, возможно, кто-то другой имеет доступ к вашему телефону.</string>
+    <string name="biometric_offer_not_now">Не сейчас</string>
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Продолжить без PIN-кода?</string>
     <string name="no_pin_warning_title_remove">Удалить PIN-код?</string>
@@ -430,6 +437,7 @@
     <string name="settings_auto_lock_label">Автоблокировка в фоне через</string>
     <string name="settings_auto_lock_immediate">Сразу</string>
     <string name="settings_biometric_unlock">Биометрическая разблокировка</string>
+    <string name="settings_biometric_unavailable">Чтобы использовать эту функцию, настройте отпечаток пальца или другой надёжный биометрический метод в настройках устройства.</string>
     <string name="settings_change_pin">Изменить PIN-код</string>
     <string name="settings_lock_now">Заблокировать сейчас</string>
     <string name="settings_set_pin">Установить PIN-код</string>
@@ -470,6 +478,7 @@
     <string name="lock_pin_label">PIN-код</string>
     <string name="lock_unlock">Разблокировать</string>
     <string name="lock_use_biometric">Использовать биометрию</string>
+    <string name="lock_biometric_reset">Биометрическая разблокировка отключена, потому что изменились биометрические данные или блокировка экрана этого устройства. Введите PIN-код.</string>
     <string name="lock_try_again_in">Повторите через %1$s</string>
     <string name="lock_locked_for">Заблокировано (%1$s)</string>
     <string name="lock_error_wrong_pin">Неверный PIN-код</string>

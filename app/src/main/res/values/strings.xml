@@ -484,6 +484,18 @@
     <string name="biometric_prompt_title">Unlock Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Authenticate to continue</string>
     <string name="biometric_prompt_use_pin">Use PIN</string>
+    <!-- System biometric prompt shown when turning biometric unlock on -->
+    <string name="biometric_enroll_prompt_title">Turn on biometric unlock</string>
+    <string name="biometric_enroll_prompt_subtitle">Confirm to unlock Mood Cairns with biometrics</string>
+    <!-- Dialog after unlocking that offers to turn biometric unlock on; the body depends on the reason -->
+    <string name="biometric_offer_title">Biometric unlock</string>
+    <!-- Shown once after updating to the version with hardware-protected biometric unlock -->
+    <string name="biometric_offer_body_upgrade">Biometric unlock is now protected by your device\'s secure hardware. Turn it back on to keep using it.</string>
+    <!-- Shown after a PIN was set up -->
+    <string name="biometric_offer_body_setup">Unlock Mood Cairns with biometrics instead of your PIN? You can change this later in Settings.</string>
+    <!-- Security notice: Android turned the key off because biometrics were added or the screen lock was removed -->
+    <string name="biometric_offer_body_invalidated">Biometric unlock was turned off because the biometrics or screen lock on this device changed. If you didn\'t make this change, someone else may have access to your phone.</string>
+    <string name="biometric_offer_not_now">Not now</string>
 
     <!-- Warning before running without a PIN, at first-run setup or when removing a PIN -->
     <string name="no_pin_warning_title_setup">Continue without a PIN?</string>
@@ -510,6 +522,7 @@
     <string name="settings_auto_lock_label">Auto-lock after background</string>
     <string name="settings_auto_lock_immediate">Immediate</string>
     <string name="settings_biometric_unlock">Biometric unlock</string>
+    <string name="settings_biometric_unavailable">Set up a fingerprint or another strong biometric in your device settings to use this.</string>
     <string name="settings_change_pin">Change PIN</string>
     <string name="settings_lock_now">Lock now</string>
     <string name="settings_set_pin">Set PIN</string>
@@ -546,6 +559,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Unlock</string>
     <string name="lock_use_biometric">Use biometric</string>
+    <string name="lock_biometric_reset">Biometric unlock was turned off because this device\'s biometrics or screen lock changed. Enter your PIN.</string>
     <!-- %1$s is a remaining duration such as "1m 30s", already localized. -->
     <string name="lock_try_again_in">Try again in %1$s</string>
     <!-- Unlock button while locked out. %1$s is a remaining duration such as "1m 30s". -->

@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.security.LockManager
-import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.LockState
 import com.lcdcode.moodcairns.security.ScreenCaptureGate
 import com.lcdcode.moodcairns.security.shouldSecureWindow
@@ -44,7 +43,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var lockManager: LockManager
-    @Inject lateinit var lockRepository: LockRepository
     @Inject lateinit var scheduler: PromptScheduler
     @Inject lateinit var localizedSurfaces: LocalizedSurfaces
     @Inject lateinit var screenCaptureGate: ScreenCaptureGate
@@ -104,16 +102,19 @@ class MainActivity : AppCompatActivity() {
 
                     when (val s = state) {
                         LockState.NeedsSetup -> SetPinScreen()
-                        LockState.Locked -> LockScreen(biometricEnabled = lockRepository.biometricEnabled)
+                        LockState.Locked -> LockScreen()
                         LockState.Booting -> com.lcdcode.moodcairns.ui.lock.BootingScreen()
                         LockState.Migrating -> com.lcdcode.moodcairns.ui.lock.MigratingScreen()
                         is LockState.MigrationFailed -> com.lcdcode.moodcairns.ui.lock.MigrationFailedScreen(
                             message = s.message,
                         )
-                        LockState.Unlocked -> AppNav(
-                            initialEntryArgs = pendingArgs,
-                            onEntryArgsConsumed = { pendingEntryArgs.value = null },
-                        )
+                        LockState.Unlocked -> {
+                            AppNav(
+                                initialEntryArgs = pendingArgs,
+                                onEntryArgsConsumed = { pendingEntryArgs.value = null },
+                            )
+                            com.lcdcode.moodcairns.ui.lock.BiometricOfferHost()
+                        }
                     }
                 }
             }

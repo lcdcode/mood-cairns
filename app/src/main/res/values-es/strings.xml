@@ -406,6 +406,13 @@
     <string name="biometric_prompt_title">Desbloquear Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Autentícate para continuar</string>
     <string name="biometric_prompt_use_pin">Usar PIN</string>
+    <string name="biometric_enroll_prompt_title">Activar el desbloqueo biométrico</string>
+    <string name="biometric_enroll_prompt_subtitle">Confirma para desbloquear Mood Cairns con biometría</string>
+    <string name="biometric_offer_title">Desbloqueo biométrico</string>
+    <string name="biometric_offer_body_upgrade">El desbloqueo biométrico ahora está protegido por el hardware de seguridad de tu dispositivo. Vuelve a activarlo para seguir usándolo.</string>
+    <string name="biometric_offer_body_setup">¿Desbloquear Mood Cairns con biometría en lugar de tu PIN? Puedes cambiarlo más tarde en Ajustes.</string>
+    <string name="biometric_offer_body_invalidated">El desbloqueo biométrico se desactivó porque cambió la biometría o el bloqueo de pantalla de este dispositivo. Si no hiciste este cambio, es posible que otra persona tenga acceso a tu teléfono.</string>
+    <string name="biometric_offer_not_now">Ahora no</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">¿Continuar sin PIN?</string>
@@ -428,6 +435,7 @@
     <string name="settings_auto_lock_label">Bloqueo automático al salir de la app</string>
     <string name="settings_auto_lock_immediate">Inmediato</string>
     <string name="settings_biometric_unlock">Desbloqueo biométrico</string>
+    <string name="settings_biometric_unavailable">Configura una huella digital u otra biometría segura en los ajustes del dispositivo para usar esta función.</string>
     <string name="settings_change_pin">Cambiar PIN</string>
     <string name="settings_lock_now">Bloquear ahora</string>
     <string name="settings_set_pin">Configurar PIN</string>
@@ -466,6 +474,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Desbloquear</string>
     <string name="lock_use_biometric">Usar biometría</string>
+    <string name="lock_biometric_reset">El desbloqueo biométrico se desactivó porque cambió la biometría o el bloqueo de pantalla de este dispositivo. Introduce tu PIN.</string>
     <string name="lock_try_again_in">Inténtalo de nuevo en %1$s</string>
     <string name="lock_locked_for">Bloqueado (%1$s)</string>
     <string name="lock_error_wrong_pin">PIN incorrecto</string>

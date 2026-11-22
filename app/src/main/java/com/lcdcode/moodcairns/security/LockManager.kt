@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.security.GeneralSecurityException
+import javax.crypto.AEADBadTagException
+import javax.crypto.Cipher
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,9 +69,16 @@ class LockManager @Inject constructor(
     private val journalHolder: JournalDatabaseHolder,
     private val migrator: LegacyMigrator,
     private val screenCaptureGate: ScreenCaptureGate,
+    private val bioSlots: BiometricSlots,
+    private val bioKeystore: BiometricKeystore,
 ) {
     private val _state = MutableStateFlow<LockState>(initialState())
     val state: StateFlow<LockState> = _state.asStateFlow()
+
+    private val _biometricOffer = MutableStateFlow(bioSlots.offer())
+
+    /** A pending "turn biometric unlock on?" offer, shown once the app is unlocked. */
+    val biometricOffer: StateFlow<BiometricOffer?> = _biometricOffer.asStateFlow()
 
     private val autoLock = AutoLockPolicy()
 
@@ -98,7 +108,7 @@ class LockManager @Inject constructor(
                 _state.value = LockState.NeedsSetup
                 return@launch
             }
-            finishUnlock(key)
+            finishUnlock(key, fromAuthoritativeCopy = true)
         }
     }
 
@@ -127,25 +137,122 @@ class LockManager @Inject constructor(
     }
 
     /**
-     * Whether biometric unlock can produce a usable DB key right now. False
-     * for installs that just upgraded from a build without encryption; the
-     * first PIN unlock seeds the biometric blob, and it becomes true after.
+     * Whether a hardware-bound biometric enrollment exists. Biometric unlock is a disposable
+     * shortcut: every failure path clears it and falls back to the PIN, which stays the only
+     * authoritative way to the DB key.
      */
-    fun canBiometricUnlock(): Boolean = repo.hasBiometricDbKey()
+    fun canBiometricUnlock(): Boolean = repo.isPinSet() && bioSlots.isEnrolled()
 
     /**
-     * Mirror the biometric-enabled toggle in Settings into the on-disk DB key
-     * blob. Only meaningful while [dbKey] is in memory (i.e. unlocked) — and
-     * Settings is only reachable from the unlocked state, so that's the only
-     * way this is called.
+     * Step 1 of biometric unlock: a decrypt cipher for the BiometricPrompt CryptoObject. A dead
+     * key (biometrics changed, screen lock removed) or a missing or corrupt blob clears the
+     * enrollment; a dead key also queues an [BiometricOffer.INVALIDATED] notice for after the
+     * PIN unlock. Runs Keystore calls, so call it off the main thread.
      */
-    fun onBiometricEnabledChanged(enabled: Boolean) {
-        if (enabled) {
-            val key = dbKey ?: return  // Defensive: nothing to save while locked.
-            if (!repo.hasBiometricDbKey()) repo.saveBiometricDbKey(key)
-        } else {
-            repo.clearBiometricDbKey()
+    fun prepareBiometricUnlock(): BioCipher {
+        val blob = when (val read = bioSlots.loadBlob()) {
+            BlobRead.Absent -> return BioCipher.Missing
+            BlobRead.Corrupt -> {
+                disableBiometric()
+                return BioCipher.Missing
+            }
+            is BlobRead.Present -> read.blob
         }
+        val result = bioKeystore.decryptCipher(blob.iv)
+        when (result) {
+            BioCipher.Invalidated -> {
+                disableBiometric()
+                offerBiometric(BiometricOffer.INVALIDATED)
+            }
+            BioCipher.Missing -> disableBiometric()
+            is BioCipher.Failed, is BioCipher.Ready -> Unit
+        }
+        return result
+    }
+
+    /**
+     * Step 2 of biometric unlock, after the prompt succeeded: decrypts the DB key with the
+     * authenticated [cipher] and unlocks. Returns false to fall back to the PIN. A failed GCM
+     * tag means the blob can never open, so the enrollment is cleared; other Keystore errors
+     * may be transient and leave it in place.
+     */
+    fun unlockWithBiometric(cipher: Cipher): Boolean {
+        val blob = (bioSlots.loadBlob() as? BlobRead.Present)?.blob ?: return false
+        val key = try {
+            cipher.updateAAD(BiometricBlob.AAD)
+            cipher.doFinal(blob.ciphertext)
+        } catch (e: AEADBadTagException) {
+            if (BuildConfig.DEBUG) Log.w(TAG, "biometric blob failed authentication", e)
+            disableBiometric()
+            return false
+        } catch (e: GeneralSecurityException) {
+            if (BuildConfig.DEBUG) Log.w(TAG, "biometric decrypt failed", e)
+            return false
+        }
+        if (key.size != DbKeyCrypto.DB_KEY_BYTES) {
+            key.fill(0)
+            disableBiometric()
+            return false
+        }
+        finishUnlock(key, fromAuthoritativeCopy = false)
+        return true
+    }
+
+    /**
+     * Step 1 of enrollment while unlocked with a PIN: replaces the Keystore key and any old
+     * enrollment, and returns an encrypt cipher for the BiometricPrompt CryptoObject.
+     */
+    fun prepareBiometricEnrollment(): BioCipher {
+        if (dbKey == null || !repo.isPinSet()) return BioCipher.Missing
+        disableBiometric()
+        return bioKeystore.newEncryptCipher()
+    }
+
+    /**
+     * Step 2 of enrollment, after the prompt succeeded: encrypts the in-memory DB key under
+     * the authenticated [cipher] and stores it durably. Returns whether biometric unlock is on.
+     */
+    fun completeBiometricEnrollment(cipher: Cipher): Boolean {
+        val live = dbKey ?: return false
+        if (!repo.isPinSet()) return false
+        val key = live.copyOf()
+        try {
+            val blob = try {
+                val iv = cipher.iv
+                cipher.updateAAD(BiometricBlob.AAD)
+                BiometricBlob(iv, cipher.doFinal(key))
+            } catch (e: GeneralSecurityException) {
+                if (BuildConfig.DEBUG) Log.w(TAG, "biometric enrollment failed", e)
+                return false
+            } catch (e: IllegalArgumentException) {
+                if (BuildConfig.DEBUG) Log.w(TAG, "biometric enrollment gave a malformed blob", e)
+                return false
+            }
+            // A concurrent lockNow zeroes the live key; never enroll a copy taken mid-zeroing.
+            if (dbKey !== live || !live.contentEquals(key)) return false
+            val saved = bioSlots.saveEnrollment(blob)
+            _biometricOffer.value = bioSlots.offer()
+            return saved
+        } finally {
+            key.fill(0)
+        }
+    }
+
+    /** Turns biometric unlock off and deletes its Keystore key. Never touches the PIN wrap. */
+    fun disableBiometric() {
+        bioSlots.clearEnrollment()
+        bioKeystore.deleteKey()
+    }
+
+    /** The user answered the offer (either way), so it is not shown again. */
+    fun dismissBiometricOffer() {
+        bioSlots.clearOffer()
+        _biometricOffer.value = null
+    }
+
+    private fun offerBiometric(offer: BiometricOffer) {
+        bioSlots.setOffer(offer)
+        _biometricOffer.value = offer
     }
 
     fun lockNow() {
@@ -168,23 +275,12 @@ class LockManager @Inject constructor(
     fun completeSetup(pin: CharArray) {
         repo.setPin(pin)
         val key = DbKeyCrypto.newDbKey()
-        val salt = DbKeyCrypto.newSalt()
-        val kek = DbKeyCrypto.deriveKek(pin, salt)
-        val wrapped = DbKeyCrypto.wrap(kek, key)
-        kek.fill(0)
+        savePinWrap(pin, key)
         pin.fill('\u0000')
-        repo.savePinDbKeyWrap(
-            LockRepository.PinDbKeyWrap(
-                iv = wrapped.iv,
-                ciphertext = wrapped.ciphertext,
-                salt = salt,
-                iterations = DbKeyCrypto.DEFAULT_ITERATIONS,
-            ),
-        )
         repo.clearLockoutState()
         dbKey = key
         openDatabases(key)
-        if (repo.biometricEnabled) repo.saveBiometricDbKey(key)
+        offerBiometric(BiometricOffer.SETUP)
         seedNewDatabases()
         _state.value = LockState.Unlocked
     }
@@ -225,7 +321,8 @@ class LockManager @Inject constructor(
             repo.saveNoPinDbKey(key)
             repo.clearPin()
             repo.clearPinDbKeyWrap()
-            repo.clearBiometricDbKey()
+            disableBiometric()
+            dismissBiometricOffer()
             repo.clearLockoutState()
             return ChangePinResult.Success
         } finally {
@@ -259,6 +356,7 @@ class LockManager @Inject constructor(
             )
             repo.clearNoPinDbKey()
             repo.clearLockoutState()
+            offerBiometric(BiometricOffer.SETUP)
             return ChangePinResult.Success
         } finally {
             newPin.fill('\u0000')
@@ -346,77 +444,94 @@ class LockManager @Inject constructor(
     }
 
     fun tryUnlockWithPin(pin: CharArray): PinUnlockResult {
-        val remaining = pinLockoutRemainingMs()
-        if (remaining > 0L) {
-            pin.fill('\u0000')
-            return PinUnlockResult.RateLimited(remaining)
-        }
-        val pinOk = repo.verifyPin(pin)
-        if (!pinOk) {
-            pin.fill('\u0000')
-            val penalty = registerFailedAttempt()
-            return if (penalty > 0L) PinUnlockResult.RateLimited(penalty) else PinUnlockResult.WrongPin
-        }
-        // PIN is good. Either unwrap the existing DB key, or — on first unlock
-        // after an upgrade from a pre-encryption build — synthesise one now.
-        val existing = repo.loadPinDbKeyWrap()
-        val key: ByteArray = if (existing != null) {
-            val kek = DbKeyCrypto.deriveKek(pin, existing.salt, existing.iterations)
-            val unwrapped = DbKeyCrypto.unwrap(
-                kek,
-                DbKeyCrypto.Wrapped(existing.iv, existing.ciphertext),
-            )
-            kek.fill(0)
-            if (unwrapped == null) {
-                // PIN hash matched but wrap can't be opened — file tampering or
-                // a partially-written wrap. Treat as wrong-PIN-equivalent
-                // failure rather than crashing; user can retry.
-                pin.fill('\u0000')
-                return PinUnlockResult.WrongPin
+        try {
+            val remaining = pinLockoutRemainingMs()
+            if (remaining > 0L) return PinUnlockResult.RateLimited(remaining)
+            if (!repo.verifyPin(pin)) {
+                val penalty = registerFailedAttempt()
+                return if (penalty > 0L) {
+                    PinUnlockResult.RateLimited(penalty)
+                } else {
+                    PinUnlockResult.WrongPin
+                }
             }
-            unwrapped
-        } else {
-            val freshKey = DbKeyCrypto.newDbKey()
-            val salt = DbKeyCrypto.newSalt()
-            val kek = DbKeyCrypto.deriveKek(pin, salt)
-            val wrapped = DbKeyCrypto.wrap(kek, freshKey)
-            kek.fill(0)
-            repo.savePinDbKeyWrap(
-                LockRepository.PinDbKeyWrap(
-                    iv = wrapped.iv,
-                    ciphertext = wrapped.ciphertext,
-                    salt = salt,
-                    iterations = DbKeyCrypto.DEFAULT_ITERATIONS,
-                ),
-            )
-            freshKey
+            // A correct PIN without a usable DB key reads as a wrong PIN, as before: nothing
+            // has been written, and the user can retry.
+            val key = dbKeyAfterCorrectPin(pin) ?: return PinUnlockResult.WrongPin
+            finishUnlock(key, fromAuthoritativeCopy = true)
+            return PinUnlockResult.Success
+        } finally {
+            pin.fill('\u0000')
         }
-        pin.fill('\u0000')
-
-        finishUnlock(key)
-        return PinUnlockResult.Success
     }
 
     /**
-     * Biometric quick-unlock. Returns false if no biometric DB key is stored
-     * (e.g. immediately after upgrading from a build without encryption);
-     * caller should fall back to PIN entry.
+     * The DB key after a correct PIN, or null when no key can be used without risking data.
+     * See [pinUnlockKeySource]. An adopted or new key is checked against the existing database
+     * before its PIN wrap is saved, so a key that cannot open the data never becomes
+     * authoritative.
      */
-    fun unlockViaBiometric(): Boolean {
-        val key = repo.loadBiometricDbKey() ?: return false
-        finishUnlock(key)
-        return true
+    private fun dbKeyAfterCorrectPin(pin: CharArray): ByteArray? {
+        val unwrapped = repo.loadPinDbKeyWrap()?.let { unwrapPinWrap(pin, it) }
+        val wrapState = pinWrapState(repo.hasAnyPinDbKeyWrapPart(), unwrapped != null)
+        val legacyKey = bioSlots.loadLegacyKeyForAdoption()
+        val source = pinUnlockKeySource(wrapState, legacyKey != null)
+        if (source != PinKeySource.ADOPT_LEGACY) legacyKey?.fill(0)
+        return when (source) {
+            PinKeySource.UNWRAPPED -> unwrapped
+            PinKeySource.ADOPT_LEGACY -> wrapIfItOpensDatabase(pin, checkNotNull(legacyKey))
+            // Upgrade from a pre-encryption build: no encrypted database exists yet.
+            PinKeySource.FRESH -> wrapIfItOpensDatabase(pin, DbKeyCrypto.newDbKey())
+            PinKeySource.REJECT -> null
+        }
     }
 
-    private fun finishUnlock(key: ByteArray) {
+    private fun unwrapPinWrap(pin: CharArray, wrap: LockRepository.PinDbKeyWrap): ByteArray? {
+        val kek = DbKeyCrypto.deriveKek(pin, wrap.salt, wrap.iterations)
+        return try {
+            DbKeyCrypto.unwrap(kek, DbKeyCrypto.Wrapped(wrap.iv, wrap.ciphertext))
+        } finally {
+            kek.fill(0)
+        }
+    }
+
+    /**
+     * Saves [key] wrapped under [pin], but only if it opens the existing database or there is
+     * none yet. A new key therefore never replaces the key of a database that already exists.
+     */
+    private fun wrapIfItOpensDatabase(pin: CharArray, key: ByteArray): ByteArray? {
+        if (!moodHolder.keyOpensExistingDatabase(key)) {
+            if (BuildConfig.DEBUG) Log.w(TAG, "refused a DB key that does not open the database")
+            key.fill(0)
+            return null
+        }
+        savePinWrap(pin, key)
+        return key
+    }
+
+    private fun savePinWrap(pin: CharArray, key: ByteArray) {
+        val salt = DbKeyCrypto.newSalt()
+        val kek = DbKeyCrypto.deriveKek(pin, salt)
+        val wrapped = DbKeyCrypto.wrap(kek, key)
+        kek.fill(0)
+        repo.savePinDbKeyWrap(
+            LockRepository.PinDbKeyWrap(
+                iv = wrapped.iv,
+                ciphertext = wrapped.ciphertext,
+                salt = salt,
+                iterations = DbKeyCrypto.DEFAULT_ITERATIONS,
+            ),
+        )
+    }
+
+    /**
+     * [fromAuthoritativeCopy] is true when [key] came from the PIN wrap or the no-PIN slot,
+     * which may retire the legacy raw key; a biometric unlock never does.
+     */
+    private fun finishUnlock(key: ByteArray, fromAuthoritativeCopy: Boolean) {
         dbKey = key
         openDatabases(key)
-        // Opportunistically populate the biometric key so the next session can
-        // use the fast path; safe because we hold the DB key in memory now.
-        // Skipped in no-PIN mode, where biometric gates nothing.
-        if (repo.isPinSet() && repo.biometricEnabled && !repo.hasBiometricDbKey()) {
-            repo.saveBiometricDbKey(key)
-        }
+        if (fromAuthoritativeCopy) retireLegacyBiometricKey(key)
         repo.clearLockoutState()
         if (migrator.needed()) {
             _state.value = LockState.Migrating
@@ -433,6 +548,21 @@ class LockManager @Inject constructor(
             }
         } else {
             _state.value = LockState.Unlocked
+        }
+    }
+
+    /**
+     * Removes the raw biometric key of audit #4 once [key] is proven to open the database. If
+     * the check fails the legacy key stays, since it may be the only working copy.
+     */
+    private fun retireLegacyBiometricKey(key: ByteArray) {
+        if (!bioSlots.hasLegacyKey()) return
+        if (!moodHolder.keyOpensExistingDatabase(key)) {
+            if (BuildConfig.DEBUG) Log.w(TAG, "kept the legacy bio key: unlock key unverified")
+            return
+        }
+        if (bioSlots.retireLegacyAfterVerifiedUnlock() == LegacyCleanup.REMOVED) {
+            _biometricOffer.value = bioSlots.offer()
         }
     }
 

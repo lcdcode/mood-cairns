@@ -30,16 +30,22 @@ class LockRepository @Inject constructor(
     }
 
     fun clearPin() = prefs.edit {
-        remove(LockPrefKeys.PIN_HASH); remove(LockPrefKeys.PIN_SALT); remove(LockPrefKeys.PIN_ITERATIONS)
+        remove(LockPrefKeys.PIN_HASH)
+        remove(LockPrefKeys.PIN_SALT)
+        remove(LockPrefKeys.PIN_ITERATIONS)
     }
 
     var timeoutMs: Long
         get() = prefs.getLong(LockPrefKeys.TIMEOUT, DEFAULT_TIMEOUT_MS)
         set(value) = prefs.edit { putLong(LockPrefKeys.TIMEOUT, value) }
 
-    var biometricEnabled: Boolean
-        get() = prefs.getBoolean(LockPrefKeys.BIOMETRIC_ENABLED, true)
-        set(value) = prefs.edit { putBoolean(LockPrefKeys.BIOMETRIC_ENABLED, value) }
+    /**
+     * Whether biometric unlock is turned on. Written only by [BiometricSlots], together with
+     * the enrolled blob. Defaults to off: unlock also requires an enrollment, which installs
+     * from before the hardware-bound key never have.
+     */
+    val biometricEnabled: Boolean
+        get() = prefs.getBoolean(LockPrefKeys.BIOMETRIC_ENABLED, false)
 
     /**
      * Opt-in gate for plaintext exports (e.g. unencrypted CSV). Off by default:
@@ -70,7 +76,8 @@ class LockRepository @Inject constructor(
         set(value) = prefs.edit { putLong(LockPrefKeys.LOCKOUT_UNTIL, value) }
 
     fun clearLockoutState() = prefs.edit {
-        remove(LockPrefKeys.FAILED_ATTEMPTS); remove(LockPrefKeys.LOCKOUT_UNTIL)
+        remove(LockPrefKeys.FAILED_ATTEMPTS)
+        remove(LockPrefKeys.LOCKOUT_UNTIL)
     }
 
     /**
@@ -85,7 +92,8 @@ class LockRepository @Inject constructor(
         val iterations: Int,
     )
 
-    fun savePinDbKeyWrap(wrap: PinDbKeyWrap) = prefs.edit {
+    /** Committed, so the wrap is durable before the caller relies on it. */
+    fun savePinDbKeyWrap(wrap: PinDbKeyWrap) = prefs.edit(commit = true) {
         putString(LockPrefKeys.DBK_PIN_IV, encode(wrap.iv))
         putString(LockPrefKeys.DBK_PIN_CT, encode(wrap.ciphertext))
         putString(LockPrefKeys.DBK_PIN_SALT, encode(wrap.salt))
@@ -124,16 +132,24 @@ class LockRepository @Inject constructor(
 
     fun hasPinDbKeyWrap(): Boolean = prefs.contains(LockPrefKeys.DBK_PIN_IV)
 
+    /**
+     * True if any part of the PIN wrap is stored. A partial wrap means a DB key existed, so it
+     * must never be treated like "no wrap" (which would create a new key over existing data).
+     */
+    fun hasAnyPinDbKeyWrapPart(): Boolean = LockPrefKeys.PIN_WRAP_KEYS.any(prefs::contains)
+
     fun clearPinDbKeyWrap() = prefs.edit {
-        remove(LockPrefKeys.DBK_PIN_IV); remove(LockPrefKeys.DBK_PIN_CT); remove(LockPrefKeys.DBK_PIN_SALT); remove(LockPrefKeys.DBK_PIN_ITER)
+        remove(LockPrefKeys.DBK_PIN_IV)
+        remove(LockPrefKeys.DBK_PIN_CT)
+        remove(LockPrefKeys.DBK_PIN_SALT)
+        remove(LockPrefKeys.DBK_PIN_ITER)
     }
 
     /**
      * Database key stored for the no-PIN mode. The user has opted out of a PIN,
      * so there is no KEK to wrap it under; we keep the raw DB key here, at rest
-     * behind EncryptedSharedPreferences' Keystore master key. This is the same
-     * exposure profile as [saveBiometricDbKey] (an attacker with code execution
-     * in this process can read it), minus the biometric gate. The trade-off is
+     * behind EncryptedSharedPreferences' Keystore master key, so an attacker with
+     * code execution in this process can read it. The trade-off is
      * the explicit, warned-about cost of running without a PIN: there is no user
      * secret protecting an exfiltrated DB + LockPrefs blob.
      */
@@ -146,32 +162,6 @@ class LockRepository @Inject constructor(
     fun hasNoPinDbKey(): Boolean = prefs.contains(LockPrefKeys.DBK_NOPIN)
 
     fun clearNoPinDbKey() = prefs.edit { remove(LockPrefKeys.DBK_NOPIN) }
-
-    /**
-     * Database key stored for the biometric quick-unlock path. EncryptedSharedPrefs
-     * already wraps this under the Android Keystore master key, so it is at rest
-     * behind device-unlock. We store the raw DB key here (rather than another
-     * Keystore-bound wrap) so biometric unlock can short-circuit without
-     * re-deriving a KEK; the security trade-off is that an attacker with code
-     * execution inside this app's process can read it. The PIN path remains the
-     * stronger credential — it's the only thing protecting an exfiltrated DB +
-     * LockPrefs blob.
-     */
-    fun saveBiometricDbKey(dbKey: ByteArray) =
-        prefs.edit { putString(LockPrefKeys.LEGACY_DBK_BIO, encode(dbKey)) }
-
-    fun loadBiometricDbKey(): ByteArray? =
-        prefs.getString(LockPrefKeys.LEGACY_DBK_BIO, null)?.let(::decode)
-
-    fun hasBiometricDbKey(): Boolean = prefs.contains(LockPrefKeys.LEGACY_DBK_BIO)
-
-    fun clearBiometricDbKey() = prefs.edit { remove(LockPrefKeys.LEGACY_DBK_BIO) }
-
-    fun clearAllKeyMaterial() = prefs.edit {
-        remove(LockPrefKeys.DBK_PIN_IV); remove(LockPrefKeys.DBK_PIN_CT); remove(LockPrefKeys.DBK_PIN_SALT); remove(LockPrefKeys.DBK_PIN_ITER)
-        remove(LockPrefKeys.LEGACY_DBK_BIO)
-        remove(LockPrefKeys.DBK_NOPIN)
-    }
 
     private fun encode(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
     private fun decode(s: String) = Base64.decode(s, Base64.NO_WRAP)

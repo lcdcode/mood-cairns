@@ -166,19 +166,11 @@ fun SettingsScreen(
                     )
                 }
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            stringResource(R.string.settings_biometric_unlock),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Switch(
-                            checked = state.biometricEnabled,
-                            onCheckedChange = viewModel::setBiometricEnabled,
-                        )
-                    }
+                    BiometricUnlockRow(
+                        enabled = state.biometricEnabled,
+                        onDisable = viewModel::disableBiometric,
+                        onEnrollmentFinished = viewModel::refresh,
+                    )
                 }
                 item {
                     OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {

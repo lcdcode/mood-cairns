@@ -390,6 +390,13 @@
     <string name="biometric_prompt_title">Mood Cairns entsperren</string>
     <string name="biometric_prompt_subtitle">Authentifiziere dich, um fortzufahren</string>
     <string name="biometric_prompt_use_pin">PIN verwenden</string>
+    <string name="biometric_enroll_prompt_title">Biometrische Entsperrung aktivieren</string>
+    <string name="biometric_enroll_prompt_subtitle">Bestätige, um Mood Cairns mit Biometrie zu entsperren</string>
+    <string name="biometric_offer_title">Biometrische Entsperrung</string>
+    <string name="biometric_offer_body_upgrade">Die biometrische Entsperrung wird jetzt durch die Sicherheitshardware deines Geräts geschützt. Aktiviere sie erneut, um sie weiter zu verwenden.</string>
+    <string name="biometric_offer_body_setup">Mood Cairns mit Biometrie statt mit deiner PIN entsperren? Du kannst das später in den Einstellungen ändern.</string>
+    <string name="biometric_offer_body_invalidated">Die biometrische Entsperrung wurde deaktiviert, weil sich die Biometrie oder die Displaysperre dieses Geräts geändert hat. Falls du das nicht selbst geändert hast, hat möglicherweise jemand anderes Zugriff auf dein Telefon.</string>
+    <string name="biometric_offer_not_now">Nicht jetzt</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Ohne PIN fortfahren?</string>
@@ -412,6 +419,7 @@
     <string name="settings_auto_lock_label">Automatisch sperren im Hintergrund nach:</string>
     <string name="settings_auto_lock_immediate">Sofort</string>
     <string name="settings_biometric_unlock">Biometrische Entsperrung</string>
+    <string name="settings_biometric_unavailable">Richte in den Geräteeinstellungen einen Fingerabdruck oder eine andere starke Biometrie ein, um diese Funktion zu nutzen.</string>
     <string name="settings_change_pin">PIN ändern</string>
     <string name="settings_lock_now">Jetzt sperren</string>
     <string name="settings_set_pin">PIN festlegen</string>
@@ -447,6 +455,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Entsperren</string>
     <string name="lock_use_biometric">Biometrie verwenden</string>
+    <string name="lock_biometric_reset">Die biometrische Entsperrung wurde deaktiviert, weil sich die Biometrie oder die Displaysperre dieses Geräts geändert hat. Gib deine PIN ein.</string>
     <string name="lock_try_again_in">Erneut versuchen in %1$s</string>
     <string name="lock_locked_for">Gesperrt (%1$s)</string>
     <string name="lock_error_wrong_pin">Falsche PIN</string>

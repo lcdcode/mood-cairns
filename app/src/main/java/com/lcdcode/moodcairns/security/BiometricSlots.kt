@@ -66,6 +66,16 @@ enum class PinKeySource {
 }
 
 /**
+ * Classifies the PIN wrap. Any stored part counts as a wrap: a partial one is UNREADABLE,
+ * never ABSENT, because ABSENT allows creating a new DB key.
+ */
+internal fun pinWrapState(hasAnyWrapPart: Boolean, unwrapped: Boolean): PinWrapState = when {
+    unwrapped -> PinWrapState.OPENED
+    hasAnyWrapPart -> PinWrapState.UNREADABLE
+    else -> PinWrapState.ABSENT
+}
+
+/**
  * Chooses the DB key source after a correct PIN. Never FRESH while a legacy key exists or a
  * wrap is stored, because a new key over existing encrypted data makes it unreadable.
  */

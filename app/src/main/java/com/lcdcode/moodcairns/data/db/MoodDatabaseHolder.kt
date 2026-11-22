@@ -50,6 +50,16 @@ class MoodDatabaseHolder @Inject constructor(
 
     fun isOpen(): Boolean = db != null
 
+    /**
+     * Whether [dbKey] opens the existing database file; true when there is no file yet, since
+     * then there is nothing to lose. [open] is lazy and proves nothing about the key, so call
+     * this before deleting or persisting anything that depends on the key being right.
+     */
+    fun keyOpensExistingDatabase(dbKey: ByteArray): Boolean {
+        val file = context.getDatabasePath(MoodDatabase.NAME)
+        return !file.exists() || SqlCipherKeyCheck.opens(file, dbKey)
+    }
+
     fun scaleDao(): ScaleDao = requireDb().scaleDao()
     fun entryDao(): EntryDao = requireDb().entryDao()
     fun tagDao(): TagDao = requireDb().tagDao()

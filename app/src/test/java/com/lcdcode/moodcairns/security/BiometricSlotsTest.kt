@@ -202,6 +202,24 @@ class BiometricSlotsTest {
         }
     }
 
+    // --- PIN wrap state -------------------------------------------------------------------------
+
+    @Test
+    fun `PIN wrap state truth table`() {
+        assertEquals(PinWrapState.OPENED, pinWrapState(hasAnyWrapPart = true, unwrapped = true))
+        assertEquals(
+            PinWrapState.UNREADABLE,
+            pinWrapState(hasAnyWrapPart = true, unwrapped = false),
+        )
+        assertEquals(PinWrapState.ABSENT, pinWrapState(hasAnyWrapPart = false, unwrapped = false))
+    }
+
+    @Test
+    fun `a partial PIN wrap never allows a new DB key`() {
+        val state = pinWrapState(hasAnyWrapPart = true, unwrapped = false)
+        assertTrue(pinUnlockKeySource(state, hasLegacyBioKey = false) != PinKeySource.FRESH)
+    }
+
     // --- PIN key source ------------------------------------------------------------------------
 
     @Test
