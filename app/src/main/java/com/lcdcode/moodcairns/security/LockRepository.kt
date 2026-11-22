@@ -11,35 +11,35 @@ import javax.inject.Singleton
 class LockRepository @Inject constructor(
     @LockPrefs private val prefs: SharedPreferences,
 ) {
-    fun isPinSet(): Boolean = prefs.contains(KEY_HASH)
+    fun isPinSet(): Boolean = prefs.contains(LockPrefKeys.PIN_HASH)
 
     fun setPin(pin: CharArray) {
         val hashed = PinHasher.hash(pin)
         prefs.edit {
-            putString(KEY_HASH, encode(hashed.hash))
-            putString(KEY_SALT, encode(hashed.salt))
-            putInt(KEY_ITERATIONS, hashed.iterations)
+            putString(LockPrefKeys.PIN_HASH, encode(hashed.hash))
+            putString(LockPrefKeys.PIN_SALT, encode(hashed.salt))
+            putInt(LockPrefKeys.PIN_ITERATIONS, hashed.iterations)
         }
     }
 
     fun verifyPin(pin: CharArray): Boolean {
-        val hash = prefs.getString(KEY_HASH, null)?.let(::decode) ?: return false
-        val salt = prefs.getString(KEY_SALT, null)?.let(::decode) ?: return false
-        val iter = prefs.getInt(KEY_ITERATIONS, 0).takeIf { it > 0 } ?: return false
+        val hash = prefs.getString(LockPrefKeys.PIN_HASH, null)?.let(::decode) ?: return false
+        val salt = prefs.getString(LockPrefKeys.PIN_SALT, null)?.let(::decode) ?: return false
+        val iter = prefs.getInt(LockPrefKeys.PIN_ITERATIONS, 0).takeIf { it > 0 } ?: return false
         return PinHasher.verify(pin, PinHasher.Hashed(hash, salt, iter))
     }
 
     fun clearPin() = prefs.edit {
-        remove(KEY_HASH); remove(KEY_SALT); remove(KEY_ITERATIONS)
+        remove(LockPrefKeys.PIN_HASH); remove(LockPrefKeys.PIN_SALT); remove(LockPrefKeys.PIN_ITERATIONS)
     }
 
     var timeoutMs: Long
-        get() = prefs.getLong(KEY_TIMEOUT, DEFAULT_TIMEOUT_MS)
-        set(value) = prefs.edit { putLong(KEY_TIMEOUT, value) }
+        get() = prefs.getLong(LockPrefKeys.TIMEOUT, DEFAULT_TIMEOUT_MS)
+        set(value) = prefs.edit { putLong(LockPrefKeys.TIMEOUT, value) }
 
     var biometricEnabled: Boolean
-        get() = prefs.getBoolean(KEY_BIOMETRIC, true)
-        set(value) = prefs.edit { putBoolean(KEY_BIOMETRIC, value) }
+        get() = prefs.getBoolean(LockPrefKeys.BIOMETRIC_ENABLED, true)
+        set(value) = prefs.edit { putBoolean(LockPrefKeys.BIOMETRIC_ENABLED, value) }
 
     /**
      * Opt-in gate for plaintext exports (e.g. unencrypted CSV). Off by default:
@@ -48,16 +48,16 @@ class LockRepository @Inject constructor(
      * it before that option appears.
      */
     var allowUnsafeExports: Boolean
-        get() = prefs.getBoolean(KEY_ALLOW_UNSAFE_EXPORTS, false)
-        set(value) = prefs.edit { putBoolean(KEY_ALLOW_UNSAFE_EXPORTS, value) }
+        get() = prefs.getBoolean(LockPrefKeys.ALLOW_UNSAFE_EXPORTS, false)
+        set(value) = prefs.edit { putBoolean(LockPrefKeys.ALLOW_UNSAFE_EXPORTS, value) }
 
     /**
      * Number of consecutive failed PIN attempts since the last successful unlock.
      * Persisted so a process restart can't reset the counter.
      */
     var failedAttempts: Int
-        get() = prefs.getInt(KEY_FAILED_ATTEMPTS, 0)
-        set(value) = prefs.edit { putInt(KEY_FAILED_ATTEMPTS, value) }
+        get() = prefs.getInt(LockPrefKeys.FAILED_ATTEMPTS, 0)
+        set(value) = prefs.edit { putInt(LockPrefKeys.FAILED_ATTEMPTS, value) }
 
     /**
      * Wall-clock instant before which PIN attempts are rejected without
@@ -66,11 +66,11 @@ class LockRepository @Inject constructor(
      * which on a locked device requires authenticating to OS Settings first.
      */
     var lockoutUntilMs: Long
-        get() = prefs.getLong(KEY_LOCKOUT_UNTIL, 0L)
-        set(value) = prefs.edit { putLong(KEY_LOCKOUT_UNTIL, value) }
+        get() = prefs.getLong(LockPrefKeys.LOCKOUT_UNTIL, 0L)
+        set(value) = prefs.edit { putLong(LockPrefKeys.LOCKOUT_UNTIL, value) }
 
     fun clearLockoutState() = prefs.edit {
-        remove(KEY_FAILED_ATTEMPTS); remove(KEY_LOCKOUT_UNTIL)
+        remove(LockPrefKeys.FAILED_ATTEMPTS); remove(LockPrefKeys.LOCKOUT_UNTIL)
     }
 
     /**
@@ -86,10 +86,10 @@ class LockRepository @Inject constructor(
     )
 
     fun savePinDbKeyWrap(wrap: PinDbKeyWrap) = prefs.edit {
-        putString(KEY_DBK_IV, encode(wrap.iv))
-        putString(KEY_DBK_CT, encode(wrap.ciphertext))
-        putString(KEY_DBK_SALT, encode(wrap.salt))
-        putInt(KEY_DBK_ITER, wrap.iterations)
+        putString(LockPrefKeys.DBK_PIN_IV, encode(wrap.iv))
+        putString(LockPrefKeys.DBK_PIN_CT, encode(wrap.ciphertext))
+        putString(LockPrefKeys.DBK_PIN_SALT, encode(wrap.salt))
+        putInt(LockPrefKeys.DBK_PIN_ITER, wrap.iterations)
     }
 
     /**
@@ -104,28 +104,28 @@ class LockRepository @Inject constructor(
     fun setPinAndDbKeyWrap(pin: CharArray, wrap: PinDbKeyWrap) {
         val hashed = PinHasher.hash(pin)
         prefs.edit(commit = true) {
-            putString(KEY_HASH, encode(hashed.hash))
-            putString(KEY_SALT, encode(hashed.salt))
-            putInt(KEY_ITERATIONS, hashed.iterations)
-            putString(KEY_DBK_IV, encode(wrap.iv))
-            putString(KEY_DBK_CT, encode(wrap.ciphertext))
-            putString(KEY_DBK_SALT, encode(wrap.salt))
-            putInt(KEY_DBK_ITER, wrap.iterations)
+            putString(LockPrefKeys.PIN_HASH, encode(hashed.hash))
+            putString(LockPrefKeys.PIN_SALT, encode(hashed.salt))
+            putInt(LockPrefKeys.PIN_ITERATIONS, hashed.iterations)
+            putString(LockPrefKeys.DBK_PIN_IV, encode(wrap.iv))
+            putString(LockPrefKeys.DBK_PIN_CT, encode(wrap.ciphertext))
+            putString(LockPrefKeys.DBK_PIN_SALT, encode(wrap.salt))
+            putInt(LockPrefKeys.DBK_PIN_ITER, wrap.iterations)
         }
     }
 
     fun loadPinDbKeyWrap(): PinDbKeyWrap? {
-        val iv = prefs.getString(KEY_DBK_IV, null)?.let(::decode) ?: return null
-        val ct = prefs.getString(KEY_DBK_CT, null)?.let(::decode) ?: return null
-        val salt = prefs.getString(KEY_DBK_SALT, null)?.let(::decode) ?: return null
-        val iter = prefs.getInt(KEY_DBK_ITER, 0).takeIf { it > 0 } ?: return null
+        val iv = prefs.getString(LockPrefKeys.DBK_PIN_IV, null)?.let(::decode) ?: return null
+        val ct = prefs.getString(LockPrefKeys.DBK_PIN_CT, null)?.let(::decode) ?: return null
+        val salt = prefs.getString(LockPrefKeys.DBK_PIN_SALT, null)?.let(::decode) ?: return null
+        val iter = prefs.getInt(LockPrefKeys.DBK_PIN_ITER, 0).takeIf { it > 0 } ?: return null
         return PinDbKeyWrap(iv, ct, salt, iter)
     }
 
-    fun hasPinDbKeyWrap(): Boolean = prefs.contains(KEY_DBK_IV)
+    fun hasPinDbKeyWrap(): Boolean = prefs.contains(LockPrefKeys.DBK_PIN_IV)
 
     fun clearPinDbKeyWrap() = prefs.edit {
-        remove(KEY_DBK_IV); remove(KEY_DBK_CT); remove(KEY_DBK_SALT); remove(KEY_DBK_ITER)
+        remove(LockPrefKeys.DBK_PIN_IV); remove(LockPrefKeys.DBK_PIN_CT); remove(LockPrefKeys.DBK_PIN_SALT); remove(LockPrefKeys.DBK_PIN_ITER)
     }
 
     /**
@@ -138,14 +138,14 @@ class LockRepository @Inject constructor(
      * secret protecting an exfiltrated DB + LockPrefs blob.
      */
     fun saveNoPinDbKey(dbKey: ByteArray) =
-        prefs.edit { putString(KEY_NOPIN_DBK, encode(dbKey)) }
+        prefs.edit { putString(LockPrefKeys.DBK_NOPIN, encode(dbKey)) }
 
     fun loadNoPinDbKey(): ByteArray? =
-        prefs.getString(KEY_NOPIN_DBK, null)?.let(::decode)
+        prefs.getString(LockPrefKeys.DBK_NOPIN, null)?.let(::decode)
 
-    fun hasNoPinDbKey(): Boolean = prefs.contains(KEY_NOPIN_DBK)
+    fun hasNoPinDbKey(): Boolean = prefs.contains(LockPrefKeys.DBK_NOPIN)
 
-    fun clearNoPinDbKey() = prefs.edit { remove(KEY_NOPIN_DBK) }
+    fun clearNoPinDbKey() = prefs.edit { remove(LockPrefKeys.DBK_NOPIN) }
 
     /**
      * Database key stored for the biometric quick-unlock path. EncryptedSharedPrefs
@@ -158,39 +158,25 @@ class LockRepository @Inject constructor(
      * LockPrefs blob.
      */
     fun saveBiometricDbKey(dbKey: ByteArray) =
-        prefs.edit { putString(KEY_BIO_DBK, encode(dbKey)) }
+        prefs.edit { putString(LockPrefKeys.LEGACY_DBK_BIO, encode(dbKey)) }
 
     fun loadBiometricDbKey(): ByteArray? =
-        prefs.getString(KEY_BIO_DBK, null)?.let(::decode)
+        prefs.getString(LockPrefKeys.LEGACY_DBK_BIO, null)?.let(::decode)
 
-    fun hasBiometricDbKey(): Boolean = prefs.contains(KEY_BIO_DBK)
+    fun hasBiometricDbKey(): Boolean = prefs.contains(LockPrefKeys.LEGACY_DBK_BIO)
 
-    fun clearBiometricDbKey() = prefs.edit { remove(KEY_BIO_DBK) }
+    fun clearBiometricDbKey() = prefs.edit { remove(LockPrefKeys.LEGACY_DBK_BIO) }
 
     fun clearAllKeyMaterial() = prefs.edit {
-        remove(KEY_DBK_IV); remove(KEY_DBK_CT); remove(KEY_DBK_SALT); remove(KEY_DBK_ITER)
-        remove(KEY_BIO_DBK)
-        remove(KEY_NOPIN_DBK)
+        remove(LockPrefKeys.DBK_PIN_IV); remove(LockPrefKeys.DBK_PIN_CT); remove(LockPrefKeys.DBK_PIN_SALT); remove(LockPrefKeys.DBK_PIN_ITER)
+        remove(LockPrefKeys.LEGACY_DBK_BIO)
+        remove(LockPrefKeys.DBK_NOPIN)
     }
 
     private fun encode(b: ByteArray) = Base64.encodeToString(b, Base64.NO_WRAP)
     private fun decode(s: String) = Base64.decode(s, Base64.NO_WRAP)
 
     companion object {
-        private const val KEY_HASH = "pin_hash"
-        private const val KEY_SALT = "pin_salt"
-        private const val KEY_ITERATIONS = "pin_iterations"
-        private const val KEY_TIMEOUT = "lock_timeout_ms"
-        private const val KEY_BIOMETRIC = "biometric_enabled"
-        private const val KEY_ALLOW_UNSAFE_EXPORTS = "allow_unsafe_exports"
-        private const val KEY_FAILED_ATTEMPTS = "pin_failed_attempts"
-        private const val KEY_LOCKOUT_UNTIL = "pin_lockout_until_ms"
-        private const val KEY_DBK_IV = "dbk_pin_iv"
-        private const val KEY_DBK_CT = "dbk_pin_ct"
-        private const val KEY_DBK_SALT = "dbk_pin_salt"
-        private const val KEY_DBK_ITER = "dbk_pin_iter"
-        private const val KEY_BIO_DBK = "dbk_bio"
-        private const val KEY_NOPIN_DBK = "dbk_nopin"
         const val DEFAULT_TIMEOUT_MS: Long = 60_000L
     }
 }
