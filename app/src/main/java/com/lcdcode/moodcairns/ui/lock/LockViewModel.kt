@@ -45,16 +45,11 @@ class LockViewModel @Inject constructor(
 
     private var countdownJob: Job? = null
 
-    init {
-        // Restore any in-progress lockout from a prior process death.
-        val initial = lockManager.pinLockoutRemainingMs()
-        if (initial > 0L) startCountdown(initial)
-    }
-
     /**
      * Call each time the lock screen is shown. This ViewModel is scoped to the activity and
-     * outlives every lock/unlock cycle, while the enrollment can change in between (Settings,
-     * invalidation), so biometric availability must be re-read on every showing.
+     * outlives every lock/unlock cycle, while the enrollment and the PIN lockout can change in
+     * between (Settings, invalidation, a PIN check elsewhere, process death), so both are
+     * re-read on every showing.
      */
     fun onShown() {
         _ui.update {
@@ -62,6 +57,18 @@ class LockViewModel @Inject constructor(
                 biometricAvailable = lockManager.canBiometricUnlock(),
                 biometricReset = lockManager.biometricOffer.value == BiometricOffer.INVALIDATED,
             )
+        }
+        syncLockout()
+    }
+
+    /** Mirrors the persisted lockout, which is shared with every other PIN check. */
+    private fun syncLockout() {
+        val remaining = lockManager.pinLockoutRemainingMs()
+        if (remaining > 0L) {
+            startCountdown(remaining)
+        } else if (_ui.value.lockoutRemainingMs != null) {
+            countdownJob?.cancel()
+            _ui.update { it.copy(lockoutRemainingMs = null, error = null) }
         }
     }
 
