@@ -1,11 +1,15 @@
 package com.lcdcode.moodcairns.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -35,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
@@ -196,12 +201,23 @@ private fun TimePickerDialog(
 ) {
     // is24Hour defaults to the device's 12/24-hour setting.
     val state = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute)
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        // Platform default width is narrower than the landscape (horizontal) picker,
+        // which squeezes the clock dial.
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
         Surface(
+            // Shrink-wrap to the picker so the fillMaxWidth button row can't widen the dialog.
+            modifier = Modifier.width(IntrinsicSize.Min),
             shape = MaterialTheme.shapes.extraLarge,
             tonalElevation = 6.dp,
         ) {
-            Column(modifier = Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                // Scroll rather than squeeze the dial on short landscape screens.
+                modifier = Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 Text(
                     stringResource(R.string.window_edit_select_time),
                     style = MaterialTheme.typography.titleMedium,
