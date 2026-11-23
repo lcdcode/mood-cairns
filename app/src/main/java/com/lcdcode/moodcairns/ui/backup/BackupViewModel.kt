@@ -23,6 +23,7 @@ import com.lcdcode.moodcairns.backup.JournalMarkdown
 import com.lcdcode.moodcairns.backup.JournalMarkdownExporter
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.settings.BackupReminder
 import com.lcdcode.moodcairns.settings.JournalSettings
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,6 +77,7 @@ class BackupViewModel @Inject constructor(
     private val markdownExporter: JournalMarkdownExporter,
     private val lockManager: LockManager,
     private val lockRepo: LockRepository,
+    private val backupReminder: BackupReminder,
     journalSettings: JournalSettings,
 ) : ViewModel() {
 
@@ -316,6 +318,7 @@ class BackupViewModel @Inject constructor(
                         name to R.string.backup_journal_export_success
                     }
                 }
+                backupReminder.postpone()
                 UiText.Res(success, listOf(name))
             }
         } catch (e: BackupTooLargeException) {

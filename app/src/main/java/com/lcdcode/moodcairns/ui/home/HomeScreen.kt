@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +30,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 
 private val ScreenPadding = 16.dp
 private val ButtonSpacing = 12.dp
+private val CardPadding = 16.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +54,12 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val journalEnabled by viewModel.journalEnabled.collectAsStateWithLifecycle()
+    val backupReminderDue by viewModel.backupReminderDue.collectAsStateWithLifecycle()
+    // The app can sit in the background for days; re-check the reminder on every resume.
+    LifecycleResumeEffect(Unit) {
+        viewModel.refreshBackupReminder()
+        onPauseOrDispose {}
+    }
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
     ) { padding ->
@@ -61,6 +70,12 @@ fun HomeScreen(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(ButtonSpacing),
             ) {
+                if (backupReminderDue) {
+                    BackupReminderCard(
+                        onOpen = onBackup,
+                        onDismiss = viewModel::dismissBackupReminder,
+                    )
+                }
                 Text(
                     stringResource(R.string.home_tagline),
                     style = MaterialTheme.typography.bodyLarge,
@@ -101,6 +116,26 @@ fun HomeScreen(
             }
             TextButton(onClick = onAbout, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(stringResource(R.string.home_about))
+            }
+        }
+    }
+}
+
+/** Tapping the card opens Backup without resetting the reminder; only Dismiss or a backup does. */
+@Composable
+private fun BackupReminderCard(onOpen: () -> Unit, onDismiss: () -> Unit) {
+    Card(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(start = CardPadding, top = CardPadding, end = CardPadding)) {
+            Text(
+                stringResource(R.string.home_backup_reminder_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                stringResource(R.string.home_backup_reminder_body),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) {
+                Text(stringResource(R.string.home_backup_reminder_dismiss))
             }
         }
     }

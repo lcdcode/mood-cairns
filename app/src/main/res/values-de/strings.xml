@@ -124,6 +124,9 @@
     <string name="home_tags">Tags verwalten</string>
     <string name="home_settings">Einstellungen</string>
     <string name="home_about">Über</string>
+    <string name="home_backup_reminder_title">Freundliche Erinnerung an deine Sicherung</string>
+    <string name="home_backup_reminder_body">Sicherungen werden unter Documents/MoodCairns auf diesem Telefon gespeichert. Kopiere sie an einen anderen Ort, damit sie den Verlust des Telefons überstehen. Tippe, um Sicherung &amp; Import zu öffnen.</string>
+    <string name="home_backup_reminder_dismiss">Ausblenden</string>
 
     <!-- Tagebuch-Editor -->
     <string name="journal_placeholder">Schreib über deinen Tag…</string>
@@ -438,6 +441,8 @@
         <item quantity="other">Erlaubt Screenshots und Bildschirmaufnahmen vorübergehend für %1$d Minuten. Der Sperrbildschirm bleibt geschützt. Standardmäßig deaktiviert.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Erlaubt bis %1$s</string>
+    <string name="settings_backup_reminder">Sicherungserinnerungen</string>
+    <string name="settings_backup_reminder_summary">Zeigt alle zwei Wochen auf dem Startbildschirm eine Erinnerung, deine Daten zu sichern. Standardmäßig aktiviert.</string>
     <string name="settings_screenshots_dialog_title">Screenshots erlauben?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">In der nächsten %1$d Minute können Screenshots, Bildschirmaufnahmen, Bildschirmübertragung und die Vorschau der zuletzt verwendeten Apps alles erfassen, was angezeigt wird, auch deine Einträge. Screenshots werden im gemeinsamen Speicher abgelegt, wo Cloud-Sicherungsdienste und andere Apps sie lesen können.\n\nScreenshots werden nach %1$d Minute oder beim Sperren der App automatisch wieder blockiert.</item>

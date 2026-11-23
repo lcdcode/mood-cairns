@@ -130,6 +130,9 @@
     <string name="home_tags">Управление тегами</string>
     <string name="home_settings">Настройки</string>
     <string name="home_about">О приложении</string>
+    <string name="home_backup_reminder_title">Дружеское напоминание о резервной копии</string>
+    <string name="home_backup_reminder_body">Копии сохраняются в Documents/MoodCairns на этом телефоне. Скопируйте их в другое место, чтобы не потерять их вместе с телефоном. Нажмите, чтобы открыть «Резервные копии и импорт».</string>
+    <string name="home_backup_reminder_dismiss">Скрыть</string>
 
     <!-- Редактор дневника -->
     <string name="journal_placeholder">Напишите о своём дне…</string>
@@ -458,6 +461,8 @@
         <item quantity="other">Временно разрешает скриншоты и запись экрана на %1$d минуты. Экран блокировки остаётся защищённым. По умолчанию выключено.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Разрешено до %1$s</string>
+    <string name="settings_backup_reminder">Напоминания о резервных копиях</string>
+    <string name="settings_backup_reminder_summary">Раз в две недели показывает на главном экране напоминание сделать резервную копию данных. По умолчанию включено.</string>
     <string name="settings_screenshots_dialog_title">Разрешить скриншоты?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">На следующую %1$d минуту скриншоты, запись экрана, трансляция и превью в списке недавних приложений смогут захватить всё, что показано на экране, включая ваши записи. Скриншоты сохраняются в общем хранилище, где их могут прочитать облачные сервисы и другие приложения.\n\nСкриншоты снова будут заблокированы автоматически через %1$d минуту или при блокировке приложения.</item>

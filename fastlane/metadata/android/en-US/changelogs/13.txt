@@ -1,2 +1,4 @@
+New Features:
+- A friendly reminder on the Home screen every two weeks to back up your data (can be turned off in Settings)
 Improvements:
 - Biometric unlock is now protected by your device's secure hardware. After updating, enter your PIN once, then turn biometric unlock back on when asked.

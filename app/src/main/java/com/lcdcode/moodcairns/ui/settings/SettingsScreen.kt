@@ -277,6 +277,29 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.settings_backup_reminder),
+                        modifier = Modifier.weight(1f),
+                    )
+                    // Losing a reminder loses no data, so no confirmation either way.
+                    Switch(
+                        checked = state.backupReminderEnabled,
+                        onCheckedChange = viewModel::setBackupReminderEnabled,
+                    )
+                }
+            }
+            item {
+                Text(
+                    stringResource(R.string.settings_backup_reminder_summary),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader(stringResource(R.string.settings_section_diagnostics)) }

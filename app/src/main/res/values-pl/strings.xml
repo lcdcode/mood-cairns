@@ -136,6 +136,9 @@
     <string name="home_tags">Zarządzaj tagami</string>
     <string name="home_settings">Ustawienia</string>
     <string name="home_about">O aplikacji</string>
+    <string name="home_backup_reminder_title">Przyjazne przypomnienie o kopii zapasowej</string>
+    <string name="home_backup_reminder_body">Kopie są zapisywane w Documents/MoodCairns na tym telefonie. Skopiuj je w inne miejsce, aby przetrwały utratę telefonu. Dotknij, aby otworzyć Kopia zapasowa i import.</string>
+    <string name="home_backup_reminder_dismiss">Odrzuć</string>
 
     <!-- Edytor dziennika -->
     <string name="journal_placeholder">Napisz o swoim dniu…</string>
@@ -481,6 +484,8 @@
         <item quantity="other">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minuty. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Dozwolone do %1$s</string>
+    <string name="settings_backup_reminder">Przypomnienia o kopii zapasowej</string>
+    <string name="settings_backup_reminder_summary">Co dwa tygodnie wyświetla na ekranie głównym przypomnienie o utworzeniu kopii zapasowej danych. Domyślnie włączone.</string>
     <string name="settings_screenshots_dialog_title">Zezwolić na zrzuty ekranu?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">Przez następną %1$d minutę zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minucie lub po zablokowaniu aplikacji.</item>

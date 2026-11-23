@@ -136,6 +136,9 @@
     <string name="home_tags">Керування тегами</string>
     <string name="home_settings">Налаштування</string>
     <string name="home_about">Про застосунок</string>
+    <string name="home_backup_reminder_title">Дружнє нагадування про резервну копію</string>
+    <string name="home_backup_reminder_body">Копії зберігаються в Documents/MoodCairns на цьому телефоні. Скопіюйте їх в інше місце, щоб не втратити разом із телефоном. Торкніться, щоб відкрити «Резервні копії та імпорт».</string>
+    <string name="home_backup_reminder_dismiss">Приховати</string>
 
     <!-- Редактор щоденника -->
     <string name="journal_placeholder">Напишіть про свій день…</string>
@@ -480,6 +483,8 @@
         <item quantity="other">Тимчасово дозволяє знімки й запис екрана на %1$d хвилини. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Дозволено до %1$s</string>
+    <string name="settings_backup_reminder">Нагадування про резервні копії</string>
+    <string name="settings_backup_reminder_summary">Раз на два тижні показує на головному екрані нагадування зробити резервну копію даних. За замовчуванням увімкнено.</string>
     <string name="settings_screenshots_dialog_title">Дозволити знімки екрана?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">На наступну %1$d хвилину знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилину або під час блокування застосунку.</item>
