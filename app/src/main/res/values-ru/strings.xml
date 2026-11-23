@@ -130,7 +130,7 @@
     <string name="home_tags">Управление тегами</string>
     <string name="home_settings">Настройки</string>
     <string name="home_about">О приложении</string>
-    <string name="home_backup_reminder_title">Дружеское напоминание о резервной копии</string>
+    <string name="home_backup_reminder_title">Дружеское напоминание сделать резервную копию</string>
     <string name="home_backup_reminder_body">Копии сохраняются в Documents/MoodCairns на этом телефоне. Скопируйте их в другое место, чтобы не потерять их вместе с телефоном. Нажмите, чтобы открыть «Резервные копии и импорт».</string>
     <string name="home_backup_reminder_dismiss">Скрыть</string>
 
@@ -280,7 +280,7 @@
     <string name="window_edit_enabled">Включено</string>
     <string name="window_edit_select_time">Выберите время</string>
     <!-- Backup screen -->
-    <string name="backup_title">Резервное копирование</string>
+    <string name="backup_title">Резервные копии и импорт</string>
     <string name="backup_intro">Резервные копии шифруются по стандарту AES-GCM с помощью выбранного вами пароля и сохраняются в папку Documents/MoodCairns. Для синхронизации данных на другие устройства можно использовать Syncthing или любой файловый менеджер; само приложение ничего в сеть не загружает.</string>
     <string name="backup_export_mood">Экспортировать данные настроения</string>
     <string name="backup_export_csv">Экспорт в CSV (без шифрования)</string>
@@ -450,7 +450,7 @@
     <string name="settings_journal_enabled_summary">Добавляет личный дневник: одна страница на каждый день. Отключение только скрывает дневник, всё написанное сохраняется.</string>
     <string name="settings_section_danger_zone">Опасная зона</string>
     <string name="settings_allow_unsafe_exports">Разрешить небезопасный экспорт</string>
-    <string name="settings_unsafe_exports_summary_plaintext">Включает незашифрованный экспорт в разделе «Резервное копирование»: CSV-файл с записями и файлы Markdown с дневником. По умолчанию выключено.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Включает незашифрованный экспорт в разделе «Резервные копии и импорт»: CSV-файл с записями и файлы Markdown с дневником. По умолчанию выключено.</string>
     <string name="settings_unsafe_exports_dialog_title">Разрешить небезопасный экспорт?</string>
     <string name="settings_unsafe_exports_dialog_body_plaintext">Появится возможность экспортировать записи в незашифрованный CSV-файл, а дневник в незашифрованные файлы Markdown. Эти файлы содержат обычный текст и не защищены паролем: любые программы с доступом к хранилищу (облачные диски, файловые менеджеры) смогут прочесть ваши записи и страницы дневника.\n\nВключайте эту функцию, только если полностью понимаете и принимаете этот риск.</string>
     <string name="settings_allow_screenshots">Разрешить скриншоты</string>
@@ -577,12 +577,12 @@
     <string name="backup_journal_section">Дневник</string>
     <string name="backup_journal_intro">Дневник сохраняется отдельно от данных о настроении, в собственном зашифрованном файле. Восстановление заменяет все страницы дневника и никогда не затрагивает данные о настроении.</string>
     <string name="backup_journal_export">Экспортировать дневник</string>
-    <string name="backup_journal_import">Восстановить дневник (заменяет все страницы)</string>
+    <string name="backup_journal_import">Восстановить дневник (заменит все страницы)</string>
     <string name="backup_journal_encrypt_title">Зашифровать копию дневника</string>
     <string name="backup_journal_encrypt_body">Придумайте пароль для шифрования этой копии дневника. Он понадобится для восстановления, даже после переустановки. Это не PIN-код приложения, и его нельзя восстановить, если вы его забудете.</string>
     <string name="backup_journal_decrypt_title">Восстановить дневник</string>
     <string name="backup_journal_decrypt_body">Восстановление заменит все страницы дневника страницами из этой копии. Данные о настроении не изменятся. Введите пароль, которым она зашифрована.</string>
-    <string name="backup_journal_export_success">Дневник сохранён: %1$s</string>
+    <string name="backup_journal_export_success">Дневник экспортирован: %1$s</string>
     <string name="backup_journal_import_failed">Не удалось восстановить дневник: %1$s</string>
     <string name="backup_journal_label">Дневник</string>
     <string name="backup_journal_markdown_warning">Экспорт в Markdown содержит обычный текст и НЕ защищен шифрованием. Любые программы с доступом к вашей папке Documents (облачные диски, файловые менеджеры) смогут прочесть ваш дневник. Чтобы скрыть эти кнопки, отключите небезопасный экспорт в настройках.</string>

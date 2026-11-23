@@ -177,9 +177,9 @@
     <string name="journal_format_numbered_list">Numbered list</string>
     <string name="journal_format_quote">Quote</string>
     <string name="journal_format_code">Code</string>
-    <!-- journal_table_column is placeholder header text in a table inserted into the user's page; %1$d is the column number (1, 2, ...). -->
     <string name="journal_format_checklist">Checklist</string>
     <string name="journal_format_table">Insert table</string>
+    <!-- journal_table_column is placeholder header text in a table inserted into the user's page; %1$d is the column number (1, 2, ...). -->
     <string name="journal_table_column">Column %1$d</string>
 
     <!-- Journal history. journal_history_title is also the Home screen button label. -->

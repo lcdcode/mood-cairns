@@ -124,7 +124,7 @@
     <string name="home_tags">Tags verwalten</string>
     <string name="home_settings">Einstellungen</string>
     <string name="home_about">Über</string>
-    <string name="home_backup_reminder_title">Freundliche Erinnerung an deine Sicherung</string>
+    <string name="home_backup_reminder_title">Freundliche Erinnerung, deine Daten zu sichern</string>
     <string name="home_backup_reminder_body">Sicherungen werden unter Documents/MoodCairns auf diesem Telefon gespeichert. Kopiere sie an einen anderen Ort, damit sie den Verlust des Telefons überstehen. Tippe, um Sicherung &amp; Import zu öffnen.</string>
     <string name="home_backup_reminder_dismiss">Ausblenden</string>
 

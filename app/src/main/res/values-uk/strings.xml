@@ -136,7 +136,7 @@
     <string name="home_tags">Керування тегами</string>
     <string name="home_settings">Налаштування</string>
     <string name="home_about">Про застосунок</string>
-    <string name="home_backup_reminder_title">Дружнє нагадування про резервну копію</string>
+    <string name="home_backup_reminder_title">Дружнє нагадування зробити резервну копію</string>
     <string name="home_backup_reminder_body">Копії зберігаються в Documents/MoodCairns на цьому телефоні. Скопіюйте їх в інше місце, щоб не втратити разом із телефоном. Торкніться, щоб відкрити «Резервні копії та імпорт».</string>
     <string name="home_backup_reminder_dismiss">Приховати</string>
 
@@ -607,7 +607,7 @@
     <string name="backup_journal_section">Щоденник</string>
     <string name="backup_journal_intro">Щоденник зберігається окремо від даних про настрій, у власному зашифрованому файлі. Відновлення замінює всі сторінки щоденника й ніколи не змінює дані про настрій.</string>
     <string name="backup_journal_export">Експортувати щоденник</string>
-    <string name="backup_journal_import">Відновити щоденник (замінює всі сторінки)</string>
+    <string name="backup_journal_import">Відновити щоденник (замінить усі сторінки)</string>
     <string name="backup_journal_encrypt_title">Зашифрувати копію щоденника</string>
     <string name="backup_journal_encrypt_body">Виберіть парольну фразу для шифрування цієї копії щоденника. Саме вона знадобиться для відновлення, навіть після перевстановлення. Це не PIN-код застосунку, і її неможливо відновити, якщо ви її забудете.</string>
     <string name="backup_journal_decrypt_title">Відновити щоденник</string>

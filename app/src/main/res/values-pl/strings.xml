@@ -136,7 +136,7 @@
     <string name="home_tags">Zarządzaj tagami</string>
     <string name="home_settings">Ustawienia</string>
     <string name="home_about">O aplikacji</string>
-    <string name="home_backup_reminder_title">Przyjazne przypomnienie o kopii zapasowej</string>
+    <string name="home_backup_reminder_title">Przyjazne przypomnienie o zrobieniu kopii zapasowej</string>
     <string name="home_backup_reminder_body">Kopie są zapisywane w Documents/MoodCairns na tym telefonie. Skopiuj je w inne miejsce, aby przetrwały utratę telefonu. Dotknij, aby otworzyć Kopia zapasowa i import.</string>
     <string name="home_backup_reminder_dismiss">Odrzuć</string>
 
@@ -439,7 +439,7 @@
     <string name="biometric_offer_title">Odblokowanie biometryczne</string>
     <string name="biometric_offer_body_upgrade">Odblokowanie biometryczne jest teraz chronione przez sprzętowe zabezpieczenia urządzenia. Włącz je ponownie, aby nadal z niego korzystać.</string>
     <string name="biometric_offer_body_setup">Odblokowywać Mood Cairns biometrią zamiast kodu PIN? Możesz to później zmienić w Ustawieniach.</string>
-    <string name="biometric_offer_body_invalidated">Odblokowanie biometryczne zostało wyłączone, ponieważ zmieniły się dane biometryczne lub blokada ekranu tego urządzenia. Jeśli ta zmiana nie pochodzi od Ciebie, ktoś inny może mieć dostęp do Twojego telefonu.</string>
+    <string name="biometric_offer_body_invalidated">Odblokowanie biometryczne zostało wyłączone, ponieważ zmieniły się dane biometryczne lub blokada ekranu tego urządzenia. Jeśli ta zmiana nie pochodzi od ciebie, ktoś inny może mieć dostęp do twojego telefonu.</string>
     <string name="biometric_offer_not_now">Nie teraz</string>
 
     <!-- No-PIN warning -->
