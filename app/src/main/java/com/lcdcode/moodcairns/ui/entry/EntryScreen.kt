@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.horizontalScroll
@@ -140,7 +139,7 @@ fun EntryScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             // Save lives in a fixed bottom bar so it stays reachable however
-            // long the form gets; imePadding keeps it above the keyboard.
+            // long the form gets; MainActivity's root imePadding keeps it above the keyboard.
             Surface(tonalElevation = 3.dp) {
                 SaveButtons(
                     state = state,
@@ -533,7 +532,6 @@ private fun SaveButtons(
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .imePadding()
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

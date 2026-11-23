@@ -10,7 +10,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,7 +28,11 @@ import com.lcdcode.moodcairns.security.shouldSecureWindow
 import com.lcdcode.moodcairns.settings.LocalizedSurfaces
 import com.lcdcode.moodcairns.ui.AppNav
 import com.lcdcode.moodcairns.ui.NotificationEntryArgs
+import com.lcdcode.moodcairns.ui.lock.BiometricOfferHost
+import com.lcdcode.moodcairns.ui.lock.BootingScreen
 import com.lcdcode.moodcairns.ui.lock.LockScreen
+import com.lcdcode.moodcairns.ui.lock.MigratingScreen
+import com.lcdcode.moodcairns.ui.lock.MigrationFailedScreen
 import com.lcdcode.moodcairns.ui.lock.SetPinScreen
 import com.lcdcode.moodcairns.ui.theme.MoodCairnsTheme
 import com.lcdcode.moodcairns.data.entity.PromptSlot
@@ -100,20 +106,25 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    when (val s = state) {
-                        LockState.NeedsSetup -> SetPinScreen()
-                        LockState.Locked -> LockScreen()
-                        LockState.Booting -> com.lcdcode.moodcairns.ui.lock.BootingScreen()
-                        LockState.Migrating -> com.lcdcode.moodcairns.ui.lock.MigratingScreen()
-                        is LockState.MigrationFailed -> com.lcdcode.moodcairns.ui.lock.MigrationFailedScreen(
-                            message = s.message,
-                        )
-                        LockState.Unlocked -> {
-                            AppNav(
-                                initialEntryArgs = pendingArgs,
-                                onEntryArgsConsumed = { pendingEntryArgs.value = null },
+                    // With adjustResize + edge-to-edge the window is not resized for the keyboard;
+                    // padding here once lifts every screen above it, and children see no IME
+                    // inset left to apply.
+                    Box(Modifier.fillMaxSize().imePadding()) {
+                        when (val s = state) {
+                            LockState.NeedsSetup -> SetPinScreen()
+                            LockState.Locked -> LockScreen()
+                            LockState.Booting -> BootingScreen()
+                            LockState.Migrating -> MigratingScreen()
+                            is LockState.MigrationFailed -> MigrationFailedScreen(
+                                message = s.message,
                             )
-                            com.lcdcode.moodcairns.ui.lock.BiometricOfferHost()
+                            LockState.Unlocked -> {
+                                AppNav(
+                                    initialEntryArgs = pendingArgs,
+                                    onEntryArgsConsumed = { pendingEntryArgs.value = null },
+                                )
+                                BiometricOfferHost()
+                            }
                         }
                     }
                 }
