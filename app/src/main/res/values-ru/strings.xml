@@ -279,10 +279,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Резервное копирование</string>
     <string name="backup_intro">Резервные копии шифруются по стандарту AES-GCM с помощью выбранного вами пароля и сохраняются в папку Documents/MoodCairns. Для синхронизации данных на другие устройства можно использовать Syncthing или любой файловый менеджер; само приложение ничего в сеть не загружает.</string>
-    <string name="backup_export">Создать копию</string>
+    <string name="backup_export_mood">Экспортировать данные настроения</string>
     <string name="backup_export_csv">Экспорт в CSV (без шифрования)</string>
     <string name="backup_export_csv_warning">CSV-файл содержит обычный текст и НЕ защищен шифрованием. Любые программы с доступом к вашей папке Documents (облачные диски, файловые менеджеры) смогут прочесть ваши личные записи. Чтобы скрыть эту кнопку, отключите небезопасный экспорт в настройках.</string>
-    <string name="backup_import">Импорт из файла (заменит все текущие данные)</string>
+    <string name="backup_restore_mood">Восстановить данные настроения (заменит все данные настроения)</string>
     <string name="backup_existing_label">Существующие копии</string>
     <string name="backup_none">Пока нет.</string>
     <string name="backup_encrypt_title">Зашифровать резервную копию</string>

@@ -271,10 +271,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Sicherung &amp; Import</string>
     <string name="backup_intro">Sicherungen werden mit AES-GCM verschlüsselt, mit einem Schlüssel aus einer Passphrase deiner Wahl, und unter Documents/MoodCairns gespeichert. Syncthing oder ein Dateimanager kann sie auf andere Geräte synchronisieren; die App lädt nie etwas hoch.</string>
-    <string name="backup_export">Jetzt exportieren</string>
+    <string name="backup_export_mood">Stimmungsdaten exportieren</string>
     <string name="backup_export_csv">Unverschlüsseltes CSV exportieren</string>
     <string name="backup_export_csv_warning">Die CSV-Datei ist reiner Text und NICHT verschlüsselt. Alles, was deinen Documents-Ordner lesen kann (Cloud-Sicherungen, Dateimanager, andere Apps), kann deine Einträge lesen. Deaktiviere unsichere Exporte in den Einstellungen, um diese Option auszublenden.</string>
-    <string name="backup_import">Aus Datei importieren (ersetzt alle Daten)</string>
+    <string name="backup_restore_mood">Stimmungsdaten wiederherstellen (ersetzt alle Stimmungsdaten)</string>
     <string name="backup_existing_label">Vorhandene Sicherungen</string>
     <string name="backup_none">Noch keine.</string>
     <string name="backup_encrypt_title">Sicherung verschlüsseln</string>

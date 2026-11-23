@@ -278,10 +278,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Copia de seguridad</string>
     <string name="backup_intro">Las copias de seguridad se cifran con AES-GCM mediante una clave derivada de una frase de contraseña que tú eliges, y se guardan en Documents/MoodCairns. Syncthing o cualquier gestor de archivos puede sincronizarlas fuera del dispositivo; la app nunca sube nada.</string>
-    <string name="backup_export">Exportar ahora</string>
+    <string name="backup_export_mood">Exportar datos de ánimo</string>
     <string name="backup_export_csv">Exportar CSV sin cifrar</string>
     <string name="backup_export_csv_warning">El CSV es texto plano y NO está cifrado. Cualquier persona o aplicación que pueda leer tu carpeta Documents (copias en la nube, gestores de archivos, otras apps) puede leer tus registros. Desactiva las exportaciones no seguras en Ajustes para ocultar esta opción.</string>
-    <string name="backup_import">Importar desde archivo (reemplaza todos los datos)</string>
+    <string name="backup_restore_mood">Restaurar datos de ánimo (reemplaza todos los datos de ánimo)</string>
     <string name="backup_existing_label">Copias existentes</string>
     <string name="backup_none">Ninguna todavía.</string>
     <string name="backup_encrypt_title">Cifrar copia de seguridad</string>

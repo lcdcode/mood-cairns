@@ -293,10 +293,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Резервні копії та імпорт</string>
     <string name="backup_intro">Резервні копії шифруються алгоритмом AES-GCM із ключем, отриманим з обраної вами парольної фрази, і зберігаються в Documents/MoodCairns. Syncthing або будь-який файловий менеджер може синхронізувати їх з іншими пристроями; сам застосунок нічого не надсилає в мережу.</string>
-    <string name="backup_export">Експортувати</string>
+    <string name="backup_export_mood">Експортувати дані настрою</string>
     <string name="backup_export_csv">Експорт у CSV без шифрування</string>
     <string name="backup_export_csv_warning">CSV-файл містить звичайний текст і НЕ зашифрований. Усе, що може читати вашу папку Documents (хмарні резервні копії, файлові менеджери, інші застосунки), зможе прочитати ваші записи. Щоб приховати цей варіант, вимкніть небезпечний експорт у налаштуваннях.</string>
-    <string name="backup_import">Імпорт з файлу (замінить усі дані)</string>
+    <string name="backup_restore_mood">Відновити дані настрою (замінить усі дані настрою)</string>
     <string name="backup_existing_label">Наявні копії</string>
     <string name="backup_none">Поки немає.</string>
     <string name="backup_encrypt_title">Зашифрувати резервну копію</string>

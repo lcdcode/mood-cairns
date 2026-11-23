@@ -294,10 +294,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Kopia zapasowa i import</string>
     <string name="backup_intro">Kopie zapasowe są szyfrowane algorytmem AES-GCM kluczem utworzonym z wybranego przez ciebie hasła i zapisywane w folderze Documents/MoodCairns. Syncthing lub dowolny menedżer plików może synchronizować je z innymi urządzeniami. Sama aplikacja niczego nie wysyła.</string>
-    <string name="backup_export">Eksportuj teraz</string>
+    <string name="backup_export_mood">Eksportuj dane nastroju</string>
     <string name="backup_export_csv">Eksportuj niezaszyfrowany CSV</string>
     <string name="backup_export_csv_warning">Plik CSV to zwykły tekst i NIE jest zaszyfrowany. Każdy, kto ma dostęp do twojego folderu Documents (kopie w chmurze, menedżery plików, inne aplikacje), może odczytać twoje wpisy. Aby ukryć tę opcję, wyłącz niebezpieczny eksport w ustawieniach.</string>
-    <string name="backup_import">Importuj z pliku (zastępuje wszystkie dane)</string>
+    <string name="backup_restore_mood">Przywróć dane nastroju (zastępuje wszystkie dane nastroju)</string>
     <string name="backup_existing_label">Istniejące kopie</string>
     <string name="backup_none">Jeszcze brak.</string>
     <string name="backup_encrypt_title">Zaszyfruj kopię zapasową</string>

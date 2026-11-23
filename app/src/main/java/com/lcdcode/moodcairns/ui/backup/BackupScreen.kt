@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -152,16 +153,10 @@ fun BackupScreen(
                     onClick = viewModel::requestExport,
                     enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.backup_export)) }
+                ) { Text(stringResource(R.string.backup_export_mood)) }
             }
             if (state.allowUnsafeExports) {
-                item {
-                    OutlinedButton(
-                        onClick = viewModel::requestCsvExport,
-                        enabled = !state.busy,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) { Text(stringResource(R.string.backup_export_csv)) }
-                }
+                // The warning comes first so it is read before the button is reached.
                 item {
                     Text(
                         stringResource(R.string.backup_export_csv_warning),
@@ -169,24 +164,20 @@ fun BackupScreen(
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
+                item {
+                    OutlinedButton(
+                        onClick = viewModel::requestCsvExport,
+                        enabled = !state.busy,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text(stringResource(R.string.backup_export_csv)) }
+                }
             }
             item {
                 OutlinedButton(
                     onClick = { pickBackupFile(importLauncher::launch) },
                     enabled = !state.busy,
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.backup_import)) }
-            }
-            item {
-                ActionSection(
-                    title = stringResource(R.string.backup_config_section),
-                    intro = stringResource(R.string.backup_config_intro),
-                    exportLabel = stringResource(R.string.backup_config_export),
-                    importLabel = stringResource(R.string.backup_config_import),
-                    enabled = !state.busy,
-                    onExport = viewModel::requestConfigExport,
-                    onImport = { pickBackupFile(configImportLauncher::launch) },
-                )
+                ) { Text(stringResource(R.string.backup_restore_mood)) }
             }
             if (state.journalEnabled) {
                 item {
@@ -196,6 +187,7 @@ fun BackupScreen(
                         exportLabel = stringResource(R.string.backup_journal_export),
                         importLabel = stringResource(R.string.backup_journal_import),
                         enabled = !state.busy,
+                        emphasizeExport = true,
                         onExport = viewModel::requestJournalExport,
                         // Journal backups are binary (.mcj), which pickers type unreliably.
                         onImport = { pickBackupFile(journalImportLauncher::launch, ANY_FILE) },
@@ -209,6 +201,17 @@ fun BackupScreen(
                         }
                     }
                 }
+            }
+            item {
+                ActionSection(
+                    title = stringResource(R.string.backup_config_section),
+                    intro = stringResource(R.string.backup_config_intro),
+                    exportLabel = stringResource(R.string.backup_config_export),
+                    importLabel = stringResource(R.string.backup_config_import),
+                    enabled = !state.busy,
+                    onExport = viewModel::requestConfigExport,
+                    onImport = { pickBackupFile(configImportLauncher::launch) },
+                )
             }
             item {
                 Text(
@@ -297,7 +300,10 @@ private fun BackupRow(file: BackupFileInfo) {
     }
 }
 
-/** A titled group with an explanation, an export and an import button, and [extra]. */
+/**
+ * A titled group with an explanation, an export and an import button, and [extra].
+ * [emphasizeExport] gives the export button the secondary (tonal) highlight.
+ */
 @Composable
 private fun ActionSection(
     title: String,
@@ -307,6 +313,7 @@ private fun ActionSection(
     enabled: Boolean,
     onExport: () -> Unit,
     onImport: () -> Unit,
+    emphasizeExport: Boolean = false,
     extra: @Composable ColumnScope.() -> Unit = {},
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -320,11 +327,19 @@ private fun ActionSection(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        OutlinedButton(
-            onClick = onExport,
-            enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(exportLabel) }
+        if (emphasizeExport) {
+            FilledTonalButton(
+                onClick = onExport,
+                enabled = enabled,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(exportLabel) }
+        } else {
+            OutlinedButton(
+                onClick = onExport,
+                enabled = enabled,
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text(exportLabel) }
+        }
         OutlinedButton(
             onClick = onImport,
             enabled = enabled,

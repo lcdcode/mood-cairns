@@ -343,10 +343,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Backup &amp; import</string>
     <string name="backup_intro">Backups are AES-GCM encrypted with a key derived from a passphrase you choose and written to Documents/MoodCairns. Syncthing or any file manager can sync them off-device - the app never uploads anything.</string>
-    <string name="backup_export">Export now</string>
+    <string name="backup_export_mood">Export mood data</string>
     <string name="backup_export_csv">Export unencrypted CSV</string>
     <string name="backup_export_csv_warning">The CSV is plain text and NOT encrypted. Anyone or anything that can read your Documents folder - cloud backup, file managers, other apps - can read your entries. Disable unsafe exports in Settings to hide this option.</string>
-    <string name="backup_import">Import from file (replaces all data)</string>
+    <string name="backup_restore_mood">Restore mood data (replaces all mood data)</string>
     <string name="backup_existing_label">Existing backups</string>
     <string name="backup_none">None yet.</string>
     <string name="backup_encrypt_title">Encrypt backup</string>
