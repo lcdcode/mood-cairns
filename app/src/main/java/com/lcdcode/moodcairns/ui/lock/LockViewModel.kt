@@ -40,12 +40,7 @@ class LockViewModel @Inject constructor(
     private val lockManager: LockManager,
 ) : ViewModel() {
 
-    private val _ui = MutableStateFlow(
-        LockUiState(
-            biometricAvailable = lockManager.canBiometricUnlock(),
-            biometricReset = lockManager.biometricOffer.value == BiometricOffer.INVALIDATED,
-        ),
-    )
+    private val _ui = MutableStateFlow(LockUiState())
     val ui: StateFlow<LockUiState> = _ui.asStateFlow()
 
     private var countdownJob: Job? = null
@@ -54,6 +49,20 @@ class LockViewModel @Inject constructor(
         // Restore any in-progress lockout from a prior process death.
         val initial = lockManager.pinLockoutRemainingMs()
         if (initial > 0L) startCountdown(initial)
+    }
+
+    /**
+     * Call each time the lock screen is shown. This ViewModel is scoped to the activity and
+     * outlives every lock/unlock cycle, while the enrollment can change in between (Settings,
+     * invalidation), so biometric availability must be re-read on every showing.
+     */
+    fun onShown() {
+        _ui.update {
+            it.copy(
+                biometricAvailable = lockManager.canBiometricUnlock(),
+                biometricReset = lockManager.biometricOffer.value == BiometricOffer.INVALIDATED,
+            )
+        }
     }
 
     fun onPinChanged(pin: String) {

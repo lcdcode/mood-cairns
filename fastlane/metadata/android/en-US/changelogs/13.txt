@@ -1,0 +1,2 @@
+Improvements:
+- Biometric unlock is now protected by your device's secure hardware. After updating, enter your PIN once, then turn biometric unlock back on when asked.

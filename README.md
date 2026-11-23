@@ -46,7 +46,10 @@ For more information, see [AI-DECLARATION.md](AI-DECLARATION.md)
   import — just enter that PIN as the passphrase. Drop a file manager or
   Syncthing on that folder if you want off-device copies.
 - **PIN + biometric lock.** PIN-gated app entry, with optional biometric
-  unlock. PIN is hashed (PBKDF2, 600k iterations) before being stored.
+  unlock. The PIN is hashed (PBKDF2, 600k iterations) before being stored, and
+  the database key is wrapped under a key derived from it. Biometric unlock uses
+  a hardware-backed Android Keystore key that requires a strong (Class 3)
+  biometric for every unlock.
 
 ## Privacy contract
 

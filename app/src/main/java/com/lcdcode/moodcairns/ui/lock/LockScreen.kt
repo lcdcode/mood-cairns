@@ -51,8 +51,10 @@ fun LockScreen(
     val scope = rememberCoroutineScope()
     var promptedBiometric by remember { mutableStateOf(false) }
 
-    val canBiometric = state.biometricAvailable &&
-        activity != null && Biometrics.canAuthenticate(activity)
+    // Non-null only when biometric unlock can be offered right now.
+    val biometricHost = activity?.takeIf {
+        state.biometricAvailable && Biometrics.canAuthenticate(it)
+    }
 
     // Failures and "Use PIN" just leave the PIN field in charge.
     val showBiometricPrompt: (FragmentActivity) -> Unit = { host ->
@@ -68,10 +70,13 @@ fun LockScreen(
         }
     }
 
-    LaunchedEffect(activity, canBiometric) {
-        if (!promptedBiometric && canBiometric && activity != null) {
+    // Runs on every entry into composition, i.e. every time the app locks.
+    LaunchedEffect(Unit) { viewModel.onShown() }
+
+    LaunchedEffect(biometricHost) {
+        if (!promptedBiometric && biometricHost != null) {
             promptedBiometric = true
-            showBiometricPrompt(activity)
+            showBiometricPrompt(biometricHost)
         }
     }
 
@@ -141,8 +146,8 @@ fun LockScreen(
                 }
             }
 
-            if (!state.busy && canBiometric && activity != null) {
-                TextButton(onClick = { showBiometricPrompt(activity) }) {
+            if (!state.busy && biometricHost != null) {
+                TextButton(onClick = { showBiometricPrompt(biometricHost) }) {
                     Text(stringResource(R.string.lock_use_biometric))
                 }
             }
