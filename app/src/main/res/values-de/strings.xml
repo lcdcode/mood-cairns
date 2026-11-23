@@ -29,6 +29,9 @@
     <string name="common_name_label">Name</string>
     <string name="common_tags_label">Tags</string>
     <string name="common_reorder">Neu anordnen</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_move_up">Nach oben verschieben</string>
+    <string name="common_move_down">Nach unten verschieben</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -239,6 +242,7 @@
     </plurals>
     <string name="tag_list_column_heading">Spalte %1$d</string>
     <string name="tag_list_add_category">Kategorie hinzufügen</string>
+    <string name="tag_list_reorder_categories">Kategorien neu anordnen</string>
     <string name="tag_category_delete_title">Kategorie löschen?</string>
     <string name="tag_category_delete_body_empty">Die Kategorie „%1$s“ wird gelöscht. Sie enthält keine Tags.</string>
     <plurals name="tag_category_delete_body">

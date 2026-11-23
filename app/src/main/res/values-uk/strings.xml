@@ -35,6 +35,9 @@
     <string name="common_name_label">Назва</string>
     <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Змінити порядок</string>
+    <string name="common_done">Готово</string>
+    <string name="common_move_up">Перемістити вгору</string>
+    <string name="common_move_down">Перемістити вниз</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -257,6 +260,7 @@
     </plurals>
     <string name="tag_list_column_heading">Стовпець %1$d</string>
     <string name="tag_list_add_category">Додати категорію</string>
+    <string name="tag_list_reorder_categories">Змінити порядок категорій</string>
     <string name="tag_category_delete_title">Видалити категорію?</string>
     <string name="tag_category_delete_body_empty">Категорію «%1$s» буде видалено. У ній немає тегів.</string>
     <plurals name="tag_category_delete_body">

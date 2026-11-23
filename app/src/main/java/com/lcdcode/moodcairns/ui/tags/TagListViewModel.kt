@@ -35,6 +35,10 @@ class TagListViewModel @Inject constructor(
         repo.reorder(orderedIds)
     }
 
+    fun reorderCategories(orderedIds: List<String>) = viewModelScope.launch {
+        repo.reorderCategories(orderedIds)
+    }
+
     /**
      * [defaultName] is the built-in's translated name, or null for a user category.
      * The dialogs never offer Other or a blank user name; these guards keep a stray

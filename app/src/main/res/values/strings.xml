@@ -45,6 +45,12 @@
     <string name="common_tags_label">Tags</string>
     <!-- Content description of a drag handle used to reorder list items. -->
     <string name="common_reorder">Reorder</string>
+    <!-- Button that leaves a mode, such as reordering categories on the Tags screen. -->
+    <string name="common_done">Done</string>
+    <!-- Accessibility actions (TalkBack, Switch Access) that move a list item one place;
+         the alternative to dragging its handle. -->
+    <string name="common_move_up">Move up</string>
+    <string name="common_move_down">Move down</string>
     <!-- Joins short items such as tag names into one line. The quotes keep the spaces. -->
     <string name="common_list_separator">" · "</string>
     <!-- From-to dates, e.g. "Mar 1, 2026 – Mar 31, 2026". -->
@@ -301,6 +307,9 @@
     <!-- Button at the end of the Tags screen that creates a tag category; also the title of
          the dialog that names it. -->
     <string name="tag_list_add_category">Add category</string>
+    <!-- Tags screen: top bar button that switches to reordering categories, and the
+         screen title while reordering. -->
+    <string name="tag_list_reorder_categories">Reorder categories</string>
     <string name="tag_category_delete_title">Delete category?</string>
     <!-- %1$s category name. Shown when the category holds no tags. -->
     <string name="tag_category_delete_body_empty">\"%1$s\" will be deleted. It has no tags.</string>
