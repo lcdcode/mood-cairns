@@ -79,8 +79,8 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.2.2"
+        versionCode = 13
+        versionName = "1.3.0"
         buildConfigField("String", "THIRD_PARTY_NOTICES_ASSET", "\"$THIRD_PARTY_NOTICES_ASSET\"")
         // Package only the languages the app ships. Library resources for other locales
         // are stripped.
