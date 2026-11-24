@@ -1,0 +1,25 @@
+Följ ditt humör på din egen Android-enhet, helt utan nätåtkomst. Registrera hur du mår med egna skalor och etiketter vid tider som passar dig. Appen laddar aldrig upp något. Du bestämmer själv om du vill säkerhetskopiera dina uppgifter och hur du vill förvara kopiorna.
+
+<b>Funktioner</b>
+
+* <b>Egna skalor.</b> De inbyggda skalorna för lycka, ångest, stress, tristess, smärta och sömn har var sin färg. Registrera ett värde på varje skala, lägg till egna skalor och arkivera dem du inte använder.
+* <b>Etiketter.</b> Välj bland de inbyggda etiketterna för till exempel platser, personer, aktiviteter och känslor. Du kan också lägga till egna etiketter.
+* <b>Påminnelseperioder.</b> Välj när på dagen du vill få en påminnelse, till exempel på morgonen mellan 8 och 12 eller på kvällen mellan 18 och 20. Du får en avisering per period och dag. Tryck på den för att registrera hur du mår.
+* <b>Historik och diagram.</b> Bläddra bland tidigare registreringar och följ hur värdena på varje skala förändras över tid.
+* <b>Språkval.</b> Välj svenska eller något av de andra språken i appens inställningar, oberoende av telefonens språk.
+* <b>Krypterad lagring.</b> Humördatabasen lagras krypterad med SQLCipher. Nyckeln finns i minnet medan appen är upplåst och rensas när du låser den.
+* <b>Pinkod och biometrisk upplåsning.</b> Skydda appen med en pinkod och välj om du vill kunna låsa upp den med biometri. Appen lagrar en hash av pinkoden som beräknas med PBKDF2-HMAC-SHA256 i 600 000 omgångar.
+* <b>Krypterade säkerhetskopior.</b> När du exporterar dina humördata sparas en JSON-fil krypterad med AES-GCM i Documents/MoodCairns/. Du väljer en lösenfras på minst åtta tecken. Krypteringsnyckeln härleds från lösenfrasen med PBKDF2-HMAC-SHA256 i 600 000 omgångar och ett nytt slumpmässigt salt för varje kopia. Saltet sparas i filen, så att du med samma lösenfras kan återställa kopian även efter en nyinstallation. Äldre kopior som krypterades med appens pinkod kan fortfarande importeras med den koden.
+
+<b>Integritet</b>
+
+Appen begär <b>inga nätverksbehörigheter</b>. Varken appen eller de bibliotek den använder kan öppna en nätverksanslutning. Det kontrolleras när appen byggs, så att en biblioteksuppdatering inte kan lägga till en nätverksbehörighet i det tysta.
+Om du vill synkronisera säkerhetskopiorna till en annan enhet kan du använda Syncthing eller en filhanterare som kan synkronisera mappen Documents/MoodCairns/.
+
+<b>Kontakt</b>
+
+Rapportera gärna problem och föreslå nya funktioner under Issues på github.com/lcdcode/mood-cairns. Jag brukar svara inom tre arbetsdagar.
+
+<b>Källkod</b>
+
+Mood Cairns är fri programvara med öppen källkod under licensen GPL-3.0-only. Appen bygger på Kotlin, Jetpack Compose, Room, SQLCipher och AndroidX.

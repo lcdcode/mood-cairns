@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Home screen widget -->
+    <string name="widget_title">Registrera humör</string>
+    <string name="widget_subtitle">Tryck för att öppna Mood Cairns</string>
+    <string name="widget_description">Registrera snabbt hur du mår</string>
+
+    <!-- Common -->
+    <string name="common_back">Tillbaka</string>
+    <string name="common_cancel">Avbryt</string>
+    <string name="common_edit">Redigera</string>
+    <string name="common_enable">Aktivera</string>
+    <string name="common_loading">Läser in…</string>
+    <string name="common_next">Nästa</string>
+    <string name="common_ok">OK</string>
+    <string name="common_save">Spara</string>
+    <string name="common_saving">Sparar…</string>
+    <string name="common_all">Alla</string>
+    <string name="common_clear">Rensa</string>
+    <string name="common_close">Stäng</string>
+    <string name="common_delete">Ta bort</string>
+    <string name="common_add">Lägg till</string>
+    <string name="common_continue">Fortsätt</string>
+    <string name="common_deleting">Tar bort…</string>
+    <string name="common_name_label">Namn</string>
+    <string name="common_tags_label">Etiketter</string>
+    <string name="common_reorder">Ändra ordning</string>
+    <string name="common_done">Klar</string>
+    <string name="common_move_up">Flytta upp</string>
+    <string name="common_move_down">Flytta ned</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_date_range">%1$s – %2$s</string>
+    <string name="common_range_dash">%1$s–%2$s</string>
+    <string name="common_range_to">%1$s till %2$s</string>
+    <string name="common_value_of_max">%1$s / %2$s</string>
+    <string name="common_value_in_range">%1$s (%2$s)</string>
+    <plurals name="common_duration_seconds_short">
+        <item quantity="one">%1$d s</item>
+        <item quantity="other">%1$d s</item>
+    </plurals>
+    <plurals name="common_duration_minutes_short">
+        <item quantity="one">%1$d min</item>
+        <item quantity="other">%1$d min</item>
+    </plurals>
+
+    <!-- Shared errors -->
+    <string name="error_save_failed">Det gick inte att spara: %1$s</string>
+    <string name="error_delete_failed">Det gick inte att ta bort: %1$s</string>
+    <string name="error_name_required">Ange ett namn</string>
+    <string name="error_pins_mismatch">Pinkoderna stämmer inte överens</string>
+    <plurals name="error_pin_too_short">
+        <item quantity="one">Pinkoden måste ha minst %1$d siffra</item>
+        <item quantity="other">Pinkoden måste ha minst %1$d siffror</item>
+    </plurals>
+
+    <!-- Prompt slots -->
+    <string name="enum_prompt_slot_morning">Morgon</string>
+    <string name="enum_prompt_slot_evening">Kväll</string>
+    <string name="enum_prompt_slot_manual">Manuell</string>
+    <string name="enum_prompt_slot_custom">Egen</string>
+
+    <!-- Built-in scales -->
+    <string name="seed_scale_happiness">Lycka</string>
+    <string name="seed_scale_anxiety">Ångest</string>
+    <string name="seed_scale_stress">Stress</string>
+    <string name="seed_scale_boredom">Tristess</string>
+    <string name="seed_scale_pain">Smärta</string>
+    <string name="seed_scale_sleep">Sömn</string>
+
+    <!-- Built-in tags -->
+    <string name="seed_tag_home">Hemma</string>
+    <string name="seed_tag_work">På jobbet</string>
+    <string name="seed_tag_school">I skolan</string>
+    <string name="seed_tag_commute">Pendling</string>
+    <string name="seed_tag_outdoors">Utomhus</string>
+    <string name="seed_tag_travel">På resa</string>
+    <string name="seed_tag_family">Familj</string>
+    <string name="seed_tag_friends">Vänner</string>
+    <string name="seed_tag_partner">Partner</string>
+    <string name="seed_tag_coworkers">Kollegor</string>
+    <string name="seed_tag_alone">På egen hand</string>
+    <string name="seed_tag_exercise">Träning</string>
+    <string name="seed_tag_socializing">Umgänge</string>
+    <string name="seed_tag_reading">Läsning</string>
+    <string name="seed_tag_gaming">Datorspel</string>
+    <string name="seed_tag_chores">Hushållssysslor</string>
+    <string name="seed_tag_rest">Vila</string>
+    <string name="seed_tag_joy">Glad</string>
+    <string name="seed_tag_excited">Entusiastisk</string>
+    <string name="seed_tag_grateful">Tacksam</string>
+    <string name="seed_tag_content">Nöjd</string>
+    <string name="seed_tag_calm">Lugn</string>
+    <string name="seed_tag_surprise">Förvånad</string>
+    <string name="seed_tag_frustrated">Frustrerad</string>
+    <string name="seed_tag_lonely">Ensam</string>
+    <string name="seed_tag_sadness">Ledsen</string>
+    <string name="seed_tag_fear">Rädd</string>
+    <string name="seed_tag_anger">Arg</string>
+    <string name="seed_tag_disgust">Äcklad</string>
+
+    <!-- Built-in prompt windows -->
+    <string name="seed_window_morning">Morgon</string>
+    <string name="seed_window_evening">Kväll</string>
+
+    <!-- Tag categories -->
+    <string name="enum_tag_category_place">Platser</string>
+    <string name="enum_tag_category_person">Personer</string>
+    <string name="enum_tag_category_activity">Aktiviteter</string>
+    <string name="enum_tag_category_mood">Känslor</string>
+    <string name="enum_tag_category_other">Övrigt</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_prompts_name">Humörpåminnelser</string>
+    <string name="notif_channel_prompts_description">Påminner dig om att registrera hur du mår.</string>
+    <string name="notif_prompt_default_title">Hur mår du just nu?</string>
+    <string name="notif_prompt_text">Registrera hur du mår</string>
+    <string name="notif_test_title">Testavisering</string>
+
+    <!-- Home screen -->
+    <string name="home_tagline">Skriv ner hur du mår och behåll det för dig själv.</string>
+    <string name="home_log_mood">Registrera humör</string>
+    <string name="home_mood_history">Humörhistorik</string>
+    <string name="home_open_journal">Öppna dagboken</string>
+    <string name="home_charts">Diagram</string>
+    <string name="home_backup">Säkerhetskopiering och import</string>
+    <string name="home_scales">Hantera skalor</string>
+    <string name="home_tags">Hantera etiketter</string>
+    <string name="home_settings">Inställningar</string>
+    <string name="home_about">Om</string>
+    <string name="home_backup_reminder_title">Kom ihåg att säkerhetskopiera</string>
+    <string name="home_backup_reminder_body">Säkerhetskopiorna sparas i Documents/MoodCairns på den här telefonen. Kopiera dem till en annan plats så att du har dem kvar om du förlorar telefonen. Tryck för att öppna Säkerhetskopiering och import.</string>
+    <string name="home_backup_reminder_dismiss">Stäng</string>
+
+    <!-- Journal editor -->
+    <string name="journal_placeholder">Skriv om din dag…</string>
+    <string name="journal_empty_read">Du har inte skrivit något för den här dagen än.</string>
+    <string name="journal_load_failed">Det gick inte att öppna dagbokssidan.</string>
+    <string name="journal_show_read">Läsläge</string>
+    <string name="journal_show_edit">Redigera</string>
+    <string name="journal_format_bold">Fetstil</string>
+    <string name="journal_format_italic">Kursiv stil</string>
+    <string name="journal_format_heading">Rubrik</string>
+    <string name="journal_format_bullet_list">Punktlista</string>
+    <string name="journal_format_numbered_list">Numrerad lista</string>
+    <string name="journal_format_quote">Citat</string>
+    <string name="journal_format_code">Kod</string>
+    <string name="journal_format_checklist">Checklista</string>
+    <string name="journal_format_table">Infoga tabell</string>
+    <string name="journal_table_column">Kolumn %1$d</string>
+
+    <!-- Journal history -->
+    <string name="journal_history_title">Tidigare dagbokssidor</string>
+    <string name="journal_history_search_hint">Sök i dagboken…</string>
+    <string name="journal_history_empty">Det finns inga dagbokssidor än.</string>
+    <string name="journal_history_no_matches">Inga sidor matchar din sökning.</string>
+
+    <!-- Entry screen -->
+    <string name="entry_title_new">Hur mår du?</string>
+    <string name="entry_title_edit">Redigera registrering</string>
+    <string name="entry_save_open_journal">Spara och öppna dagboken</string>
+    <string name="entry_no_scales">Det finns inga skalor. Lägg till en under Hantera skalor.</string>
+    <string name="entry_note_label">Anteckning (valfritt)</string>
+    <string name="entry_prompt_slot_label">Registreringstillfälle</string>
+    <string name="entry_change_date_time">Ändra datum och tid…</string>
+    <string name="entry_slider_description_out_of">%1$s, värde %2$s av %3$d</string>
+    <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, värde %2$s på en skala från %3$d till %4$d</string>
+    <string name="entry_slider_description_lower_better">%1$s, lägre är bättre</string>
+    <string name="entry_once_per_day_reask_hint">Låt värdet stå kvar på %1$s om du vill få frågan igen senare.</string>
+
+    <!-- Mood history -->
+    <string name="history_mood_title">Humörhistorik</string>
+    <string name="history_add_past">Registrera i efterhand</string>
+    <string name="history_empty">Det finns inga registreringar än.</string>
+    <string name="history_no_matches">Inga registreringar matchar de valda filtren.</string>
+    <string name="history_delete_title">Ta bort registreringen?</string>
+    <string name="history_delete_body">Registreringen tas bort permanent.</string>
+    <string name="history_search_placeholder">Sök i anteckningar…</string>
+    <string name="history_search">Sök</string>
+    <string name="history_clear_search">Rensa sökning</string>
+    <string name="history_clear_all">Rensa alla</string>
+    <string name="history_pick_date">Välj datum</string>
+    <string name="history_long_press_hint">Håll fingret på en registrering för att redigera eller ta bort den.</string>
+
+    <!-- Scale list -->
+    <string name="scale_list_title">Skalor</string>
+    <string name="scale_list_add">Lägg till skala</string>
+    <string name="scale_list_empty">Det finns inga skalor än.</string>
+    <string name="scale_list_section_active">Aktiva</string>
+    <string name="scale_list_section_archived">Arkiverade</string>
+    <string name="scale_list_archive">Arkivera</string>
+    <string name="scale_list_unarchive">Återställ från arkivet</string>
+    <string name="scale_list_step">steglängd %1$s</string>
+    <string name="scale_list_default">standardvärde %1$s</string>
+    <string name="scale_list_lower_better">lägre är bättre</string>
+    <string name="scale_list_built_in">inbyggd</string>
+    <string name="scale_list_once_per_day">en gång om dagen</string>
+
+    <!-- Scale editor -->
+    <string name="scale_edit_title_new">Ny skala</string>
+    <string name="scale_edit_title_edit">Redigera skala</string>
+    <string name="scale_edit_min_label">Min</string>
+    <string name="scale_edit_max_label">Max</string>
+    <string name="scale_edit_step_label">Steglängd</string>
+    <string name="scale_edit_default_label">Standardvärde</string>
+    <string name="scale_edit_default_hint">Reglagets startvärde för en ny registrering. Lämna fältet tomt för att börja mitt på skalan.</string>
+    <string name="scale_edit_lower_better">Lägre är bättre</string>
+    <string name="scale_edit_lower_better_hint">Reglaget går från höga till låga värden. I diagrammen vänds skalan så att en förbättring visas som en uppgång.</string>
+    <string name="scale_edit_once_per_day">En gång om dagen</string>
+    <string name="scale_edit_once_per_day_hint">Du får frågan tills du har registrerat ett värde över skalans minimum den dagen. Om du väljer minimivärdet får du frågan igen. I diagrammet visas värdena som punkter förenade med en linje utan skuggning.</string>
+    <string name="scale_edit_color_label">Färg</string>
+    <string name="scale_edit_color_custom">Egen färg</string>
+    <string name="scale_edit_color_picker_title">Välj färg</string>
+    <string name="scale_edit_color_hex_label">Hexkod</string>
+    <string name="scale_edit_color_panel_description">Mättnad och ljusstyrka</string>
+    <string name="scale_edit_color_hue_description">Nyans</string>
+    <string name="scale_edit_color_low_contrast_light">Färgen kan vara svår att se i ljust läge.</string>
+    <string name="scale_edit_color_low_contrast_dark">Färgen kan vara svår att se i mörkt läge.</string>
+    <string name="scale_edit_built_in_hint">Inbyggda skalor har fasta namn. Du kan ändra intervall, steglängd och färg.</string>
+    <string name="scale_edit_delete">Ta bort skala</string>
+    <string name="scale_edit_this_scale">den här skalan</string>
+    <string name="scale_edit_remap_title">Räkna om registrerade värden?</string>
+    <string name="scale_edit_remap_confirm">Räkna om</string>
+    <string name="scale_edit_remap_keep">Behåll värdena</string>
+    <plurals name="scale_edit_remap_body">
+        <item quantity="one">%1$d registrering har ett värde på skalan ”%2$s”. Om du räknar om värdena ersätts varje värde v med (min + max) - v. Då får tidigare registreringar samma betydelse när skalan vänds. Välj ”%3$s” om du bara vill ändra hur skalan visas.</item>
+        <item quantity="other">%1$d registreringar har värden på skalan ”%2$s”. Om du räknar om värdena ersätts varje värde v med (min + max) - v. Då får tidigare registreringar samma betydelse när skalan vänds. Välj ”%3$s” om du bara vill ändra hur skalan visas.</item>
+    </plurals>
+    <string name="scale_edit_delete_title">Ta bort skalan?</string>
+    <string name="scale_edit_delete_body">Skalan ”%1$s” och alla värden som registrerats på den tas bort permanent. Det går inte att ångra.</string>
+    <string name="scale_edit_delete_body_unused">Inga registreringar använder skalan ”%1$s” än. Skalan ”%1$s” och alla värden som registrerats på den tas bort permanent. Det går inte att ångra.</string>
+    <plurals name="scale_edit_delete_body_used">
+        <item quantity="one">%1$d registrering har ett värde på skalan ”%2$s”. Skalan ”%2$s” och alla värden som registrerats på den tas bort permanent. Det går inte att ångra.</item>
+        <item quantity="other">%1$d registreringar har värden på skalan ”%2$s”. Skalan ”%2$s” och alla värden som registrerats på den tas bort permanent. Det går inte att ångra.</item>
+    </plurals>
+
+    <!-- Tag list -->
+    <string name="tag_list_title">Etiketter</string>
+    <string name="tag_list_empty">Det finns inga etiketter än.</string>
+    <plurals name="tag_filter_selected_count">
+        <item quantity="one">%1$d vald</item>
+        <item quantity="other">%1$d valda</item>
+    </plurals>
+    <string name="tag_list_column_heading">Kolumn %1$d</string>
+    <string name="tag_list_add_category">Lägg till kategori</string>
+    <string name="tag_list_reorder_categories">Ändra ordning på kategorier</string>
+    <string name="tag_category_delete_title">Ta bort kategorin?</string>
+    <string name="tag_category_delete_body_empty">Kategorin ”%1$s” tas bort. Den innehåller inga etiketter.</string>
+    <plurals name="tag_category_delete_body">
+        <item quantity="one">Kategorin ”%1$s” tas bort. %2$d etikett flyttas till ”%3$s”.</item>
+        <item quantity="other">Kategorin ”%1$s” tas bort. %2$d etiketter flyttas till ”%3$s”.</item>
+    </plurals>
+
+    <!-- Tag editor -->
+    <string name="tag_edit_title_new">Ny etikett</string>
+    <string name="tag_edit_title_edit">Redigera etikett</string>
+    <string name="tag_edit_category_label">Kategori</string>
+    <string name="tag_edit_column_label">Kolumn</string>
+    <string name="tag_edit_delete">Ta bort etikett</string>
+    <string name="tag_edit_this_tag">den här etiketten</string>
+    <string name="tag_edit_delete_title">Ta bort etiketten?</string>
+    <string name="tag_edit_delete_body">Etiketten ”%1$s” tas bort. Övriga uppgifter i registreringarna finns kvar.</string>
+    <string name="tag_edit_delete_body_unused">Inga registreringar använder etiketten ”%1$s” än.</string>
+    <plurals name="tag_edit_delete_body_used">
+        <item quantity="one">%1$d registrering har etiketten ”%2$s”. Bara etiketten tas bort. Övriga uppgifter finns kvar.</item>
+        <item quantity="other">%1$d registreringar har etiketten ”%2$s”. Bara etiketten tas bort. Övriga uppgifter finns kvar.</item>
+    </plurals>
+
+    <!-- Prompt window editor -->
+    <string name="window_edit_title_new">Ny påminnelseperiod</string>
+    <string name="window_edit_title_edit">Redigera påminnelseperiod</string>
+    <string name="window_edit_label_label">Namn</string>
+    <string name="window_edit_slot_label">Typ av registreringstillfälle</string>
+    <string name="window_edit_start">Från: %1$s</string>
+    <string name="window_edit_end">Till: %1$s</string>
+    <string name="window_edit_enabled">Aktiverad</string>
+    <string name="window_edit_select_time">Välj tid</string>
+
+    <!-- Backup and import -->
+    <string name="backup_title">Säkerhetskopiering och import</string>
+    <string name="backup_intro">Säkerhetskopiorna krypteras med AES-GCM med hjälp av en nyckel som härleds från din lösenfras. De sparas i Documents/MoodCairns. Du kan synkronisera dem till en annan enhet med Syncthing eller en filhanterare med synkronisering. Appen laddar aldrig upp något.</string>
+    <string name="backup_export_mood">Exportera humördata</string>
+    <string name="backup_export_csv">Exportera okrypterad CSV-fil</string>
+    <string name="backup_export_csv_warning">CSV-filen innehåller okrypterad text. Alla som har åtkomst till mappen Dokument kan läsa dina registreringar. Det gäller även molntjänster för säkerhetskopiering, filhanterare och andra appar. Stäng av osäkra exporter i inställningarna för att dölja alternativet.</string>
+    <string name="backup_restore_mood">Återställ humördata (ersätter alla humördata)</string>
+    <string name="backup_existing_label">Befintliga säkerhetskopior</string>
+    <string name="backup_none">Det finns inga än.</string>
+    <string name="backup_encrypt_title">Kryptera säkerhetskopian</string>
+    <string name="backup_encrypt_body">Välj en lösenfras för att kryptera säkerhetskopian. Du behöver samma lösenfras för att återställa kopian, även efter en nyinstallation. Lösenfrasen är skild från appens pinkod och går inte att återställa om du glömmer den.</string>
+    <string name="backup_passphrase_label">Lösenfras</string>
+    <string name="backup_passphrase_confirm_label">Bekräfta lösenfrasen</string>
+    <string name="backup_passphrase_mismatch">Lösenfraserna stämmer inte överens</string>
+    <plurals name="backup_passphrase_min_length">
+        <item quantity="one">Minst %1$d tecken</item>
+        <item quantity="other">Minst %1$d tecken</item>
+    </plurals>
+    <string name="backup_decrypt_title">Dekryptera säkerhetskopian</string>
+    <string name="backup_decrypt_body">Ange lösenfrasen som användes för att kryptera säkerhetskopian. För äldre säkerhetskopior anger du den pinkod som gällde när kopian skapades.</string>
+    <string name="backup_passphrase_or_pin_label">Lösenfras eller pinkod</string>
+
+    <!-- About -->
+    <string name="about_title">Om</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_why_title">Varför jag skapade appen</string>
+    <string name="about_why_body">Jag skapade Mood Cairns för att kunna följa mitt humör med de funktioner jag gillar, utan spårning, användningsanalys, kontokrav eller krav på Google Play för köp. Dina registreringar stannar på din enhet. Appen begär inga nätverksbehörigheter, och så kommer det att förbli.</string>
+    <string name="about_made_by">Skapad av %1$s. Fri programvara med öppen källkod. Tack!</string>
+    <string name="about_updates_title">Uppdateringar</string>
+    <string name="about_updates_body">&lt;b&gt;Om du använder F-Droid bör du få uppdateringar automatiskt.&lt;/b&gt; Om det inte fungerar, eller om du hämtade Mood Cairns från GitHub, kan du använda knappen nedan för att söka efter uppdateringar och &lt;b&gt;hämta den senaste APK-filen&lt;/b&gt; under Assets.</string>
+    <string name="about_get_latest">Hämta senaste versionen</string>
+    <string name="about_get_latest_hint">Öppnar den senaste utgåvan på GitHub i din webbläsare. Själva appen använder aldrig nätverket.</string>
+    <string name="about_no_browser">Det finns ingen webbläsare som kan öppna sidan.</string>
+    <string name="about_contact_title">Kontakt</string>
+    <string name="about_contact_body">Om du vill föreslå en ändring eller en ny funktion når du mig enklast genom att &lt;a href=\"%1$s\"&gt;öppna ett ärende på GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses -->
+    <string name="licenses_title">Licenser för öppen källkod</string>
+    <string name="licenses_original_language">Licenstexterna är juridiska dokument och visas på originalspråket engelska.</string>
+    <string name="licenses_load_failed">Det gick inte att läsa in licenstexterna.</string>
+
+    <!-- Charts -->
+    <string name="charts_title">Diagram</string>
+    <string name="charts_help_button">Hjälp med diagrammen</string>
+    <string name="charts_no_data">Det finns inga data för den här perioden.</string>
+    <string name="charts_date_range_label">Datumintervall</string>
+    <string name="charts_change_range">Ändra</string>
+    <string name="charts_select_range">Välj intervall</string>
+    <string name="charts_series_label">Serie</string>
+    <string name="charts_mode_raw">Rådata</string>
+    <plurals name="charts_mode_rolling">
+        <item quantity="one">Snitt %1$d d</item>
+        <item quantity="other">Snitt %1$d d</item>
+    </plurals>
+    <string name="charts_mode_hourly">Timvis</string>
+    <plurals name="charts_summary_raw">
+        <item quantity="one">%1$d registrering · dagsvärden</item>
+        <item quantity="other">%1$d registreringar · dagsvärden</item>
+    </plurals>
+    <plurals name="charts_summary_rolling">
+        <item quantity="one">%1$d registrering · centrerat medelvärde över %2$d dygn</item>
+        <item quantity="other">%1$d registreringar · centrerat medelvärde över %2$d dygn</item>
+    </plurals>
+    <plurals name="charts_summary_hourly">
+        <item quantity="one">%1$d registrering · medelvärde per timme på dygnet</item>
+        <item quantity="other">%1$d registreringar · medelvärde per timme på dygnet</item>
+    </plurals>
+    <string name="charts_y_axis_label">Y-axel</string>
+    <string name="charts_axis_autofit">Automatisk</string>
+    <string name="charts_axis_absolute">Absolut</string>
+    <string name="charts_prompt_slots_label">Registreringstillfällen</string>
+    <string name="charts_slot_other">Övriga</string>
+    <string name="charts_scales_label">Skalor</string>
+    <string name="charts_axis_caption_absolute" formatted="false">Lodrät axel: läge på respektive skala. 100 % visas överst. Skalor där lägre är bättre är vända.</string>
+    <string name="charts_axis_caption_values">Lodrät axel: registrerade värden</string>
+    <string name="charts_axis_caption_single">Lodrät axel: %1$s (%2$s)</string>
+    <plurals name="charts_axis_caption_shared">
+        <item quantity="one">Lodrät axel: registrerade värden för %1$d skala</item>
+        <item quantity="other">Lodrät axel: registrerade värden för %1$d skalor på en gemensam axel</item>
+    </plurals>
+    <string name="charts_legend">%1$s (%2$s)</string>
+    <string name="charts_legend_lower_better">%1$s (%2$s, lägre är bättre)</string>
+    <string name="charts_no_entries_day">Det finns inga registreringar för den här dagen.</string>
+    <string name="charts_point_value">%1$s: %2$s</string>
+    <string name="charts_hour_range">%1$s–%2$s</string>
+    <plurals name="charts_hour_entry_count">
+        <item quantity="one">%1$d registrering under den här timmen</item>
+        <item quantity="other">%1$d registreringar under den här timmen</item>
+    </plurals>
+    <string name="charts_hour_average">%1$s, medelvärde: %2$s</string>
+    <plurals name="charts_hour_more_entries">
+        <item quantity="one">Visa %1$d registrering till</item>
+        <item quantity="other">Visa %1$d registreringar till</item>
+    </plurals>
+
+    <!-- Chart help -->
+    <string name="charts_help_title">Så läser du diagrammen</string>
+    <string name="charts_help_dismiss">Jag förstår</string>
+    <string name="charts_help_intro">Du kan ändra hur värdena visas med två inställningar. Dina registreringar påverkas inte.</string>
+    <string name="charts_help_series_title">Serie: %1$s, %2$s eller %3$s</string>
+    <string name="charts_help_raw_body">Visar dina registrerade värden dag för dag. Om en dag har flera registreringar visas medelvärdet. Du ser hur värdena ändras från en dag till nästa, även när de svänger mycket. Dra isär två fingrar för att zooma in. När bara några dagar syns i diagrammet visas varje registrering vid sitt klockslag.</string>
+    <plurals name="charts_help_rolling_body">
+        <item quantity="one">För varje dag visas ett viktat medelvärde för en period på %1$d dygn med dagen i mitten. Mittendagen väger tyngst. Då jämnas enstaka toppar ut utan att förskjutas framåt i tiden, så att det blir lättare att se om ditt humör blir bättre eller sämre över tid.</item>
+        <item quantity="other">För varje dag visas ett viktat medelvärde för en period på %1$d dygn med dagen i mitten. Mittendagen väger tyngst. Då jämnas enstaka toppar ut utan att förskjutas framåt i tiden, så att det blir lättare att se om ditt humör blir bättre eller sämre över tid.</item>
+    </plurals>
+    <string name="charts_help_hourly_body">Samlar alla registreringar under den valda perioden i ett enda dygn och visar medelvärdet för varje timme. Då kan du till exempel se om morgnarna brukar vara svårare än kvällarna. Timmar utan registreringar hoppas över. Tryck på en punkt för att se registreringarna under den timmen.</string>
+    <string name="charts_help_axis_title">Y-axel: %1$s eller %2$s</string>
+    <string name="charts_help_autofit_body">Den lodräta axeln anpassas till intervallet mellan dina lägsta och högsta registrerade värden. Små förändringar syns tydligare när kurvan fyller diagrammet, även om de bara täcker en liten del av skalan. Siffrorna till vänster visar dina registrerade värden. Om flera skalor visas delar de på samma axel.</string>
+    <string name="charts_help_absolute_body" formatted="false">Varje kurva visas över hela sin skala, från lägsta till högsta värde. Förändringarna ser mindre ut, men du kan jämföra värden på olika skalor i samma diagram. Skalor där lägre är bättre vänds så att en förbättring alltid visas som en uppgång. Till vänster visas läget på respektive skala i procent. 100 % motsvarar skalans högsta värde, eller det lägsta om lägre är bättre.</string>
+    <string name="charts_help_once_per_day_title">Skalor som fylls i en gång om dagen</string>
+    <string name="charts_help_once_per_day_body">På skalor som Sömn registrerar du ett värde per dag. Varje dag visas som en punkt och punkterna förbinds med en linje utan skuggning. De här skalorna utelämnas i vyn ”%1$s” eftersom klockslaget för registreringen saknar betydelse. Om en dag har både minimivärdet och ett högre värde visas bara det högre. Minimivärdet kan betyda att du ännu inte hade fyllt i skalan.</string>
+
+    <!-- Data store upgrade -->
+    <string name="migrating_title">Uppgraderar databasen…</string>
+    <string name="migrating_body">Dina registreringar flyttas till den krypterade databasen. Håll appen öppen.</string>
+    <string name="migration_failed_title">Uppgraderingen misslyckades</string>
+    <string name="migration_failed_body">Dina ursprungliga data finns kvar på enheten. Öppna appen igen för att försöka på nytt. Om problemet kvarstår kan du avinstallera appen och återställa dina data från en säkerhetskopia.</string>
+
+    <!-- Biometric unlock -->
+    <string name="biometric_prompt_title">Lås upp Mood Cairns</string>
+    <string name="biometric_prompt_subtitle">Bekräfta din identitet för att fortsätta</string>
+    <string name="biometric_prompt_use_pin">Använd pinkod</string>
+    <string name="biometric_enroll_prompt_title">Aktivera biometrisk upplåsning</string>
+    <string name="biometric_enroll_prompt_subtitle">Bekräfta att du vill kunna låsa upp Mood Cairns med biometri</string>
+    <string name="biometric_offer_title">Biometrisk upplåsning</string>
+    <string name="biometric_offer_body_upgrade">Enhetens säkerhetshårdvara skyddar nu den biometriska upplåsningen. Aktivera den igen om du vill fortsätta använda den.</string>
+    <string name="biometric_offer_body_setup">Vill du låsa upp Mood Cairns med biometri i stället för pinkod? Du kan ändra detta senare i inställningarna.</string>
+    <string name="biometric_offer_body_invalidated">Biometrisk upplåsning har stängts av eftersom biometrin eller skärmlåset på enheten har ändrats. Om du inte själv gjorde ändringen kan någon annan ha åtkomst till din telefon.</string>
+    <string name="biometric_offer_not_now">Inte nu</string>
+
+    <!-- Using the app without a PIN -->
+    <string name="no_pin_warning_title_setup">Fortsätta utan pinkod?</string>
+    <string name="no_pin_warning_title_remove">Ta bort pinkoden?</string>
+    <string name="no_pin_warning_body">Utan pinkod kan vem som helst som har tillgång till den upplåsta enheten öppna Mood Cairns och läsa alla dina registreringar. Dina data lagras fortfarande krypterade, men skyddas då bara av enhetens säkra nyckellager. Det extra skydd som pinkoden ger försvinner och biometrisk upplåsning stängs av. Du kan när som helst välja en ny pinkod i inställningarna.</string>
+    <string name="no_pin_warning_accept">Godkänn och fortsätt</string>
+
+    <!-- App language picker -->
+    <string name="language_app_language">Appens språk</string>
+    <string name="language_system_default">Följ systemets språk</string>
+    <string name="language_system_untranslated">%1$s (översättning saknas, så engelska används)</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_section_language">Språk</string>
+    <string name="settings_section_prompt_windows">Påminnelseperioder</string>
+    <string name="settings_add_window">Lägg till period</string>
+    <string name="settings_window_summary">%1$s–%2$s · %3$s</string>
+    <string name="settings_section_security">Säkerhet</string>
+    <string name="settings_auto_lock_label">Lås automatiskt när appen är i bakgrunden</string>
+    <string name="settings_auto_lock_immediate">Direkt</string>
+    <string name="settings_biometric_unlock">Biometrisk upplåsning</string>
+    <string name="settings_biometric_unavailable">Lägg till ett fingeravtryck eller en annan stark biometrisk metod i enhetens inställningar för att använda den här funktionen.</string>
+    <string name="settings_change_pin">Ändra pinkod</string>
+    <string name="settings_lock_now">Lås nu</string>
+    <string name="settings_set_pin">Välj pinkod</string>
+    <string name="settings_no_pin_explanation">Ingen pinkod har valts. Dina data är krypterade på enheten och skyddas enbart av enhetens nyckellager. Utan pinkod går det inte att låsa appen automatiskt, låsa upp med biometri eller använda Lås nu.</string>
+    <string name="settings_section_journal">Dagbok</string>
+    <string name="settings_journal_enabled">Aktivera dagboken</string>
+    <string name="settings_journal_enabled_summary">Lägger till en privat dagbok med en sida per dag. Om du stänger av funktionen döljs dagboken. Allt du har skrivit finns kvar.</string>
+    <string name="settings_section_danger_zone">Riskfyllda inställningar</string>
+    <string name="settings_allow_unsafe_exports">Tillåt osäkra exporter</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Tillåter okrypterade exporter under Säkerhetskopiering och import. Dina registreringar exporteras till en CSV-fil och din dagbok till Markdown-filer. Avstängt som standard.</string>
+    <string name="settings_unsafe_exports_dialog_title">Tillåt osäkra exporter?</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Du får möjlighet att exportera dina registreringar till en okrypterad CSV-fil och din dagbok till okrypterade Markdown-filer i det delade lagringsutrymmet. Filerna sparas i klartext utan lösenfras. Molntjänster för säkerhetskopiering, filhanterare och andra appar med läsåtkomst till det delade lagringsutrymmet kan då läsa alla dina registreringar och dagbokssidor.\n\nAktivera bara funktionen om du förstår och accepterar risken.</string>
+    <string name="settings_allow_screenshots">Tillåt skärmbilder</string>
+    <plurals name="settings_allow_screenshots_summary">
+        <item quantity="one">Tillåter skärmbilder och skärminspelning i %1$d minut. Låsskärmen är fortfarande skyddad. Avstängt som standard.</item>
+        <item quantity="other">Tillåter skärmbilder och skärminspelning i %1$d minuter. Låsskärmen är fortfarande skyddad. Avstängt som standard.</item>
+    </plurals>
+    <string name="settings_screenshots_allowed_until">Tillåtet till %1$s</string>
+    <string name="settings_backup_reminder">Påminnelser om säkerhetskopiering</string>
+    <string name="settings_backup_reminder_summary">Visar en påminnelse på startskärmen varannan vecka om att säkerhetskopiera dina data. Aktiverat som standard.</string>
+    <string name="settings_screenshots_dialog_title">Tillåt skärmbilder?</string>
+    <plurals name="settings_screenshots_dialog_body">
+        <item quantity="one">Under %1$d minut kan allt som visas, även dina registreringar, fångas på skärmbild eller skärminspelning, visas på en annan skärm eller synas i förhandsvisningen av senast använda appar. Skärmbilder sparas i det delade lagringsutrymmet där molntjänster för säkerhetskopiering och andra appar kan läsa dem.\n\nSkärmbilder blockeras automatiskt igen efter %1$d minut eller när appen låses.</item>
+        <item quantity="other">Under %1$d minuter kan allt som visas, även dina registreringar, fångas på skärmbild eller skärminspelning, visas på en annan skärm eller synas i förhandsvisningen av senast använda appar. Skärmbilder sparas i det delade lagringsutrymmet där molntjänster för säkerhetskopiering och andra appar kan läsa dem.\n\nSkärmbilder blockeras automatiskt igen efter %1$d minuter eller när appen låses.</item>
+    </plurals>
+    <string name="settings_section_diagnostics">Diagnostik</string>
+    <plurals name="settings_test_notification">
+        <item quantity="one">Testavisering (visas om ungefär %1$d sekund)</item>
+        <item quantity="other">Testavisering (visas om ungefär %1$d sekunder)</item>
+    </plurals>
+
+    <!-- Lock screen -->
+    <string name="lock_title">Låst</string>
+    <string name="lock_subtitle">Ange pinkoden för att fortsätta</string>
+    <string name="lock_pin_label">Pinkod</string>
+    <string name="lock_unlock">Lås upp</string>
+    <string name="lock_use_biometric">Lås upp med biometri</string>
+    <string name="lock_biometric_reset">Biometrisk upplåsning stängdes av eftersom enhetens biometri eller skärmlås har ändrats. Ange din pinkod.</string>
+    <string name="lock_try_again_in">Försök igen om %1$s</string>
+    <string name="lock_locked_for">Låst (%1$s)</string>
+    <string name="lock_error_wrong_pin">Fel pinkod</string>
+    <string name="lock_error_too_many_attempts">För många försök</string>
+    <string name="lock_error_unlock_failed">Det gick inte att låsa upp: %1$s</string>
+
+    <!-- First-run PIN setup -->
+    <string name="set_pin_title">Välj en pinkod</string>
+    <string name="set_pin_intro">Dina registreringar stannar på enheten. Skydda dem med pinkod och biometrisk upplåsning.</string>
+    <plurals name="set_pin_pin_label">
+        <item quantity="one">Pinkod (%1$d–%2$d siffra)</item>
+        <item quantity="other">Pinkod (%1$d–%2$d siffror)</item>
+    </plurals>
+    <string name="set_pin_confirm_label">Bekräfta pinkoden</string>
+    <string name="set_pin_save">Spara pinkoden</string>
+    <string name="set_pin_continue_without">Fortsätt utan pinkod</string>
+    <string name="set_pin_error_failed">Det gick inte att ställa in pinkoden: %1$s</string>
+    <string name="set_pin_error_no_pin_failed">Det gick inte att fortsätta utan pinkod: %1$s</string>
+
+    <!-- Change PIN -->
+    <string name="change_pin_title_change">Ändra pinkod</string>
+    <string name="change_pin_title_set">Välj pinkod</string>
+    <string name="change_pin_action_change">Ändra pinkod</string>
+    <string name="change_pin_action_set">Välj pinkod</string>
+    <string name="change_pin_action_remove">Ta bort pinkoden</string>
+    <string name="change_pin_current_label">Nuvarande pinkod</string>
+    <string name="change_pin_new_label">Ny pinkod</string>
+    <string name="change_pin_confirm_label">Bekräfta ny pinkod</string>
+    <string name="change_pin_remove_hint">Lämna fälten för den nya pinkoden tomma om du vill ta bort pinkoden.</string>
+    <string name="change_pin_error_current_required">Ange din nuvarande pinkod för att ta bort den</string>
+    <string name="change_pin_error_wrong_current">Den nuvarande pinkoden är fel</string>
+    <string name="change_pin_error_locked">Appen är låst. Lås upp den och försök igen.</string>
+    <string name="change_pin_error_failed">Det gick inte att ändra pinkoden: %1$s</string>
+    <plurals name="change_pin_error_new_pin_too_short">
+        <item quantity="one">Den nya pinkoden måste innehålla minst %1$d siffra</item>
+        <item quantity="other">Den nya pinkoden måste innehålla minst %1$d siffror</item>
+    </plurals>
+    <plurals name="change_pin_error_rate_limited">
+        <item quantity="one">För många försök. Försök igen om %1$d sekund.</item>
+        <item quantity="other">För många försök. Försök igen om %1$d sekunder.</item>
+    </plurals>
+
+    <!-- Scale validation -->
+    <string name="scale_edit_error_not_found">Skalan hittades inte</string>
+    <string name="scale_edit_error_numbers_required">Ange tal för minimivärde, maximivärde och steglängd</string>
+    <string name="scale_edit_error_min_not_below_max">Minimivärdet måste vara mindre än maximivärdet</string>
+    <string name="scale_edit_error_step_not_positive">Steglängden måste vara större än noll</string>
+    <string name="scale_edit_error_range_not_step_multiple">Intervallet (%1$d) måste vara jämnt delbart med steglängden (%2$s)</string>
+    <string name="scale_edit_error_default_not_number">Standardvärdet måste vara ett tal</string>
+    <string name="scale_edit_error_hex_incomplete">Ange sex hexadecimala tecken (0–9, A–F)</string>
+    <string name="scale_edit_error_default_out_of_range" tools:ignore="PluralsCandidate">Standardvärdet måste ligga mellan %1$d och %2$d</string>
+    <string name="scale_edit_error_default_off_step">Standardvärdet måste kunna nås från %2$d i steg om %1$s</string>
+
+    <!-- Tag validation -->
+    <string name="tag_edit_error_not_found">Etiketten hittades inte</string>
+    <string name="tag_edit_error_name_taken">Det finns redan en etikett med namnet ”%1$s” i den här kategorin</string>
+
+    <!-- Prompt window validation -->
+    <string name="window_edit_error_not_found">Påminnelseperioden hittades inte</string>
+    <string name="window_edit_error_label_required">Ange ett namn</string>
+    <string name="window_edit_error_start_not_before_end">Starttiden måste ligga före sluttiden</string>
+
+    <!-- Backup errors and results -->
+    <string name="backup_error_unsafe_exports_disabled">Osäkra exporter är avstängda</string>
+    <plurals name="backup_error_passphrase_too_short">
+        <item quantity="one">Lösenfrasen måste innehålla minst %1$d tecken</item>
+        <item quantity="other">Lösenfrasen måste innehålla minst %1$d tecken</item>
+    </plurals>
+    <string name="backup_export_success">%1$s har exporterats</string>
+    <string name="backup_export_csv_success">%1$s har exporterats (okrypterad)</string>
+    <string name="backup_export_failed">Exporten misslyckades: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Dagbokssidan för %1$s sparades inte. Appen kan inte återställa en sida med det datumet. Kontrollera sidans datum och exportera igen.</string>
+    <string name="backup_error_export_too_large">Säkerhetskopian sparades inte. Den skulle bli större än %1$d MB, vilket är gränsen för vad appen kan återställa.</string>
+    <string name="backup_import_success">Importen är klar. Registreringar: %1$d, skalor: %2$d, etiketter: %3$d, påminnelseperioder: %4$d</string>
+    <string name="backup_import_failed">Importen misslyckades: %1$s</string>
+
+    <!-- Configuration export and import -->
+    <string name="backup_config_section">Konfiguration</string>
+    <string name="backup_config_intro">Konfigurationsfilen innehåller dina skalor, etiketter, etikettkategorier och påminnelseperioder. Registreringar ingår inte. Använd filen för att göra samma inställningar i en annan installation eller för att återställa dina inställningar. Alla registreringar finns kvar efter importen.</string>
+    <string name="backup_config_export">Exportera konfiguration</string>
+    <string name="backup_config_import">Importera konfiguration (behåller dina registreringar)</string>
+    <string name="backup_config_encrypt_title">Kryptera konfigurationen</string>
+    <string name="backup_config_encrypt_body">Välj en lösenfras för att kryptera konfigurationen. Namnen på etiketter och skalor kan vara personliga. Därför skyddas filen på samma sätt som en fullständig säkerhetskopia. Du behöver exakt samma lösenfras för att importera filen. Lösenfrasen är skild från appens pinkod och går inte att återställa om du glömmer den.</string>
+    <string name="backup_config_decrypt_title">Dekryptera konfigurationen</string>
+    <string name="backup_config_decrypt_body">Ange lösenfrasen för konfigurationsfilen eller säkerhetskopian. Bara konfigurationen importeras. Dina registreringar finns kvar som de är.</string>
+    <string name="backup_config_export_success">Konfigurationen %1$s har exporterats</string>
+    <string name="backup_config_import_success">Konfigurationen har importerats. Skalor: %1$d, etiketter: %2$d, påminnelseperioder: %3$d. Dina registreringar är oförändrade.</string>
+    <string name="backup_config_import_failed">Det gick inte att importera konfigurationen: %1$s</string>
+    <string name="backup_config_import_partial">Delar av konfigurationen har importerats. Skalor: %1$d, etiketter: %2$d. Påminnelseperioderna kunde inte uppdateras (%3$s). Kontrollera dem i inställningarna. Dina registreringar är oförändrade.</string>
+    <string name="backup_config_only_label">Endast konfiguration</string>
+
+    <!-- Journal export and restore -->
+    <string name="backup_journal_section">Dagbok</string>
+    <string name="backup_journal_intro">Dagboken säkerhetskopieras separat från dina humördata i en egen krypterad fil. När du återställer en dagbok ersätts alla dagbokssidor. Dina humördata påverkas inte.</string>
+    <string name="backup_journal_export">Exportera dagboken</string>
+    <string name="backup_journal_import">Återställ dagboken (ersätter alla sidor)</string>
+    <string name="backup_journal_encrypt_title">Kryptera dagbokens säkerhetskopia</string>
+    <string name="backup_journal_encrypt_body">Välj en lösenfras för att kryptera dagbokens säkerhetskopia. Du behöver exakt samma lösenfras för att återställa den, även om du installerar appen på nytt. Lösenfrasen är skild från appens pinkod och går inte att återställa om du glömmer den.</string>
+    <string name="backup_journal_decrypt_title">Återställ dagboken</string>
+    <string name="backup_journal_decrypt_body">Alla sidor i din dagbok ersätts med sidorna i säkerhetskopian. Dina humördata påverkas inte. Ange lösenfrasen som användes för krypteringen.</string>
+    <string name="backup_journal_export_success">Dagboken %1$s har exporterats</string>
+    <string name="backup_journal_import_failed">Det gick inte att återställa dagboken: %1$s</string>
+    <string name="backup_journal_label">Dagbok</string>
+    <string name="backup_journal_markdown_warning">Dagboken exporteras i klartext när du väljer Markdown. Filerna är okrypterade. Alla som kan läsa mappen Dokument kan då läsa din dagbok. Det gäller även molntjänster för säkerhetskopiering, filhanterare och andra appar. Stäng av osäkra exporter i inställningarna för att dölja de här alternativen.</string>
+    <string name="backup_journal_markdown_all">Exportera alla sidor som Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Exportera en dag som Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Välj vilken dag du vill exportera</string>
+    <string name="backup_journal_markdown_export">Exportera</string>
+    <string name="backup_journal_markdown_empty">Det finns inga dagbokssidor att exportera.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Dagboken har återställts: %1$d sida</item>
+        <item quantity="other">Dagboken har återställts: %1$d sidor</item>
+    </plurals>
+
+    <!-- Configuration incompatibilities -->
+    <string name="backup_config_incompatible_title">Konfigurationen är inte kompatibel</string>
+    <string name="backup_config_incompatible_version">Konfigurationsfilen använder formatversion %1$d, som den här appversionen inte kan importera. Uppdatera appen och försök igen. Inget har ändrats.</string>
+    <string name="backup_config_incompatible_backup_version">Säkerhetskopian använder formatversion %1$d. Den här appversionen kan inte importera konfigurationer från det formatet. Uppdatera appen och försök igen. Inget har ändrats.</string>
+    <string name="backup_config_incompatible_data_loss">Konfigurationen är inte kompatibel med dina data. En import skulle kunna radera eller ändra data i befintliga registreringar. Inget har ändrats.</string>
+    <string name="backup_config_conflict_item">• %1$s</string>
+    <plurals name="backup_config_conflict_scale_missing">
+        <item quantity="one">Skalan ”%2$s” används i %1$d registrering men saknas i konfigurationen.</item>
+        <item quantity="other">Skalan ”%2$s” används i %1$d registreringar men saknas i konfigurationen.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_direction">
+        <item quantity="one">Konfigurationen vänder på skalan ”%2$s”. Det skulle ändra innebörden av %1$d registrering.</item>
+        <item quantity="other">Konfigurationen vänder på skalan ”%2$s”. Det skulle ändra innebörden av %1$d registreringar.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_scale_range">
+        <item quantity="one">Konfigurationen begränsar skalan ”%2$s” till intervallet från %3$d till %4$d. Det registrerade värdet i %1$d registrering ryms inte i intervallet.</item>
+        <item quantity="other">Konfigurationen begränsar skalan ”%2$s” till intervallet från %3$d till %4$d. Registrerade värden i %1$d registreringar ryms inte i intervallet.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_tag_missing">
+        <item quantity="one">Etiketten ”%2$s” (%3$s) används i %1$d registrering men saknas i konfigurationen.</item>
+        <item quantity="other">Etiketten ”%2$s” (%3$s) används i %1$d registreringar men saknas i konfigurationen.</item>
+    </plurals>
+    <plurals name="backup_config_conflict_more">
+        <item quantity="one">Och ytterligare %1$d problem.</item>
+        <item quantity="other">Och ytterligare %1$d problem.</item>
+    </plurals>
+
+    <!-- Import errors -->
+    <string name="import_error_too_large">Filen är större än gränsen på %1$d MB.</string>
+    <string name="import_error_contents_too_large">Säkerhetskopian överskrider gränsen på %1$d MB när den packas upp.</string>
+    <string name="import_error_unreadable">Det gick inte att läsa filen.</string>
+    <string name="import_error_unreadable_detail">Det gick inte att läsa filen (%1$s).</string>
+    <string name="import_error_not_a_backup">Filen är ingen säkerhetskopia från Mood Cairns.</string>
+    <string name="import_error_wrong_secret">Det gick inte att dekryptera säkerhetskopian. Lösenfrasen är fel eller så är filen skadad.</string>
+    <string name="import_error_unsupported_version">Säkerhetskopian använder formatversion %1$d, som den här appversionen inte kan läsa. Prova att uppdatera appen.</string>
+    <string name="import_error_malformed">Säkerhetskopian är skadad (%1$s).</string>
+    <string name="import_error_write_failed">Importen avbröts när dina data skulle sparas (%1$s).</string>
+    <string name="import_error_config_only">Den här filen innehåller bara en konfiguration och har inga registreringar att återställa. Välj Importera konfiguration i stället.</string>
+    <string name="import_error_journal_file">Det här är en säkerhetskopia av dagboken. Välj Återställ dagboken under Dagbok.</string>
+    <string name="import_error_not_journal">Det här är ingen säkerhetskopia av dagboken. Säkerhetskopior av humördata och konfigurationsfiler importeras i sina respektive avsnitt.</string>
+</resources>
