@@ -22,27 +22,27 @@ class SlotKeyTest {
     )
 
     @Test
-    fun liveWindowMapsToWindowKey() {
+    fun live_window_maps_to_window_key() {
         assertEquals(SlotKey.Window(2L), slotKeyFor(entry(PromptSlot.EVENING, 2L), knownWindowIds))
     }
 
     @Test
-    fun manualMapsToManual() {
+    fun manual_maps_to_manual() {
         assertEquals(SlotKey.Manual, slotKeyFor(entry(PromptSlot.MANUAL, null), knownWindowIds))
     }
 
     @Test
-    fun customMapsToCustom() {
+    fun custom_maps_to_custom() {
         assertEquals(SlotKey.Custom, slotKeyFor(entry(PromptSlot.CUSTOM, null), knownWindowIds))
     }
 
     @Test
-    fun deletedWindowBucketsToOther() {
+    fun deleted_window_buckets_to_other() {
         assertEquals(SlotKey.Other, slotKeyFor(entry(PromptSlot.MORNING, 99L), knownWindowIds))
     }
 
     @Test
-    fun legacySlotWithoutWindowBucketsToOther() {
+    fun legacy_slot_without_window_buckets_to_other() {
         assertEquals(SlotKey.Other, slotKeyFor(entry(PromptSlot.MORNING, null), knownWindowIds))
     }
 }

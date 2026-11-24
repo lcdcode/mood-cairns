@@ -75,12 +75,32 @@ internal object SeedTagCategories {
 
 /** Plain ARGB literals rather than android.graphics.Color, so JVM tests can load this. */
 internal object Seed {
+    /** Indigo-violet with at least 4:1 contrast against both theme backgrounds. */
+    const val SLEEP_COLOR_ARGB: Int = 0xFF7B68D9.toInt()
+
+    /**
+     * Hours slept, asked once per day. Added in DB v7, so MIGRATION_6_7 seeds it on its
+     * own and a restore of an older backup backfills it.
+     */
+    val sleepScale: Scale = Scale(
+        name = "Sleep",
+        minValue = 0,
+        maxValue = 12,
+        step = 0.5f,
+        colorArgb = SLEEP_COLOR_ARGB,
+        isBuiltIn = true,
+        sortOrder = 5,
+        defaultValue = 7.5f,
+        oncePerDay = true,
+    )
+
     val scales: List<Scale> = listOf(
         Scale(name = "Happiness", minValue = 1, maxValue = 10, colorArgb = 0xFFF6C453.toInt(), isBuiltIn = true, sortOrder = 0),
         Scale(name = "Anxiety",   minValue = 1, maxValue = 10, colorArgb = 0xFF7D99D1.toInt(), isBuiltIn = true, sortOrder = 1),
         Scale(name = "Stress",    minValue = 1, maxValue = 10, colorArgb = 0xFFD17D7D.toInt(), isBuiltIn = true, sortOrder = 2),
         Scale(name = "Boredom",   minValue = 1, maxValue = 10, colorArgb = 0xFF9AA39A.toInt(), isBuiltIn = true, sortOrder = 3),
         Scale(name = "Pain",      minValue = 1, maxValue = 10, colorArgb = 0xFFB5651D.toInt(), isBuiltIn = true, sortOrder = 4),
+        sleepScale,
     )
 
     val windows: List<PromptWindow> = listOf(

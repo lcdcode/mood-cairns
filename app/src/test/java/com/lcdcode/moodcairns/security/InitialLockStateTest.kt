@@ -12,19 +12,19 @@ import org.junit.Test
 class InitialLockStateTest {
 
     @Test
-    fun pinSet_locksRegardlessOfNoPinKey() {
+    fun pin_set_locks_regardless_of_no_pin_key() {
         assertEquals(LockState.Locked, resolveInitialState(pinSet = true, hasNoPinDbKey = false))
         // A stale no-PIN key must never override a real PIN.
         assertEquals(LockState.Locked, resolveInitialState(pinSet = true, hasNoPinDbKey = true))
     }
 
     @Test
-    fun noPin_withStoredKey_boots() {
+    fun no_pin_with_stored_key_boots() {
         assertEquals(LockState.Booting, resolveInitialState(pinSet = false, hasNoPinDbKey = true))
     }
 
     @Test
-    fun noPin_noKey_needsSetup() {
+    fun no_pin_no_key_needs_setup() {
         assertEquals(LockState.NeedsSetup, resolveInitialState(pinSet = false, hasNoPinDbKey = false))
     }
 }

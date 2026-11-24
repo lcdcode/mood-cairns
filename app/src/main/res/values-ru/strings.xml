@@ -35,6 +35,9 @@
     <string name="common_name_label">Название</string>
     <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Изменить порядок</string>
+    <string name="common_done">Готово</string>
+    <string name="common_move_up">Переместить вверх</string>
+    <string name="common_move_down">Переместить вниз</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -75,6 +78,7 @@
     <string name="seed_scale_stress">Стресс / Напряжение</string>
     <string name="seed_scale_boredom">Апатия / Скука</string>
     <string name="seed_scale_pain">Боль</string>
+    <string name="seed_scale_sleep">Сон</string>
     <string name="seed_tag_home">Дом</string>
     <string name="seed_tag_work">Работа</string>
     <string name="seed_tag_school">Учёба</string>
@@ -120,17 +124,45 @@
     <string name="notif_test_title">Тестовое уведомление</string>
     <!-- Home screen -->
     <string name="home_tagline">Записывайте, как вы себя чувствуете. Конфиденциально.</string>
-    <string name="home_log_entry">Новая запись</string>
-    <string name="home_history">История</string>
+    <string name="home_log_mood">Записать настроение</string>
+    <string name="home_mood_history">История настроения</string>
+    <string name="home_open_journal">Открыть дневник</string>
     <string name="home_charts">Графики</string>
     <string name="home_backup">Резервные копии и импорт</string>
     <string name="home_scales">Управление шкалами</string>
     <string name="home_tags">Управление тегами</string>
     <string name="home_settings">Настройки</string>
     <string name="home_about">О приложении</string>
+    <string name="home_backup_reminder_title">Дружеское напоминание сделать резервную копию</string>
+    <string name="home_backup_reminder_body">Копии сохраняются в Documents/MoodCairns на этом телефоне. Скопируйте их в другое место, чтобы не потерять их вместе с телефоном. Нажмите, чтобы открыть «Резервные копии и импорт».</string>
+    <string name="home_backup_reminder_dismiss">Скрыть</string>
+
+    <!-- Редактор дневника -->
+    <string name="journal_placeholder">Напишите о своём дне…</string>
+    <string name="journal_empty_read">За этот день пока ничего не написано.</string>
+    <string name="journal_load_failed">Не удалось открыть эту страницу дневника.</string>
+    <string name="journal_show_read">Режим чтения</string>
+    <string name="journal_show_edit">Редактировать</string>
+    <string name="journal_format_bold">Жирный</string>
+    <string name="journal_format_italic">Курсив</string>
+    <string name="journal_format_heading">Заголовок</string>
+    <string name="journal_format_bullet_list">Маркированный список</string>
+    <string name="journal_format_numbered_list">Нумерованный список</string>
+    <string name="journal_format_quote">Цитата</string>
+    <string name="journal_format_code">Код</string>
+    <string name="journal_format_checklist">Список задач</string>
+    <string name="journal_format_table">Вставить таблицу</string>
+    <string name="journal_table_column">Столбец %1$d</string>
+
+    <!-- История дневника -->
+    <string name="journal_history_title">История дневника</string>
+    <string name="journal_history_search_hint">Поиск по дневнику…</string>
+    <string name="journal_history_empty">В дневнике пока нет страниц.</string>
+    <string name="journal_history_no_matches">Нет страниц, соответствующих запросу.</string>
     <!-- Entry screen -->
     <string name="entry_title_new">Как вы себя чувствуете?</string>
     <string name="entry_title_edit">Изменить запись</string>
+    <string name="entry_save_open_journal">Сохранить и открыть дневник</string>
     <string name="entry_no_scales">Шкалы не настроены. Добавьте шкалу в разделе «Управление шкалами».</string>
     <string name="entry_note_label">Заметка (необязательно)</string>
     <string name="entry_prompt_slot_label">Интервал напоминания</string>
@@ -138,8 +170,9 @@
     <string name="entry_slider_description_out_of">%1$s, значение %2$s из %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, значение %2$s в диапазоне от %3$d до %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s (меньше — лучше)</string>
+    <string name="entry_once_per_day_reask_hint">Оставьте %1$s, чтобы вас спросили ещё раз позже.</string>
     <!-- History screen -->
-    <string name="history_title">История</string>
+    <string name="history_mood_title">История настроения</string>
     <string name="history_add_past">Добавить прошлую запись</string>
     <string name="history_empty">Записей пока нет.</string>
     <string name="history_no_matches">Нет записей, соответствующих фильтрам.</string>
@@ -150,6 +183,7 @@
     <string name="history_clear_search">Очистить поиск</string>
     <string name="history_clear_all">Сбросить все</string>
     <string name="history_pick_date">Выбрать дату</string>
+    <string name="history_long_press_hint">Нажмите и удерживайте запись, чтобы изменить или удалить её.</string>
     <!-- Scale list -->
     <string name="scale_list_title">Шкалы</string>
     <string name="scale_list_add">Добавить шкалу</string>
@@ -162,6 +196,7 @@
     <string name="scale_list_default">по умолчанию: %1$s</string>
     <string name="scale_list_lower_better">меньше — лучше</string>
     <string name="scale_list_built_in">встроенная</string>
+    <string name="scale_list_once_per_day">раз в день</string>
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Новая шкала</string>
     <string name="scale_edit_title_edit">Изменить шкалу</string>
@@ -172,6 +207,8 @@
     <string name="scale_edit_default_hint">С этого значения начинается ползунок в новой записи. Если оставить пустым, ползунок начнётся с середины шкалы.</string>
     <string name="scale_edit_lower_better">Меньше — лучше</string>
     <string name="scale_edit_lower_better_hint">Инвертировать шкалу: меньшие значения будут считаться улучшением состояния, а на графиках тренд поползет вверх.</string>
+    <string name="scale_edit_once_per_day">Раз в день</string>
+    <string name="scale_edit_once_per_day_hint">Спрашивается, пока за этот день нет значения выше минимума; если записать минимум, вопрос появится снова. На графиках отображается точками, соединёнными линией, без заливки.</string>
     <string name="scale_edit_color_label">Цвет</string>
     <string name="scale_edit_color_custom">Свой цвет</string>
     <string name="scale_edit_color_picker_title">Выберите цвет</string>
@@ -212,6 +249,7 @@
     </plurals>
     <string name="tag_list_column_heading">Столбец %1$d</string>
     <string name="tag_list_add_category">Добавить категорию</string>
+    <string name="tag_list_reorder_categories">Изменить порядок категорий</string>
     <string name="tag_category_delete_title">Удалить категорию?</string>
     <string name="tag_category_delete_body_empty">Категория «%1$s» будет удалена. В ней нет тегов.</string>
     <plurals name="tag_category_delete_body">
@@ -246,12 +284,12 @@
     <string name="window_edit_enabled">Включено</string>
     <string name="window_edit_select_time">Выберите время</string>
     <!-- Backup screen -->
-    <string name="backup_title">Резервное копирование</string>
+    <string name="backup_title">Резервные копии и импорт</string>
     <string name="backup_intro">Резервные копии шифруются по стандарту AES-GCM с помощью выбранного вами пароля и сохраняются в папку Documents/MoodCairns. Для синхронизации данных на другие устройства можно использовать Syncthing или любой файловый менеджер; само приложение ничего в сеть не загружает.</string>
-    <string name="backup_export">Создать копию</string>
+    <string name="backup_export_mood">Экспортировать данные настроения</string>
     <string name="backup_export_csv">Экспорт в CSV (без шифрования)</string>
     <string name="backup_export_csv_warning">CSV-файл содержит обычный текст и НЕ защищен шифрованием. Любые программы с доступом к вашей папке Documents (облачные диски, файловые менеджеры) смогут прочесть ваши личные записи. Чтобы скрыть эту кнопку, отключите небезопасный экспорт в настройках.</string>
-    <string name="backup_import">Импорт из файла (заменит все текущие данные)</string>
+    <string name="backup_restore_mood">Восстановить данные настроения (заменит все данные настроения)</string>
     <string name="backup_existing_label">Существующие копии</string>
     <string name="backup_none">Пока нет.</string>
     <string name="backup_encrypt_title">Зашифровать резервную копию</string>
@@ -281,6 +319,11 @@
     <string name="about_no_browser">На устройстве не найден браузер для открытия страницы.</string>
     <string name="about_contact_title">Обратная связь</string>
     <string name="about_contact_body">Чтобы предложить новую функцию или сообщить об ошибке, пожалуйста, &lt;a href=\"%1$s\"&gt;создайте новое обращение (issue) на GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Лицензии открытого ПО</string>
+    <string name="licenses_original_language">Тексты лицензий являются юридическими документами и приводятся на языке оригинала (английском).</string>
+    <string name="licenses_load_failed">Не удалось загрузить тексты лицензий.</string>
     <!-- Charts screen -->
     <string name="charts_title">Графики</string>
     <string name="charts_help_button">Справка</string>
@@ -364,6 +407,8 @@
     <string name="charts_help_axis_title">Ось Y: %1$s или %2$s</string>
     <string name="charts_help_autofit_body">Масштабирует вертикальную ось только до того диапазона, который действительно занимают ваши данные. Небольшие изменения хорошо видны, потому что график заполняет всё пространство, но линия не соотносится с полным диапазоном шкалы. Подписи слева показывают записанные значения; если выбрано несколько шкал, все они используют эту одну ось.</string>
     <string name="charts_help_absolute_body" formatted="false">Показывает каждую линию относительно полного диапазона её шкалы, от минимума до максимума. Изменения выглядят меньше, зато разные шкалы выравниваются, и их можно наглядно сравнивать на одном графике. Шкалы с пометкой «меньше — лучше» здесь перевёрнуты, чтобы улучшение состояния всегда было направлено вверх. Подписи слева указаны в процентах, потому что каждая линия измеряется относительно своего диапазона: 100% соответствует верху диапазона, а для шкалы «меньше — лучше» соответствует его нижней точке.</string>
+    <string name="charts_help_once_per_day_title">Шкалы «раз в день»</string>
+    <string name="charts_help_once_per_day_body">Шкалы вроде «Сон» заполняются раз в день, поэтому каждый день отмечен точкой, а точки соединены линией без заливки под ней. В режиме %1$s их нет, так как время записи для них ничего не значит. Если за день есть и минимум, и более высокое значение, рисуется только более высокое: минимум может означать, что значение ещё не было записано.</string>
     <!-- Data store upgrade -->
     <string name="migrating_title">Обновление хранилища данных…</string>
     <string name="migrating_body">Ваши записи переносятся в зашифрованную базу данных. Пожалуйста, не закрывайте приложение.</string>
@@ -373,6 +418,13 @@
     <string name="biometric_prompt_title">Разблокировать Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Подтвердите личность для входа</string>
     <string name="biometric_prompt_use_pin">Ввести PIN-код</string>
+    <string name="biometric_enroll_prompt_title">Включить биометрическую разблокировку</string>
+    <string name="biometric_enroll_prompt_subtitle">Подтвердите, чтобы разблокировать Mood Cairns с помощью биометрии</string>
+    <string name="biometric_offer_title">Биометрическая разблокировка</string>
+    <string name="biometric_offer_body_upgrade">Биометрическая разблокировка теперь защищена аппаратными средствами безопасности вашего устройства. Включите её снова, чтобы продолжить ею пользоваться.</string>
+    <string name="biometric_offer_body_setup">Разблокировать Mood Cairns с помощью биометрии вместо PIN-кода? Это можно изменить позже в настройках.</string>
+    <string name="biometric_offer_body_invalidated">Биометрическая разблокировка отключена, потому что изменились биометрические данные или блокировка экрана этого устройства. Если вы этого не делали, возможно, кто-то другой имеет доступ к вашему телефону.</string>
+    <string name="biometric_offer_not_now">Не сейчас</string>
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Продолжить без PIN-кода?</string>
     <string name="no_pin_warning_title_remove">Удалить PIN-код?</string>
@@ -392,15 +444,19 @@
     <string name="settings_auto_lock_label">Автоблокировка в фоне через</string>
     <string name="settings_auto_lock_immediate">Сразу</string>
     <string name="settings_biometric_unlock">Биометрическая разблокировка</string>
+    <string name="settings_biometric_unavailable">Чтобы использовать эту функцию, настройте отпечаток пальца или другой надёжный биометрический метод в настройках устройства.</string>
     <string name="settings_change_pin">Изменить PIN-код</string>
     <string name="settings_lock_now">Заблокировать сейчас</string>
     <string name="settings_set_pin">Установить PIN-код</string>
     <string name="settings_no_pin_explanation">PIN-код не установлен. Ваши данные зашифрованы на устройстве, но защищены только системным хранилищем ключей. Без PIN-кода недоступны автоблокировка, биометрический вход и мгновенная блокировка.</string>
+    <string name="settings_section_journal">Дневник</string>
+    <string name="settings_journal_enabled">Включить дневник</string>
+    <string name="settings_journal_enabled_summary">Добавляет личный дневник: одна страница на каждый день. Отключение только скрывает дневник, всё написанное сохраняется.</string>
     <string name="settings_section_danger_zone">Опасная зона</string>
     <string name="settings_allow_unsafe_exports">Разрешить небезопасный экспорт</string>
-    <string name="settings_allow_unsafe_exports_summary">Включает экспорт в незашифрованный CSV в разделе «Резервное копирование». По умолчанию выключено.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Включает незашифрованный экспорт в разделе «Резервные копии и импорт»: CSV-файл с записями и файлы Markdown с дневником. По умолчанию выключено.</string>
     <string name="settings_unsafe_exports_dialog_title">Разрешить небезопасный экспорт?</string>
-    <string name="settings_unsafe_exports_dialog_body">Появится возможность экспортировать данные в незашифрованный CSV-файл. Этот файл содержит обычный текст и не защищен паролем: любые программы с доступом к хранилищу (облачные диски, файловые менеджеры) смогут прочесть ваши личные записи.\n\nВключайте эту функцию, только если полностью понимаете и принимаете этот риск.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Появится возможность экспортировать записи в незашифрованный CSV-файл, а дневник в незашифрованные файлы Markdown. Эти файлы содержат обычный текст и не защищены паролем: любые программы с доступом к хранилищу (облачные диски, файловые менеджеры) смогут прочесть ваши записи и страницы дневника.\n\nВключайте эту функцию, только если полностью понимаете и принимаете этот риск.</string>
     <string name="settings_allow_screenshots">Разрешить скриншоты</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Временно разрешает скриншоты и запись экрана на %1$d минуту. Экран блокировки остаётся защищённым. По умолчанию выключено.</item>
@@ -409,6 +465,8 @@
         <item quantity="other">Временно разрешает скриншоты и запись экрана на %1$d минуты. Экран блокировки остаётся защищённым. По умолчанию выключено.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Разрешено до %1$s</string>
+    <string name="settings_backup_reminder">Напоминания о резервных копиях</string>
+    <string name="settings_backup_reminder_summary">Раз в две недели показывает на главном экране напоминание сделать резервную копию данных. По умолчанию включено.</string>
     <string name="settings_screenshots_dialog_title">Разрешить скриншоты?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">На следующую %1$d минуту скриншоты, запись экрана, трансляция и превью в списке недавних приложений смогут захватить всё, что показано на экране, включая ваши записи. Скриншоты сохраняются в общем хранилище, где их могут прочитать облачные сервисы и другие приложения.\n\nСкриншоты снова будут заблокированы автоматически через %1$d минуту или при блокировке приложения.</item>
@@ -429,6 +487,7 @@
     <string name="lock_pin_label">PIN-код</string>
     <string name="lock_unlock">Разблокировать</string>
     <string name="lock_use_biometric">Использовать биометрию</string>
+    <string name="lock_biometric_reset">Биометрическая разблокировка отключена, потому что изменились биометрические данные или блокировка экрана этого устройства. Введите PIN-код.</string>
     <string name="lock_try_again_in">Повторите через %1$s</string>
     <string name="lock_locked_for">Заблокировано (%1$s)</string>
     <string name="lock_error_wrong_pin">Неверный PIN-код</string>
@@ -502,6 +561,8 @@
     <string name="backup_export_success">Успешно сохранено: %1$s</string>
     <string name="backup_export_csv_success">Успешно сохранено в CSV: %1$s (без шифрования)</string>
     <string name="backup_export_failed">Не удалось сохранить: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Не сохранено: у страницы дневника за %1$s дата, которую приложение не сможет восстановить. Проверьте дату страницы и повторите экспорт.</string>
+    <string name="backup_error_export_too_large">Не сохранено: копия превысила бы %1$d МБ, максимальный размер, который приложение может восстановить.</string>
     <string name="backup_import_success">Импорт успешно завершён. Записи: %1$d, шкалы: %2$d, теги: %3$d, интервалы напоминаний: %4$d</string>
     <string name="backup_import_failed">Не удалось импортировать данные: %1$s</string>
 
@@ -518,6 +579,29 @@
     <string name="backup_config_import_failed">Не удалось импортировать конфигурацию: %1$s</string>
     <string name="backup_config_import_partial">Конфигурация импортирована частично. Шкалы: %1$d, теги: %2$d. Не удалось обновить интервалы напоминаний (%3$s), проверьте их в настройках. Ваши записи не изменены.</string>
     <string name="backup_config_only_label">Только конфигурация</string>
+    <string name="backup_journal_section">Дневник</string>
+    <string name="backup_journal_intro">Дневник сохраняется отдельно от данных о настроении, в собственном зашифрованном файле. Восстановление заменяет все страницы дневника и никогда не затрагивает данные о настроении.</string>
+    <string name="backup_journal_export">Экспортировать дневник</string>
+    <string name="backup_journal_import">Восстановить дневник (заменит все страницы)</string>
+    <string name="backup_journal_encrypt_title">Зашифровать копию дневника</string>
+    <string name="backup_journal_encrypt_body">Придумайте пароль для шифрования этой копии дневника. Он понадобится для восстановления, даже после переустановки. Это не PIN-код приложения, и его нельзя восстановить, если вы его забудете.</string>
+    <string name="backup_journal_decrypt_title">Восстановить дневник</string>
+    <string name="backup_journal_decrypt_body">Восстановление заменит все страницы дневника страницами из этой копии. Данные о настроении не изменятся. Введите пароль, которым она зашифрована.</string>
+    <string name="backup_journal_export_success">Дневник экспортирован: %1$s</string>
+    <string name="backup_journal_import_failed">Не удалось восстановить дневник: %1$s</string>
+    <string name="backup_journal_label">Дневник</string>
+    <string name="backup_journal_markdown_warning">Экспорт в Markdown содержит обычный текст и НЕ защищен шифрованием. Любые программы с доступом к вашей папке Documents (облачные диски, файловые менеджеры) смогут прочесть ваш дневник. Чтобы скрыть эти кнопки, отключите небезопасный экспорт в настройках.</string>
+    <string name="backup_journal_markdown_all">Экспортировать все страницы в Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Экспортировать один день в Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Выберите день для экспорта</string>
+    <string name="backup_journal_markdown_export">Экспортировать</string>
+    <string name="backup_journal_markdown_empty">Нет страниц дневника для экспорта.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Дневник восстановлен: %1$d страница</item>
+        <item quantity="few">Дневник восстановлен: %1$d страницы</item>
+        <item quantity="many">Дневник восстановлен: %1$d страниц</item>
+        <item quantity="other">Дневник восстановлен: %1$d страницы</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Конфигурация несовместима</string>
     <string name="backup_config_incompatible_version">Эта конфигурация использует формат версии %1$d, который текущая версия приложения не может импортировать. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
     <string name="backup_config_incompatible_backup_version">Этот бэкап использует формат версии %1$d, из которого текущая версия приложения не может импортировать конфигурацию. Обновите приложение и попробуйте снова. Ничего не изменено.</string>
@@ -555,6 +639,7 @@
     </plurals>
     <!-- Import errors -->
     <string name="import_error_too_large">Размер файла превышает ограничение в %1$d МБ.</string>
+    <string name="import_error_contents_too_large">После распаковки копия превышает ограничение в %1$d МБ.</string>
     <string name="import_error_unreadable">Не удалось прочитать выбранный файл.</string>
     <string name="import_error_unreadable_detail">Не удалось прочитать файл (%1$s).</string>
     <string name="import_error_not_a_backup">Этот файл не является резервной копией Mood Cairns.</string>
@@ -563,4 +648,6 @@
     <string name="import_error_malformed">Файл резервной копии повреждён (%1$s).</string>
     <string name="import_error_write_failed">Импорт прерван при записи данных в память устройства (%1$s).</string>
     <string name="import_error_config_only">Это файл только с конфигурацией, в нём нет записей для восстановления. Используйте вместо этого «Импорт конфигурации».</string>
+    <string name="import_error_journal_file">Это копия дневника. Восстановите её кнопкой «Восстановить дневник» в разделе «Дневник».</string>
+    <string name="import_error_not_journal">Это не копия дневника. Резервные копии настроения и файлы конфигурации импортируются в своих разделах.</string>
 </resources>

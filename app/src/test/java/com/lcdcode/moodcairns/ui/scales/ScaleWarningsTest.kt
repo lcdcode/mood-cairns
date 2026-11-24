@@ -11,7 +11,7 @@ class ScaleWarningsTest {
     private val keepValues = UiText.Res(R.string.scale_edit_remap_keep)
 
     @Test
-    fun remap_isPluralOnEntryCount_andNamesTheKeepButton() {
+    fun remap_is_plural_on_entry_count_and_names_the_keep_button() {
         assertEquals(
             UiText.Plural(R.plurals.scale_edit_remap_body, 3, listOf(3, "Mood", keepValues)),
             remapWarning("Mood", 3),
@@ -19,7 +19,7 @@ class ScaleWarningsTest {
     }
 
     @Test
-    fun blankName_fallsBackToThisScale() {
+    fun blank_name_falls_back_to_this_scale() {
         assertEquals(
             UiText.Plural(R.plurals.scale_edit_remap_body, 1, listOf(1, thisScale, keepValues)),
             remapWarning("  ", 1),
@@ -31,7 +31,7 @@ class ScaleWarningsTest {
     }
 
     @Test
-    fun delete_whileCountLoading_omitsTheCount() {
+    fun delete_while_count_loading_omits_the_count() {
         assertEquals(
             UiText.Res(R.string.scale_edit_delete_body, listOf("Mood")),
             deleteWarning("Mood", affectedEntryCount = null),
@@ -39,7 +39,7 @@ class ScaleWarningsTest {
     }
 
     @Test
-    fun delete_unusedScale_saysSo() {
+    fun delete_unused_scale_says_so() {
         assertEquals(
             UiText.Res(R.string.scale_edit_delete_body_unused, listOf("Mood")),
             deleteWarning("Mood", affectedEntryCount = 0),
@@ -47,7 +47,7 @@ class ScaleWarningsTest {
     }
 
     @Test
-    fun delete_usedScale_isPluralOnEntryCount() {
+    fun delete_used_scale_is_plural_on_entry_count() {
         assertEquals(
             UiText.Plural(R.plurals.scale_edit_delete_body_used, 1, listOf(1, "Mood")),
             deleteWarning("Mood", affectedEntryCount = 1),

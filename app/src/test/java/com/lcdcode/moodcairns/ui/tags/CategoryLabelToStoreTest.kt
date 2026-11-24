@@ -10,38 +10,38 @@ class CategoryLabelToStoreTest {
     private val defaultName = "Places"
 
     @Test
-    fun customName_isStoredAsTyped() {
+    fun custom_name_is_stored_as_typed() {
         assertEquals("Spots", categoryLabelToStore("Spots", defaultName))
     }
 
     @Test
-    fun defaultName_restoresDefault() {
+    fun default_name_restores_default() {
         assertEquals("", categoryLabelToStore("Places", defaultName))
     }
 
     @Test
-    fun defaultNameWithStraySpaces_restoresDefault() {
+    fun default_name_with_stray_spaces_restores_default() {
         assertEquals("", categoryLabelToStore("  Places\n", defaultName))
     }
 
     @Test
-    fun defaultNameInDifferentCase_isACustomName() {
+    fun default_name_in_different_case_is_a_custom_name() {
         assertEquals("places", categoryLabelToStore("places", defaultName))
     }
 
     @Test
-    fun blank_isPassedThroughForTheRepositoryToReset() {
+    fun blank_is_passed_through_for_the_repository_to_reset() {
         assertEquals("   ", categoryLabelToStore("   ", defaultName))
     }
 
     @Test
-    fun userCategory_withBlankName_isMissingAName() {
+    fun user_category_with_blank_name_is_missing_a_name() {
         assertTrue(isMissingCategoryName("  \n", defaultName = null))
         assertFalse(isMissingCategoryName("Health", defaultName = null))
     }
 
     @Test
-    fun builtIn_withBlankName_isFine_becauseItRestoresTheDefault() {
+    fun built_in_with_blank_name_is_fine_because_it_restores_the_default() {
         assertFalse(isMissingCategoryName("", defaultName))
     }
 }

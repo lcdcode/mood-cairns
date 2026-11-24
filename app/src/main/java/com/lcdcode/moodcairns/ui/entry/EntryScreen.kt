@@ -1,15 +1,18 @@
 package com.lcdcode.moodcairns.ui.entry
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.horizontalScroll
@@ -21,9 +24,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
@@ -57,6 +62,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,13 +92,20 @@ import java.time.ZoneOffset
 fun EntryScreen(
     onBack: () -> Unit,
     onSaved: () -> Unit,
+    onSavedOpenJournal: (LocalDate) -> Unit,
     viewModel: EntryViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val journalEnabled by viewModel.journalEnabled.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(state.savedId) {
-        if (state.savedId != null) onSaved()
+        if (state.savedId == null) return@LaunchedEffect
+        if (state.openJournalAfterSave) {
+            onSavedOpenJournal(journalDayOf(state.recordedAt, ZoneId.systemDefault()))
+        } else {
+            onSaved()
+        }
     }
 
     val errorText = state.error?.asString()
@@ -125,23 +139,14 @@ fun EntryScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             // Save lives in a fixed bottom bar so it stays reachable however
-            // long the form gets; imePadding keeps it above the keyboard.
+            // long the form gets; MainActivity's root imePadding keeps it above the keyboard.
             Surface(tonalElevation = 3.dp) {
-                Button(
-                    onClick = viewModel::save,
-                    enabled = !state.saving && state.scales.isNotEmpty(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                ) {
-                    Text(
-                        stringResource(
-                            if (state.saving) R.string.common_saving else R.string.common_save,
-                        ),
-                    )
-                }
+                SaveButtons(
+                    state = state,
+                    journalEnabled = journalEnabled,
+                    onSave = { viewModel.save() },
+                    onSaveAndOpenJournal = { viewModel.save(openJournal = true) },
+                )
             }
         },
     ) { padding ->
@@ -167,11 +172,20 @@ fun EntryScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            state.scales.forEach { scale ->
+            val locale = currentLocale()
+            state.askedScales.forEach { scale ->
                 ScaleSlider(
                     scale = scale,
-                    value = state.values[scale.id] ?: scale.initialSliderValue(),
+                    value = state.values[scale.id] ?: state.startValue(scale),
                     onValueChange = { viewModel.setValue(scale.id, it) },
+                    hint = if (state.isReasked(scale)) {
+                        stringResource(
+                            R.string.entry_once_per_day_reask_hint,
+                            formatScaleValue(scale.minValue.toFloat(), locale),
+                        )
+                    } else {
+                        null
+                    },
                 )
             }
 
@@ -181,6 +195,9 @@ fun EntryScreen(
                 value = state.note,
                 onValueChange = viewModel::setNote,
                 label = { Text(stringResource(R.string.entry_note_label)) },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                ),
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
             )
@@ -406,6 +423,7 @@ private fun ScaleSlider(
     scale: Scale,
     value: Float,
     onValueChange: (Float) -> Unit,
+    hint: String? = null,
 ) {
     val accent = Color(scale.colorArgb)
     val locale = currentLocale()
@@ -464,6 +482,13 @@ private fun ScaleSlider(
                 },
             )
         }
+        hint?.let {
+            Text(
+                it,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -488,4 +513,53 @@ internal fun snapToStep(raw: Float, scale: Scale): Float {
     val offset = raw - scale.minValue
     val snapped = scale.minValue + kotlin.math.round(offset / scale.step) * scale.step
     return snapped.coerceIn(scale.minValue.toFloat(), scale.maxValue.toFloat())
+}
+
+/**
+ * Save, plus "Save & open journal" when the journal is enabled. Side by side at equal width
+ * and height, so a label that wraps in a longer language does not make the pair uneven. The
+ * button that was tapped shows the saving state.
+ */
+@Composable
+private fun SaveButtons(
+    state: EntryUiState,
+    journalEnabled: Boolean,
+    onSave: () -> Unit,
+    onSaveAndOpenJournal: () -> Unit,
+) {
+    val enabled = !state.saving && state.scales.isNotEmpty()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Button(
+            onClick = onSave,
+            enabled = enabled,
+            modifier = Modifier.weight(1f).fillMaxHeight(),
+        ) {
+            val savingHere = state.saving && !state.openJournalAfterSave
+            SaveLabel(if (savingHere) R.string.common_saving else R.string.common_save)
+        }
+        if (journalEnabled) {
+            FilledTonalButton(
+                onClick = onSaveAndOpenJournal,
+                enabled = enabled,
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+            ) {
+                val savingHere = state.saving && state.openJournalAfterSave
+                SaveLabel(
+                    if (savingHere) R.string.common_saving else R.string.entry_save_open_journal,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SaveLabel(@StringRes label: Int) {
+    Text(stringResource(label), textAlign = TextAlign.Center)
 }

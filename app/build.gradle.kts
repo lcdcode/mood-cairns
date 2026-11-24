@@ -1,9 +1,17 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.register
@@ -23,6 +31,10 @@ plugins {
 
 val androidNamespace = "http://schemas.android.com/apk/res/android"
 val PSEUDO_LOCALE_ACCENTED = "en-rXA"
+
+// Repo-root notices file and the asset name it is packaged under (read by the licenses page).
+val THIRD_PARTY_NOTICES_FILE = "THIRD_PARTY_NOTICES.md"
+val THIRD_PARTY_NOTICES_ASSET = "third_party_notices.md"
 
 val simpleLocaleTag = Regex("^[a-z]{2,3}(-[A-Z]{2})?$")
 
@@ -67,8 +79,9 @@ android {
         applicationId = "com.lcdcode.moodcairns"
         minSdk = 29
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.2.2"
+        versionCode = 13
+        versionName = "1.3.0"
+        buildConfigField("String", "THIRD_PARTY_NOTICES_ASSET", "\"$THIRD_PARTY_NOTICES_ASSET\"")
         // Package only the languages the app ships. Library resources for other locales
         // are stripped.
         resourceConfigurations.addAll(supportedResourceLocales())
@@ -162,6 +175,9 @@ tasks.withType<Test>().configureEach {
     listOf("src/main/res", "src/debug/res", "schemas").forEach { dir ->
         inputs.dir(dir).withPathSensitivity(PathSensitivity.RELATIVE).withPropertyName(dir)
     }
+    inputs.file(rootProject.file(THIRD_PARTY_NOTICES_FILE))
+        .withPathSensitivity(PathSensitivity.NONE)
+        .withPropertyName("thirdPartyNotices")
 }
 
 configurations.all {
@@ -213,6 +229,12 @@ dependencies {
 
     implementation(libs.reorderable)
 
+    // Pure-Java Markdown parser (BSD-2). No Android resources, so the compileSdk 34 cap is safe.
+    implementation(libs.commonmark)
+    implementation(libs.commonmark.ext.gfm.tables)
+    implementation(libs.commonmark.ext.gfm.strikethrough)
+    implementation(libs.commonmark.ext.task.list.items)
+
     testImplementation(libs.junit)
     testImplementation(libs.sqlite.jdbc)
 }
@@ -260,17 +282,113 @@ abstract class VerifyNoNetworkTask : DefaultTask() {
     }
 }
 
+// Copies the repo-root THIRD_PARTY_NOTICES.md into the APK assets, so the in-app licenses
+// page always shows exactly the file that is reviewed in the repository.
+abstract class ThirdPartyNoticesAssetTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val notices: RegularFileProperty
+
+    @get:Input
+    abstract val assetName: Property<String>
+
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        notices.get().asFile.copyTo(
+            outputDirectory.get().file(assetName.get()).asFile,
+            overwrite = true,
+        )
+    }
+}
+
+// Compliance ratchet: every Maven group on the runtime classpath must be listed on a
+// "Maven groups:" line in THIRD_PARTY_NOTICES.md. A pattern ending in ".*" also covers
+// subgroups (`androidx.*` covers androidx.core).
+abstract class VerifyThirdPartyNoticesTask : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val notices: RegularFileProperty
+
+    @get:Input
+    abstract val rootComponent: Property<ResolvedComponentResult>
+
+    @TaskAction
+    fun verify() {
+        val patterns = notices.get().asFile.readLines()
+            .filter { it.contains(GROUPS_MARKER) }
+            .flatMap { line ->
+                BACKTICKED.findAll(line.substringAfter(GROUPS_MARKER)).map { it.groupValues[1] }
+            }
+        val uncovered = runtimeGroups().filterNot { group -> patterns.any { covers(it, group) } }
+        if (uncovered.isNotEmpty()) {
+            throw GradleException(
+                "THIRD_PARTY_NOTICES.md does not cover runtime dependency group(s): " +
+                    "${uncovered.sorted()}. Add each library's license and notices, plus a " +
+                    "\"$GROUPS_MARKER\" entry, before shipping.",
+            )
+        }
+    }
+
+    private fun runtimeGroups(): Set<String> {
+        val groups = mutableSetOf<String>()
+        val seen = mutableSetOf<ComponentIdentifier>()
+        val pending = ArrayDeque(listOf(rootComponent.get()))
+        while (pending.isNotEmpty()) {
+            val component = pending.removeFirst()
+            if (!seen.add(component.id)) continue
+            (component.id as? ModuleComponentIdentifier)?.let { groups += it.group }
+            component.dependencies.filterIsInstance<ResolvedDependencyResult>()
+                .forEach { pending.addLast(it.selected) }
+        }
+        return groups
+    }
+
+    private fun covers(pattern: String, group: String): Boolean =
+        if (pattern.endsWith(WILDCARD_SUFFIX)) {
+            val prefix = pattern.removeSuffix(WILDCARD_SUFFIX)
+            group == prefix || group.startsWith("$prefix.")
+        } else {
+            group == pattern
+        }
+
+    private companion object {
+        const val GROUPS_MARKER = "Maven groups:"
+        const val WILDCARD_SUFFIX = ".*"
+        val BACKTICKED = Regex("`([^`]+)`")
+    }
+}
+
 androidComponents {
     onVariants { variant ->
         val capitalized = variant.name.replaceFirstChar { it.uppercase() }
+        val noticesFile = rootProject.layout.projectDirectory.file(THIRD_PARTY_NOTICES_FILE)
         val verifyTask = tasks.register<VerifyNoNetworkTask>("verifyNoNetwork$capitalized") {
             mergedManifest.set(
                 variant.artifacts.get(com.android.build.api.artifact.SingleArtifact.MERGED_MANIFEST),
             )
             forbiddenPermissions.set(this@Build_gradle.forbiddenPermissions)
         }
+        val verifyNoticesTask =
+            tasks.register<VerifyThirdPartyNoticesTask>("verifyThirdPartyNotices$capitalized") {
+                notices.set(noticesFile)
+                rootComponent.set(variant.runtimeConfiguration.incoming.resolutionResult.rootComponent)
+            }
+        val noticesAssetTask =
+            tasks.register<ThirdPartyNoticesAssetTask>("thirdPartyNoticesAsset$capitalized") {
+                notices.set(noticesFile)
+                assetName.set(THIRD_PARTY_NOTICES_ASSET)
+            }
+        variant.sources.assets?.addGeneratedSourceDirectory(
+            noticesAssetTask,
+            ThirdPartyNoticesAssetTask::outputDirectory,
+        )
         afterEvaluate {
-            tasks.named("assemble$capitalized").configure { dependsOn(verifyTask) }
+            tasks.named("assemble$capitalized").configure {
+                dependsOn(verifyTask, verifyNoticesTask)
+            }
         }
     }
 }

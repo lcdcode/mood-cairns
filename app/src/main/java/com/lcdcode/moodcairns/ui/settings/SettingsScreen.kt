@@ -166,19 +166,11 @@ fun SettingsScreen(
                     )
                 }
                 item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            stringResource(R.string.settings_biometric_unlock),
-                            modifier = Modifier.weight(1f),
-                        )
-                        Switch(
-                            checked = state.biometricEnabled,
-                            onCheckedChange = viewModel::setBiometricEnabled,
-                        )
-                    }
+                    BiometricUnlockRow(
+                        enabled = state.biometricEnabled,
+                        onDisable = viewModel::disableBiometric,
+                        onEnrollmentFinished = viewModel::refresh,
+                    )
                 }
                 item {
                     OutlinedButton(onClick = onChangePin, modifier = Modifier.fillMaxWidth()) {
@@ -206,6 +198,32 @@ fun SettingsScreen(
             }
 
             item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+            item { SectionHeader(stringResource(R.string.settings_section_journal)) }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.settings_journal_enabled),
+                        modifier = Modifier.weight(1f),
+                    )
+                    // Hiding never deletes anything, so no confirmation either way.
+                    Switch(
+                        checked = state.journalEnabled,
+                        onCheckedChange = viewModel::setJournalEnabled,
+                    )
+                }
+            }
+            item {
+                Text(
+                    stringResource(R.string.settings_journal_enabled_summary),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
             item { SectionHeader(stringResource(R.string.settings_section_danger_zone)) }
             item {
                 Row(
@@ -229,7 +247,7 @@ fun SettingsScreen(
             }
             item {
                 Text(
-                    stringResource(R.string.settings_allow_unsafe_exports_summary),
+                    stringResource(R.string.settings_unsafe_exports_summary_plaintext),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -255,6 +273,29 @@ fun SettingsScreen(
             item {
                 Text(
                     screenshotsSummary(state.screenshotsRemainingMs),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.settings_backup_reminder),
+                        modifier = Modifier.weight(1f),
+                    )
+                    // Losing a reminder loses no data, so no confirmation either way.
+                    Switch(
+                        checked = state.backupReminderEnabled,
+                        onCheckedChange = viewModel::setBackupReminderEnabled,
+                    )
+                }
+            }
+            item {
+                Text(
+                    stringResource(R.string.settings_backup_reminder_summary),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -288,7 +329,7 @@ private fun UnsafeExportWarningDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.settings_unsafe_exports_dialog_title)) },
-        text = { Text(stringResource(R.string.settings_unsafe_exports_dialog_body)) },
+        text = { Text(stringResource(R.string.settings_unsafe_exports_dialog_body_plaintext)) },
         confirmButton = {
             TextButton(onClick = onConfirm) { Text(stringResource(R.string.common_enable)) }
         },

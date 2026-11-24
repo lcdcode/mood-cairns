@@ -52,6 +52,18 @@ interface TagCategoryDao {
     @Query("UPDATE tag_category SET sortOrder = sortOrder + 1 WHERE sortOrder >= :from")
     suspend fun shiftSortOrderFrom(from: Int)
 
+    @Query("UPDATE tag_category SET sortOrder = :sortOrder WHERE id = :id")
+    suspend fun setSortOrder(id: String, sortOrder: Int)
+
+    /** Renumbers every category from 0 in [requestedIds] order (see [planCategoryOrder]). */
+    @Transaction
+    suspend fun applySortOrder(requestedIds: List<String>) {
+        val currentIds = all().map { it.id }
+        planCategoryOrder(currentIds, requestedIds).forEachIndexed { index, id ->
+            setSortOrder(id, index)
+        }
+    }
+
     /** Inserts [category] in Other's slot and pushes Other (and anything after it) down. */
     @Transaction
     suspend fun insertBeforeOther(category: TagCategory) {

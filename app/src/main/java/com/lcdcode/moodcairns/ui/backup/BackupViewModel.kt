@@ -1,20 +1,33 @@
 package com.lcdcode.moodcairns.ui.backup
 
+import android.database.SQLException
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
 import com.lcdcode.moodcairns.backup.BackupSerializer
 import com.lcdcode.moodcairns.backup.BackupStore
+import com.lcdcode.moodcairns.backup.BackupTooLargeException
 import com.lcdcode.moodcairns.backup.ConfigImportResult
 import com.lcdcode.moodcairns.backup.ConfigImportService
 import com.lcdcode.moodcairns.backup.CsvExporter
 import com.lcdcode.moodcairns.backup.ImportResult
 import com.lcdcode.moodcairns.backup.ImportService
+import com.lcdcode.moodcairns.backup.JournalBackupExporter
+import com.lcdcode.moodcairns.backup.JournalBackupFormat
+import com.lcdcode.moodcairns.backup.JournalImportResult
+import com.lcdcode.moodcairns.backup.JournalImportService
+import com.lcdcode.moodcairns.backup.JournalMarkdown
+import com.lcdcode.moodcairns.backup.JournalMarkdownExporter
+import com.lcdcode.moodcairns.backup.UnrestorableJournalPageException
+import com.lcdcode.moodcairns.backup.logLabel
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
+import com.lcdcode.moodcairns.settings.BackupReminder
+import com.lcdcode.moodcairns.settings.JournalSettings
 import com.lcdcode.moodcairns.ui.common.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +37,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.time.LocalDate
 import javax.inject.Inject
 
 data class BackupUiState(
@@ -34,13 +49,21 @@ data class BackupUiState(
     val allowUnsafeExports: Boolean = false,
     /** Shown as a dialog: the reasons need more room than a snackbar. */
     val configIssue: ConfigIssue? = null,
+    val journalEnabled: Boolean = JournalSettings.DEFAULT_ENABLED,
+    /** Days offered by the "export one day as Markdown" picker; null while it is closed. */
+    val journalDayPicker: List<LocalDate>? = null,
 )
 
-enum class PinPromptMode(val isExport: Boolean, val isConfigOnly: Boolean) {
-    Export(isExport = true, isConfigOnly = false),
-    Import(isExport = false, isConfigOnly = false),
-    ExportConfig(isExport = true, isConfigOnly = true),
-    ImportConfig(isExport = false, isConfigOnly = true),
+/** What a passphrase dialog exports or imports. */
+enum class BackupPayload { Mood, Config, Journal }
+
+enum class PinPromptMode(val isExport: Boolean, val payload: BackupPayload) {
+    Export(isExport = true, payload = BackupPayload.Mood),
+    Import(isExport = false, payload = BackupPayload.Mood),
+    ExportConfig(isExport = true, payload = BackupPayload.Config),
+    ImportConfig(isExport = false, payload = BackupPayload.Config),
+    ExportJournal(isExport = true, payload = BackupPayload.Journal),
+    ImportJournal(isExport = false, payload = BackupPayload.Journal),
 }
 
 data class PinPrompt(val mode: PinPromptMode, val importUri: Uri? = null)
@@ -52,8 +75,13 @@ class BackupViewModel @Inject constructor(
     private val store: BackupStore,
     private val importer: ImportService,
     private val configImporter: ConfigImportService,
+    private val journalExporter: JournalBackupExporter,
+    private val journalImporter: JournalImportService,
+    private val markdownExporter: JournalMarkdownExporter,
     private val lockManager: LockManager,
     private val lockRepo: LockRepository,
+    private val backupReminder: BackupReminder,
+    journalSettings: JournalSettings,
 ) : ViewModel() {
 
     private val _ui = MutableStateFlow(
@@ -61,7 +89,14 @@ class BackupViewModel @Inject constructor(
     )
     val ui: StateFlow<BackupUiState> = _ui.asStateFlow()
 
-    init { refresh() }
+    init {
+        refresh()
+        viewModelScope.launch {
+            journalSettings.enabled.collect { enabled ->
+                _ui.update { it.copy(journalEnabled = enabled) }
+            }
+        }
+    }
 
     fun refresh() = viewModelScope.launch {
         // MediaStore query is disk I/O; keep it off the UI thread.
@@ -76,6 +111,10 @@ class BackupViewModel @Inject constructor(
 
     fun requestConfigExport() {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ExportConfig)) }
+    }
+
+    fun requestJournalExport() {
+        _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ExportJournal)) }
     }
 
     /**
@@ -94,6 +133,87 @@ class BackupViewModel @Inject constructor(
         runCsvExport()
     }
 
+    /** Plaintext zip of every journal page, one YYYY-MM-DD.md per day. */
+    fun requestJournalMarkdownZip() {
+        if (!unsafeExportsAllowed()) return
+        _ui.update { it.copy(busy = true, message = null) }
+        runPlaintextExport {
+            if (markdownExporter.days().isEmpty()) return@runPlaintextExport null
+            val name = BackupStore.suggestJournalMarkdownName()
+            store.writeStream(name, JournalMarkdown.MIME_ZIP) { out ->
+                markdownExporter.exportAll(out)
+            }
+            name
+        }
+    }
+
+    /** Opens the day picker, offering only days that have a page. */
+    fun requestJournalMarkdownDayPicker() {
+        if (!unsafeExportsAllowed()) return
+        viewModelScope.launch {
+            val days = withContext(Dispatchers.Default) { markdownExporter.days() }
+            _ui.update {
+                if (days.isEmpty()) {
+                    it.copy(message = UiText.Res(R.string.backup_journal_markdown_empty))
+                } else {
+                    it.copy(journalDayPicker = days)
+                }
+            }
+        }
+    }
+
+    fun dismissJournalDayPicker() = _ui.update { it.copy(journalDayPicker = null) }
+
+    /** Plaintext YYYY-MM-DD.md of one day's page. */
+    fun exportJournalMarkdownDay(day: LocalDate) {
+        _ui.update { it.copy(journalDayPicker = null) }
+        if (!unsafeExportsAllowed()) return
+        _ui.update { it.copy(busy = true, message = null) }
+        runPlaintextExport {
+            val content = markdownExporter.pageMarkdown(day) ?: return@runPlaintextExport null
+            val name = JournalMarkdown.fileName(day)
+            store.writeBackup(name, content, JournalMarkdown.MIME_MARKDOWN)
+            name
+        }
+    }
+
+    /**
+     * Re-checks the Settings gate for plaintext exports, so a stale screen cannot bypass it.
+     * Shows why when the gate is closed.
+     */
+    private fun unsafeExportsAllowed(): Boolean {
+        if (lockRepo.allowUnsafeExports) return true
+        _ui.update {
+            it.copy(message = UiText.Res(R.string.backup_error_unsafe_exports_disabled))
+        }
+        return false
+    }
+
+    /** Runs [export] off the UI thread; it returns the written file name, or null if empty. */
+    private fun runPlaintextExport(export: suspend () -> String?) = viewModelScope.launch {
+        val text = try {
+            val name = withContext(Dispatchers.Default) { export() }
+            if (name == null) {
+                UiText.Res(R.string.backup_journal_markdown_empty)
+            } else {
+                UiText.Res(R.string.backup_export_csv_success, listOf(name))
+            }
+        } catch (e: IOException) {
+            plaintextExportFailed(e)
+        } catch (e: IllegalStateException) {
+            plaintextExportFailed(e) // MediaStore refused the file, or the app locked.
+        } catch (e: SQLException) {
+            plaintextExportFailed(e)
+        }
+        _ui.update { it.copy(busy = false, message = text) }
+        refresh()
+    }
+
+    private fun plaintextExportFailed(cause: Exception): UiText {
+        Log.w(TAG, "Markdown export failed", cause)
+        return UiText.withDetail(R.string.backup_export_failed, cause)
+    }
+
     /**
      * Call right before launching the import file picker. The picker is an
      * external full-screen activity, so without a grace window an "Immediate"
@@ -107,6 +227,10 @@ class BackupViewModel @Inject constructor(
 
     fun requestConfigImport(uri: Uri) {
         _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ImportConfig, importUri = uri)) }
+    }
+
+    fun requestJournalImport(uri: Uri) {
+        _ui.update { it.copy(pinPrompt = PinPrompt(PinPromptMode.ImportJournal, importUri = uri)) }
     }
 
     fun cancelPinPrompt() {
@@ -150,7 +274,7 @@ class BackupViewModel @Inject constructor(
             return
         }
         _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-        runExport(secret, configOnly = mode.isConfigOnly)
+        runExport(secret, mode.payload)
     }
 
     private fun submitImportSecret(prompt: PinPrompt, secret: CharArray) {
@@ -164,31 +288,49 @@ class BackupViewModel @Inject constructor(
             _ui.update { it.copy(pinPrompt = null, busy = false) }
         } else {
             _ui.update { it.copy(pinPrompt = null, busy = true, message = null) }
-            if (prompt.mode.isConfigOnly) runConfigImport(uri, secret)
-            else runImport(uri, secret)
+            when (prompt.mode.payload) {
+                BackupPayload.Mood -> runImport(uri, secret)
+                BackupPayload.Config -> runConfigImport(uri, secret)
+                BackupPayload.Journal -> runJournalImport(uri, secret)
+            }
         }
     }
 
-    private fun runExport(passphrase: CharArray, configOnly: Boolean) = viewModelScope.launch {
+    private fun runExport(passphrase: CharArray, payload: BackupPayload) = viewModelScope.launch {
         val text = try {
             // PBKDF2 (600k rounds) + AES + file write; off the UI thread so a
             // large export can't freeze or ANR-crash the app on slow devices.
             withContext(Dispatchers.Default) {
-                val json: String
-                val name: String
-                if (configOnly) {
-                    json = serializer.exportConfigJson(passphrase)
-                    name = BackupStore.suggestConfigName()
-                } else {
-                    json = serializer.exportJson(passphrase)
-                    name = BackupStore.suggestName()
+                val (name, success) = when (payload) {
+                    BackupPayload.Mood -> {
+                        val name = BackupStore.suggestName()
+                        store.writeBackup(name, serializer.exportJson(passphrase))
+                        name to R.string.backup_export_success
+                    }
+                    BackupPayload.Config -> {
+                        val name = BackupStore.suggestConfigName()
+                        store.writeBackup(name, serializer.exportConfigJson(passphrase))
+                        name to R.string.backup_config_export_success
+                    }
+                    BackupPayload.Journal -> {
+                        // Streamed straight to the file in constant memory, within the
+                        // size limits a restore accepts.
+                        val name = BackupStore.suggestJournalName()
+                        store.writeStream(name, JournalBackupFormat.MIME_TYPE) { out ->
+                            journalExporter.export(passphrase, out)
+                        }
+                        name to R.string.backup_journal_export_success
+                    }
                 }
-                store.writeBackup(name, json)
-                val success =
-                    if (configOnly) R.string.backup_config_export_success
-                    else R.string.backup_export_success
+                backupReminder.postpone()
                 UiText.Res(success, listOf(name))
             }
+        } catch (e: BackupTooLargeException) {
+            Log.w(TAG, "Export refused: over the import size limit", e)
+            UiText.Res(R.string.backup_error_export_too_large, listOf(e.maxMegabytes))
+        } catch (e: UnrestorableJournalPageException) {
+            Log.w(TAG, "Export refused: a page would not restore (${e.error.logLabel()})")
+            UiText.Res(R.string.backup_error_export_unrestorable_page, listOf(e.day.toString()))
         } catch (t: Throwable) {
             Log.w(TAG, "Export failed", t)
             UiText.withDetail(R.string.backup_export_failed, t)
@@ -226,12 +368,31 @@ class BackupViewModel @Inject constructor(
                     listOf(result.entries, result.scales, result.tags, result.windows),
                 )
                 is ImportResult.Failure -> {
-                    Log.w(TAG, "Import failed: ${result.error}")
+                    Log.w(TAG, "Import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
                     UiText.Res(R.string.backup_import_failed, listOf(result.error.toUiText()))
                 }
             }
         } finally {
             secret.fill('\u0000')
+        }
+        _ui.update { it.copy(busy = false, message = text) }
+        refresh()
+    }
+
+    private fun runJournalImport(uri: Uri, secret: CharArray) = viewModelScope.launch {
+        val result = try {
+            // PBKDF2 + decrypt + validation + DB writes; keep it off the UI thread.
+            withContext(Dispatchers.Default) { journalImporter.importReplace(uri, secret) }
+        } finally {
+            secret.fill('\u0000')
+        }
+        val text = when (result) {
+            is JournalImportResult.Success ->
+                UiText.Plural(R.plurals.backup_journal_import_success, result.days)
+            is JournalImportResult.Failure -> {
+                Log.w(TAG, "Journal import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
+                UiText.Res(R.string.backup_journal_import_failed, listOf(result.error.toUiText()))
+            }
         }
         _ui.update { it.copy(busy = false, message = text) }
         refresh()
@@ -259,7 +420,8 @@ class BackupViewModel @Inject constructor(
             Log.w(TAG, "Config import refused: format version ${result.found}")
         is ConfigImportResult.WindowsNotUpdated ->
             Log.w(TAG, "Config imported without prompt windows: ${result.detail}")
-        is ConfigImportResult.Failure -> Log.w(TAG, "Config import failed: ${result.error}")
+        is ConfigImportResult.Failure ->
+            Log.w(TAG, "Config import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
     }
 
     fun dismissMessage() = _ui.update { it.copy(message = null) }

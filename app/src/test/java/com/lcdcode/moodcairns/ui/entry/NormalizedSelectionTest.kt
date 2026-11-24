@@ -29,25 +29,25 @@ class NormalizedSelectionTest {
     private val windows = listOf(morning, evening)
 
     @Test
-    fun keepsValidWindowSelection() {
+    fun keeps_valid_window_selection() {
         val state = EntryUiState(slot = PromptSlot.MORNING, promptWindowId = 1, windows = windows)
         assertSame(state, state.normalizedSelection())
     }
 
     @Test
-    fun keepsManual() {
+    fun keeps_manual() {
         val state = EntryUiState(slot = PromptSlot.MANUAL, promptWindowId = null, windows = windows)
         assertSame(state, state.normalizedSelection())
     }
 
     @Test
-    fun keepsCustom() {
+    fun keeps_custom() {
         val state = EntryUiState(slot = PromptSlot.CUSTOM, promptWindowId = null, windows = windows)
         assertSame(state, state.normalizedSelection())
     }
 
     @Test
-    fun legacyEntryWithoutWindowFallsBackToSameSlotWindow() {
+    fun legacy_entry_without_window_falls_back_to_same_slot_window() {
         // Outlier #2: slot set, no window id (old data) -> first enabled window of that slot.
         val state = EntryUiState(slot = PromptSlot.EVENING, promptWindowId = null, windows = windows)
         val result = state.normalizedSelection()
@@ -56,7 +56,7 @@ class NormalizedSelectionTest {
     }
 
     @Test
-    fun orphanedWindowIdFallsBackToSameSlotWindow() {
+    fun orphaned_window_id_falls_back_to_same_slot_window() {
         // Outlier #1, hard-deleted window: dangling id, no pin -> re-points to live same-slot window.
         val state = EntryUiState(slot = PromptSlot.MORNING, promptWindowId = 99, windows = windows)
         val result = state.normalizedSelection()
@@ -64,7 +64,7 @@ class NormalizedSelectionTest {
     }
 
     @Test
-    fun fallsBackToManualWhenNoMatchingWindow() {
+    fun falls_back_to_manual_when_no_matching_window() {
         val state = EntryUiState(slot = PromptSlot.MORNING, promptWindowId = null, windows = emptyList())
         val result = state.normalizedSelection()
         assertEquals(PromptSlot.MANUAL, result.slot)
@@ -72,7 +72,7 @@ class NormalizedSelectionTest {
     }
 
     @Test
-    fun keepsPinnedDisabledWindow() {
+    fun keeps_pinned_disabled_window() {
         // Outlier #1, disabled window: not in enabled list but pinned via extraWindow.
         val disabled = window(3, PromptSlot.CUSTOM, enabled = false)
         val state = EntryUiState(

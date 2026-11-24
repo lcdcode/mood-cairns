@@ -14,7 +14,7 @@ import java.sql.DriverManager
 class ConfigUsageSqlTest {
 
     @Test
-    fun scaleUsage_countsEntriesAndValueExtremes_andSkipsUnusedScales() {
+    fun scale_usage_counts_entries_and_value_extremes_and_skips_unused_scales() {
         connectMemory().use { c ->
             createSchema(c)
             insertScale(c, id = 1, name = "Mood")
@@ -38,7 +38,7 @@ class ConfigUsageSqlTest {
     }
 
     @Test
-    fun tagUsage_countsDistinctEntries() {
+    fun tag_usage_counts_distinct_entries() {
         connectMemory().use { c ->
             createSchema(c)
             insertTag(c, id = 1, name = "Gym")
@@ -57,7 +57,7 @@ class ConfigUsageSqlTest {
     }
 
     @Test
-    fun replacingATag_dropsItsEntryLinks_whileUpdatingKeepsThem() {
+    fun replacing_a_tag_drops_its_entry_links_while_updating_keeps_them() {
         connectMemory().use { c ->
             createSchema(c)
             insertTag(c, id = 1, name = "Gym")

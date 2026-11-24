@@ -88,6 +88,35 @@ internal fun hourlyMeans(samples: List<Pair<Int, Float>>): List<HourPoint> {
 }
 
 /**
+ * [scale]'s Hourly points. None for a once-per-day scale: the hour its value was
+ * logged says nothing about it, so it drops out of Hourly mode entirely.
+ */
+internal fun hourlyPointsFor(scale: Scale, samples: List<Pair<Int, Float>>): List<HourPoint> =
+    if (scale.oncePerDay) emptyList() else hourlyMeans(samples)
+
+/**
+ * Day indices on which a once-per-day [scale] has a value above its minimum, from
+ * (dayIndex, value) samples. Empty for a regular scale, whose minimum is just a value.
+ */
+internal fun daysAnsweredAboveMinimum(scale: Scale, samples: List<Pair<Int, Float>>): Set<Int> =
+    if (!scale.oncePerDay) {
+        emptySet()
+    } else {
+        samples.filter { (_, value) -> value > scale.minValue }.mapTo(HashSet()) { it.first }
+    }
+
+/**
+ * A once-per-day minimum can mean "not logged yet", so it is left off the chart when
+ * its day also has a higher value. A day with nothing but minimums keeps them.
+ */
+internal fun isSupersededMinimum(
+    value: Float,
+    dayIndex: Int,
+    scale: Scale,
+    answeredDays: Set<Int>,
+): Boolean = value <= scale.minValue && dayIndex in answeredDays
+
+/**
  * Share of the full x range on screen. Vico's minimum zoom is the factor that fits
  * all content, so the visible share is that over the current factor. Before the
  * first measure both are zero, which reads as fully zoomed out.
@@ -146,3 +175,41 @@ internal fun plotPoints(
         ChartMode.RollingAvg -> series.rolling.map { PlotPoint(dayPointX(it.dayIndex), it.value) }
         ChartMode.Hourly -> series.hourly.map { PlotPoint(it.hour, it.value) }
     }
+
+/**
+ * Splits x-sorted minute-axis [points] into runs on consecutive days, so a line breaks
+ * across a day with no value instead of bridging it. Points on one day stay together.
+ */
+internal fun splitAtMissingDays(points: List<PlotPoint>): List<List<PlotPoint>> {
+    val runs = mutableListOf<MutableList<PlotPoint>>()
+    var previousDay: Int? = null
+    for (point in points) {
+        val day = Math.floorDiv(point.x, MINUTES_PER_DAY)
+        if (previousDay == null || day - previousDay > 1) runs += mutableListOf<PlotPoint>()
+        runs.last() += point
+        previousDay = day
+    }
+    return runs
+}
+
+/** One series as Vico draws it: all of [scale]'s points, or one unbroken run of them. */
+internal data class PlotSegment(val scale: Scale, val points: List<PlotPoint>)
+
+/**
+ * The series to draw, in order. A once-per-day scale on the date axis is split at
+ * missing days, so its line never implies a value for a day that has none; every
+ * other scale is one series. Scales with nothing to plot are skipped.
+ */
+internal fun plotSegments(
+    series: List<ScaleSeries>,
+    mode: ChartMode,
+    showEntries: Boolean,
+): List<PlotSegment> = series.flatMap { s ->
+    val points = plotPoints(s, mode, showEntries)
+    when {
+        points.isEmpty() -> emptyList()
+        s.scale.oncePerDay && mode != ChartMode.Hourly ->
+            splitAtMissingDays(points).map { PlotSegment(s.scale, it) }
+        else -> listOf(PlotSegment(s.scale, points))
+    }
+}

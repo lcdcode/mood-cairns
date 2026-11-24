@@ -22,7 +22,7 @@ internal class BackupContentsDecoder(private val json: Json) {
 
     fun parseObject(plaintext: String): JsonObject =
         runCatching { json.parseToJsonElement(plaintext) as? JsonObject }.getOrNull()
-            ?: fail(ImportError.Malformed("Backup contents are not a JSON object"))
+            ?: fail(ImportError.Malformed(MalformedReason.CONTENTS_NOT_AN_OBJECT))
 
     /** A full backup to restore. A configuration file is refused: it has no entries. */
     fun forFullRestore(contents: JsonObject): BackupFile {
@@ -53,13 +53,14 @@ internal class BackupContentsDecoder(private val json: Json) {
         return decode(contents) { json.decodeFromJsonElement(ConfigFile.serializer(), it) }
     }
 
+    /** Decoder messages quote the file, so only a fixed reason is reported. */
     private fun <T> decode(contents: JsonObject, decoder: (JsonObject) -> T): T =
         runCatching { decoder(contents) }
-            .getOrElse { fail(ImportError.Malformed(it.message ?: "Unreadable backup contents")) }
+            .getOrElse { fail(ImportError.Malformed(MalformedReason.CONTENTS_INVALID)) }
 
     private fun intField(contents: JsonObject, key: String): Int =
         (contents[key] as? JsonPrimitive)?.intOrNull
-            ?: fail(ImportError.Malformed("Backup is missing $key"))
+            ?: fail(ImportError.Malformed(MalformedReason.MISSING_VERSION))
 
     /** The setup in a full backup. v1 backups predate tags, so they get the seed tags. */
     private fun toConfigEntities(file: BackupFile): ConfigEntities {
@@ -95,7 +96,7 @@ internal class BackupContentsDecoder(private val json: Json) {
             scale.minValue < scale.maxValue &&
             scale.step.isFinite() && scale.step > 0f &&
             (scale.defaultValue == null || scale.defaultValue in range)
-        if (!valid) fail(ImportError.Malformed("Invalid scale \"${dto.name}\""))
+        if (!valid) fail(ImportError.Malformed(MalformedReason.INVALID_SCALE))
         return scale
     }
 
@@ -106,7 +107,7 @@ internal class BackupContentsDecoder(private val json: Json) {
     private fun validWindow(dto: PromptWindowDto): PromptWindow =
         runCatching { dto.toEntity() }.getOrNull()
             ?.takeIf { it.label.isNotBlank() && it.startTime.isBefore(it.endTime) }
-            ?: fail(ImportError.Malformed("Invalid prompt window \"${dto.label}\""))
+            ?: fail(ImportError.Malformed(MalformedReason.INVALID_PROMPT_WINDOW))
 
     private companion object {
         const val SCHEMA_VERSION_KEY = "schemaVersion"
@@ -127,7 +128,7 @@ internal fun ScaleDto.toEntity() = Scale(
     id = id, name = name, minValue = minValue, maxValue = maxValue,
     step = step, colorArgb = colorArgb, isBuiltIn = isBuiltIn,
     archived = archived, sortOrder = sortOrder, inverted = inverted,
-    defaultValue = defaultValue,
+    defaultValue = defaultValue, oncePerDay = oncePerDay,
 )
 
 /** Throws on an unknown slot or an unparseable time. */

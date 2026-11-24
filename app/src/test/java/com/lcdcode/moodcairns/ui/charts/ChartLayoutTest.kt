@@ -12,24 +12,24 @@ class ChartLayoutTest {
         Scale(name = "test", minValue = min, maxValue = max, colorArgb = 0)
 
     @Test
-    fun positiveScales_useBaseHeight() {
+    fun positive_scales_use_base_height() {
         val scales = listOf(scale(1, 10), scale(0, 5))
         assertEquals(360.dp, chartHeight(scales, absoluteY = false))
     }
 
     @Test
-    fun negativeScale_addsHeadroom() {
+    fun negative_scale_adds_headroom() {
         val scales = listOf(scale(1, 10), scale(-5, 5))
         assertEquals(450.dp, chartHeight(scales, absoluteY = false))
     }
 
     @Test
-    fun absoluteMode_neverAddsHeadroom() {
+    fun absolute_mode_never_adds_headroom() {
         assertEquals(360.dp, chartHeight(listOf(scale(-5, 5)), absoluteY = true))
     }
 
     @Test
-    fun noScales_useBaseHeight() {
+    fun no_scales_use_base_height() {
         assertEquals(360.dp, chartHeight(emptyList(), absoluteY = false))
     }
 }

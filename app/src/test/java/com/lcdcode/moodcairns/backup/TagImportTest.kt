@@ -35,7 +35,7 @@ class TagImportTest {
     // ---- resolveCategories ----
 
     @Test
-    fun preV3File_restoresBuiltInsWithV2Names() {
+    fun pre_v3_file_restores_built_ins_with_v2_names() {
         val categories = resolveCategories(
             file(version = 2, labels = listOf(TagCategoryLabelDto("MOOD", "Feelings"))),
         )
@@ -45,14 +45,14 @@ class TagImportTest {
     }
 
     @Test
-    fun preV3File_ignoresAnyCategoryList() {
+    fun pre_v3_file_ignores_any_category_list() {
         val categories = resolveCategories(file(version = 2, categories = listOf(cat("x", "X"))))
 
         assertTrue(categories.none { it.id == "x" })
     }
 
     @Test
-    fun v3File_keepsUserCategoriesAndOrder() {
+    fun v3_file_keeps_user_categories_and_order() {
         val categories = resolveCategories(
             file(
                 version = 3,
@@ -71,7 +71,7 @@ class TagImportTest {
     }
 
     @Test
-    fun v3File_forcesOtherLast() {
+    fun v3_file_forces_other_last() {
         val categories = resolveCategories(
             file(
                 version = 3,
@@ -83,7 +83,7 @@ class TagImportTest {
     }
 
     @Test
-    fun v3File_addsMissingOther() {
+    fun v3_file_adds_missing_other() {
         val categories = resolveCategories(file(version = 3, categories = listOf(cat("PLACE"))))
 
         assertEquals(listOf("PLACE", other), categories.map { it.id })
@@ -91,12 +91,12 @@ class TagImportTest {
     }
 
     @Test
-    fun v3File_withNoCategories_stillHasOther() {
+    fun v3_file_with_no_categories_still_has_other() {
         assertEquals(listOf(other), resolveCategories(file(version = 3)).map { it.id })
     }
 
     @Test
-    fun v3File_dropsUnusableCategories() {
+    fun v3_file_drops_unusable_categories() {
         val categories = resolveCategories(
             file(
                 version = 3,
@@ -114,7 +114,7 @@ class TagImportTest {
     }
 
     @Test
-    fun v3File_sanitizesNames_andBuiltInsMayBeBlank() {
+    fun v3_file_sanitizes_names_and_built_ins_may_be_blank() {
         val categories = resolveCategories(
             file(version = 3, categories = listOf(cat("PLACE", " \n "), cat("c", "  Crew\n"))),
         )
@@ -124,7 +124,7 @@ class TagImportTest {
     }
 
     @Test
-    fun othersName_isDropped_fromV2AndV3Files() {
+    fun others_name_is_dropped_from_v2_and_v3_files() {
         val fromV2 = resolveCategories(
             file(version = 2, labels = listOf(TagCategoryLabelDto(other, "Exercises"))),
         )
@@ -137,7 +137,7 @@ class TagImportTest {
     }
 
     @Test
-    fun v3File_repeatedId_keepsTheFirst() {
+    fun v3_file_repeated_id_keeps_the_first() {
         val categories = resolveCategories(
             file(version = 3, categories = listOf(cat("c", "First"), cat("c", "Second"))),
         )
@@ -148,7 +148,7 @@ class TagImportTest {
     // ---- resolveTags ----
 
     @Test
-    fun tagsInKnownCategories_keepCategoryAndColumn() {
+    fun tags_in_known_categories_keep_category_and_column() {
         val resolved = resolveTags(
             listOf(tag(1, "Gym", "health", column = 2)),
             setOf("health", other),
@@ -161,7 +161,7 @@ class TagImportTest {
     }
 
     @Test
-    fun blankNames_areDropped() {
+    fun blank_names_are_dropped() {
         val dtos = listOf(tag(1, "Gym", other), tag(2, "", other), tag(3, "  ", other))
 
         val resolved = resolveTags(dtos, setOf(other))
@@ -170,21 +170,21 @@ class TagImportTest {
     }
 
     @Test
-    fun negativeColumnIndex_isClampedToZero() {
+    fun negative_column_index_is_clamped_to_zero() {
         val resolved = resolveTags(listOf(tag(1, "Gym", other, column = -3)), setOf(other))
 
         assertEquals(0, resolved.tags.single().columnIndex)
     }
 
     @Test
-    fun columnIndexAboveTheMax_isClampedToTheLastColumn() {
+    fun column_index_above_the_max_is_clamped_to_the_last_column() {
         val resolved = resolveTags(listOf(tag(1, "Gym", other, column = 99)), setOf(other))
 
         assertEquals(Tag.MAX_COLUMNS - 1, resolved.tags.single().columnIndex)
     }
 
     @Test
-    fun orphanTag_movesToOther_inColumnZero() {
+    fun orphan_tag_moves_to_other_in_column_zero() {
         val resolved = resolveTags(listOf(tag(1, "Gym", "gone", column = 2)), setOf(other))
 
         val gym = resolved.tags.single()
@@ -193,7 +193,7 @@ class TagImportTest {
     }
 
     @Test
-    fun orphanTag_clashingWithOtherTag_mergesIntoIt() {
+    fun orphan_tag_clashing_with_other_tag_merges_into_it() {
         // The orphan comes first in the file, but the tag already in Other must survive.
         val resolved = resolveTags(
             listOf(tag(1, "Gym", "gone"), tag(2, "Gym", other)),
@@ -205,7 +205,7 @@ class TagImportTest {
     }
 
     @Test
-    fun sameNameInDifferentCategories_isKept() {
+    fun same_name_in_different_categories_is_kept() {
         val resolved = resolveTags(
             listOf(tag(1, "Gym", "health"), tag(2, "Gym", other)),
             setOf("health", other),
@@ -215,7 +215,7 @@ class TagImportTest {
     }
 
     @Test
-    fun repeatedTagId_keepsTheFirst() {
+    fun repeated_tag_id_keeps_the_first() {
         val resolved = resolveTags(
             listOf(tag(1, "Gym", other), tag(1, "Yoga", other)),
             setOf(other),

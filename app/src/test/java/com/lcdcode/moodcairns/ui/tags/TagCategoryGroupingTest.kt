@@ -17,7 +17,7 @@ class TagCategoryGroupingTest {
         Tag(id = id, name = "t$id", categoryId = categoryId)
 
     @Test
-    fun groupedByCategory_keysByCategoryId_andKeepsOrder() {
+    fun grouped_by_category_keys_by_category_id_and_keeps_order() {
         val tags = listOf(tag(2, "PLACE"), tag(1, "PLACE"), tag(3, "health"))
 
         val grouped = tags.groupedByCategory(categories)
@@ -27,7 +27,7 @@ class TagCategoryGroupingTest {
     }
 
     @Test
-    fun groupedByCategory_putsUnknownCategoriesUnderOther() {
+    fun grouped_by_category_puts_unknown_categories_under_other() {
         val tags = listOf(tag(1, TagCategory.OTHER_ID), tag(2, "deleted-elsewhere"))
 
         val grouped = tags.groupedByCategory(categories)
@@ -37,7 +37,7 @@ class TagCategoryGroupingTest {
     }
 
     @Test
-    fun sortedByDisplayRank_followsTheReferenceOrder() {
+    fun sorted_by_display_rank_follows_the_reference_order() {
         val rank = tagDisplayRank(listOf(tag(5, "PLACE"), tag(3, "health"), tag(9, "OTHER")))
 
         val sorted = listOf(tag(9, "OTHER"), tag(5, "PLACE"), tag(3, "health"))
@@ -47,7 +47,7 @@ class TagCategoryGroupingTest {
     }
 
     @Test
-    fun sortedByDisplayRank_putsUnrankedTagsLast_inTheirOrder() {
+    fun sorted_by_display_rank_puts_unranked_tags_last_in_their_order() {
         val rank = tagDisplayRank(listOf(tag(1, "PLACE")))
 
         val sorted = listOf(tag(8, "PLACE"), tag(7, "PLACE"), tag(1, "PLACE"))

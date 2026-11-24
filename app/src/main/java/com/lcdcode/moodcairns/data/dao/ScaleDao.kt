@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.lcdcode.moodcairns.data.db.Seed
 import com.lcdcode.moodcairns.data.entity.Scale
 import kotlinx.coroutines.flow.Flow
 
@@ -131,6 +132,15 @@ interface ScaleDao {
 
     @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM scale")
     suspend fun maxSortOrder(): Int
+
+    /**
+     * Appends the built-in Sleep scale for paths that rebuild the scale table from rows
+     * predating it (legacy migration, backup restore). Skipped on a name clash.
+     */
+    @Transaction
+    suspend fun insertSleepScaleIfMissing() {
+        insertAllIgnore(listOf(Seed.sleepScale.copy(sortOrder = maxSortOrder() + 1)))
+    }
 
     @Transaction
     suspend fun applySortOrder(orderedIds: List<Long>) {

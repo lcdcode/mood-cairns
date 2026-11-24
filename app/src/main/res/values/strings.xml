@@ -45,6 +45,12 @@
     <string name="common_tags_label">Tags</string>
     <!-- Content description of a drag handle used to reorder list items. -->
     <string name="common_reorder">Reorder</string>
+    <!-- Button that leaves a mode, such as reordering categories on the Tags screen. -->
+    <string name="common_done">Done</string>
+    <!-- Accessibility actions (TalkBack, Switch Access) that move a list item one place;
+         the alternative to dragging its handle. -->
+    <string name="common_move_up">Move up</string>
+    <string name="common_move_down">Move down</string>
     <!-- Joins short items such as tag names into one line. The quotes keep the spaces. -->
     <string name="common_list_separator">" · "</string>
     <!-- From-to dates, e.g. "Mar 1, 2026 – Mar 31, 2026". -->
@@ -93,6 +99,7 @@
     <string name="seed_scale_stress">Stress</string>
     <string name="seed_scale_boredom">Boredom</string>
     <string name="seed_scale_pain">Pain</string>
+    <string name="seed_scale_sleep">Sleep</string>
     <!-- Tags, category Places -->
     <string name="seed_tag_home">Home</string>
     <string name="seed_tag_work">Work</string>
@@ -150,18 +157,47 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Log how you\'re feeling, privately.</string>
-    <string name="home_log_entry">Log entry</string>
-    <string name="home_history">View history</string>
+    <string name="home_log_mood">Log mood</string>
+    <string name="home_mood_history">Mood history</string>
+    <string name="home_open_journal">Open journal</string>
     <string name="home_charts">Charts</string>
     <string name="home_backup">Backup &amp; import</string>
     <string name="home_scales">Manage scales</string>
     <string name="home_tags">Manage tags</string>
     <string name="home_settings">Settings</string>
     <string name="home_about">About</string>
+    <string name="home_backup_reminder_title">Friendly reminder to back up</string>
+    <string name="home_backup_reminder_body">Backups are saved in Documents/MoodCairns on this phone. Copy them somewhere else so they survive losing the phone. Tap to open Backup &amp; import.</string>
+    <string name="home_backup_reminder_dismiss">Dismiss</string>
+
+    <!-- Journal editor. The format_* strings are spoken labels for the formatting toolbar buttons. -->
+    <string name="journal_placeholder">Write about your day…</string>
+    <string name="journal_empty_read">Nothing written for this day yet.</string>
+    <string name="journal_load_failed">Could not open this journal page.</string>
+    <string name="journal_show_read">Reading view</string>
+    <string name="journal_show_edit">Edit</string>
+    <string name="journal_format_bold">Bold</string>
+    <string name="journal_format_italic">Italic</string>
+    <string name="journal_format_heading">Heading</string>
+    <string name="journal_format_bullet_list">Bulleted list</string>
+    <string name="journal_format_numbered_list">Numbered list</string>
+    <string name="journal_format_quote">Quote</string>
+    <string name="journal_format_code">Code</string>
+    <string name="journal_format_checklist">Checklist</string>
+    <string name="journal_format_table">Insert table</string>
+    <!-- journal_table_column is placeholder header text in a table inserted into the user's page; %1$d is the column number (1, 2, ...). -->
+    <string name="journal_table_column">Column %1$d</string>
+
+    <!-- Journal history. journal_history_title is also the Home screen button label. -->
+    <string name="journal_history_title">Journal history</string>
+    <string name="journal_history_search_hint">Search journal…</string>
+    <string name="journal_history_empty">No journal pages yet.</string>
+    <string name="journal_history_no_matches">No pages match your search.</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">How are you?</string>
     <string name="entry_title_edit">Edit entry</string>
+    <string name="entry_save_open_journal">Save &amp; open journal</string>
     <string name="entry_no_scales">No scales configured. Add one from Manage scales.</string>
     <string name="entry_note_label">Note (optional)</string>
     <string name="entry_prompt_slot_label">Prompt slot</string>
@@ -175,9 +211,10 @@
     <!-- For scales where a lower value is the better outcome. %1$s is one of the
          descriptions above. -->
     <string name="entry_slider_description_lower_better">%1$s, lower is better</string>
+    <string name="entry_once_per_day_reask_hint">Leave at %1$s to be asked again later.</string>
 
     <!-- History screen -->
-    <string name="history_title">History</string>
+    <string name="history_mood_title">Mood history</string>
     <string name="history_add_past">Add past entry</string>
     <string name="history_empty">No entries yet.</string>
     <string name="history_no_matches">No entries match the current filters.</string>
@@ -188,6 +225,7 @@
     <string name="history_clear_search">Clear search</string>
     <string name="history_clear_all">Clear all</string>
     <string name="history_pick_date">Pick date</string>
+    <string name="history_long_press_hint">Press and hold on an entry to edit or delete.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Scales</string>
@@ -203,6 +241,7 @@
     <string name="scale_list_default">default %1$s</string>
     <string name="scale_list_lower_better">lower is better</string>
     <string name="scale_list_built_in">built-in</string>
+    <string name="scale_list_once_per_day">once per day</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">New scale</string>
@@ -214,6 +253,8 @@
     <string name="scale_edit_default_hint">Where the slider starts for a new entry. Blank uses the midpoint.</string>
     <string name="scale_edit_lower_better">Lower is better</string>
     <string name="scale_edit_lower_better_hint">Inverse scale: the slider runs high to low, and charts draw it so improvement points up.</string>
+    <string name="scale_edit_once_per_day">Once per day</string>
+    <string name="scale_edit_once_per_day_hint">Asked until that day has a value above the minimum, so logging the minimum means you are asked again. Charted as dots joined by a line, without shading.</string>
     <string name="scale_edit_color_label">Color</string>
     <string name="scale_edit_color_custom">Custom color</string>
     <string name="scale_edit_color_picker_title">Choose a color</string>
@@ -266,6 +307,9 @@
     <!-- Button at the end of the Tags screen that creates a tag category; also the title of
          the dialog that names it. -->
     <string name="tag_list_add_category">Add category</string>
+    <!-- Tags screen: top bar button that switches to reordering categories, and the
+         screen title while reordering. -->
+    <string name="tag_list_reorder_categories">Reorder categories</string>
     <string name="tag_category_delete_title">Delete category?</string>
     <!-- %1$s category name. Shown when the category holds no tags. -->
     <string name="tag_category_delete_body_empty">\"%1$s\" will be deleted. It has no tags.</string>
@@ -311,10 +355,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Backup &amp; import</string>
     <string name="backup_intro">Backups are AES-GCM encrypted with a key derived from a passphrase you choose and written to Documents/MoodCairns. Syncthing or any file manager can sync them off-device - the app never uploads anything.</string>
-    <string name="backup_export">Export now</string>
+    <string name="backup_export_mood">Export mood data</string>
     <string name="backup_export_csv">Export unencrypted CSV</string>
     <string name="backup_export_csv_warning">The CSV is plain text and NOT encrypted. Anyone or anything that can read your Documents folder - cloud backup, file managers, other apps - can read your entries. Disable unsafe exports in Settings to hide this option.</string>
-    <string name="backup_import">Import from file (replaces all data)</string>
+    <string name="backup_restore_mood">Restore mood data (replaces all mood data)</string>
     <string name="backup_existing_label">Existing backups</string>
     <string name="backup_none">None yet.</string>
     <string name="backup_encrypt_title">Encrypt backup</string>
@@ -347,6 +391,12 @@
     <string name="about_contact_title">Contact</string>
     <!-- %1$s is the issue tracker URL; keep it inside href. -->
     <string name="about_contact_body">The best way to contact me for changes or feature requests is to &lt;a href=\"%1$s\"&gt;open a new issue on GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen. The title is also the button label on the About screen.
+         The license texts themselves are legal documents and stay in English. -->
+    <string name="licenses_title">Open-source licenses</string>
+    <string name="licenses_original_language">License texts are legal documents and are shown in their original English.</string>
+    <string name="licenses_load_failed">Could not load the license texts.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Charts</string>
@@ -433,6 +483,8 @@
     <string name="charts_help_axis_title">Y axis: %1$s vs %2$s</string>
     <string name="charts_help_autofit_body">Zooms the vertical axis to just the range your data actually covers. Small movements become easy to see because the chart fills the space - but the line isn\'t measured against the scale\'s full range. The labels down the left are your logged values; when more than one scale is plotted they all share that one axis.</string>
     <string name="charts_help_absolute_body" formatted="false">Shows each line against its scale\'s full min-to-max range. Movements look smaller, but different scales line up, so you can compare one against another on the same chart. Scales marked \"lower is better\" are drawn flipped here, so better always points up. The labels down the left read as percentages because each line is measured against its own range: 100% is the top of that range, or the bottom for a scale marked \"lower is better\".</string>
+    <string name="charts_help_once_per_day_title">Once-per-day scales</string>
+    <string name="charts_help_once_per_day_body">Scales like Sleep are logged once per day, so each day is marked with a dot, joined by a line without the shading below it. They are left out of %1$s, since the hour you logged them says nothing about them. If a day has both the minimum and a higher value, only the higher one is drawn, since the minimum may just mean it was not logged yet.</string>
 
     <!-- Data store upgrade (shown once, when migrating to the encrypted database) -->
     <string name="migrating_title">Upgrading data store…</string>
@@ -444,6 +496,18 @@
     <string name="biometric_prompt_title">Unlock Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Authenticate to continue</string>
     <string name="biometric_prompt_use_pin">Use PIN</string>
+    <!-- System biometric prompt shown when turning biometric unlock on -->
+    <string name="biometric_enroll_prompt_title">Turn on biometric unlock</string>
+    <string name="biometric_enroll_prompt_subtitle">Confirm to unlock Mood Cairns with biometrics</string>
+    <!-- Dialog after unlocking that offers to turn biometric unlock on; the body depends on the reason -->
+    <string name="biometric_offer_title">Biometric unlock</string>
+    <!-- Shown once after updating to the version with hardware-protected biometric unlock -->
+    <string name="biometric_offer_body_upgrade">Biometric unlock is now protected by your device\'s secure hardware. Turn it back on to keep using it.</string>
+    <!-- Shown after a PIN was set up -->
+    <string name="biometric_offer_body_setup">Unlock Mood Cairns with biometrics instead of your PIN? You can change this later in Settings.</string>
+    <!-- Security notice: Android turned the key off because biometrics were added or the screen lock was removed -->
+    <string name="biometric_offer_body_invalidated">Biometric unlock was turned off because the biometrics or screen lock on this device changed. If you didn\'t make this change, someone else may have access to your phone.</string>
+    <string name="biometric_offer_not_now">Not now</string>
 
     <!-- Warning before running without a PIN, at first-run setup or when removing a PIN -->
     <string name="no_pin_warning_title_setup">Continue without a PIN?</string>
@@ -470,21 +534,28 @@
     <string name="settings_auto_lock_label">Auto-lock after background</string>
     <string name="settings_auto_lock_immediate">Immediate</string>
     <string name="settings_biometric_unlock">Biometric unlock</string>
+    <string name="settings_biometric_unavailable">Set up a fingerprint or another strong biometric in your device settings to use this.</string>
     <string name="settings_change_pin">Change PIN</string>
     <string name="settings_lock_now">Lock now</string>
     <string name="settings_set_pin">Set PIN</string>
     <string name="settings_no_pin_explanation">No PIN set. Your data is encrypted on this device but protected only by your device\'s keystore, not by a PIN. Auto-lock, biometric unlock, and lock-now are unavailable without a PIN.</string>
+    <!-- Journal settings. Turning the journal off only hides it; nothing is deleted. -->
+    <string name="settings_section_journal">Journal</string>
+    <string name="settings_journal_enabled">Enable journal</string>
+    <string name="settings_journal_enabled_summary">Adds a private journal with one page per day. Turning this off only hides the journal; everything you have written is kept.</string>
     <string name="settings_section_danger_zone">Danger zone</string>
     <string name="settings_allow_unsafe_exports">Allow unsafe exports</string>
-    <string name="settings_allow_unsafe_exports_summary">Enables an unencrypted CSV export under Backup &amp; import. Off by default.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Enables unencrypted exports under Backup &amp; import: a CSV of your entries and Markdown files of your journal. Off by default.</string>
     <string name="settings_unsafe_exports_dialog_title">Allow unsafe exports?</string>
-    <string name="settings_unsafe_exports_dialog_body">This adds an option to export your data as an unencrypted CSV file to shared storage. That file is plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries.\n\nOnly enable this if you understand and accept that danger.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">This adds options to export your entries as an unencrypted CSV file and your journal as unencrypted Markdown files to shared storage. Those files are plain text with no passphrase: cloud backup services, file managers, and any other app that can read shared storage will be able to read all of your entries and journal pages.\n\nOnly enable this if you understand and accept that danger.</string>
     <string name="settings_allow_screenshots">Allow screenshots</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Temporarily allows screenshots and screen recording for %1$d minute. The lock screen stays protected. Off by default.</item>
         <item quantity="other">Temporarily allows screenshots and screen recording for %1$d minutes. The lock screen stays protected. Off by default.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Allowed until %1$s</string>
+    <string name="settings_backup_reminder">Backup reminders</string>
+    <string name="settings_backup_reminder_summary">Shows a reminder on the Home screen every two weeks to back up your data. On by default.</string>
     <string name="settings_screenshots_dialog_title">Allow screenshots?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">For the next %1$d minute, screenshots, screen recordings, casting, and the recent-apps preview can capture everything shown, including your entries. Screenshots are saved to shared storage, where cloud backup services and other apps can read them.\n\nScreenshots are blocked again automatically after %1$d minute or when the app locks.</item>
@@ -502,6 +573,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Unlock</string>
     <string name="lock_use_biometric">Use biometric</string>
+    <string name="lock_biometric_reset">Biometric unlock was turned off because this device\'s biometrics or screen lock changed. Enter your PIN.</string>
     <!-- %1$s is a remaining duration such as "1m 30s", already localized. -->
     <string name="lock_try_again_in">Try again in %1$s</string>
     <!-- Unlock button while locked out. %1$s is a remaining duration such as "1m 30s". -->
@@ -579,6 +651,10 @@
     <string name="backup_export_success">Exported %1$s</string>
     <string name="backup_export_csv_success">Exported %1$s (unencrypted)</string>
     <string name="backup_export_failed">Export failed: %1$s</string>
+    <!-- %1$s is the page's date (YYYY-MM-DD). Its date is outside what a restore accepts. -->
+    <string name="backup_error_export_unrestorable_page">Not saved: the journal page for %1$s has a date this app could not restore. Check the page\'s date, then export again.</string>
+    <!-- %1$d is the size limit in megabytes (50 for mood backups, 256 for journal backups). Shown when an export is refused because it could not be restored. -->
+    <string name="backup_error_export_too_large">Not saved: this backup would be larger than %1$d MB, the most the app can restore.</string>
     <!-- Label: count pairs avoid needing a plural form for each noun. -->
     <string name="backup_import_success">Import complete. Entries: %1$d, scales: %2$d, tags: %3$d, prompt windows: %4$d</string>
     <!-- %1$s is one of the import_error_* sentences. -->
@@ -603,6 +679,29 @@
     <string name="backup_config_import_partial">Configuration partly imported. Scales: %1$d, tags: %2$d. Updating the prompt windows failed (%3$s), so check them in Settings. Your entries were not changed.</string>
     <!-- Shown under the file name of a configuration-only export in the list of backups. -->
     <string name="backup_config_only_label">Configuration only</string>
+    <!-- Journal backups: a separate encrypted file. Restoring replaces all journal pages and never touches mood data. -->
+    <string name="backup_journal_section">Journal</string>
+    <string name="backup_journal_intro">Your journal is backed up separately from your moods, in its own encrypted file. Restoring a journal backup replaces all journal pages and never changes your mood data.</string>
+    <string name="backup_journal_export">Export journal</string>
+    <string name="backup_journal_import">Restore journal (replaces all pages)</string>
+    <string name="backup_journal_encrypt_title">Encrypt journal backup</string>
+    <string name="backup_journal_encrypt_body">Choose a passphrase to encrypt this journal backup. You\'ll need this exact passphrase to restore it, even on a fresh install. It is not your app PIN and cannot be recovered if you forget it.</string>
+    <string name="backup_journal_decrypt_title">Restore journal</string>
+    <string name="backup_journal_decrypt_body">Restoring replaces every page in your journal with the pages in this backup. Your mood data is not changed. Enter the passphrase used to encrypt it.</string>
+    <string name="backup_journal_export_success">Exported journal %1$s</string>
+    <string name="backup_journal_import_failed">Journal restore failed: %1$s</string>
+    <string name="backup_journal_label">Journal</string>
+    <!-- Plaintext Markdown export of the journal, shown only while unsafe exports are allowed in Settings. -->
+    <string name="backup_journal_markdown_warning">Markdown exports are plain text and NOT encrypted. Anyone or anything that can read your Documents folder - cloud backup, file managers, other apps - can read your journal. Disable unsafe exports in Settings to hide these options.</string>
+    <string name="backup_journal_markdown_all">Export all pages as Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Export one day as Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Choose a day to export</string>
+    <string name="backup_journal_markdown_export">Export</string>
+    <string name="backup_journal_markdown_empty">There are no journal pages to export.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Journal restored: %1$d page</item>
+        <item quantity="other">Journal restored: %1$d pages</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Configuration not compatible</string>
     <string name="backup_config_incompatible_version">This configuration uses format version %1$d, which this version of the app can\'t import. Update the app and try again. Nothing was changed.</string>
     <!-- Like backup_config_incompatible_version, when the picked file is a full backup. -->
@@ -637,6 +736,8 @@
 
     <!-- Reasons a backup import failed. %1$s detail strings are technical, shown as-is. -->
     <string name="import_error_too_large">The file is larger than the %1$d MB limit.</string>
+    <!-- A small file that unpacks to too much data, e.g. a damaged or crafted journal backup. -->
+    <string name="import_error_contents_too_large">The backup unpacks to more than the %1$d MB limit.</string>
     <string name="import_error_unreadable">Couldn\'t read the file.</string>
     <string name="import_error_unreadable_detail">Couldn\'t read the file (%1$s).</string>
     <string name="import_error_not_a_backup">This file isn\'t a Mood Cairns backup.</string>
@@ -645,4 +746,6 @@
     <string name="import_error_malformed">The backup file is damaged (%1$s).</string>
     <string name="import_error_write_failed">Import stopped while saving data (%1$s).</string>
     <string name="import_error_config_only">This is a configuration-only file, which has no entries to restore. Use Import configuration instead.</string>
+    <string name="import_error_journal_file">This is a journal backup. Restore it with Restore journal in the Journal section.</string>
+    <string name="import_error_not_journal">This is not a journal backup. Mood backups and configuration files are imported in their own sections.</string>
 </resources>

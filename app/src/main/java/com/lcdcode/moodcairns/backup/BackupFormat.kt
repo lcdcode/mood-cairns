@@ -51,6 +51,7 @@ data class ScaleDto(
     val sortOrder: Int,
     val inverted: Boolean = false,
     val defaultValue: Float? = null,
+    val oncePerDay: Boolean = false,
 )
 
 @Serializable

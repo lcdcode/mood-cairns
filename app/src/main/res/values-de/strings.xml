@@ -29,6 +29,9 @@
     <string name="common_name_label">Name</string>
     <string name="common_tags_label">Tags</string>
     <string name="common_reorder">Neu anordnen</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_move_up">Nach oben verschieben</string>
+    <string name="common_move_down">Nach unten verschieben</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -66,6 +69,7 @@
     <string name="seed_scale_stress">Stress</string>
     <string name="seed_scale_boredom">Langeweile</string>
     <string name="seed_scale_pain">Schmerz</string>
+    <string name="seed_scale_sleep">Schlaf</string>
     <string name="seed_tag_home">Zuhause</string>
     <string name="seed_tag_work">Arbeit</string>
     <string name="seed_tag_school">Schule</string>
@@ -114,18 +118,46 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Trage privat ein, wie du dich fühlst.</string>
-    <string name="home_log_entry">Neuer Eintrag</string>
-    <string name="home_history">Verlauf ansehen</string>
+    <string name="home_log_mood">Stimmung eintragen</string>
+    <string name="home_mood_history">Stimmungsverlauf</string>
+    <string name="home_open_journal">Tagebuch öffnen</string>
     <string name="home_charts">Diagramme</string>
     <string name="home_backup">Sicherung &amp; Import</string>
     <string name="home_scales">Skalen verwalten</string>
     <string name="home_tags">Tags verwalten</string>
     <string name="home_settings">Einstellungen</string>
     <string name="home_about">Über</string>
+    <string name="home_backup_reminder_title">Freundliche Erinnerung, deine Daten zu sichern</string>
+    <string name="home_backup_reminder_body">Sicherungen werden unter Documents/MoodCairns auf diesem Telefon gespeichert. Kopiere sie an einen anderen Ort, damit sie den Verlust des Telefons überstehen. Tippe, um Sicherung &amp; Import zu öffnen.</string>
+    <string name="home_backup_reminder_dismiss">Ausblenden</string>
+
+    <!-- Tagebuch-Editor -->
+    <string name="journal_placeholder">Schreib über deinen Tag…</string>
+    <string name="journal_empty_read">Für diesen Tag wurde noch nichts geschrieben.</string>
+    <string name="journal_load_failed">Diese Tagebuchseite konnte nicht geöffnet werden.</string>
+    <string name="journal_show_read">Leseansicht</string>
+    <string name="journal_show_edit">Bearbeiten</string>
+    <string name="journal_format_bold">Fett</string>
+    <string name="journal_format_italic">Kursiv</string>
+    <string name="journal_format_heading">Überschrift</string>
+    <string name="journal_format_bullet_list">Aufzählung</string>
+    <string name="journal_format_numbered_list">Nummerierte Liste</string>
+    <string name="journal_format_quote">Zitat</string>
+    <string name="journal_format_code">Code</string>
+    <string name="journal_format_checklist">Checkliste</string>
+    <string name="journal_format_table">Tabelle einfügen</string>
+    <string name="journal_table_column">Spalte %1$d</string>
+
+    <!-- Tagebuchverlauf -->
+    <string name="journal_history_title">Tagebuchverlauf</string>
+    <string name="journal_history_search_hint">Tagebuch durchsuchen…</string>
+    <string name="journal_history_empty">Noch keine Tagebuchseiten.</string>
+    <string name="journal_history_no_matches">Keine Seiten passen zu deiner Suche.</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Wie geht es dir?</string>
     <string name="entry_title_edit">Eintrag bearbeiten</string>
+    <string name="entry_save_open_journal">Speichern &amp; Tagebuch öffnen</string>
     <string name="entry_no_scales">Keine Skalen eingerichtet. Füge unter „Skalen verwalten“ eine hinzu.</string>
     <string name="entry_note_label">Notiz (optional)</string>
     <string name="entry_prompt_slot_label">Erinnerungszeitraum</string>
@@ -133,9 +165,10 @@
     <string name="entry_slider_description_out_of">%1$s, Wert %2$s von %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, Wert %2$s im Bereich %3$d bis %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s, niedriger ist besser</string>
+    <string name="entry_once_per_day_reask_hint">Bei %1$s lassen, um später erneut gefragt zu werden.</string>
 
     <!-- History screen -->
-    <string name="history_title">Verlauf</string>
+    <string name="history_mood_title">Stimmungsverlauf</string>
     <string name="history_add_past">Früheren Eintrag hinzufügen</string>
     <string name="history_empty">Noch keine Einträge.</string>
     <string name="history_no_matches">Keine Einträge entsprechen den aktuellen Filtern.</string>
@@ -146,6 +179,7 @@
     <string name="history_clear_search">Suche leeren</string>
     <string name="history_clear_all">Alle zurücksetzen</string>
     <string name="history_pick_date">Datum wählen</string>
+    <string name="history_long_press_hint">Halte einen Eintrag gedrückt, um ihn zu bearbeiten oder zu löschen.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Skalen</string>
@@ -159,6 +193,7 @@
     <string name="scale_list_default">Start %1$s</string>
     <string name="scale_list_lower_better">niedriger ist besser</string>
     <string name="scale_list_built_in">integriert</string>
+    <string name="scale_list_once_per_day">einmal täglich</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Neue Skala</string>
@@ -170,6 +205,8 @@
     <string name="scale_edit_default_hint">Hier beginnt der Schieberegler bei einem neuen Eintrag. Leer lassen für die Mitte.</string>
     <string name="scale_edit_lower_better">Niedriger ist besser</string>
     <string name="scale_edit_lower_better_hint">Umgekehrte Skala: Der Schieberegler läuft von hoch nach niedrig, und Diagramme zeichnen sie so, dass eine Verbesserung nach oben zeigt.</string>
+    <string name="scale_edit_once_per_day">Einmal täglich</string>
+    <string name="scale_edit_once_per_day_hint">Wird abgefragt, bis der Tag einen Wert über dem Minimum hat; trägst du das Minimum ein, wirst du erneut gefragt. In Diagrammen als Punkte mit Verbindungslinie gezeichnet, ohne Schattierung.</string>
     <string name="scale_edit_color_label">Farbe</string>
     <string name="scale_edit_color_custom">Eigene Farbe</string>
     <string name="scale_edit_color_picker_title">Farbe wählen</string>
@@ -205,6 +242,7 @@
     </plurals>
     <string name="tag_list_column_heading">Spalte %1$d</string>
     <string name="tag_list_add_category">Kategorie hinzufügen</string>
+    <string name="tag_list_reorder_categories">Kategorien neu anordnen</string>
     <string name="tag_category_delete_title">Kategorie löschen?</string>
     <string name="tag_category_delete_body_empty">Die Kategorie „%1$s“ wird gelöscht. Sie enthält keine Tags.</string>
     <plurals name="tag_category_delete_body">
@@ -240,10 +278,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Sicherung &amp; Import</string>
     <string name="backup_intro">Sicherungen werden mit AES-GCM verschlüsselt, mit einem Schlüssel aus einer Passphrase deiner Wahl, und unter Documents/MoodCairns gespeichert. Syncthing oder ein Dateimanager kann sie auf andere Geräte synchronisieren; die App lädt nie etwas hoch.</string>
-    <string name="backup_export">Jetzt exportieren</string>
+    <string name="backup_export_mood">Stimmungsdaten exportieren</string>
     <string name="backup_export_csv">Unverschlüsseltes CSV exportieren</string>
     <string name="backup_export_csv_warning">Die CSV-Datei ist reiner Text und NICHT verschlüsselt. Alles, was deinen Documents-Ordner lesen kann (Cloud-Sicherungen, Dateimanager, andere Apps), kann deine Einträge lesen. Deaktiviere unsichere Exporte in den Einstellungen, um diese Option auszublenden.</string>
-    <string name="backup_import">Aus Datei importieren (ersetzt alle Daten)</string>
+    <string name="backup_restore_mood">Stimmungsdaten wiederherstellen (ersetzt alle Stimmungsdaten)</string>
     <string name="backup_existing_label">Vorhandene Sicherungen</string>
     <string name="backup_none">Noch keine.</string>
     <string name="backup_encrypt_title">Sicherung verschlüsseln</string>
@@ -272,6 +310,11 @@
     <string name="about_no_browser">Kein Browser zum Öffnen der Seite gefunden.</string>
     <string name="about_contact_title">Kontakt</string>
     <string name="about_contact_body">Am besten erreichst du mich für Änderungen oder Funktionswünsche, indem du &lt;a href=\"%1$s\"&gt;ein neues Issue auf GitHub eröffnest&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Open-Source-Lizenzen</string>
+    <string name="licenses_original_language">Lizenztexte sind rechtliche Dokumente und werden im englischen Original angezeigt.</string>
+    <string name="licenses_load_failed">Die Lizenztexte konnten nicht geladen werden.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Diagramme</string>
@@ -341,6 +384,8 @@
     <string name="charts_help_axis_title">Y-Achse: %1$s oder %2$s</string>
     <string name="charts_help_autofit_body">Zoomt die vertikale Achse auf den Bereich, den deine Daten tatsächlich abdecken. Kleine Veränderungen sind gut sichtbar, weil das Diagramm den Platz ausfüllt, aber die Linie wird nicht am vollen Bereich der Skala gemessen. Die Beschriftungen links sind deine erfassten Werte; werden mehrere Skalen dargestellt, teilen sie sich diese eine Achse.</string>
     <string name="charts_help_absolute_body" formatted="false">Zeigt jede Linie im vollen Bereich ihrer Skala, vom Minimum bis zum Maximum. Veränderungen wirken kleiner, aber die Skalen liegen übereinander, sodass du sie im selben Diagramm vergleichen kannst. Als „niedriger ist besser“ markierte Skalen werden hier umgekehrt gezeichnet, damit besser immer nach oben zeigt. Die Beschriftungen links sind Prozentwerte, weil jede Linie an ihrem eigenen Bereich gemessen wird: 100&#160;% ist das obere Ende dieses Bereichs, bei einer als „niedriger ist besser“ markierten Skala das untere.</string>
+    <string name="charts_help_once_per_day_title">Einmal täglich erfasste Skalen</string>
+    <string name="charts_help_once_per_day_body">Skalen wie Schlaf werden einmal täglich erfasst, daher bekommt jeder Tag einen Punkt; die Punkte sind durch eine Linie ohne Schattierung darunter verbunden. In %1$s fehlen sie, weil die Uhrzeit des Eintrags bei ihnen nichts aussagt. Hat ein Tag sowohl das Minimum als auch einen höheren Wert, wird nur der höhere gezeichnet, da das Minimum auch bedeuten kann, dass noch nichts eingetragen war.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Datenspeicher wird aktualisiert…</string>
@@ -352,6 +397,13 @@
     <string name="biometric_prompt_title">Mood Cairns entsperren</string>
     <string name="biometric_prompt_subtitle">Authentifiziere dich, um fortzufahren</string>
     <string name="biometric_prompt_use_pin">PIN verwenden</string>
+    <string name="biometric_enroll_prompt_title">Biometrische Entsperrung aktivieren</string>
+    <string name="biometric_enroll_prompt_subtitle">Bestätige, um Mood Cairns mit Biometrie zu entsperren</string>
+    <string name="biometric_offer_title">Biometrische Entsperrung</string>
+    <string name="biometric_offer_body_upgrade">Die biometrische Entsperrung wird jetzt durch die Sicherheitshardware deines Geräts geschützt. Aktiviere sie erneut, um sie weiter zu verwenden.</string>
+    <string name="biometric_offer_body_setup">Mood Cairns mit Biometrie statt mit deiner PIN entsperren? Du kannst das später in den Einstellungen ändern.</string>
+    <string name="biometric_offer_body_invalidated">Die biometrische Entsperrung wurde deaktiviert, weil sich die Biometrie oder die Displaysperre dieses Geräts geändert hat. Falls du das nicht selbst geändert hast, hat möglicherweise jemand anderes Zugriff auf dein Telefon.</string>
+    <string name="biometric_offer_not_now">Nicht jetzt</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Ohne PIN fortfahren?</string>
@@ -374,21 +426,27 @@
     <string name="settings_auto_lock_label">Automatisch sperren im Hintergrund nach:</string>
     <string name="settings_auto_lock_immediate">Sofort</string>
     <string name="settings_biometric_unlock">Biometrische Entsperrung</string>
+    <string name="settings_biometric_unavailable">Richte in den Geräteeinstellungen einen Fingerabdruck oder eine andere starke Biometrie ein, um diese Funktion zu nutzen.</string>
     <string name="settings_change_pin">PIN ändern</string>
     <string name="settings_lock_now">Jetzt sperren</string>
     <string name="settings_set_pin">PIN festlegen</string>
     <string name="settings_no_pin_explanation">Keine PIN festgelegt. Deine Daten sind auf diesem Gerät verschlüsselt, aber nur durch den Schlüsselspeicher des Geräts geschützt, nicht durch eine PIN. Automatische Sperre, biometrische Entsperrung und „Jetzt sperren“ sind ohne PIN nicht verfügbar.</string>
+    <string name="settings_section_journal">Tagebuch</string>
+    <string name="settings_journal_enabled">Tagebuch aktivieren</string>
+    <string name="settings_journal_enabled_summary">Fügt ein privates Tagebuch mit einer Seite pro Tag hinzu. Beim Ausschalten wird das Tagebuch nur ausgeblendet; alles Geschriebene bleibt erhalten.</string>
     <string name="settings_section_danger_zone">Gefahrenbereich</string>
     <string name="settings_allow_unsafe_exports">Unsichere Exporte erlauben</string>
-    <string name="settings_allow_unsafe_exports_summary">Aktiviert einen unverschlüsselten CSV-Export unter „Sicherung &amp; Import“. Standardmäßig deaktiviert.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Aktiviert unverschlüsselte Exporte unter „Sicherung &amp; Import“: eine CSV-Datei deiner Einträge und Markdown-Dateien deines Tagebuchs. Standardmäßig deaktiviert.</string>
     <string name="settings_unsafe_exports_dialog_title">Unsichere Exporte erlauben?</string>
-    <string name="settings_unsafe_exports_dialog_body">Damit kannst du deine Daten als unverschlüsselte CSV-Datei in den gemeinsamen Speicher exportieren. Diese Datei ist reiner Text ohne Passphrase: Cloud-Sicherungsdienste, Dateimanager und jede andere App, die den gemeinsamen Speicher lesen kann, können alle deine Einträge lesen.\n\nAktiviere dies nur, wenn du dieses Risiko verstehst und in Kauf nimmst.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Damit kannst du deine Einträge als unverschlüsselte CSV-Datei und dein Tagebuch als unverschlüsselte Markdown-Dateien in den gemeinsamen Speicher exportieren. Diese Dateien sind reiner Text ohne Passphrase: Cloud-Sicherungsdienste, Dateimanager und jede andere App, die den gemeinsamen Speicher lesen kann, können alle deine Einträge und Tagebuchseiten lesen.\n\nAktiviere dies nur, wenn du dieses Risiko verstehst und in Kauf nimmst.</string>
     <string name="settings_allow_screenshots">Screenshots erlauben</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Erlaubt Screenshots und Bildschirmaufnahmen vorübergehend für %1$d Minute. Der Sperrbildschirm bleibt geschützt. Standardmäßig deaktiviert.</item>
         <item quantity="other">Erlaubt Screenshots und Bildschirmaufnahmen vorübergehend für %1$d Minuten. Der Sperrbildschirm bleibt geschützt. Standardmäßig deaktiviert.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Erlaubt bis %1$s</string>
+    <string name="settings_backup_reminder">Sicherungserinnerungen</string>
+    <string name="settings_backup_reminder_summary">Zeigt alle zwei Wochen auf dem Startbildschirm eine Erinnerung, deine Daten zu sichern. Standardmäßig aktiviert.</string>
     <string name="settings_screenshots_dialog_title">Screenshots erlauben?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">In der nächsten %1$d Minute können Screenshots, Bildschirmaufnahmen, Bildschirmübertragung und die Vorschau der zuletzt verwendeten Apps alles erfassen, was angezeigt wird, auch deine Einträge. Screenshots werden im gemeinsamen Speicher abgelegt, wo Cloud-Sicherungsdienste und andere Apps sie lesen können.\n\nScreenshots werden nach %1$d Minute oder beim Sperren der App automatisch wieder blockiert.</item>
@@ -406,6 +464,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Entsperren</string>
     <string name="lock_use_biometric">Biometrie verwenden</string>
+    <string name="lock_biometric_reset">Die biometrische Entsperrung wurde deaktiviert, weil sich die Biometrie oder die Displaysperre dieses Geräts geändert hat. Gib deine PIN ein.</string>
     <string name="lock_try_again_in">Erneut versuchen in %1$s</string>
     <string name="lock_locked_for">Gesperrt (%1$s)</string>
     <string name="lock_error_wrong_pin">Falsche PIN</string>
@@ -477,6 +536,8 @@
     <string name="backup_export_success">Exportiert: %1$s</string>
     <string name="backup_export_csv_success">Exportiert: %1$s (unverschlüsselt)</string>
     <string name="backup_export_failed">Export fehlgeschlagen: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Nicht gespeichert: Die Tagebuchseite vom %1$s hat ein Datum, das die App nicht wiederherstellen könnte. Prüfe das Datum der Seite und exportiere dann erneut.</string>
+    <string name="backup_error_export_too_large">Nicht gespeichert: Diese Sicherung wäre größer als %1$d MB, das Maximum, das die App wiederherstellen kann.</string>
     <string name="backup_import_success">Import abgeschlossen. Einträge: %1$d, Skalen: %2$d, Tags: %3$d, Erinnerungszeiten: %4$d</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
 
@@ -493,6 +554,27 @@
     <string name="backup_config_import_failed">Import der Konfiguration fehlgeschlagen: %1$s</string>
     <string name="backup_config_import_partial">Konfiguration teilweise importiert. Skalen: %1$d, Tags: %2$d. Die Erinnerungszeiten konnten nicht aktualisiert werden (%3$s), prüfe sie daher in den Einstellungen. Deine Einträge wurden nicht verändert.</string>
     <string name="backup_config_only_label">Nur Konfiguration</string>
+    <string name="backup_journal_section">Tagebuch</string>
+    <string name="backup_journal_intro">Dein Tagebuch wird getrennt von deinen Stimmungen in einer eigenen verschlüsselten Datei gesichert. Das Wiederherstellen ersetzt alle Tagebuchseiten und ändert nie deine Stimmungsdaten.</string>
+    <string name="backup_journal_export">Tagebuch exportieren</string>
+    <string name="backup_journal_import">Tagebuch wiederherstellen (ersetzt alle Seiten)</string>
+    <string name="backup_journal_encrypt_title">Tagebuchsicherung verschlüsseln</string>
+    <string name="backup_journal_encrypt_body">Wähle eine Passphrase, um diese Tagebuchsicherung zu verschlüsseln. Du brauchst genau diese Passphrase zum Wiederherstellen, auch nach einer Neuinstallation. Sie ist nicht deine App-PIN und kann nicht wiederhergestellt werden, wenn du sie vergisst.</string>
+    <string name="backup_journal_decrypt_title">Tagebuch wiederherstellen</string>
+    <string name="backup_journal_decrypt_body">Beim Wiederherstellen werden alle Seiten deines Tagebuchs durch die Seiten dieser Sicherung ersetzt. Deine Stimmungsdaten bleiben unverändert. Gib die Passphrase ein, mit der sie verschlüsselt wurde.</string>
+    <string name="backup_journal_export_success">Tagebuch exportiert: %1$s</string>
+    <string name="backup_journal_import_failed">Wiederherstellen des Tagebuchs fehlgeschlagen: %1$s</string>
+    <string name="backup_journal_label">Tagebuch</string>
+    <string name="backup_journal_markdown_warning">Markdown-Exporte sind reiner Text und NICHT verschlüsselt. Alles, was deinen Documents-Ordner lesen kann (Cloud-Sicherungen, Dateimanager, andere Apps), kann dein Tagebuch lesen. Deaktiviere unsichere Exporte in den Einstellungen, um diese Optionen auszublenden.</string>
+    <string name="backup_journal_markdown_all">Alle Seiten als Markdown exportieren (.zip)</string>
+    <string name="backup_journal_markdown_day">Einen Tag als Markdown exportieren (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Tag zum Exportieren wählen</string>
+    <string name="backup_journal_markdown_export">Exportieren</string>
+    <string name="backup_journal_markdown_empty">Es gibt keine Tagebuchseiten zum Exportieren.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Tagebuch wiederhergestellt: %1$d Seite</item>
+        <item quantity="other">Tagebuch wiederhergestellt: %1$d Seiten</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Konfiguration nicht kompatibel</string>
     <string name="backup_config_incompatible_version">Diese Konfiguration verwendet Formatversion %1$d, die diese App-Version nicht importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
     <string name="backup_config_incompatible_backup_version">Diese Sicherung verwendet Formatversion %1$d, aus der diese App-Version keine Konfiguration importieren kann. Aktualisiere die App und versuche es erneut. Es wurde nichts verändert.</string>
@@ -521,6 +603,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">Die Datei überschreitet das Limit von %1$d MB.</string>
+    <string name="import_error_contents_too_large">Entpackt ist die Sicherung größer als das Limit von %1$d MB.</string>
     <string name="import_error_unreadable">Die Datei konnte nicht gelesen werden.</string>
     <string name="import_error_unreadable_detail">Die Datei konnte nicht gelesen werden (%1$s).</string>
     <string name="import_error_not_a_backup">Diese Datei ist keine Mood-Cairns-Sicherung.</string>
@@ -529,4 +612,6 @@
     <string name="import_error_malformed">Die Sicherungsdatei ist beschädigt (%1$s).</string>
     <string name="import_error_write_failed">Der Import wurde beim Speichern der Daten abgebrochen (%1$s).</string>
     <string name="import_error_config_only">Dies ist eine reine Konfigurationsdatei ohne Einträge zum Wiederherstellen. Verwende stattdessen „Konfiguration importieren“.</string>
+    <string name="import_error_journal_file">Dies ist eine Tagebuchsicherung. Stelle sie im Bereich „Tagebuch“ mit „Tagebuch wiederherstellen“ wieder her.</string>
+    <string name="import_error_not_journal">Dies ist keine Tagebuchsicherung. Stimmungssicherungen und Konfigurationsdateien werden in ihren eigenen Bereichen importiert.</string>
 </resources>

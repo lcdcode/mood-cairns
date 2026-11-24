@@ -23,4 +23,6 @@ data class Scale(
     @ColumnInfo(defaultValue = "0") val inverted: Boolean = false,
     /** Slider start value for new entries; null falls back to the range midpoint. */
     val defaultValue: Float? = null,
+    /** Asked only while its day has no value yet; charted as dots on an unshaded line. */
+    @ColumnInfo(defaultValue = "0") val oncePerDay: Boolean = false,
 )

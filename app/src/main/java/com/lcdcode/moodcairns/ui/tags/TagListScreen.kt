@@ -1,5 +1,6 @@
 package com.lcdcode.moodcairns.ui.tags
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,13 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +41,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +52,8 @@ import com.lcdcode.moodcairns.data.entity.BuiltInTagCategory
 import com.lcdcode.moodcairns.data.entity.Tag
 import com.lcdcode.moodcairns.data.entity.TagCategory
 import com.lcdcode.moodcairns.ui.common.displayName
+import com.lcdcode.moodcairns.ui.common.moveActions
+import com.lcdcode.moodcairns.ui.common.withItemMoved
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -66,6 +72,8 @@ fun TagListScreen(
     var editingId by rememberSaveable { mutableStateOf<String?>(null) }
     var deletingId by rememberSaveable { mutableStateOf<String?>(null) }
     var creating by rememberSaveable { mutableStateOf(false) }
+    var orderingCategories by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = orderingCategories) { orderingCategories = false }
     var lists by remember { mutableStateOf(state.byCategory) }
     LaunchedEffect(state.byCategory, isDragging) {
         if (!isDragging) lists = state.byCategory
@@ -90,78 +98,94 @@ fun TagListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.tag_list_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.common_back),
-                        )
-                    }
-                },
+            TagListTopBar(
+                orderingCategories = orderingCategories,
+                canOrderCategories = state.categories.count { it.id != TagCategory.OTHER_ID } > 1,
+                onBack = { if (orderingCategories) orderingCategories = false else onBack() },
+                onStartOrdering = { orderingCategories = true },
+                onDoneOrdering = { orderingCategories = false },
             )
         },
     ) { padding ->
-        LazyColumn(
-            state = lazyListState,
-            modifier = Modifier.padding(padding).fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            for (category in state.categories) {
-                val tags = lists[category.id].orEmpty()
-                item(key = "hdr/${category.id}") {
-                    SectionHeader(
-                        text = category.displayName(),
-                        // Other is the catch-all for deleted categories: fixed name, no delete.
-                        onEdit = { editingId = category.id }
-                            .takeIf { category.id != TagCategory.OTHER_ID },
-                        onAdd = { onAdd(category.id) },
-                    )
-                }
-                if (tags.isEmpty()) {
-                    item(key = "empty/${category.id}") { EmptyNote() }
-                }
-                val columns = tags.inColumns()
-                columns.forEachIndexed { column, columnTags ->
-                    // Single-column sections look as before; split ones get headings.
-                    if (columns.size > 1) {
-                        item(key = "col/${category.id}/$column") { ColumnHeading(column) }
-                        if (columnTags.isEmpty()) {
-                            item(key = "empty/${category.id}/$column") { EmptyNote() }
+        if (orderingCategories) {
+            CategoryOrderList(
+                categories = state.categories,
+                onReorder = { viewModel.reorderCategories(it) },
+                modifier = Modifier.padding(padding),
+            )
+        } else {
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.padding(padding).fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                for (category in state.categories) {
+                    val tags = lists[category.id].orEmpty()
+                    item(key = "hdr/${category.id}") {
+                        SectionHeader(
+                            text = category.displayName(),
+                            // Other is the catch-all for deleted categories: fixed name, no delete.
+                            onEdit = { editingId = category.id }
+                                .takeIf { category.id != TagCategory.OTHER_ID },
+                            onAdd = { onAdd(category.id) },
+                        )
+                    }
+                    if (tags.isEmpty()) {
+                        item(key = "empty/${category.id}") { EmptyNote() }
+                    }
+                    val columns = tags.inColumns()
+                    columns.forEachIndexed { column, columnTags ->
+                        // Single-column sections look as before; split ones get headings.
+                        if (columns.size > 1) {
+                            item(key = "col/${category.id}/$column") { ColumnHeading(column) }
+                            if (columnTags.isEmpty()) {
+                                item(key = "empty/${category.id}/$column") { EmptyNote() }
+                            }
+                        }
+                        itemsIndexed(
+                            columnTags,
+                            key = { _, tag -> tagKey(category.id, tag) },
+                        ) { index, tag ->
+                            ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
+                                val dragModifier = Modifier.draggableHandle(
+                                    onDragStarted = { _ -> isDragging = true },
+                                    onDragStopped = {
+                                        val columnIds = lists[category.id].orEmpty()
+                                            .filter { it.visibleColumn == column }
+                                            .map { it.id }
+                                        viewModel.onReorder(columnIds)
+                                        isDragging = false
+                                    },
+                                )
+                                fun moveBy(offset: Int): (() -> Unit)? {
+                                    val moved = columnTags.withItemMoved(index, index + offset)
+                                        ?: return null
+                                    return { viewModel.onReorder(moved.map { it.id }) }
+                                }
+                                TagRow(
+                                    tag = tag,
+                                    onClick = { onEdit(tag.id) },
+                                    dragHandleModifier = dragModifier,
+                                    actions = moveActions(
+                                        onMoveUp = moveBy(-1),
+                                        onMoveDown = moveBy(1),
+                                    ),
+                                )
+                            }
                         }
                     }
-                    items(columnTags, key = { tagKey(category.id, it) }) { tag ->
-                        ReorderableItem(reorderableState, key = tagKey(category.id, tag)) { _ ->
-                            val dragModifier = Modifier.draggableHandle(
-                                onDragStarted = { _ -> isDragging = true },
-                                onDragStopped = {
-                                    val columnIds = lists[category.id].orEmpty()
-                                        .filter { it.visibleColumn == column }
-                                        .map { it.id }
-                                    viewModel.onReorder(columnIds)
-                                    isDragging = false
-                                },
-                            )
-                            TagRow(
-                                tag = tag,
-                                onClick = { onEdit(tag.id) },
-                                dragHandleModifier = dragModifier,
-                            )
-                        }
-                    }
                 }
-            }
-            if (state.categories.isNotEmpty()) {
-                item(key = "add-category") {
-                    OutlinedButton(
-                        onClick = { creating = true },
-                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.tag_list_add_category))
+                if (state.categories.isNotEmpty()) {
+                    item(key = "add-category") {
+                        OutlinedButton(
+                            onClick = { creating = true },
+                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.tag_list_add_category))
+                        }
                     }
                 }
             }
@@ -297,8 +321,14 @@ private fun TagRow(
     tag: Tag,
     onClick: () -> Unit,
     dragHandleModifier: Modifier,
+    actions: List<CustomAccessibilityAction>,
 ) {
-    Card(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { customActions = actions }
+            .clickable(onClick = onClick),
+    ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -309,13 +339,45 @@ private fun TagRow(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
-            IconButton(modifier = dragHandleModifier, onClick = {}) {
-                Icon(
-                    Icons.Default.DragHandle,
-                    contentDescription = stringResource(R.string.common_reorder),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            ReorderHandle(dragHandleModifier)
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TagListTopBar(
+    orderingCategories: Boolean,
+    canOrderCategories: Boolean,
+    onBack: () -> Unit,
+    onStartOrdering: () -> Unit,
+    onDoneOrdering: () -> Unit,
+) {
+    val titleRes =
+        if (orderingCategories) R.string.tag_list_reorder_categories else R.string.tag_list_title
+    TopAppBar(
+        title = { Text(stringResource(titleRes)) },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.common_back),
+                )
+            }
+        },
+        actions = {
+            if (orderingCategories) {
+                TextButton(onClick = onDoneOrdering) {
+                    Text(stringResource(R.string.common_done))
+                }
+            } else if (canOrderCategories) {
+                IconButton(onClick = onStartOrdering) {
+                    Icon(
+                        Icons.Default.SwapVert,
+                        contentDescription = stringResource(R.string.tag_list_reorder_categories),
+                    )
+                }
+            }
+        },
+    )
 }

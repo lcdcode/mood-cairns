@@ -6,14 +6,14 @@ import org.junit.Test
 class LocaleFormatsTest {
 
     @Test
-    fun hourCycle_followsDeviceSetting() {
+    fun hour_cycle_follows_device_setting() {
         assertEquals("Hm", applyHourCycle("jm", is24Hour = true))
         assertEquals("hm", applyHourCycle("jm", is24Hour = false))
         assertEquals("MMMdHm", applyHourCycle("MMMdjm", is24Hour = true))
     }
 
     @Test
-    fun hourCycle_leavesDateOnlySkeletonsAlone() {
+    fun hour_cycle_leaves_date_only_skeletons_alone() {
         assertEquals("yMMMEd", applyHourCycle("yMMMEd", is24Hour = true))
     }
 }

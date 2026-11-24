@@ -44,7 +44,7 @@ private const val AUTHOR = "lcdcode"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(onBack: () -> Unit) {
+fun AboutScreen(onBack: () -> Unit, onLicenses: () -> Unit) {
     val ctx = LocalContext.current
     var showNoBrowser by remember { mutableStateOf(false) }
 
@@ -147,6 +147,10 @@ fun AboutScreen(onBack: () -> Unit) {
                 ),
                 style = MaterialTheme.typography.bodyMedium,
             )
+
+            OutlinedButton(onClick = onLicenses, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.licenses_title))
+            }
         }
     }
 }

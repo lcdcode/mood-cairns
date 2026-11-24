@@ -7,8 +7,11 @@ import com.lcdcode.moodcairns.data.repo.PromptWindowRepository
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.security.ScreenCaptureGate
+import com.lcdcode.moodcairns.settings.BackupReminder
+import com.lcdcode.moodcairns.settings.JournalSettings
 import com.lcdcode.moodcairns.work.PromptScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,14 +19,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class SettingsUiState(
     val windows: List<PromptWindow> = emptyList(),
     val lockTimeoutMs: Long = LockRepository.DEFAULT_TIMEOUT_MS,
-    val biometricEnabled: Boolean = true,
+    val biometricEnabled: Boolean = false,
     val pinSet: Boolean = true,
     val allowUnsafeExports: Boolean = false,
+    val journalEnabled: Boolean = JournalSettings.DEFAULT_ENABLED,
+    val backupReminderEnabled: Boolean = BackupReminder.DEFAULT_ENABLED,
     /** Remaining screen-capture opt-out in ms, or 0 when screenshots are blocked. */
     val screenshotsRemainingMs: Long = 0L,
     val loaded: Boolean = false,
@@ -36,18 +42,24 @@ class SettingsViewModel @Inject constructor(
     private val lockManager: LockManager,
     private val promptScheduler: PromptScheduler,
     private val screenCaptureGate: ScreenCaptureGate,
+    private val journalSettings: JournalSettings,
+    private val backupReminder: BackupReminder,
 ) : ViewModel() {
 
     private val lockState = MutableStateFlow(
-        Triple(lockRepo.timeoutMs, lockRepo.biometricEnabled, 0),
+        Triple(lockRepo.timeoutMs, lockManager.canBiometricUnlock(), 0),
     )
 
     val state: StateFlow<SettingsUiState> = combine(
         windowsRepo.observeAll(),
         lockState,
         screenCaptureGate.allowedUntil,
-    ) { windows, lock, _ ->
+        journalSettings.enabled,
+        backupReminder.enabled,
+    ) { windows, lock, _, journalEnabled, backupReminderEnabled ->
         SettingsUiState(
+            journalEnabled = journalEnabled,
+            backupReminderEnabled = backupReminderEnabled,
             screenshotsRemainingMs = screenCaptureGate.remainingMs(),
             windows = windows,
             lockTimeoutMs = lock.first,
@@ -61,7 +73,9 @@ class SettingsViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
     /** Re-evaluate lock-derived state, e.g. after returning from Change/Set PIN. */
-    fun refresh() = lockState.update { it.copy(third = it.third + 1) }
+    fun refresh() = lockState.update {
+        it.copy(second = lockManager.canBiometricUnlock(), third = it.third + 1)
+    }
 
     fun toggleWindowEnabled(window: PromptWindow) {
         viewModelScope.launch {
@@ -79,21 +93,22 @@ class SettingsViewModel @Inject constructor(
         lockState.update { it.copy(first = ms, third = it.third + 1) }
     }
 
-    fun setBiometricEnabled(enabled: Boolean) {
-        lockRepo.biometricEnabled = enabled
-        // Mirror the change into the key blob so future biometric unlocks have
-        // (or no longer have) a DB key to use. Populating relies on
-        // [LockManager.onBiometricEnabledChanged] holding the in-memory DB key
-        // — only callable while unlocked, which is the only state from which
-        // Settings is reachable.
-        lockManager.onBiometricEnabledChanged(enabled)
-        lockState.update { it.copy(second = enabled, third = it.third + 1) }
+    /** Deletes the enrollment and its Keystore key. Turning it on is [BiometricUnlockRow]'s job. */
+    fun disableBiometric() {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) { lockManager.disableBiometric() }
+            refresh()
+        }
     }
 
     fun setAllowUnsafeExports(enabled: Boolean) {
         lockRepo.allowUnsafeExports = enabled
         lockState.update { it.copy(third = it.third + 1) }
     }
+
+    fun setJournalEnabled(enabled: Boolean) = journalSettings.setEnabled(enabled)
+
+    fun setBackupReminderEnabled(enabled: Boolean) = backupReminder.setEnabled(enabled)
 
     fun setScreenshotsAllowed(enabled: Boolean) {
         if (enabled) screenCaptureGate.allowTemporarily() else screenCaptureGate.revoke()

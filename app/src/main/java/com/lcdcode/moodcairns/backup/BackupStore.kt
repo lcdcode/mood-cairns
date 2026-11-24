@@ -7,18 +7,22 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.BufferedOutputStream
+import java.io.OutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/** What an encrypted file in the backup folder holds, told apart by its name. */
+enum class BackupKind { Mood, Config, Journal }
 
 data class BackupFileInfo(
     val uri: Uri,
     val displayName: String,
     val createdAt: Long,
     val sizeBytes: Long,
-    /** True for a configuration-only export, which holds no entries. */
-    val isConfigOnly: Boolean = false,
+    val kind: BackupKind = BackupKind.Mood,
 )
 
 /**
@@ -37,6 +41,17 @@ class BackupStore @Inject constructor(
         name: String,
         content: String,
         mimeType: String = MIME_JSON,
+    ): Uri = writeStream(name, mimeType) { out -> out.write(content.toByteArray(Charsets.UTF_8)) }
+
+    /**
+     * Creates [name] and lets [write] stream its contents, so large exports never need to
+     * fit in memory. The file stays hidden (pending) until [write] finishes and is deleted
+     * if it fails, so a half-written backup is never left behind.
+     */
+    suspend fun writeStream(
+        name: String,
+        mimeType: String,
+        write: suspend (OutputStream) -> Unit,
     ): Uri {
         val resolver = context.contentResolver
         val values = ContentValues().apply {
@@ -50,10 +65,12 @@ class BackupStore @Inject constructor(
             ?: error("Failed to create backup entry in MediaStore")
 
         try {
-            resolver.openOutputStream(uri, "w")?.use { out ->
-                out.write(content.toByteArray(Charsets.UTF_8))
+            val output = resolver.openOutputStream(uri, "w")
+                ?: error("Failed to open MediaStore output for $uri")
+            BufferedOutputStream(output, WRITE_BUFFER_BYTES).use { out ->
+                write(out)
                 out.flush()
-            } ?: error("Failed to open MediaStore output for $uri")
+            }
 
             val done = ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }
             resolver.update(uri, done, null, null)
@@ -76,8 +93,14 @@ class BackupStore @Inject constructor(
         )
         val nameColumn = MediaStore.MediaColumns.DISPLAY_NAME
         val selection = "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND " +
-            "($nameColumn LIKE ? OR $nameColumn LIKE ?)"
-        val args = arrayOf(relativePath, "$FILE_PREFIX%.json", "$CONFIG_FILE_PREFIX%.json")
+            "($nameColumn LIKE ? OR $nameColumn LIKE ? OR $nameColumn LIKE ?)"
+        // Only encrypted backups; plaintext exports (CSV, Markdown zip) are not listed.
+        val args = arrayOf(
+            relativePath,
+            "$FILE_PREFIX%.json",
+            "$CONFIG_FILE_PREFIX%.json",
+            "$JOURNAL_FILE_PREFIX%.$JOURNAL_EXTENSION",
+        )
         val sort = "${MediaStore.MediaColumns.DATE_ADDED} DESC"
 
         val result = mutableListOf<BackupFileInfo>()
@@ -95,7 +118,7 @@ class BackupStore @Inject constructor(
                     displayName = displayName,
                     createdAt = cursor.getLong(dateCol) * 1000L,
                     sizeBytes = cursor.getLong(sizeCol),
-                    isConfigOnly = isConfigOnlyName(displayName),
+                    kind = classifyBackupName(displayName),
                 )
             }
         }
@@ -106,9 +129,9 @@ class BackupStore @Inject constructor(
         return context.contentResolver.delete(uri, null, null) > 0
     }
 
-    /** Keep [keep] most-recent full backups, delete the rest. Config exports are left alone. */
+    /** Keep [keep] most-recent mood backups, delete the rest. Other kinds are left alone. */
     suspend fun trim(keep: Int): Int {
-        val all = list().filterNot { it.isConfigOnly }
+        val all = list().filter { it.kind == BackupKind.Mood }
         if (all.size <= keep) return 0
         val toDelete = all.drop(keep)
         var deleted = 0
@@ -123,7 +146,11 @@ class BackupStore @Inject constructor(
         private const val FILE_PREFIX = "mood-cairns-backup-"
         private const val CONFIG_FILE_PREFIX = "mood-cairns-config-only-"
         private const val CSV_FILE_PREFIX = "mood-cairns-export-"
+        private const val JOURNAL_FILE_PREFIX = "mood-cairns-journal-"
+        private const val JOURNAL_MARKDOWN_PREFIX = "mood-cairns-journal-markdown-"
+        private const val JOURNAL_EXTENSION = JournalBackupFormat.FILE_EXTENSION
         private val FILE_DATE_FMT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+        private const val WRITE_BUFFER_BYTES = 64 * 1024
 
         fun suggestName(date: LocalDate = LocalDate.now()): String =
             "$FILE_PREFIX${FILE_DATE_FMT.format(date)}.json"
@@ -134,7 +161,17 @@ class BackupStore @Inject constructor(
         fun suggestCsvName(date: LocalDate = LocalDate.now()): String =
             "$CSV_FILE_PREFIX${FILE_DATE_FMT.format(date)}.csv"
 
-        fun isConfigOnlyName(displayName: String): Boolean =
-            displayName.startsWith(CONFIG_FILE_PREFIX)
+        fun suggestJournalName(date: LocalDate = LocalDate.now()): String =
+            "$JOURNAL_FILE_PREFIX${FILE_DATE_FMT.format(date)}.$JOURNAL_EXTENSION"
+
+        /** Plaintext Markdown zip; .zip is never listed with the encrypted backups. */
+        fun suggestJournalMarkdownName(date: LocalDate = LocalDate.now()): String =
+            "$JOURNAL_MARKDOWN_PREFIX${FILE_DATE_FMT.format(date)}.zip"
+
+        fun classifyBackupName(displayName: String): BackupKind = when {
+            displayName.startsWith(CONFIG_FILE_PREFIX) -> BackupKind.Config
+            displayName.startsWith(JOURNAL_FILE_PREFIX) -> BackupKind.Journal
+            else -> BackupKind.Mood
+        }
     }
 }

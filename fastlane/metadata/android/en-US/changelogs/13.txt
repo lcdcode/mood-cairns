@@ -1,0 +1,8 @@
+New Features:
+- Journal - a new page each day for you to privately write your thoughts and feelings in plain text or Markdown
+- Sleep scale (once daily) - track your sleep hours if you wish, on your first mood log of the day
+- A friendly reminder on the Home screen every two weeks to back up your data (can be turned off in Settings)
+Improvements:
+- Biometric unlock is now better protected by your device's hardware. After updating, just enter your PIN once, then turn biometric unlock back on when asked, if desired.
+- Improved Backup and import screen
+- Various bug fixes

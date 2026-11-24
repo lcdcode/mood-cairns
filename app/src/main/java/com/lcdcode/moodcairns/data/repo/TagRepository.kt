@@ -32,6 +32,10 @@ class TagRepository @Inject constructor(private val holder: MoodDatabaseHolder) 
 
     suspend fun allCategories(): List<TagCategory> = categoryDao().all()
 
+    /** Stores a new category order. Other stays last whatever [orderedIds] says. */
+    suspend fun reorderCategories(orderedIds: List<String>) =
+        categoryDao().applySortOrder(orderedIds)
+
     /**
      * Renames a category. A blank [raw] restores a built-in's translated default;
      * user categories have no default, so a blank name is rejected. Other is the

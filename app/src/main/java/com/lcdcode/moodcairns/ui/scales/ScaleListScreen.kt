@@ -173,6 +173,7 @@ private fun scaleDetails(scale: Scale): String {
             add(stringResource(R.string.scale_list_default, formatScaleSetting(it, locale)))
         }
         if (scale.inverted) add(stringResource(R.string.scale_list_lower_better))
+        if (scale.oncePerDay) add(stringResource(R.string.scale_list_once_per_day))
         if (scale.isBuiltIn) add(stringResource(R.string.scale_list_built_in))
     }
     return parts.joinToString(stringResource(R.string.common_list_separator))

@@ -22,12 +22,12 @@ class MoodDbV5MigrationTest {
     private val labelTable = "tag_category_label"
 
     @Test
-    fun migrationSql_matchesExportedRoomSchema() {
+    fun migration_sql_matches_exported_room_schema() {
         assertEquals(listOf(createSqlFromSchema("5.json", labelTable)), MoodDbMigrationSql.V4_TO_V5)
     }
 
     @Test
-    fun existingTables_areUnchangedInV5() {
+    fun existing_tables_are_unchanged_in_v5() {
         for (table in listOf("scale", "entry", "entry_value", "tag", "entry_tag")) {
             assertEquals(
                 "$table must not change in v5",
@@ -38,7 +38,7 @@ class MoodDbV5MigrationTest {
     }
 
     @Test
-    fun migration_createsEmptyTable_andKeepsTags() {
+    fun migration_creates_empty_table_and_keeps_tags() {
         connectV4().use { c ->
             exec(c, "INSERT INTO tag (name, category, sortOrder) VALUES ('Home', 'PLACE', 0)")
 
@@ -50,7 +50,7 @@ class MoodDbV5MigrationTest {
     }
 
     @Test
-    fun migration_isIdempotent() {
+    fun migration_is_idempotent() {
         connectV4().use { c ->
             runStatements(c, MoodDbMigrationSql.V4_TO_V5)
             exec(c, "INSERT INTO $labelTable (category, label) VALUES ('PLACE', 'Spots')")
@@ -62,7 +62,7 @@ class MoodDbV5MigrationTest {
     }
 
     @Test
-    fun category_isUnique() {
+    fun category_is_unique() {
         connectV4().use { c ->
             runStatements(c, MoodDbMigrationSql.V4_TO_V5)
             exec(c, "INSERT INTO $labelTable (category, label) VALUES ('PLACE', 'Spots')")

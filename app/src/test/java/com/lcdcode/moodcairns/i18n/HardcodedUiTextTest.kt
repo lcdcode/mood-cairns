@@ -13,7 +13,7 @@ import org.junit.Test
 class HardcodedUiTextTest {
 
     @Test
-    fun extractedFiles_haveNoLiteralUiText() {
+    fun extracted_files_have_no_literal_ui_text() {
         val sourceRoot = sequenceOf("src/main/java", "app/src/main/java")
             .map { File(it, "com/lcdcode/moodcairns") }
             .firstOrNull(File::isDirectory)
@@ -34,6 +34,7 @@ class HardcodedUiTextTest {
             "notifications/NotificationChannels.kt",
             "notifications/PromptAlarmReceiver.kt",
             "ui/about/AboutScreen.kt",
+            "ui/about/LicensesScreen.kt",
             "ui/backup/BackupScreen.kt",
             "ui/charts/ChartAxis.kt",
             "ui/charts/ChartsScreen.kt",
@@ -42,6 +43,10 @@ class HardcodedUiTextTest {
             "ui/entry/EntryScreen.kt",
             "ui/history/HistoryScreen.kt",
             "ui/home/HomeScreen.kt",
+            "ui/journal/JournalHistoryScreen.kt",
+            "ui/journal/JournalScreen.kt",
+            "ui/journal/MarkdownRender.kt",
+            "ui/lock/BiometricOfferDialog.kt",
             "ui/lock/Biometrics.kt",
             "ui/lock/LockScreen.kt",
             "ui/lock/MigratingScreen.kt",
@@ -51,6 +56,7 @@ class HardcodedUiTextTest {
             "ui/scales/ScaleEditScreen.kt",
             "ui/scales/ScaleListScreen.kt",
             "ui/scales/ScaleWarnings.kt",
+            "ui/settings/BiometricUnlockRow.kt",
             "ui/settings/ChangePinScreen.kt",
             "ui/settings/LanguagePicker.kt",
             "ui/settings/PromptWindowEditScreen.kt",

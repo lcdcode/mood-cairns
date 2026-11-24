@@ -8,7 +8,7 @@ import org.junit.Test
 class TagWarningsTest {
 
     @Test
-    fun whileCountLoading_omitsTheCount() {
+    fun while_count_loading_omits_the_count() {
         assertEquals(
             UiText.Res(R.string.tag_edit_delete_body, listOf("Home")),
             tagDeleteWarning("Home", affectedEntryCount = null),
@@ -16,7 +16,7 @@ class TagWarningsTest {
     }
 
     @Test
-    fun unusedTag_saysSo() {
+    fun unused_tag_says_so() {
         assertEquals(
             UiText.Res(R.string.tag_edit_delete_body_unused, listOf("Home")),
             tagDeleteWarning("Home", affectedEntryCount = 0),
@@ -24,7 +24,7 @@ class TagWarningsTest {
     }
 
     @Test
-    fun usedTag_isPluralOnEntryCount() {
+    fun used_tag_is_plural_on_entry_count() {
         assertEquals(
             UiText.Plural(R.plurals.tag_edit_delete_body_used, 4, listOf(4, "Home")),
             tagDeleteWarning("Home", affectedEntryCount = 4),
@@ -32,7 +32,7 @@ class TagWarningsTest {
     }
 
     @Test
-    fun blankName_fallsBackToThisTag() {
+    fun blank_name_falls_back_to_this_tag() {
         assertEquals(
             UiText.Res(
                 R.string.tag_edit_delete_body,

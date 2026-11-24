@@ -24,7 +24,7 @@ class BackupContentsDecoderTest {
     private val decoder = BackupContentsDecoder(json)
 
     @Test
-    fun configFile_doesNotDecodeAsBackupFile_soOlderAppsCannotRestoreIt() {
+    fun config_file_does_not_decode_as_backup_file_so_older_apps_cannot_restore_it() {
         // Older versions decode the plaintext straight into BackupFile. The missing
         // required "entries" key is what stops them from wiping entries.
         val text = json.encodeToString(ConfigFile.serializer(), configFile())
@@ -35,21 +35,21 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun fullRestore_refusesAConfigFile() {
+    fun full_restore_refuses_a_config_file() {
         val error = importError { decoder.forFullRestore(encode(configFile())) }
 
         assertEquals(ImportError.ConfigOnlyFile, error)
     }
 
     @Test
-    fun fullRestore_stillReadsABackup() {
+    fun full_restore_still_reads_a_backup() {
         val backup = backupFile()
 
         assertEquals(backup, decoder.forFullRestore(encode(backup)))
     }
 
     @Test
-    fun configImport_readsAConfigFile() {
+    fun config_import_reads_a_config_file() {
         val entities = decoder.forConfigImport(encode(configFile()))
 
         assertEquals(listOf("Sleep"), entities.scales.map { it.name })
@@ -59,7 +59,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun configImport_takesOnlyTheSetupFromAFullBackup() {
+    fun config_import_takes_only_the_setup_from_a_full_backup() {
         val entities = decoder.forConfigImport(encode(backupFile()))
 
         assertEquals(listOf("Sleep"), entities.scales.map { it.name })
@@ -67,14 +67,14 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun configImport_fromAV1Backup_usesTheSeedTags() {
+    fun config_import_from_a_v1_backup_uses_the_seed_tags() {
         val entities = decoder.forConfigImport(encode(backupFile(version = 1)))
 
         assertEquals(SeedTags.tags, entities.tags)
     }
 
     @Test
-    fun newerConfigVersion_isUnsupported_evenIfItsShapeChanged() {
+    fun newer_config_version_is_unsupported_even_if_its_shape_changed() {
         val future = JsonObject(
             mapOf(
                 ConfigFile.KIND_KEY to JsonPrimitive(ConfigFile.KIND),
@@ -92,7 +92,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun newerBackupVersion_isUnsupportedForConfigImport() {
+    fun newer_backup_version_is_unsupported_for_config_import() {
         val future = encode(backupFile(version = BackupFile.CURRENT_VERSION + 1))
 
         val error = importError { decoder.forConfigImport(future) }
@@ -101,14 +101,14 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun configImport_ofSomethingElse_isNotABackup() {
+    fun config_import_of_something_else_is_not_a_backup() {
         val error = importError { decoder.forConfigImport(JsonObject(emptyMap())) }
 
         assertEquals(ImportError.NotABackup, error)
     }
 
     @Test
-    fun invalidScales_areRejected() {
+    fun invalid_scales_are_rejected() {
         val invalid = listOf(
             sleep().copy(name = " "),
             sleep().copy(minValue = 5, maxValue = 5),
@@ -125,7 +125,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun windowsTheEditorCouldNotSave_areRejected() {
+    fun windows_the_editor_could_not_save_are_rejected() {
         val invalid = listOf(
             morning().copy(slot = "NOON"),
             morning().copy(startTime = "late"),
@@ -142,7 +142,23 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun blankTagNames_areDroppedFromAFullBackupToo() {
+    fun rejected_names_are_not_echoed_into_the_error() {
+        val hostile = "\n[FAKE] \u202E".repeat(10_000)
+        val scale = sleep().copy(name = hostile, step = 0f)
+        val window = morning().copy(label = hostile, startTime = "late")
+
+        assertEquals(
+            ImportError.Malformed(MalformedReason.INVALID_SCALE),
+            importError { decoder.forConfigImport(encode(configFile(scales = listOf(scale)))) },
+        )
+        assertEquals(
+            ImportError.Malformed(MalformedReason.INVALID_PROMPT_WINDOW),
+            importError { decoder.forConfigImport(encode(configFile(windows = listOf(window)))) },
+        )
+    }
+
+    @Test
+    fun blank_tag_names_are_dropped_from_a_full_backup_too() {
         val backup = backupFile().copy(tags = listOf(gym(), gym().copy(id = 2, name = "")))
 
         val entities = decoder.forConfigImport(encode(backup))
@@ -151,7 +167,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun blankTagNames_areDropped() {
+    fun blank_tag_names_are_dropped() {
         val tags = listOf(gym(), gym().copy(id = 2, name = "  "))
 
         val entities = decoder.forConfigImport(encode(configFile(tags = tags)))
@@ -160,7 +176,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun kindMarker_mustBeTheExactString() {
+    fun kind_marker_must_be_the_exact_string() {
         assertTrue(isConfigFile(encode(configFile())))
         assertFalse(isConfigFile(encode(backupFile())))
         assertFalse(isConfigFile(JsonObject(mapOf(ConfigFile.KIND_KEY to JsonPrimitive("other")))))
@@ -168,7 +184,7 @@ class BackupContentsDecoderTest {
     }
 
     @Test
-    fun parseObject_rejectsNonObjects() {
+    fun parse_object_rejects_non_objects() {
         val error = importError { decoder.parseObject("[1, 2]") }
 
         assertTrue(error is ImportError.Malformed)

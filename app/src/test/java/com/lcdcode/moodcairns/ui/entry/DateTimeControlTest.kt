@@ -16,7 +16,7 @@ import java.time.ZoneOffset
 class DateTimeControlTest {
 
     @Test
-    fun combinesDateAndTimeInGivenZone() {
+    fun combines_date_and_time_in_given_zone() {
         val date = LocalDate.of(2026, 7, 10)
         val time = LocalTime.of(15, 45)
         val zone = ZoneId.of("America/New_York")
@@ -28,7 +28,7 @@ class DateTimeControlTest {
     }
 
     @Test
-    fun combineIsZoneSensitive() {
+    fun combine_is_zone_sensitive() {
         val date = LocalDate.of(2026, 1, 1)
         val time = LocalTime.of(0, 30)
 
@@ -41,7 +41,7 @@ class DateTimeControlTest {
     }
 
     @Test
-    fun datePickerUtcMillisRoundTripsToSameCalendarDate() {
+    fun date_picker_utc_millis_round_trips_to_same_calendar_date() {
         val date = LocalDate.of(2026, 2, 28)
 
         val millis = date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()

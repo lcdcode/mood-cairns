@@ -36,7 +36,7 @@ class ScaleDeleteCascadeTest {
     private val deleteScaleSql = "DELETE FROM scale WHERE id = ?"
 
     @Test
-    fun cascade_deletesScale_orphanEntries_andItsValues_butKeepsSharedAndUnrelated() {
+    fun cascade_deletes_scale_orphan_entries_and_its_values_but_keeps_shared_and_unrelated() {
         connectMemory().use { c ->
             createSchema(c)
             // Target scale 1 ("Energy") and bystander scale 2 ("Mood").
@@ -77,7 +77,7 @@ class ScaleDeleteCascadeTest {
     }
 
     @Test
-    fun cascade_onScaleWithNoEntries_removesOnlyTheScale() {
+    fun cascade_on_scale_with_no_entries_removes_only_the_scale() {
         connectMemory().use { c ->
             createSchema(c)
             insertScale(c, id = 1, name = "Unused")

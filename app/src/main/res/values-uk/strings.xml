@@ -35,6 +35,9 @@
     <string name="common_name_label">Назва</string>
     <string name="common_tags_label">Теги</string>
     <string name="common_reorder">Змінити порядок</string>
+    <string name="common_done">Готово</string>
+    <string name="common_move_up">Перемістити вгору</string>
+    <string name="common_move_down">Перемістити вниз</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -78,6 +81,7 @@
     <string name="seed_scale_stress">Стрес</string>
     <string name="seed_scale_boredom">Нудьга</string>
     <string name="seed_scale_pain">Біль</string>
+    <string name="seed_scale_sleep">Сон</string>
     <string name="seed_tag_home">Дім</string>
     <string name="seed_tag_work">Робота</string>
     <string name="seed_tag_school">Навчання</string>
@@ -126,18 +130,46 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Записуйте, як ви почуваєтеся. Конфіденційно.</string>
-    <string name="home_log_entry">Новий запис</string>
-    <string name="home_history">Історія</string>
+    <string name="home_log_mood">Записати настрій</string>
+    <string name="home_mood_history">Історія настрою</string>
+    <string name="home_open_journal">Відкрити щоденник</string>
     <string name="home_charts">Графіки</string>
     <string name="home_backup">Резервні копії та імпорт</string>
     <string name="home_scales">Керування шкалами</string>
     <string name="home_tags">Керування тегами</string>
     <string name="home_settings">Налаштування</string>
     <string name="home_about">Про застосунок</string>
+    <string name="home_backup_reminder_title">Дружнє нагадування зробити резервну копію</string>
+    <string name="home_backup_reminder_body">Копії зберігаються в Documents/MoodCairns на цьому телефоні. Скопіюйте їх в інше місце, щоб не втратити разом із телефоном. Торкніться, щоб відкрити «Резервні копії та імпорт».</string>
+    <string name="home_backup_reminder_dismiss">Приховати</string>
+
+    <!-- Редактор щоденника -->
+    <string name="journal_placeholder">Напишіть про свій день…</string>
+    <string name="journal_empty_read">За цей день ще нічого не написано.</string>
+    <string name="journal_load_failed">Не вдалося відкрити цю сторінку щоденника.</string>
+    <string name="journal_show_read">Режим читання</string>
+    <string name="journal_show_edit">Редагувати</string>
+    <string name="journal_format_bold">Жирний</string>
+    <string name="journal_format_italic">Курсив</string>
+    <string name="journal_format_heading">Заголовок</string>
+    <string name="journal_format_bullet_list">Маркований список</string>
+    <string name="journal_format_numbered_list">Нумерований список</string>
+    <string name="journal_format_quote">Цитата</string>
+    <string name="journal_format_code">Код</string>
+    <string name="journal_format_checklist">Список завдань</string>
+    <string name="journal_format_table">Вставити таблицю</string>
+    <string name="journal_table_column">Стовпець %1$d</string>
+
+    <!-- Історія щоденника -->
+    <string name="journal_history_title">Історія щоденника</string>
+    <string name="journal_history_search_hint">Пошук у щоденнику…</string>
+    <string name="journal_history_empty">У щоденнику ще немає сторінок.</string>
+    <string name="journal_history_no_matches">Немає сторінок, що відповідають запиту.</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Як ви почуваєтеся?</string>
     <string name="entry_title_edit">Редагувати запис</string>
+    <string name="entry_save_open_journal">Зберегти й відкрити щоденник</string>
     <string name="entry_no_scales">Шкали не налаштовано. Додайте шкалу в розділі «Керування шкалами».</string>
     <string name="entry_note_label">Нотатка (опціонально)</string>
     <string name="entry_prompt_slot_label">Вікно нагадування</string>
@@ -145,9 +177,10 @@
     <string name="entry_slider_description_out_of">%1$s, значення %2$s з %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, значення %2$s у діапазоні від %3$d до %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s, що нижче, то краще</string>
+    <string name="entry_once_per_day_reask_hint">Залиште %1$s, щоб вас запитали ще раз пізніше.</string>
 
     <!-- History screen -->
-    <string name="history_title">Історія</string>
+    <string name="history_mood_title">Історія настрою</string>
     <string name="history_add_past">Додати минулий запис</string>
     <string name="history_empty">Записів поки немає.</string>
     <string name="history_no_matches">Немає записів, що відповідають фільтрам.</string>
@@ -158,6 +191,7 @@
     <string name="history_clear_search">Очистити пошук</string>
     <string name="history_clear_all">Скинути все</string>
     <string name="history_pick_date">Вибрати дату</string>
+    <string name="history_long_press_hint">Натисніть і утримуйте запис, щоб редагувати або видалити його.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Шкали</string>
@@ -171,6 +205,7 @@
     <string name="scale_list_default">початкове %1$s</string>
     <string name="scale_list_lower_better">що нижче, то краще</string>
     <string name="scale_list_built_in">вбудована</string>
+    <string name="scale_list_once_per_day">раз на день</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Нова шкала</string>
@@ -182,6 +217,8 @@
     <string name="scale_edit_default_hint">З цього значення починається повзунок у новому записі. Якщо залишити порожнім, повзунок почнеться з середини.</string>
     <string name="scale_edit_lower_better">Що нижче, то краще</string>
     <string name="scale_edit_lower_better_hint">Обернена шкала: повзунок іде від більшого до меншого, а на графіках покращення спрямоване вгору.</string>
+    <string name="scale_edit_once_per_day">Раз на день</string>
+    <string name="scale_edit_once_per_day_hint">Запитується, доки за цей день немає значення понад мінімум; якщо записати мінімум, питання з’явиться знову. На графіках показується точками, з’єднаними лінією, без заливки.</string>
     <string name="scale_edit_color_label">Колір</string>
     <string name="scale_edit_color_custom">Власний колір</string>
     <string name="scale_edit_color_picker_title">Виберіть колір</string>
@@ -223,6 +260,7 @@
     </plurals>
     <string name="tag_list_column_heading">Стовпець %1$d</string>
     <string name="tag_list_add_category">Додати категорію</string>
+    <string name="tag_list_reorder_categories">Змінити порядок категорій</string>
     <string name="tag_category_delete_title">Видалити категорію?</string>
     <string name="tag_category_delete_body_empty">Категорію «%1$s» буде видалено. У ній немає тегів.</string>
     <plurals name="tag_category_delete_body">
@@ -262,10 +300,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Резервні копії та імпорт</string>
     <string name="backup_intro">Резервні копії шифруються алгоритмом AES-GCM із ключем, отриманим з обраної вами парольної фрази, і зберігаються в Documents/MoodCairns. Syncthing або будь-який файловий менеджер може синхронізувати їх з іншими пристроями; сам застосунок нічого не надсилає в мережу.</string>
-    <string name="backup_export">Експортувати</string>
+    <string name="backup_export_mood">Експортувати дані настрою</string>
     <string name="backup_export_csv">Експорт у CSV без шифрування</string>
     <string name="backup_export_csv_warning">CSV-файл містить звичайний текст і НЕ зашифрований. Усе, що може читати вашу папку Documents (хмарні резервні копії, файлові менеджери, інші застосунки), зможе прочитати ваші записи. Щоб приховати цей варіант, вимкніть небезпечний експорт у налаштуваннях.</string>
-    <string name="backup_import">Імпорт з файлу (замінить усі дані)</string>
+    <string name="backup_restore_mood">Відновити дані настрою (замінить усі дані настрою)</string>
     <string name="backup_existing_label">Наявні копії</string>
     <string name="backup_none">Поки немає.</string>
     <string name="backup_encrypt_title">Зашифрувати резервну копію</string>
@@ -296,6 +334,11 @@
     <string name="about_no_browser">Не знайдено браузера, щоб відкрити сторінку.</string>
     <string name="about_contact_title">Зв’язок</string>
     <string name="about_contact_body">Щоб повідомити про проблему чи запропонувати нову функцію, найкраще &lt;a href=\"%1$s\"&gt;створити нове звернення (issue) на GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Ліцензії відкритого ПЗ</string>
+    <string name="licenses_original_language">Тексти ліцензій є юридичними документами й наводяться мовою оригіналу (англійською).</string>
+    <string name="licenses_load_failed">Не вдалося завантажити тексти ліцензій.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Графіки</string>
@@ -381,6 +424,8 @@
     <string name="charts_help_axis_title">Вісь Y: %1$s або %2$s</string>
     <string name="charts_help_autofit_body">Масштабує вертикальну вісь лише до того діапазону, який справді займають ваші дані. Невеликі зміни добре видно, бо графік заповнює весь простір, але лінія не співвідноситься з повним діапазоном шкали. Підписи ліворуч показують записані значення; якщо показано кілька шкал, усі вони використовують цю одну вісь.</string>
     <string name="charts_help_absolute_body" formatted="false">Показує кожну лінію відносно повного діапазону її шкали, від мінімуму до максимуму. Зміни виглядають меншими, зате різні шкали вирівнюються, і їх можна порівнювати на одному графіку. Шкали з позначкою «що нижче, то краще» тут перевернуто, щоб покращення завжди було спрямоване вгору. Підписи ліворуч указано у відсотках, бо кожна лінія вимірюється відносно власного діапазону: 100% відповідає верху діапазону, а для шкали «що нижче, то краще» відповідає його низу.</string>
+    <string name="charts_help_once_per_day_title">Шкали «раз на день»</string>
+    <string name="charts_help_once_per_day_body">Шкали на кшталт «Сон» заповнюються раз на день, тому кожен день позначено точкою, а точки з’єднано лінією без заливки під нею. У режимі %1$s їх немає, бо час запису для них нічого не означає. Якщо за день є і мінімум, і вище значення, малюється лише вище: мінімум може означати, що значення ще не було записано.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Оновлення сховища даних…</string>
@@ -392,6 +437,13 @@
     <string name="biometric_prompt_title">Розблокувати Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Підтвердьте особу, щоб продовжити</string>
     <string name="biometric_prompt_use_pin">Ввести PIN-код</string>
+    <string name="biometric_enroll_prompt_title">Увімкнути біометричне розблокування</string>
+    <string name="biometric_enroll_prompt_subtitle">Підтвердьте, щоб розблоковувати Mood Cairns за допомогою біометрії</string>
+    <string name="biometric_offer_title">Біометричне розблокування</string>
+    <string name="biometric_offer_body_upgrade">Біометричне розблокування тепер захищене апаратними засобами безпеки вашого пристрою. Увімкніть його знову, щоб і далі ним користуватися.</string>
+    <string name="biometric_offer_body_setup">Розблоковувати Mood Cairns за допомогою біометрії замість PIN-коду? Це можна змінити пізніше в налаштуваннях.</string>
+    <string name="biometric_offer_body_invalidated">Біометричне розблокування вимкнено, бо змінилися біометричні дані або блокування екрана цього пристрою. Якщо ви цього не робили, можливо, хтось інший має доступ до вашого телефона.</string>
+    <string name="biometric_offer_not_now">Не зараз</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Продовжити без PIN-коду?</string>
@@ -414,15 +466,19 @@
     <string name="settings_auto_lock_label">Автоблокування у фоні</string>
     <string name="settings_auto_lock_immediate">Одразу</string>
     <string name="settings_biometric_unlock">Біометричне розблокування</string>
+    <string name="settings_biometric_unavailable">Щоб користуватися цією функцією, налаштуйте відбиток пальця або інший надійний біометричний метод у налаштуваннях пристрою.</string>
     <string name="settings_change_pin">Змінити PIN-код</string>
     <string name="settings_lock_now">Заблокувати зараз</string>
     <string name="settings_set_pin">Встановити PIN-код</string>
     <string name="settings_no_pin_explanation">PIN-код не встановлено. Ваші дані зашифровано на цьому пристрої, але захищено лише сховищем ключів пристрою, а не PIN-кодом. Без PIN-коду недоступні автоблокування, біометричне розблокування та «Заблокувати зараз».</string>
+    <string name="settings_section_journal">Щоденник</string>
+    <string name="settings_journal_enabled">Увімкнути щоденник</string>
+    <string name="settings_journal_enabled_summary">Додає особистий щоденник: одна сторінка на кожен день. Вимкнення лише приховує щоденник, усе написане зберігається.</string>
     <string name="settings_section_danger_zone">Небезпечна зона</string>
     <string name="settings_allow_unsafe_exports">Дозволити небезпечний експорт</string>
-    <string name="settings_allow_unsafe_exports_summary">Вмикає експорт у CSV без шифрування в розділі «Резервні копії та імпорт». За замовчуванням вимкнено.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Вмикає експорт без шифрування в розділі «Резервні копії та імпорт»: CSV-файл із записами та файли Markdown зі щоденником. За замовчуванням вимкнено.</string>
     <string name="settings_unsafe_exports_dialog_title">Дозволити небезпечний експорт?</string>
-    <string name="settings_unsafe_exports_dialog_body">З’явиться можливість експортувати дані в незашифрований CSV-файл у спільному сховищі. Цей файл містить звичайний текст без парольної фрази: хмарні сервіси резервного копіювання, файлові менеджери та будь-які інші застосунки з доступом до спільного сховища зможуть прочитати всі ваші записи.\n\nВмикайте цю функцію, лише якщо розумієте й приймаєте цей ризик.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">З’явиться можливість експортувати записи в незашифрований CSV-файл, а щоденник у незашифровані файли Markdown у спільному сховищі. Ці файли містять звичайний текст без парольної фрази: хмарні сервіси резервного копіювання, файлові менеджери та будь-які інші застосунки з доступом до спільного сховища зможуть прочитати всі ваші записи й сторінки щоденника.\n\nВмикайте цю функцію, лише якщо розумієте й приймаєте цей ризик.</string>
     <string name="settings_allow_screenshots">Дозволити знімки екрана</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Тимчасово дозволяє знімки й запис екрана на %1$d хвилину. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
@@ -431,6 +487,8 @@
         <item quantity="other">Тимчасово дозволяє знімки й запис екрана на %1$d хвилини. Екран блокування залишається захищеним. За замовчуванням вимкнено.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Дозволено до %1$s</string>
+    <string name="settings_backup_reminder">Нагадування про резервні копії</string>
+    <string name="settings_backup_reminder_summary">Раз на два тижні показує на головному екрані нагадування зробити резервну копію даних. За замовчуванням увімкнено.</string>
     <string name="settings_screenshots_dialog_title">Дозволити знімки екрана?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">На наступну %1$d хвилину знімки екрана, запис екрана, трансляція та мініатюра в списку останніх застосунків зможуть захопити все, що показано на екрані, включно з вашими записами. Знімки екрана зберігаються в спільному сховищі, де їх можуть прочитати хмарні сервіси резервного копіювання та інші застосунки.\n\nЗнімки екрана знову буде заблоковано автоматично через %1$d хвилину або під час блокування застосунку.</item>
@@ -452,6 +510,7 @@
     <string name="lock_pin_label">PIN-код</string>
     <string name="lock_unlock">Розблокувати</string>
     <string name="lock_use_biometric">Використати біометрію</string>
+    <string name="lock_biometric_reset">Біометричне розблокування вимкнено, бо змінилися біометричні дані або блокування екрана цього пристрою. Введіть PIN-код.</string>
     <string name="lock_try_again_in">Повторіть через %1$s</string>
     <string name="lock_locked_for">Заблоковано (%1$s)</string>
     <string name="lock_error_wrong_pin">Неправильний PIN-код</string>
@@ -532,6 +591,8 @@
     <string name="backup_export_success">Експортовано: %1$s</string>
     <string name="backup_export_csv_success">Експортовано: %1$s (без шифрування)</string>
     <string name="backup_export_failed">Не вдалося експортувати: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Не збережено: сторінка щоденника за %1$s має дату, яку застосунок не зможе відновити. Перевірте дату сторінки й повторіть експорт.</string>
+    <string name="backup_error_export_too_large">Не збережено: копія перевищила б %1$d МБ, максимальний розмір, який застосунок може відновити.</string>
     <string name="backup_import_success">Імпорт завершено. Записи: %1$d, шкали: %2$d, теги: %3$d, вікна нагадувань: %4$d</string>
     <string name="backup_import_failed">Не вдалося імпортувати: %1$s</string>
 
@@ -548,6 +609,29 @@
     <string name="backup_config_import_failed">Не вдалося імпортувати конфігурацію: %1$s</string>
     <string name="backup_config_import_partial">Конфігурацію імпортовано частково. Шкали: %1$d, теги: %2$d. Не вдалося оновити вікна нагадувань (%3$s), перевірте їх у налаштуваннях. Ваші записи не змінено.</string>
     <string name="backup_config_only_label">Лише конфігурація</string>
+    <string name="backup_journal_section">Щоденник</string>
+    <string name="backup_journal_intro">Щоденник зберігається окремо від даних про настрій, у власному зашифрованому файлі. Відновлення замінює всі сторінки щоденника й ніколи не змінює дані про настрій.</string>
+    <string name="backup_journal_export">Експортувати щоденник</string>
+    <string name="backup_journal_import">Відновити щоденник (замінить усі сторінки)</string>
+    <string name="backup_journal_encrypt_title">Зашифрувати копію щоденника</string>
+    <string name="backup_journal_encrypt_body">Виберіть парольну фразу для шифрування цієї копії щоденника. Саме вона знадобиться для відновлення, навіть після перевстановлення. Це не PIN-код застосунку, і її неможливо відновити, якщо ви її забудете.</string>
+    <string name="backup_journal_decrypt_title">Відновити щоденник</string>
+    <string name="backup_journal_decrypt_body">Відновлення замінить усі сторінки щоденника сторінками з цієї копії. Дані про настрій не зміняться. Введіть парольну фразу, якою її зашифровано.</string>
+    <string name="backup_journal_export_success">Щоденник експортовано: %1$s</string>
+    <string name="backup_journal_import_failed">Не вдалося відновити щоденник: %1$s</string>
+    <string name="backup_journal_label">Щоденник</string>
+    <string name="backup_journal_markdown_warning">Експорт у Markdown містить звичайний текст і НЕ зашифрований. Усе, що може читати вашу папку Documents (хмарні резервні копії, файлові менеджери, інші застосунки), зможе прочитати ваш щоденник. Щоб приховати ці варіанти, вимкніть небезпечний експорт у налаштуваннях.</string>
+    <string name="backup_journal_markdown_all">Експортувати всі сторінки в Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Експортувати один день у Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Виберіть день для експорту</string>
+    <string name="backup_journal_markdown_export">Експортувати</string>
+    <string name="backup_journal_markdown_empty">Немає сторінок щоденника для експорту.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Щоденник відновлено: %1$d сторінка</item>
+        <item quantity="few">Щоденник відновлено: %1$d сторінки</item>
+        <item quantity="many">Щоденник відновлено: %1$d сторінок</item>
+        <item quantity="other">Щоденник відновлено: %1$d сторінки</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Конфігурація несумісна</string>
     <string name="backup_config_incompatible_version">Ця конфігурація використовує формат версії %1$d, який ця версія застосунку не може імпортувати. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
     <string name="backup_config_incompatible_backup_version">Ця копія використовує формат версії %1$d, з якого ця версія застосунку не може імпортувати конфігурацію. Оновіть застосунок і спробуйте ще раз. Нічого не змінено.</string>
@@ -586,6 +670,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">Файл перевищує обмеження в %1$d МБ.</string>
+    <string name="import_error_contents_too_large">Після розпакування копія перевищує обмеження в %1$d МБ.</string>
     <string name="import_error_unreadable">Не вдалося прочитати файл.</string>
     <string name="import_error_unreadable_detail">Не вдалося прочитати файл (%1$s).</string>
     <string name="import_error_not_a_backup">Цей файл не є резервною копією Mood Cairns.</string>
@@ -594,4 +679,6 @@
     <string name="import_error_malformed">Файл резервної копії пошкоджено (%1$s).</string>
     <string name="import_error_write_failed">Імпорт перервано під час збереження даних (%1$s).</string>
     <string name="import_error_config_only">Це файл лише з конфігурацією, у ньому немає записів для відновлення. Натомість скористайтеся «Імпортувати конфігурацію».</string>
+    <string name="import_error_journal_file">Це копія щоденника. Відновіть її кнопкою «Відновити щоденник» у розділі «Щоденник».</string>
+    <string name="import_error_not_journal">Це не копія щоденника. Резервні копії настрою та файли конфігурації імпортуються у своїх розділах.</string>
 </resources>

@@ -35,6 +35,9 @@
     <string name="common_name_label">Nazwa</string>
     <string name="common_tags_label">Tagi</string>
     <string name="common_reorder">Zmień kolejność</string>
+    <string name="common_done">Gotowe</string>
+    <string name="common_move_up">Przesuń w górę</string>
+    <string name="common_move_down">Przesuń w dół</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -78,6 +81,7 @@
     <string name="seed_scale_stress">Stres</string>
     <string name="seed_scale_boredom">Nuda</string>
     <string name="seed_scale_pain">Ból</string>
+    <string name="seed_scale_sleep">Sen</string>
     <string name="seed_tag_home">Dom</string>
     <string name="seed_tag_work">Praca</string>
     <string name="seed_tag_school">Szkoła</string>
@@ -126,18 +130,46 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Zapisuj, jak się czujesz. Prywatnie.</string>
-    <string name="home_log_entry">Nowy wpis</string>
-    <string name="home_history">Historia</string>
+    <string name="home_log_mood">Zapisz nastrój</string>
+    <string name="home_mood_history">Historia nastroju</string>
+    <string name="home_open_journal">Otwórz dziennik</string>
     <string name="home_charts">Wykresy</string>
     <string name="home_backup">Kopia zapasowa i import</string>
     <string name="home_scales">Zarządzaj skalami</string>
     <string name="home_tags">Zarządzaj tagami</string>
     <string name="home_settings">Ustawienia</string>
     <string name="home_about">O aplikacji</string>
+    <string name="home_backup_reminder_title">Przyjazne przypomnienie o zrobieniu kopii zapasowej</string>
+    <string name="home_backup_reminder_body">Kopie są zapisywane w Documents/MoodCairns na tym telefonie. Skopiuj je w inne miejsce, aby przetrwały utratę telefonu. Dotknij, aby otworzyć Kopia zapasowa i import.</string>
+    <string name="home_backup_reminder_dismiss">Odrzuć</string>
+
+    <!-- Edytor dziennika -->
+    <string name="journal_placeholder">Napisz o swoim dniu…</string>
+    <string name="journal_empty_read">Na ten dzień nic jeszcze nie napisano.</string>
+    <string name="journal_load_failed">Nie udało się otworzyć tej strony dziennika.</string>
+    <string name="journal_show_read">Widok do czytania</string>
+    <string name="journal_show_edit">Edytuj</string>
+    <string name="journal_format_bold">Pogrubienie</string>
+    <string name="journal_format_italic">Kursywa</string>
+    <string name="journal_format_heading">Nagłówek</string>
+    <string name="journal_format_bullet_list">Lista punktowana</string>
+    <string name="journal_format_numbered_list">Lista numerowana</string>
+    <string name="journal_format_quote">Cytat</string>
+    <string name="journal_format_code">Kod</string>
+    <string name="journal_format_checklist">Lista zadań</string>
+    <string name="journal_format_table">Wstaw tabelę</string>
+    <string name="journal_table_column">Kolumna %1$d</string>
+
+    <!-- Historia dziennika -->
+    <string name="journal_history_title">Historia dziennika</string>
+    <string name="journal_history_search_hint">Szukaj w dzienniku…</string>
+    <string name="journal_history_empty">W dzienniku nie ma jeszcze stron.</string>
+    <string name="journal_history_no_matches">Żadna strona nie pasuje do wyszukiwania.</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">Jak się czujesz?</string>
     <string name="entry_title_edit">Edytuj wpis</string>
+    <string name="entry_save_open_journal">Zapisz i otwórz dziennik</string>
     <string name="entry_no_scales">Brak skonfigurowanych skal. Dodaj skalę w sekcji „Zarządzaj skalami”.</string>
     <string name="entry_note_label">Notatka (opcjonalnie)</string>
     <string name="entry_prompt_slot_label">Okno przypomnienia</string>
@@ -145,9 +177,10 @@
     <string name="entry_slider_description_out_of">%1$s, wartość %2$s z %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, wartość %2$s w zakresie od %3$d do %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s, im niżej, tym lepiej</string>
+    <string name="entry_once_per_day_reask_hint">Zostaw %1$s, aby pytanie wróciło później.</string>
 
     <!-- History screen -->
-    <string name="history_title">Historia</string>
+    <string name="history_mood_title">Historia nastroju</string>
     <string name="history_add_past">Dodaj wcześniejszy wpis</string>
     <string name="history_empty">Brak wpisów.</string>
     <string name="history_no_matches">Brak wpisów pasujących do filtrów.</string>
@@ -158,6 +191,7 @@
     <string name="history_clear_search">Wyczyść wyszukiwanie</string>
     <string name="history_clear_all">Wyczyść wszystko</string>
     <string name="history_pick_date">Wybierz datę</string>
+    <string name="history_long_press_hint">Przytrzymaj wpis, aby go edytować lub usunąć.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Skale</string>
@@ -171,6 +205,7 @@
     <string name="scale_list_default">domyślnie %1$s</string>
     <string name="scale_list_lower_better">im niżej, tym lepiej</string>
     <string name="scale_list_built_in">wbudowana</string>
+    <string name="scale_list_once_per_day">raz dziennie</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Nowa skala</string>
@@ -182,6 +217,8 @@
     <string name="scale_edit_default_hint">Od tej wartości zaczyna się suwak w nowym wpisie. Puste pole oznacza środek skali.</string>
     <string name="scale_edit_lower_better">Im niżej, tym lepiej</string>
     <string name="scale_edit_lower_better_hint">Skala odwrócona: suwak biegnie od wysokich do niskich wartości, a na wykresach poprawa jest skierowana w górę.</string>
+    <string name="scale_edit_once_per_day">Raz dziennie</string>
+    <string name="scale_edit_once_per_day_hint">Pytanie pojawia się, dopóki dany dzień nie ma wartości powyżej minimum; zapisanie minimum oznacza, że pytanie wróci. Na wykresach rysowana jako punkty połączone linią, bez cieniowania.</string>
     <string name="scale_edit_color_label">Kolor</string>
     <string name="scale_edit_color_custom">Własny kolor</string>
     <string name="scale_edit_color_picker_title">Wybierz kolor</string>
@@ -223,6 +260,7 @@
     </plurals>
     <string name="tag_list_column_heading">Kolumna %1$d</string>
     <string name="tag_list_add_category">Dodaj kategorię</string>
+    <string name="tag_list_reorder_categories">Zmień kolejność kategorii</string>
     <string name="tag_category_delete_title">Usunąć kategorię?</string>
     <string name="tag_category_delete_body_empty">Kategoria „%1$s” zostanie usunięta. Nie zawiera tagów.</string>
     <plurals name="tag_category_delete_body">
@@ -263,10 +301,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Kopia zapasowa i import</string>
     <string name="backup_intro">Kopie zapasowe są szyfrowane algorytmem AES-GCM kluczem utworzonym z wybranego przez ciebie hasła i zapisywane w folderze Documents/MoodCairns. Syncthing lub dowolny menedżer plików może synchronizować je z innymi urządzeniami. Sama aplikacja niczego nie wysyła.</string>
-    <string name="backup_export">Eksportuj teraz</string>
+    <string name="backup_export_mood">Eksportuj dane nastroju</string>
     <string name="backup_export_csv">Eksportuj niezaszyfrowany CSV</string>
     <string name="backup_export_csv_warning">Plik CSV to zwykły tekst i NIE jest zaszyfrowany. Każdy, kto ma dostęp do twojego folderu Documents (kopie w chmurze, menedżery plików, inne aplikacje), może odczytać twoje wpisy. Aby ukryć tę opcję, wyłącz niebezpieczny eksport w ustawieniach.</string>
-    <string name="backup_import">Importuj z pliku (zastępuje wszystkie dane)</string>
+    <string name="backup_restore_mood">Przywróć dane nastroju (zastępuje wszystkie dane nastroju)</string>
     <string name="backup_existing_label">Istniejące kopie</string>
     <string name="backup_none">Jeszcze brak.</string>
     <string name="backup_encrypt_title">Zaszyfruj kopię zapasową</string>
@@ -297,6 +335,11 @@
     <string name="about_no_browser">Nie znaleziono przeglądarki do otwarcia strony.</string>
     <string name="about_contact_title">Kontakt</string>
     <string name="about_contact_body">Aby zgłosić problem lub zaproponować nową funkcję, najlepiej &lt;a href=\"%1$s\"&gt;utworzyć nowe zgłoszenie (issue) na GitHubie&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Licencje open source</string>
+    <string name="licenses_original_language">Teksty licencji są dokumentami prawnymi i są wyświetlane w oryginalnej wersji angielskiej.</string>
+    <string name="licenses_load_failed">Nie udało się wczytać tekstów licencji.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Wykresy</string>
@@ -382,6 +425,8 @@
     <string name="charts_help_axis_title">Oś pionowa: %1$s czy %2$s</string>
     <string name="charts_help_autofit_body">Przybliża oś pionową do zakresu, który faktycznie zajmują twoje dane. Drobne zmiany są dobrze widoczne, bo wykres wypełnia całą przestrzeń, ale linia nie jest odnoszona do pełnego zakresu skali. Etykiety po lewej to zapisane wartości. Gdy na wykresie jest kilka skal, wszystkie korzystają z tej jednej osi.</string>
     <string name="charts_help_absolute_body" formatted="false">Pokazuje każdą linię względem pełnego zakresu jej skali, od minimum do maksimum. Zmiany wyglądają na mniejsze, ale różne skale się wyrównują, więc można je porównywać na jednym wykresie. Skale oznaczone „im niżej, tym lepiej” są tu odwrócone, aby poprawa zawsze była skierowana w górę. Etykiety po lewej są w procentach, bo każda linia jest mierzona względem własnego zakresu: 100% to góra tego zakresu, a w przypadku skali „im niżej, tym lepiej” jego dół.</string>
+    <string name="charts_help_once_per_day_title">Skale raz dziennie</string>
+    <string name="charts_help_once_per_day_body">Skale takie jak Sen są zapisywane raz dziennie, dlatego każdy dzień jest oznaczony punktem, a punkty łączy linia bez cieniowania pod nią. Nie ma ich w trybie %1$s, bo godzina wpisu nic o nich nie mówi. Jeśli dany dzień ma zarówno minimum, jak i wyższą wartość, rysowana jest tylko wyższa, bo minimum może oznaczać po prostu brak wpisu.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Aktualizowanie magazynu danych…</string>
@@ -393,6 +438,13 @@
     <string name="biometric_prompt_title">Odblokuj Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Potwierdź tożsamość, aby kontynuować</string>
     <string name="biometric_prompt_use_pin">Użyj kodu PIN</string>
+    <string name="biometric_enroll_prompt_title">Włącz odblokowanie biometryczne</string>
+    <string name="biometric_enroll_prompt_subtitle">Potwierdź, aby odblokowywać Mood Cairns biometrią</string>
+    <string name="biometric_offer_title">Odblokowanie biometryczne</string>
+    <string name="biometric_offer_body_upgrade">Odblokowanie biometryczne jest teraz chronione przez sprzętowe zabezpieczenia urządzenia. Włącz je ponownie, aby nadal z niego korzystać.</string>
+    <string name="biometric_offer_body_setup">Odblokowywać Mood Cairns biometrią zamiast kodu PIN? Możesz to później zmienić w Ustawieniach.</string>
+    <string name="biometric_offer_body_invalidated">Odblokowanie biometryczne zostało wyłączone, ponieważ zmieniły się dane biometryczne lub blokada ekranu tego urządzenia. Jeśli ta zmiana nie pochodzi od ciebie, ktoś inny może mieć dostęp do twojego telefonu.</string>
+    <string name="biometric_offer_not_now">Nie teraz</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">Kontynuować bez kodu PIN?</string>
@@ -415,15 +467,19 @@
     <string name="settings_auto_lock_label">Automatyczna blokada w tle</string>
     <string name="settings_auto_lock_immediate">Natychmiast</string>
     <string name="settings_biometric_unlock">Odblokowanie biometryczne</string>
+    <string name="settings_biometric_unavailable">Aby z tego korzystać, skonfiguruj odcisk palca lub inną silną metodę biometryczną w ustawieniach urządzenia.</string>
     <string name="settings_change_pin">Zmień kod PIN</string>
     <string name="settings_lock_now">Zablokuj teraz</string>
     <string name="settings_set_pin">Ustaw kod PIN</string>
     <string name="settings_no_pin_explanation">Nie ustawiono kodu PIN. Twoje dane są zaszyfrowane na tym urządzeniu, ale chroni je tylko magazyn kluczy urządzenia, a nie kod PIN. Bez kodu PIN niedostępne są automatyczna blokada, odblokowanie biometryczne i „Zablokuj teraz”.</string>
+    <string name="settings_section_journal">Dziennik</string>
+    <string name="settings_journal_enabled">Włącz dziennik</string>
+    <string name="settings_journal_enabled_summary">Dodaje prywatny dziennik z jedną stroną na każdy dzień. Wyłączenie tylko ukrywa dziennik; wszystko, co napisano, zostaje zachowane.</string>
     <string name="settings_section_danger_zone">Strefa zagrożenia</string>
     <string name="settings_allow_unsafe_exports">Zezwalaj na niebezpieczny eksport</string>
-    <string name="settings_allow_unsafe_exports_summary">Włącza niezaszyfrowany eksport CSV w sekcji „Kopia zapasowa i import”. Domyślnie wyłączone.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Włącza niezaszyfrowany eksport w sekcji „Kopia zapasowa i import”: plik CSV z wpisami i pliki Markdown z dziennikiem. Domyślnie wyłączone.</string>
     <string name="settings_unsafe_exports_dialog_title">Zezwolić na niebezpieczny eksport?</string>
-    <string name="settings_unsafe_exports_dialog_body">Dodaje opcję eksportu danych do niezaszyfrowanego pliku CSV w pamięci współdzielonej. Ten plik to zwykły tekst bez hasła: usługi kopii zapasowych w chmurze, menedżery plików i wszystkie inne aplikacje z dostępem do pamięci współdzielonej będą mogły odczytać wszystkie twoje wpisy.\n\nWłącz tę opcję tylko wtedy, gdy rozumiesz i akceptujesz to ryzyko.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Dodaje opcje eksportu wpisów do niezaszyfrowanego pliku CSV oraz dziennika do niezaszyfrowanych plików Markdown w pamięci współdzielonej. Te pliki to zwykły tekst bez hasła: usługi kopii zapasowych w chmurze, menedżery plików i wszystkie inne aplikacje z dostępem do pamięci współdzielonej będą mogły odczytać wszystkie twoje wpisy i strony dziennika.\n\nWłącz tę opcję tylko wtedy, gdy rozumiesz i akceptujesz to ryzyko.</string>
     <string name="settings_allow_screenshots">Zezwalaj na zrzuty ekranu</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minutę. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
@@ -432,6 +488,8 @@
         <item quantity="other">Tymczasowo zezwala na zrzuty i nagrywanie ekranu przez %1$d minuty. Ekran blokady pozostaje chroniony. Domyślnie wyłączone.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Dozwolone do %1$s</string>
+    <string name="settings_backup_reminder">Przypomnienia o kopii zapasowej</string>
+    <string name="settings_backup_reminder_summary">Co dwa tygodnie wyświetla na ekranie głównym przypomnienie o utworzeniu kopii zapasowej danych. Domyślnie włączone.</string>
     <string name="settings_screenshots_dialog_title">Zezwolić na zrzuty ekranu?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">Przez następną %1$d minutę zrzuty ekranu, nagrania ekranu, przesyłanie obrazu i podgląd na liście ostatnich aplikacji mogą przechwycić wszystko, co jest wyświetlane, w tym twoje wpisy. Zrzuty ekranu są zapisywane w pamięci współdzielonej, gdzie mogą je odczytać usługi kopii zapasowych w chmurze i inne aplikacje.\n\nZrzuty ekranu zostaną ponownie zablokowane automatycznie po %1$d minucie lub po zablokowaniu aplikacji.</item>
@@ -453,6 +511,7 @@
     <string name="lock_pin_label">Kod PIN</string>
     <string name="lock_unlock">Odblokuj</string>
     <string name="lock_use_biometric">Użyj biometrii</string>
+    <string name="lock_biometric_reset">Odblokowanie biometryczne zostało wyłączone, ponieważ zmieniły się dane biometryczne lub blokada ekranu tego urządzenia. Wpisz kod PIN.</string>
     <string name="lock_try_again_in">Spróbuj ponownie za %1$s</string>
     <string name="lock_locked_for">Zablokowano (%1$s)</string>
     <string name="lock_error_wrong_pin">Nieprawidłowy kod PIN</string>
@@ -532,6 +591,8 @@
     <string name="backup_export_success">Wyeksportowano: %1$s</string>
     <string name="backup_export_csv_success">Wyeksportowano: %1$s (bez szyfrowania)</string>
     <string name="backup_export_failed">Eksport nie powiódł się: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Nie zapisano: strona dziennika z dnia %1$s ma datę, której aplikacja nie mogłaby przywrócić. Sprawdź datę strony i wyeksportuj ponownie.</string>
+    <string name="backup_error_export_too_large">Nie zapisano: ta kopia przekroczyłaby %1$d MB, czyli maksimum, które aplikacja może przywrócić.</string>
     <string name="backup_import_success">Import zakończony. Wpisy: %1$d, skale: %2$d, tagi: %3$d, okna przypomnień: %4$d</string>
     <string name="backup_import_failed">Import nie powiódł się: %1$s</string>
 
@@ -548,6 +609,29 @@
     <string name="backup_config_import_failed">Import konfiguracji nie powiódł się: %1$s</string>
     <string name="backup_config_import_partial">Konfiguracja zaimportowana częściowo. Skale: %1$d, tagi: %2$d. Nie udało się zaktualizować okien przypomnień (%3$s), sprawdź je w Ustawieniach. Twoje wpisy nie zostały zmienione.</string>
     <string name="backup_config_only_label">Tylko konfiguracja</string>
+    <string name="backup_journal_section">Dziennik</string>
+    <string name="backup_journal_intro">Dziennik jest zapisywany osobno od nastrojów, we własnym zaszyfrowanym pliku. Przywrócenie kopii dziennika zastępuje wszystkie jego strony i nigdy nie zmienia danych o nastroju.</string>
+    <string name="backup_journal_export">Eksportuj dziennik</string>
+    <string name="backup_journal_import">Przywróć dziennik (zastępuje wszystkie strony)</string>
+    <string name="backup_journal_encrypt_title">Zaszyfruj kopię dziennika</string>
+    <string name="backup_journal_encrypt_body">Wybierz hasło do zaszyfrowania tej kopii dziennika. Będzie ono potrzebne do jej przywrócenia, także po ponownej instalacji. To nie jest kod PIN aplikacji i nie da się go odzyskać, jeśli je zapomnisz.</string>
+    <string name="backup_journal_decrypt_title">Przywróć dziennik</string>
+    <string name="backup_journal_decrypt_body">Przywrócenie zastąpi wszystkie strony dziennika stronami z tej kopii. Dane o nastroju nie zostaną zmienione. Wpisz hasło, którym ją zaszyfrowano.</string>
+    <string name="backup_journal_export_success">Wyeksportowano dziennik: %1$s</string>
+    <string name="backup_journal_import_failed">Nie udało się przywrócić dziennika: %1$s</string>
+    <string name="backup_journal_label">Dziennik</string>
+    <string name="backup_journal_markdown_warning">Eksport Markdown to zwykły tekst i NIE jest zaszyfrowany. Każdy, kto ma dostęp do twojego folderu Documents (kopie w chmurze, menedżery plików, inne aplikacje), może odczytać twój dziennik. Aby ukryć te opcje, wyłącz niebezpieczny eksport w ustawieniach.</string>
+    <string name="backup_journal_markdown_all">Eksportuj wszystkie strony do Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Eksportuj jeden dzień do Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Wybierz dzień do eksportu</string>
+    <string name="backup_journal_markdown_export">Eksportuj</string>
+    <string name="backup_journal_markdown_empty">Nie ma stron dziennika do wyeksportowania.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Przywrócono dziennik: %1$d strona</item>
+        <item quantity="few">Przywrócono dziennik: %1$d strony</item>
+        <item quantity="many">Przywrócono dziennik: %1$d stron</item>
+        <item quantity="other">Przywrócono dziennik: %1$d strony</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Niezgodna konfiguracja</string>
     <string name="backup_config_incompatible_version">Ta konfiguracja używa formatu w wersji %1$d, którego ta wersja aplikacji nie potrafi zaimportować. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
     <string name="backup_config_incompatible_backup_version">Ta kopia używa formatu w wersji %1$d, z którego ta wersja aplikacji nie potrafi zaimportować konfiguracji. Zaktualizuj aplikację i spróbuj ponownie. Nic nie zostało zmienione.</string>
@@ -586,6 +670,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">Plik przekracza limit %1$d MB.</string>
+    <string name="import_error_contents_too_large">Po rozpakowaniu kopia przekracza limit %1$d MB.</string>
     <string name="import_error_unreadable">Nie udało się odczytać pliku.</string>
     <string name="import_error_unreadable_detail">Nie udało się odczytać pliku (%1$s).</string>
     <string name="import_error_not_a_backup">Ten plik nie jest kopią zapasową Mood Cairns.</string>
@@ -594,4 +679,6 @@
     <string name="import_error_malformed">Plik kopii zapasowej jest uszkodzony (%1$s).</string>
     <string name="import_error_write_failed">Import przerwany podczas zapisywania danych (%1$s).</string>
     <string name="import_error_config_only">To plik zawierający tylko konfigurację, bez wpisów do przywrócenia. Użyj zamiast tego opcji „Importuj konfigurację”.</string>
+    <string name="import_error_journal_file">To kopia dziennika. Przywróć ją opcją „Przywróć dziennik” w sekcji Dziennik.</string>
+    <string name="import_error_not_journal">To nie jest kopia dziennika. Kopie nastrojów i pliki konfiguracji importuje się w ich własnych sekcjach.</string>
 </resources>

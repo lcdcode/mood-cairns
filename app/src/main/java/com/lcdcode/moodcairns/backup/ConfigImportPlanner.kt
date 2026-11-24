@@ -203,8 +203,15 @@ private fun planScales(incoming: List<Scale>, local: List<Scale>): RowChanges<Sc
         }
     }
     val keptNames = incoming.mapTo(HashSet()) { it.name }
-    return RowChanges(inserts, updates, local.filterNot { it.name in keptNames }.map { it.id })
+    val deleteIds = local.filterNot { it.name in keptNames || it.keptWhenMissing() }.map { it.id }
+    return RowChanges(inserts, updates, deleteIds)
 }
+
+/**
+ * Built-in scales cannot be deleted in the app, and a file exported before one was
+ * added (e.g. Sleep) would otherwise delete it or be refused, so they stay as they are.
+ */
+private fun Scale.keptWhenMissing(): Boolean = isBuiltIn
 
 /** isBuiltIn only means something for a seed name; anything else would be a stray flag. */
 private val seedScaleNames: Set<String> by lazy { Seed.scales.mapTo(HashSet()) { it.name } }
@@ -216,6 +223,7 @@ private fun scaleConflicts(incoming: List<Scale>, local: LocalMoodConfig): List<
             ?: return@mapNotNull null
         val target = incomingByName[scale.name]
         when {
+            target == null && scale.keptWhenMissing() -> null
             target == null -> ConfigConflict.ScaleMissing(scale, usage.entryCount)
             target.inverted != scale.inverted ->
                 ConfigConflict.ScaleDirectionChanged(scale, usage.entryCount)

@@ -28,6 +28,9 @@
     <string name="common_name_label">Nombre</string>
     <string name="common_tags_label">Etiquetas</string>
     <string name="common_reorder">Reordenar</string>
+    <string name="common_done">Listo</string>
+    <string name="common_move_up">Mover arriba</string>
+    <string name="common_move_down">Mover abajo</string>
     <string name="common_list_separator">" · "</string>
     <string name="common_date_range">%1$s – %2$s</string>
     <string name="common_range_dash">%1$s–%2$s</string>
@@ -68,6 +71,7 @@
     <string name="seed_scale_stress">Estrés</string>
     <string name="seed_scale_boredom">Aburrimiento</string>
     <string name="seed_scale_pain">Dolor</string>
+    <string name="seed_scale_sleep">Sueño</string>
     <string name="seed_tag_home">Casa</string>
     <string name="seed_tag_work">Trabajo</string>
     <string name="seed_tag_school">Escuela</string>
@@ -116,18 +120,46 @@
 
     <!-- Home screen -->
     <string name="home_tagline">Registra cómo te sientes, en privado.</string>
-    <string name="home_log_entry">Nuevo registro</string>
-    <string name="home_history">Ver historial</string>
+    <string name="home_log_mood">Registrar ánimo</string>
+    <string name="home_mood_history">Historial de ánimo</string>
+    <string name="home_open_journal">Abrir diario</string>
     <string name="home_charts">Gráficos</string>
     <string name="home_backup">Copia de seguridad</string>
     <string name="home_scales">Gestionar escalas</string>
     <string name="home_tags">Gestionar etiquetas</string>
     <string name="home_settings">Ajustes</string>
     <string name="home_about">Acerca de</string>
+    <string name="home_backup_reminder_title">Recordatorio amistoso para hacer una copia de seguridad</string>
+    <string name="home_backup_reminder_body">Las copias se guardan en Documents/MoodCairns en este teléfono. Cópialas a otro lugar para no perderlas si pierdes el teléfono. Toca para abrir Copia de seguridad.</string>
+    <string name="home_backup_reminder_dismiss">Descartar</string>
+
+    <!-- Editor del diario -->
+    <string name="journal_placeholder">Escribe sobre tu día…</string>
+    <string name="journal_empty_read">Todavía no hay nada escrito para este día.</string>
+    <string name="journal_load_failed">No se pudo abrir esta página del diario.</string>
+    <string name="journal_show_read">Vista de lectura</string>
+    <string name="journal_show_edit">Editar</string>
+    <string name="journal_format_bold">Negrita</string>
+    <string name="journal_format_italic">Cursiva</string>
+    <string name="journal_format_heading">Título</string>
+    <string name="journal_format_bullet_list">Lista con viñetas</string>
+    <string name="journal_format_numbered_list">Lista numerada</string>
+    <string name="journal_format_quote">Cita</string>
+    <string name="journal_format_code">Código</string>
+    <string name="journal_format_checklist">Lista de tareas</string>
+    <string name="journal_format_table">Insertar tabla</string>
+    <string name="journal_table_column">Columna %1$d</string>
+
+    <!-- Historial del diario -->
+    <string name="journal_history_title">Historial del diario</string>
+    <string name="journal_history_search_hint">Buscar en el diario…</string>
+    <string name="journal_history_empty">Todavía no hay páginas en el diario.</string>
+    <string name="journal_history_no_matches">Ninguna página coincide con tu búsqueda.</string>
 
     <!-- Entry screen -->
     <string name="entry_title_new">¿Cómo estás?</string>
     <string name="entry_title_edit">Editar registro</string>
+    <string name="entry_save_open_journal">Guardar y abrir diario</string>
     <string name="entry_no_scales">No hay escalas configuradas. Añade una desde Gestionar escalas.</string>
     <string name="entry_note_label">Nota (opcional)</string>
     <string name="entry_prompt_slot_label">Franja de aviso</string>
@@ -135,9 +167,10 @@
     <string name="entry_slider_description_out_of">%1$s, valor %2$s de %3$d</string>
     <string name="entry_slider_description_range" tools:ignore="PluralsCandidate">%1$s, valor %2$s en el rango de %3$d a %4$d</string>
     <string name="entry_slider_description_lower_better">%1$s, cuanto más bajo, mejor</string>
+    <string name="entry_once_per_day_reask_hint">Déjalo en %1$s para que se te vuelva a preguntar más tarde.</string>
 
     <!-- History screen -->
-    <string name="history_title">Historial</string>
+    <string name="history_mood_title">Historial de ánimo</string>
     <string name="history_add_past">Añadir un registro anterior</string>
     <string name="history_empty">Aún no hay registros.</string>
     <string name="history_no_matches">Ningún registro coincide con los filtros actuales.</string>
@@ -148,6 +181,7 @@
     <string name="history_clear_search">Borrar búsqueda</string>
     <string name="history_clear_all">Limpiar todo</string>
     <string name="history_pick_date">Elegir fecha</string>
+    <string name="history_long_press_hint">Mantén presionado un registro para editarlo o eliminarlo.</string>
 
     <!-- Scale list -->
     <string name="scale_list_title">Escalas</string>
@@ -161,6 +195,7 @@
     <string name="scale_list_default">inicio %1$s</string>
     <string name="scale_list_lower_better">cuanto más bajo, mejor</string>
     <string name="scale_list_built_in">integrada</string>
+    <string name="scale_list_once_per_day">una vez al día</string>
 
     <!-- Scale editor -->
     <string name="scale_edit_title_new">Nueva escala</string>
@@ -172,6 +207,8 @@
     <string name="scale_edit_default_hint">Dónde empieza el control deslizante en un registro nuevo. Si lo dejas vacío, empieza en el punto medio.</string>
     <string name="scale_edit_lower_better">Cuanto más bajo, mejor</string>
     <string name="scale_edit_lower_better_hint">Escala inversa: el control deslizante va de mayor a menor y los gráficos la dibujan de modo que una mejora apunte hacia arriba.</string>
+    <string name="scale_edit_once_per_day">Una vez al día</string>
+    <string name="scale_edit_once_per_day_hint">Se pregunta hasta que ese día tenga un valor por encima del mínimo; si registras el mínimo, se te volverá a preguntar. Se dibuja como puntos unidos por una línea, sin sombreado.</string>
     <string name="scale_edit_color_label">Color</string>
     <string name="scale_edit_color_custom">Color personalizado</string>
     <string name="scale_edit_color_picker_title">Elige un color</string>
@@ -210,6 +247,7 @@
     </plurals>
     <string name="tag_list_column_heading">Columna %1$d</string>
     <string name="tag_list_add_category">Añadir categoría</string>
+    <string name="tag_list_reorder_categories">Reordenar categorías</string>
     <string name="tag_category_delete_title">¿Eliminar categoría?</string>
     <string name="tag_category_delete_body_empty">Se eliminará la categoría \"%1$s\". No tiene etiquetas.</string>
     <plurals name="tag_category_delete_body">
@@ -247,10 +285,10 @@
     <!-- Backup screen -->
     <string name="backup_title">Copia de seguridad</string>
     <string name="backup_intro">Las copias de seguridad se cifran con AES-GCM mediante una clave derivada de una frase de contraseña que tú eliges, y se guardan en Documents/MoodCairns. Syncthing o cualquier gestor de archivos puede sincronizarlas fuera del dispositivo; la app nunca sube nada.</string>
-    <string name="backup_export">Exportar ahora</string>
+    <string name="backup_export_mood">Exportar datos de ánimo</string>
     <string name="backup_export_csv">Exportar CSV sin cifrar</string>
     <string name="backup_export_csv_warning">El CSV es texto plano y NO está cifrado. Cualquier persona o aplicación que pueda leer tu carpeta Documents (copias en la nube, gestores de archivos, otras apps) puede leer tus registros. Desactiva las exportaciones no seguras en Ajustes para ocultar esta opción.</string>
-    <string name="backup_import">Importar desde archivo (reemplaza todos los datos)</string>
+    <string name="backup_restore_mood">Restaurar datos de ánimo (reemplaza todos los datos de ánimo)</string>
     <string name="backup_existing_label">Copias existentes</string>
     <string name="backup_none">Ninguna todavía.</string>
     <string name="backup_encrypt_title">Cifrar copia de seguridad</string>
@@ -280,6 +318,11 @@
     <string name="about_no_browser">No se encontró ningún navegador para abrir la página.</string>
     <string name="about_contact_title">Contacto</string>
     <string name="about_contact_body">La mejor forma de contactarme para pedir cambios o funciones nuevas es &lt;a href=\"%1$s\"&gt;abrir un issue en GitHub&lt;/a&gt;.</string>
+
+    <!-- Open-source licenses screen -->
+    <string name="licenses_title">Licencias de código abierto</string>
+    <string name="licenses_original_language">Los textos de las licencias son documentos legales y se muestran en su versión original en inglés.</string>
+    <string name="licenses_load_failed">No se pudieron cargar los textos de las licencias.</string>
 
     <!-- Charts screen -->
     <string name="charts_title">Gráficos</string>
@@ -357,6 +400,8 @@
     <string name="charts_help_axis_title">Eje Y: %1$s o %2$s</string>
     <string name="charts_help_autofit_body">Ajusta el eje vertical solo al rango que cubren realmente tus datos. Los cambios pequeños se ven con facilidad porque el gráfico ocupa todo el espacio, pero la línea no se mide frente al rango completo de la escala. Las etiquetas de la izquierda son tus valores registrados; cuando se muestra más de una escala, todas comparten ese mismo eje.</string>
     <string name="charts_help_absolute_body" formatted="false">Muestra cada línea frente al rango completo de su escala, de mínimo a máximo. Los cambios se ven más pequeños, pero las escalas quedan alineadas, así que puedes compararlas entre sí en el mismo gráfico. Las escalas marcadas como \"cuanto más bajo, mejor\" se dibujan invertidas, de modo que mejorar siempre apunta hacia arriba. Las etiquetas de la izquierda se leen como porcentajes porque cada línea se mide frente a su propio rango: 100% es la parte superior de ese rango, o la inferior en una escala marcada como \"cuanto más bajo, mejor\".</string>
+    <string name="charts_help_once_per_day_title">Escalas de una vez al día</string>
+    <string name="charts_help_once_per_day_body">Las escalas como Sueño se registran una vez al día, así que cada día se marca con un punto, unidos por una línea sin sombreado debajo. No aparecen en %1$s, porque la hora del registro no dice nada sobre ellas. Si un día tiene tanto el mínimo como un valor mayor, solo se dibuja el mayor, ya que el mínimo puede significar simplemente que aún no se había registrado.</string>
 
     <!-- Data store upgrade -->
     <string name="migrating_title">Actualizando el almacén de datos…</string>
@@ -368,6 +413,13 @@
     <string name="biometric_prompt_title">Desbloquear Mood Cairns</string>
     <string name="biometric_prompt_subtitle">Autentícate para continuar</string>
     <string name="biometric_prompt_use_pin">Usar PIN</string>
+    <string name="biometric_enroll_prompt_title">Activar el desbloqueo biométrico</string>
+    <string name="biometric_enroll_prompt_subtitle">Confirma para desbloquear Mood Cairns con biometría</string>
+    <string name="biometric_offer_title">Desbloqueo biométrico</string>
+    <string name="biometric_offer_body_upgrade">El desbloqueo biométrico ahora está protegido por el hardware de seguridad de tu dispositivo. Vuelve a activarlo para seguir usándolo.</string>
+    <string name="biometric_offer_body_setup">¿Desbloquear Mood Cairns con biometría en lugar de tu PIN? Puedes cambiarlo más tarde en Ajustes.</string>
+    <string name="biometric_offer_body_invalidated">El desbloqueo biométrico se desactivó porque cambió la biometría o el bloqueo de pantalla de este dispositivo. Si no hiciste este cambio, es posible que otra persona tenga acceso a tu teléfono.</string>
+    <string name="biometric_offer_not_now">Ahora no</string>
 
     <!-- No-PIN warning -->
     <string name="no_pin_warning_title_setup">¿Continuar sin PIN?</string>
@@ -390,15 +442,19 @@
     <string name="settings_auto_lock_label">Bloqueo automático al salir de la app</string>
     <string name="settings_auto_lock_immediate">Inmediato</string>
     <string name="settings_biometric_unlock">Desbloqueo biométrico</string>
+    <string name="settings_biometric_unavailable">Configura una huella digital u otra biometría segura en los ajustes del dispositivo para usar esta función.</string>
     <string name="settings_change_pin">Cambiar PIN</string>
     <string name="settings_lock_now">Bloquear ahora</string>
     <string name="settings_set_pin">Configurar PIN</string>
     <string name="settings_no_pin_explanation">No hay ningún PIN configurado. Tus datos están cifrados en este dispositivo, pero solo los protege el almacén de claves del dispositivo, no un PIN. El bloqueo automático, el desbloqueo biométrico y Bloquear ahora no están disponibles sin PIN.</string>
+    <string name="settings_section_journal">Diario personal</string>
+    <string name="settings_journal_enabled">Activar el diario personal</string>
+    <string name="settings_journal_enabled_summary">Añade un diario personal privado con una página por día. Al desactivarlo, el diario solo se oculta; todo lo que hayas escrito se conserva.</string>
     <string name="settings_section_danger_zone">Zona de peligro</string>
     <string name="settings_allow_unsafe_exports">Permitir exportaciones no seguras</string>
-    <string name="settings_allow_unsafe_exports_summary">Activa una exportación CSV sin cifrar en Copia de seguridad. Desactivado de forma predeterminada.</string>
+    <string name="settings_unsafe_exports_summary_plaintext">Activa exportaciones sin cifrar en Copia de seguridad: un CSV de tus registros y archivos Markdown de tu diario personal. Desactivado de forma predeterminada.</string>
     <string name="settings_unsafe_exports_dialog_title">¿Permitir exportaciones no seguras?</string>
-    <string name="settings_unsafe_exports_dialog_body">Esto añade una opción para exportar tus datos como un archivo CSV sin cifrar al almacenamiento compartido. Ese archivo es texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
+    <string name="settings_unsafe_exports_dialog_body_plaintext">Esto añade opciones para exportar tus registros como un archivo CSV sin cifrar y tu diario personal como archivos Markdown sin cifrar al almacenamiento compartido. Esos archivos son texto plano sin frase de contraseña: los servicios de copia en la nube, los gestores de archivos y cualquier otra app que pueda leer el almacenamiento compartido podrán leer todos tus registros y páginas del diario.\n\nActívalo solo si entiendes y aceptas ese riesgo.</string>
     <string name="settings_allow_screenshots">Permitir capturas de pantalla</string>
     <plurals name="settings_allow_screenshots_summary">
         <item quantity="one">Permite temporalmente capturas y grabaciones de pantalla durante %1$d minuto. La pantalla de bloqueo sigue protegida. Desactivado de forma predeterminada.</item>
@@ -406,6 +462,8 @@
         <item quantity="other">Permite temporalmente capturas y grabaciones de pantalla durante %1$d minutos. La pantalla de bloqueo sigue protegida. Desactivado de forma predeterminada.</item>
     </plurals>
     <string name="settings_screenshots_allowed_until">Permitido hasta %1$s</string>
+    <string name="settings_backup_reminder">Recordatorios de copia de seguridad</string>
+    <string name="settings_backup_reminder_summary">Muestra cada dos semanas un recordatorio en la pantalla de inicio para hacer una copia de seguridad de tus datos. Activado de forma predeterminada.</string>
     <string name="settings_screenshots_dialog_title">¿Permitir capturas de pantalla?</string>
     <plurals name="settings_screenshots_dialog_body">
         <item quantity="one">Durante el próximo %1$d minuto, las capturas y grabaciones de pantalla, la transmisión y la vista previa de apps recientes podrán captar todo lo que se muestre, incluidos tus registros. Las capturas se guardan en el almacenamiento compartido, donde los servicios de copia en la nube y otras apps pueden leerlas.\n\nLas capturas se bloquearán de nuevo automáticamente tras %1$d minuto o cuando se bloquee la app.</item>
@@ -425,6 +483,7 @@
     <string name="lock_pin_label">PIN</string>
     <string name="lock_unlock">Desbloquear</string>
     <string name="lock_use_biometric">Usar biometría</string>
+    <string name="lock_biometric_reset">El desbloqueo biométrico se desactivó porque cambió la biometría o el bloqueo de pantalla de este dispositivo. Introduce tu PIN.</string>
     <string name="lock_try_again_in">Inténtalo de nuevo en %1$s</string>
     <string name="lock_locked_for">Bloqueado (%1$s)</string>
     <string name="lock_error_wrong_pin">PIN incorrecto</string>
@@ -500,6 +559,8 @@
     <string name="backup_export_success">Exportado: %1$s</string>
     <string name="backup_export_csv_success">Exportado: %1$s (sin cifrar)</string>
     <string name="backup_export_failed">Error al exportar: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">No se guardó: la página del diario del %1$s tiene una fecha que la app no podría restaurar. Revisa la fecha de la página y vuelve a exportar.</string>
+    <string name="backup_error_export_too_large">No se guardó: esta copia superaría los %1$d MB, el máximo que la app puede restaurar.</string>
     <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
 
@@ -516,6 +577,28 @@
     <string name="backup_config_import_failed">Error al importar la configuración: %1$s</string>
     <string name="backup_config_import_partial">Configuración importada en parte. Escalas: %1$d, etiquetas: %2$d. No se pudieron actualizar las franjas de aviso (%3$s); revísalas en Ajustes. Tus registros no se han modificado.</string>
     <string name="backup_config_only_label">Solo configuración</string>
+    <string name="backup_journal_section">Diario personal</string>
+    <string name="backup_journal_intro">Tu diario personal se guarda por separado de tus estados de ánimo, en su propio archivo cifrado. Restaurarlo reemplaza todas las páginas del diario y nunca cambia tus datos de ánimo.</string>
+    <string name="backup_journal_export">Exportar diario</string>
+    <string name="backup_journal_import">Restaurar diario (reemplaza todas las páginas)</string>
+    <string name="backup_journal_encrypt_title">Cifrar copia del diario</string>
+    <string name="backup_journal_encrypt_body">Elige una frase de contraseña para cifrar esta copia del diario. Necesitarás exactamente esta frase para restaurarla, incluso en una instalación nueva. No es el PIN de la app y no se puede recuperar si la olvidas.</string>
+    <string name="backup_journal_decrypt_title">Restaurar diario</string>
+    <string name="backup_journal_decrypt_body">Restaurar reemplaza todas las páginas de tu diario por las de esta copia. Tus datos de ánimo no cambian. Introduce la frase de contraseña con la que se cifró.</string>
+    <string name="backup_journal_export_success">Diario exportado: %1$s</string>
+    <string name="backup_journal_import_failed">No se pudo restaurar el diario: %1$s</string>
+    <string name="backup_journal_label">Diario</string>
+    <string name="backup_journal_markdown_warning">Las exportaciones Markdown son texto plano y NO están cifradas. Cualquier persona o aplicación que pueda leer tu carpeta Documents (copias en la nube, gestores de archivos, otras apps) puede leer tu diario. Desactiva las exportaciones no seguras en Ajustes para ocultar estas opciones.</string>
+    <string name="backup_journal_markdown_all">Exportar todas las páginas en Markdown (.zip)</string>
+    <string name="backup_journal_markdown_day">Exportar un día en Markdown (.md)</string>
+    <string name="backup_journal_markdown_pick_day">Elige un día para exportar</string>
+    <string name="backup_journal_markdown_export">Exportar</string>
+    <string name="backup_journal_markdown_empty">No hay páginas del diario para exportar.</string>
+    <plurals name="backup_journal_import_success">
+        <item quantity="one">Diario restaurado: %1$d página</item>
+        <item quantity="many">Diario restaurado: %1$d páginas</item>
+        <item quantity="other">Diario restaurado: %1$d páginas</item>
+    </plurals>
     <string name="backup_config_incompatible_title">Configuración no compatible</string>
     <string name="backup_config_incompatible_version">Esta configuración usa la versión de formato %1$d, que esta versión de la app no puede importar. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
     <string name="backup_config_incompatible_backup_version">Esta copia usa la versión de formato %1$d, de la que esta versión de la app no puede importar la configuración. Actualiza la app y vuelve a intentarlo. No se ha cambiado nada.</string>
@@ -549,6 +632,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">El archivo supera el límite de %1$d MB.</string>
+    <string name="import_error_contents_too_large">Descomprimida, la copia supera el límite de %1$d MB.</string>
     <string name="import_error_unreadable">No se pudo leer el archivo.</string>
     <string name="import_error_unreadable_detail">No se pudo leer el archivo (%1$s).</string>
     <string name="import_error_not_a_backup">Este archivo no es una copia de seguridad de Mood Cairns.</string>
@@ -557,4 +641,6 @@
     <string name="import_error_malformed">El archivo de copia está dañado (%1$s).</string>
     <string name="import_error_write_failed">La importación se detuvo al guardar los datos (%1$s).</string>
     <string name="import_error_config_only">Este es un archivo solo de configuración, sin registros que restaurar. Usa \"Importar configuración\" en su lugar.</string>
+    <string name="import_error_journal_file">Esta es una copia del diario. Restáurala con \"Restaurar diario\" en la sección Diario personal.</string>
+    <string name="import_error_not_journal">Esta no es una copia del diario. Las copias de ánimo y los archivos de configuración se importan en sus propias secciones.</string>
 </resources>

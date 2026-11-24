@@ -27,6 +27,7 @@ data class ScaleEditUiState(
     val isBuiltIn: Boolean = false,
     val sortOrder: Int = 0,
     val inverted: Boolean = false,
+    val oncePerDay: Boolean = false,
     val invertDataPrompt: InvertDataPrompt? = null,
     val loaded: Boolean = false,
     val saving: Boolean = false,
@@ -83,6 +84,7 @@ class ScaleEditViewModel @Inject constructor(
                             isBuiltIn = existing.isBuiltIn,
                             sortOrder = existing.sortOrder,
                             inverted = existing.inverted,
+                            oncePerDay = existing.oncePerDay,
                             loaded = true,
                         )
                     }
@@ -106,6 +108,7 @@ class ScaleEditViewModel @Inject constructor(
         _state.update { it.copy(defaultValue = sanitizeSignedDecimal(v, maxLen = 7), error = null) }
     fun setColor(argb: Int) = _state.update { it.copy(colorArgb = argb) }
     fun setInverted(v: Boolean) = _state.update { it.copy(inverted = v, error = null) }
+    fun setOncePerDay(v: Boolean) = _state.update { it.copy(oncePerDay = v, error = null) }
 
     fun save() {
         val cur = _state.value
@@ -145,6 +148,7 @@ class ScaleEditViewModel @Inject constructor(
             archived = false,
             sortOrder = cur.sortOrder,
             inverted = cur.inverted,
+            oncePerDay = cur.oncePerDay,
         )
 
         if (invertsDirection(persisted, scale)) {

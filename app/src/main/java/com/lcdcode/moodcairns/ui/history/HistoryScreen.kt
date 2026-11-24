@@ -104,7 +104,7 @@ fun HistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.history_title)) },
+                title = { Text(stringResource(R.string.history_mood_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -168,6 +168,14 @@ fun HistoryScreen(
                 }
                 return@Scaffold
             }
+
+            // Edit and delete live behind a long press, which nothing else on screen reveals.
+            Text(
+                stringResource(R.string.history_long_press_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
 
             val grouped = filteredEntries.groupBy {
                 it.entry.recordedAt.atZone(ZoneId.systemDefault()).toLocalDate()

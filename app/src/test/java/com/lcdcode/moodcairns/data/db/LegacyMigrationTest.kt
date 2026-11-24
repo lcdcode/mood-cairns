@@ -27,7 +27,7 @@ import java.sql.DriverManager
 class LegacyMigrationTest {
 
     @Test
-    fun readsV2Schema_andCopiesAllRowsAcrossSplit() {
+    fun reads_v2_schema_and_copies_all_rows_across_split() {
         connectMemory().use { source ->
             createV2Schema(source)
             // Two scales, two windows, two entries with one value each.
@@ -118,7 +118,7 @@ class LegacyMigrationTest {
     }
 
     @Test
-    fun readsV1Schema_withIntegerStepAndValue() {
+    fun reads_v1_schema_with_integer_step_and_value() {
         // Pre-MIGRATION_1_2 schema: scale.step was INTEGER, entry_value.value was INTEGER.
         // The legacy reader uses getFloat/getDouble which read both INTEGER and REAL
         // columns transparently — so a v1 user upgrading skipping v2 still works.

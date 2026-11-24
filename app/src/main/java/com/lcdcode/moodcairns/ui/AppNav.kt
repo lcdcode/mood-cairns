@@ -11,11 +11,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lcdcode.moodcairns.data.entity.PromptSlot
 import com.lcdcode.moodcairns.ui.about.AboutScreen
+import com.lcdcode.moodcairns.ui.about.LicensesScreen
 import com.lcdcode.moodcairns.ui.backup.BackupScreen
 import com.lcdcode.moodcairns.ui.charts.ChartsScreen
 import com.lcdcode.moodcairns.ui.entry.EntryScreen
 import com.lcdcode.moodcairns.ui.history.HistoryScreen
 import com.lcdcode.moodcairns.ui.home.HomeScreen
+import com.lcdcode.moodcairns.ui.journal.JournalHistoryScreen
+import com.lcdcode.moodcairns.ui.journal.JournalScreen
+import com.lcdcode.moodcairns.ui.journal.JournalViewModel
 import com.lcdcode.moodcairns.ui.scales.ScaleEditScreen
 import com.lcdcode.moodcairns.ui.scales.ScaleListScreen
 import com.lcdcode.moodcairns.ui.settings.ChangePinScreen
@@ -23,6 +27,7 @@ import com.lcdcode.moodcairns.ui.settings.PromptWindowEditScreen
 import com.lcdcode.moodcairns.ui.settings.SettingsScreen
 import com.lcdcode.moodcairns.ui.tags.TagEditScreen
 import com.lcdcode.moodcairns.ui.tags.TagListScreen
+import java.time.LocalDate
 
 data class NotificationEntryArgs(val slot: String, val windowId: Long?)
 
@@ -40,6 +45,13 @@ object Routes {
     const val TAGS = "tags"
     const val TAG_EDIT = "tag_edit"
     const val ABOUT = "about"
+    const val LICENSES = "licenses"
+    const val JOURNAL = "journal"
+    const val JOURNAL_HISTORY = "journal_history"
+
+    /** Today's page when [day] is null. */
+    fun journal(day: LocalDate? = null) =
+        "$JOURNAL?${JournalViewModel.ARG_DAY}=${day?.toString().orEmpty()}"
     fun scaleEdit(id: Long? = null) = "$SCALE_EDIT?scaleId=${id ?: 0L}"
     fun tagEdit(id: Long? = null, categoryId: String? = null) =
         "$TAG_EDIT?tagId=${id ?: 0L}&category=${Uri.encode(categoryId.orEmpty())}"
@@ -85,11 +97,39 @@ fun AppNav(
                 onCharts = { nav.navigate(Routes.CHARTS) },
                 onSettings = { nav.navigate(Routes.SETTINGS) },
                 onAbout = { nav.navigate(Routes.ABOUT) },
+                onOpenJournal = { nav.navigate(Routes.journal()) },
+                onJournalHistory = { nav.navigate(Routes.JOURNAL_HISTORY) },
+            )
+        }
+
+        composable(
+            route = "${Routes.JOURNAL}?${JournalViewModel.ARG_DAY}={${JournalViewModel.ARG_DAY}}",
+            arguments = listOf(
+                navArgument(JournalViewModel.ARG_DAY) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) {
+            JournalScreen(onBack = { nav.popBackStack() })
+        }
+
+        composable(Routes.JOURNAL_HISTORY) {
+            JournalHistoryScreen(
+                onBack = { nav.popBackStack() },
+                onOpenDay = { nav.navigate(Routes.journal(it)) },
             )
         }
 
         composable(Routes.ABOUT) {
-            AboutScreen(onBack = { nav.popBackStack() })
+            AboutScreen(
+                onBack = { nav.popBackStack() },
+                onLicenses = { nav.navigate(Routes.LICENSES) },
+            )
+        }
+
+        composable(Routes.LICENSES) {
+            LicensesScreen(onBack = { nav.popBackStack() })
         }
 
         composable(Routes.CHARTS) {
@@ -178,6 +218,11 @@ fun AppNav(
             EntryScreen(
                 onBack = { nav.popBackStack() },
                 onSaved = { nav.popBackStack(Routes.HOME, inclusive = false) },
+                // Back from the journal then lands on Home, as after a plain save.
+                onSavedOpenJournal = { day ->
+                    nav.popBackStack(Routes.HOME, inclusive = false)
+                    nav.navigate(Routes.journal(day))
+                },
             )
         }
     }

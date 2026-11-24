@@ -39,9 +39,10 @@ class ImportService @Inject constructor(
             serializer.toEntities(file)
         } catch (e: BackupImportException) {
             return ImportResult.Failure(e.error)
-        } catch (t: Throwable) {
-            // toEntities rejects bad timestamps, slots, etc. in a decrypted file.
-            return ImportResult.Failure(ImportError.Malformed(t.message ?: t.javaClass.simpleName))
+        } catch (_: Throwable) {
+            // toEntities rejects bad timestamps, slots, etc. in a decrypted file. Its message
+            // quotes the rejected value, so it is neither shown nor logged.
+            return ImportResult.Failure(ImportError.Malformed(MalformedReason.CONTENTS_INVALID))
         }
 
         return try {
@@ -52,6 +53,8 @@ class ImportService @Inject constructor(
                 val entryDao = moodDb.entryDao()
                 val tagDao = moodDb.tagDao()
                 for (s in entities.scales) scaleDao.insert(s)
+                // Backups made before Sleep existed lack it.
+                scaleDao.insertSleepScaleIfMissing()
                 // Tags keep their original ids (like scales) so entry_tag links
                 // need no remapping. v1 backups predate tags entirely; seed the
                 // defaults so those users are not left with an empty tag list.
@@ -83,7 +86,7 @@ class ImportService @Inject constructor(
                 tags = entities.tags.size,
             )
         } catch (t: Throwable) {
-            ImportResult.Failure(ImportError.WriteFailed(t.message ?: t.javaClass.simpleName))
+            ImportResult.Failure(ImportError.WriteFailed(Diagnostic.of(t)))
         }
     }
 }

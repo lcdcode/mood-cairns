@@ -17,14 +17,14 @@ import org.junit.Test
 class ScaleDefaultValueTest {
 
     @Test
-    fun sanitize_keepsSignedDecimals() {
+    fun sanitize_keeps_signed_decimals() {
         assertEquals("-5.5", sanitizeSignedDecimal("-5.5", maxLen = 7))
         assertEquals("7", sanitizeSignedDecimal("7", maxLen = 7))
         assertEquals("", sanitizeSignedDecimal("", maxLen = 7))
     }
 
     @Test
-    fun sanitize_dropsInteriorMinusAndExtraDots() {
+    fun sanitize_drops_interior_minus_and_extra_dots() {
         assertEquals("56", sanitizeSignedDecimal("5-6", maxLen = 7))
         assertEquals("-5.5", sanitizeSignedDecimal("--5.5", maxLen = 7))
         assertEquals("1.23", sanitizeSignedDecimal("1.2.3", maxLen = 7))
@@ -32,7 +32,7 @@ class ScaleDefaultValueTest {
     }
 
     @Test
-    fun sanitize_acceptsCommaAsDecimalPoint() {
+    fun sanitize_accepts_comma_as_decimal_point() {
         assertEquals("2.5", sanitizeSignedDecimal("2,5", maxLen = 7))
         assertEquals("-0.25", sanitizeSignedDecimal("-0,25", maxLen = 7))
         // Only the first separator, comma or point, is kept.
@@ -41,32 +41,32 @@ class ScaleDefaultValueTest {
     }
 
     @Test
-    fun sanitize_capsLength_countingTheSign() {
+    fun sanitize_caps_length_counting_the_sign() {
         assertEquals("1234", sanitizeSignedDecimal("12345", maxLen = 4))
         assertEquals("-123", sanitizeSignedDecimal("-12345", maxLen = 4))
     }
 
     @Test
-    fun isOnStepGrid_acceptsMultiplesOnly() {
+    fun is_on_step_grid_accepts_multiples_only() {
         assertTrue(isOnStepGrid(0f, 0.5f))
         assertTrue(isOnStepGrid(1.5f, 0.5f))
         assertFalse(isOnStepGrid(0.3f, 0.5f))
     }
 
     @Test
-    fun isOnStepGrid_toleratesInexactFloatSteps() {
+    fun is_on_step_grid_tolerates_inexact_float_steps() {
         // 0.9f / 0.3f is 2.9999998; an exact comparison would reject it.
         assertTrue(isOnStepGrid(0.9f, 0.3f))
     }
 
     @Test
-    fun isOnStepGrid_rejectsNonPositiveStep() {
+    fun is_on_step_grid_rejects_non_positive_step() {
         assertFalse(isOnStepGrid(1f, 0f))
         assertFalse(isOnStepGrid(1f, -1f))
     }
 
     @Test
-    fun parse_treatsBlankAsNoDefault() {
+    fun parse_treats_blank_as_no_default() {
         assertNull(parseDefaultValue(""))
         assertNull(parseDefaultValue("   "))
         assertEquals(6f, parseDefaultValue("6"))
@@ -74,13 +74,13 @@ class ScaleDefaultValueTest {
     }
 
     @Test
-    fun validate_blankIsAllowed() {
+    fun validate_blank_is_allowed() {
         assertNull(defaultValueError("", min = 1, max = 10, step = 1f))
         assertNull(defaultValueError("  ", min = 1, max = 10, step = 1f))
     }
 
     @Test
-    fun validate_acceptsOnGridValuesInRange() {
+    fun validate_accepts_on_grid_values_in_range() {
         assertNull(defaultValueError("6", min = 1, max = 10, step = 1f))
         assertNull(defaultValueError("1", min = 1, max = 10, step = 1f))
         assertNull(defaultValueError("10", min = 1, max = 10, step = 1f))
@@ -89,14 +89,14 @@ class ScaleDefaultValueTest {
     }
 
     @Test
-    fun validate_rejectsOutOfRange() {
+    fun validate_rejects_out_of_range() {
         val expected = UiText.Res(R.string.scale_edit_error_default_out_of_range, listOf(1, 10))
         assertEquals(expected, defaultValueError("0", min = 1, max = 10, step = 1f))
         assertEquals(expected, defaultValueError("11", min = 1, max = 10, step = 1f))
     }
 
     @Test
-    fun validate_rejectsOffGrid() {
+    fun validate_rejects_off_grid() {
         assertEquals(
             UiText.Res(R.string.scale_edit_error_default_off_step, listOf("1", 1)),
             defaultValueError("5.5", min = 1, max = 10, step = 1f),
@@ -108,7 +108,7 @@ class ScaleDefaultValueTest {
     }
 
     @Test
-    fun validate_rejectsNonNumeric() {
+    fun validate_rejects_non_numeric() {
         // The sanitizer keeps a lone "-", which is not yet a number.
         assertEquals(
             UiText.Res(R.string.scale_edit_error_default_not_number),

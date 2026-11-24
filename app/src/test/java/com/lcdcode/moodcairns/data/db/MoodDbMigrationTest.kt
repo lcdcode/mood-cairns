@@ -23,7 +23,7 @@ import java.sql.DriverManager
 class MoodDbMigrationTest {
 
     @Test
-    fun migration_createsTables_andSeedsDefaults() {
+    fun migration_creates_tables_and_seeds_defaults() {
         connectV1().use { c ->
             migrate(c)
 
@@ -46,7 +46,7 @@ class MoodDbMigrationTest {
     }
 
     @Test
-    fun seeding_isIdempotent() {
+    fun seeding_is_idempotent() {
         connectV1().use { c ->
             migrate(c)
             runStatements(c, MoodDbMigrationSql.seedTagInserts(SeedTags.tags))
@@ -55,7 +55,7 @@ class MoodDbMigrationTest {
     }
 
     @Test
-    fun deletingEntry_cascadesEntryTagLinks_butKeepsTag() {
+    fun deleting_entry_cascades_entry_tag_links_but_keeps_tag() {
         connectV1().use { c ->
             migrate(c)
             insertEntry(c, id = 10)
@@ -70,7 +70,7 @@ class MoodDbMigrationTest {
     }
 
     @Test
-    fun deletingTag_cascadesEntryTagLinks_butKeepsEntry() {
+    fun deleting_tag_cascades_entry_tag_links_but_keeps_entry() {
         connectV1().use { c ->
             migrate(c)
             insertEntry(c, id = 10)
@@ -85,7 +85,7 @@ class MoodDbMigrationTest {
     }
 
     @Test
-    fun migrationSql_matchesExportedRoomSchema() {
+    fun migration_sql_matches_exported_room_schema() {
         val schemaFile = sequenceOf("schemas", "app/schemas")
             .map { File(it, "com.lcdcode.moodcairns.data.db.MoodDatabase/2.json") }
             .firstOrNull(File::exists)

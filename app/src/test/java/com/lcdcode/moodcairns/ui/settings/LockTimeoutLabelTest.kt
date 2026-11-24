@@ -8,12 +8,12 @@ import org.junit.Test
 class LockTimeoutLabelTest {
 
     @Test
-    fun zero_isImmediate() {
+    fun zero_is_immediate() {
         assertEquals(UiText.Res(R.string.settings_auto_lock_immediate), lockTimeoutLabel(0L))
     }
 
     @Test
-    fun subMinute_isSeconds() {
+    fun sub_minute_is_seconds() {
         assertEquals(
             UiText.Plural(R.plurals.common_duration_seconds_short, 30),
             lockTimeoutLabel(30_000L),
@@ -21,7 +21,7 @@ class LockTimeoutLabelTest {
     }
 
     @Test
-    fun wholeMinutes_areMinutes() {
+    fun whole_minutes_are_minutes() {
         assertEquals(
             UiText.Plural(R.plurals.common_duration_minutes_short, 1),
             lockTimeoutLabel(60_000L),
@@ -33,7 +33,7 @@ class LockTimeoutLabelTest {
     }
 
     @Test
-    fun nonWholeMinutes_fallBackToSeconds() {
+    fun non_whole_minutes_fall_back_to_seconds() {
         assertEquals(
             UiText.Plural(R.plurals.common_duration_seconds_short, 90),
             lockTimeoutLabel(90_000L),

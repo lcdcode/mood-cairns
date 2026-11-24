@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,28 +39,44 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.ui.common.asString
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
 fun LockScreen(
-    biometricEnabled: Boolean,
     viewModel: LockViewModel = hiltViewModel(),
 ) {
     val state by viewModel.ui.collectAsStateWithLifecycle()
     val activity = LocalContext.current as? FragmentActivity
+    val scope = rememberCoroutineScope()
     var promptedBiometric by remember { mutableStateOf(false) }
 
-    val canBiometric = biometricEnabled && viewModel.canBiometricUnlock()
+    // Non-null only when biometric unlock can be offered right now.
+    val biometricHost = activity?.takeIf {
+        state.biometricAvailable && Biometrics.canAuthenticate(it)
+    }
 
-    LaunchedEffect(activity, canBiometric) {
-        if (!promptedBiometric && canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
-            promptedBiometric = true
-            Biometrics.prompt(
-                activity = activity,
-                onSuccess = { viewModel.onBiometricSuccess() },
-                onFailure = { /* fall through to PIN */ },
-                onUsePin = { /* fall through to PIN */ },
+    // Failures and "Use PIN" just leave the PIN field in charge.
+    val showBiometricPrompt: (FragmentActivity) -> Unit = { host ->
+        scope.launch {
+            val cipher = viewModel.prepareBiometricCipher() ?: return@launch
+            Biometrics.promptUnlock(
+                activity = host,
+                cipher = cipher,
+                onSuccess = viewModel::onBiometricSuccess,
+                onFailure = {},
+                onUsePin = {},
             )
+        }
+    }
+
+    // Runs on every entry into composition, i.e. every time the app locks.
+    LaunchedEffect(Unit) { viewModel.onShown() }
+
+    LaunchedEffect(biometricHost) {
+        if (!promptedBiometric && biometricHost != null) {
+            promptedBiometric = true
+            showBiometricPrompt(biometricHost)
         }
     }
 
@@ -78,6 +95,13 @@ fun LockScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (state.biometricReset) {
+                Text(
+                    stringResource(R.string.lock_biometric_reset),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
 
             Spacer(Modifier.height(8.dp))
 
@@ -122,15 +146,10 @@ fun LockScreen(
                 }
             }
 
-            if (!state.busy && canBiometric && activity != null && Biometrics.canAuthenticate(activity)) {
-                TextButton(onClick = {
-                    Biometrics.prompt(
-                        activity = activity,
-                        onSuccess = { viewModel.onBiometricSuccess() },
-                        onFailure = {},
-                        onUsePin = {},
-                    )
-                }) { Text(stringResource(R.string.lock_use_biometric)) }
+            if (!state.busy && biometricHost != null) {
+                TextButton(onClick = { showBiometricPrompt(biometricHost) }) {
+                    Text(stringResource(R.string.lock_use_biometric))
+                }
             }
         }
     }

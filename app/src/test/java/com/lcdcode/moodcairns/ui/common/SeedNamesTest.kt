@@ -15,30 +15,30 @@ import org.junit.Test
 class SeedNamesTest {
 
     @Test
-    fun everySeedScale_hasATranslation_andNoExtras() {
+    fun every_seed_scale_has_a_translation_and_no_extras() {
         assertEquals(Seed.scales.map { it.name }.toSet(), SeedNames.scaleNames)
         Seed.scales.forEach { assertNotNull(it.name, SeedNames.scaleRes(it.name, it.isBuiltIn)) }
     }
 
     @Test
-    fun everySeedTag_hasATranslation_andNoExtras() {
+    fun every_seed_tag_has_a_translation_and_no_extras() {
         assertEquals(SeedTags.tags.map { it.name }.toSet(), SeedNames.tagNames)
     }
 
     @Test
-    fun everySeedWindow_hasATranslation_andNoExtras() {
+    fun every_seed_window_has_a_translation_and_no_extras() {
         assertEquals(Seed.windows.map { it.label }.toSet(), SeedNames.windowLabels)
     }
 
     @Test
-    fun seedTagNames_areUniqueAcrossCategories() {
+    fun seed_tag_names_are_unique_across_categories() {
         // Tags match on name alone, so a duplicate name would make one ambiguous.
         val names = SeedTags.tags.map { it.name }
         assertEquals(names.distinct(), names)
     }
 
     @Test
-    fun scale_matchesOnlyWhenBuiltIn() {
+    fun scale_matches_only_when_built_in() {
         assertEquals(
             R.string.seed_scale_happiness,
             SeedNames.scaleRes("Happiness", isBuiltIn = true),
@@ -47,7 +47,7 @@ class SeedNamesTest {
     }
 
     @Test
-    fun renamedOrCustomRows_keepTheirOwnText() {
+    fun renamed_or_custom_rows_keep_their_own_text() {
         assertNull(SeedNames.tagRes("Zuhause"))
         assertNull(SeedNames.tagRes("home"))
         assertNull(SeedNames.windowRes("Lunch"))

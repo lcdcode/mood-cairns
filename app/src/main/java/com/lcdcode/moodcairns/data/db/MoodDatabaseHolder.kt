@@ -19,8 +19,8 @@ import javax.inject.Singleton
  * access throws — guarded by [requireDb] — so accidental read attempts after
  * lock surface as crashes rather than silent failures.
  *
- * SQLCipher's native libs are loaded lazily on first open; the call is cheap to
- * repeat and the library guards against double-loading.
+ * Keying and native-library loading are shared with [JournalDatabaseHolder] via
+ * [rawKeyPassphrase] and [SqlCipherLibs].
  */
 @Singleton
 class MoodDatabaseHolder @Inject constructor(
@@ -31,16 +31,14 @@ class MoodDatabaseHolder @Inject constructor(
     @Synchronized
     fun open(dbKey: ByteArray) {
         if (db != null) return
-        loadNativeLibs()
-        // Use SQLCipher's raw-key form ("x'HEX'") so the 32-byte CSPRNG key is
-        // used directly as the page-encryption key — bypassing SQLCipher's
-        // per-open PBKDF2 (≈300 ms on phones) which adds no security here since
-        // our key is already full-entropy. SupportOpenHelperFactory zeroes the
-        // array after handing it to the native side.
-        val factory = SupportOpenHelperFactory(toRawKeyPassphrase(dbKey))
+        SqlCipherLibs.load()
+        val factory = SupportOpenHelperFactory(rawKeyPassphrase(dbKey))
         db = Room.databaseBuilder(context, MoodDatabase::class.java, MoodDatabase.NAME)
             .openHelperFactory(factory)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+            .addMigrations(
+                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
+                MIGRATION_6_7,
+            )
             .build()
     }
 
@@ -52,6 +50,16 @@ class MoodDatabaseHolder @Inject constructor(
 
     fun isOpen(): Boolean = db != null
 
+    /**
+     * Whether [dbKey] opens the existing database file; true when there is no file yet, since
+     * then there is nothing to lose. [open] is lazy and proves nothing about the key, so call
+     * this before deleting or persisting anything that depends on the key being right.
+     */
+    fun keyOpensExistingDatabase(dbKey: ByteArray): Boolean {
+        val file = context.getDatabasePath(MoodDatabase.NAME)
+        return !file.exists() || SqlCipherKeyCheck.opens(file, dbKey)
+    }
+
     fun scaleDao(): ScaleDao = requireDb().scaleDao()
     fun entryDao(): EntryDao = requireDb().entryDao()
     fun tagDao(): TagDao = requireDb().tagDao()
@@ -60,36 +68,4 @@ class MoodDatabaseHolder @Inject constructor(
 
     private fun requireDb(): MoodDatabase = db
         ?: error("MoodDatabase accessed while locked")
-
-    private fun toRawKeyPassphrase(dbKey: ByteArray): ByteArray {
-        val hex = StringBuilder(dbKey.size * 2 + 3).apply {
-            append("x'")
-            for (b in dbKey) {
-                val v = b.toInt() and 0xFF
-                append(HEX[v ushr 4]); append(HEX[v and 0x0F])
-            }
-            append('\'')
-        }
-        return hex.toString().toByteArray(Charsets.US_ASCII)
-    }
-
-    companion object {
-        private val HEX = "0123456789abcdef".toCharArray()
-
-        @Volatile private var librariesLoaded = false
-
-        /**
-         * Idempotently pull SQLCipher's native libraries in.
-         * sqlcipher-android 4.6.x dropped the wrapper `SQLiteDatabase.loadLibs`;
-         * a direct System.loadLibrary call is the supported replacement.
-         */
-        private fun loadNativeLibs() {
-            if (librariesLoaded) return
-            synchronized(Companion) {
-                if (librariesLoaded) return
-                System.loadLibrary("sqlcipher")
-                librariesLoaded = true
-            }
-        }
-    }
 }

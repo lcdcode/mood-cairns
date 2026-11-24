@@ -15,13 +15,13 @@ class CenteredAverageTest {
     ) = centeredWeightedAverage(sums.toFloatArray(), counts.toIntArray(), halfWindow, padding)
 
     @Test
-    fun windowIsOdd_soItCanCenter() {
+    fun window_is_odd_so_it_can_center() {
         assertEquals(1, ROLLING_AVERAGE_DAYS % 2)
         assertEquals(ROLLING_AVERAGE_DAYS, 2 * ROLLING_AVERAGE_HALF_WINDOW + 1)
     }
 
     @Test
-    fun spike_peaksOnItsOwnDay_andFallsOffSymmetrically() {
+    fun spike_peaks_on_its_own_day_and_falls_off_symmetrically() {
         val spikeDay = 7
         val sums = List(15) { if (it == spikeDay) 10f else 0f }
         val points = average(sums, List(15) { 1 }).associate { it.dayIndex to it.value }
@@ -43,14 +43,14 @@ class CenteredAverageTest {
     }
 
     @Test
-    fun flatSeries_staysFlat() {
+    fun flat_series_stays_flat() {
         val points = average(List(10) { 5f }, List(10) { 1 })
         assertEquals(10, points.size)
         points.forEach { assertEquals(5f, it.value, 1e-6f) }
     }
 
     @Test
-    fun weightsPerEntry_notPerDay() {
+    fun weights_per_entry_not_per_day() {
         // Middle day: three entries averaging 10. Per-entry: (2*30) / (1 + 2*3 + 1) = 7.5.
         // A mean of daily means would give (2*10) / 4 = 5.
         val points = average(listOf(0f, 30f, 0f), listOf(1, 3, 1), halfWindow = 1)
@@ -58,7 +58,7 @@ class CenteredAverageTest {
     }
 
     @Test
-    fun paddingDays_feedEdgeAverages_butGetNoPoints() {
+    fun padding_days_feed_edge_averages_but_get_no_points() {
         val points = average(
             sums = listOf(10f, 0f, 0f, 0f, 10f),
             counts = listOf(1, 1, 1, 1, 1),
@@ -72,26 +72,26 @@ class CenteredAverageTest {
     }
 
     @Test
-    fun windowWithoutEntries_emitsNoPoint() {
+    fun window_without_entries_emits_no_point() {
         val points = average(List(9) { 0f }, listOf(1, 0, 0, 0, 0, 0, 0, 0, 1), halfWindow = 1)
         assertEquals(listOf(0, 1, 7, 8), points.map { it.dayIndex })
     }
 
     @Test
-    fun emptyDayInsideWindow_stillGetsASmoothedPoint() {
+    fun empty_day_inside_window_still_gets_a_smoothed_point() {
         val points = average(listOf(4f, 0f, 8f), listOf(1, 0, 1), halfWindow = 1)
         assertEquals(6f, points.single { it.dayIndex == 1 }.value, 1e-6f)
     }
 
     @Test
-    fun lastDay_usesOnlyThePastSideOfTheWindow() {
+    fun last_day_uses_only_the_past_side_of_the_window() {
         // Weights 1,2,3,4 over the last four days: (4 * 8) / 10.
         val points = average(listOf(0f, 0f, 0f, 8f), listOf(1, 1, 1, 1))
         assertEquals(3.2f, points.last().value, 1e-6f)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun mismatchedArrays_areRejected() {
+    fun mismatched_arrays_are_rejected() {
         average(listOf(1f, 2f), listOf(1))
     }
 }

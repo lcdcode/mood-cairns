@@ -39,7 +39,7 @@ class ConfigImportService @Inject constructor(
         // rolls back its transaction, so nothing has changed yet.
         val plan = catchingFailures { applyMoodConfig(incoming) }.getOrElse {
             Log.w(TAG, "Config import failed before anything was changed", it)
-            return ConfigImportResult.Failure(ImportError.WriteFailed(it.describe()))
+            return ConfigImportResult.Failure(ImportError.WriteFailed(Diagnostic.of(it)))
         }
         if (plan is MoodConfigPlan.Incompatible) {
             return ConfigImportResult.Incompatible(plan.conflicts)
@@ -69,8 +69,9 @@ class ConfigImportService @Inject constructor(
      */
     private fun parseFailure(t: Throwable): ConfigImportResult {
         if (t is BackupImportException) return t.error.toConfigResult()
-        Log.w(TAG, "Config file could not be parsed", t)
-        return ConfigImportResult.Failure(ImportError.Malformed(t.describe()))
+        // The message can quote file content, so only the exception type is logged.
+        Log.w(TAG, "Config file could not be parsed: ${t.javaClass.name}")
+        return ConfigImportResult.Failure(ImportError.Malformed(MalformedReason.CONTENTS_INVALID))
     }
 
     /**
