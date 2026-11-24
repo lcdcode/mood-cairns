@@ -591,6 +591,7 @@
     <string name="backup_export_success">Експортовано: %1$s</string>
     <string name="backup_export_csv_success">Експортовано: %1$s (без шифрування)</string>
     <string name="backup_export_failed">Не вдалося експортувати: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Не збережено: сторінка щоденника за %1$s має дату, яку застосунок не зможе відновити. Перевірте дату сторінки й повторіть експорт.</string>
     <string name="backup_error_export_too_large">Не збережено: копія перевищила б %1$d МБ, максимальний розмір, який застосунок може відновити.</string>
     <string name="backup_import_success">Імпорт завершено. Записи: %1$d, шкали: %2$d, теги: %3$d, вікна нагадувань: %4$d</string>
     <string name="backup_import_failed">Не вдалося імпортувати: %1$s</string>
@@ -669,6 +670,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">Файл перевищує обмеження в %1$d МБ.</string>
+    <string name="import_error_contents_too_large">Після розпакування копія перевищує обмеження в %1$d МБ.</string>
     <string name="import_error_unreadable">Не вдалося прочитати файл.</string>
     <string name="import_error_unreadable_detail">Не вдалося прочитати файл (%1$s).</string>
     <string name="import_error_not_a_backup">Цей файл не є резервною копією Mood Cairns.</string>

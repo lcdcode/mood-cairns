@@ -559,6 +559,7 @@
     <string name="backup_export_success">Exportado: %1$s</string>
     <string name="backup_export_csv_success">Exportado: %1$s (sin cifrar)</string>
     <string name="backup_export_failed">Error al exportar: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">No se guardó: la página del diario del %1$s tiene una fecha que la app no podría restaurar. Revisa la fecha de la página y vuelve a exportar.</string>
     <string name="backup_error_export_too_large">No se guardó: esta copia superaría los %1$d MB, el máximo que la app puede restaurar.</string>
     <string name="backup_import_success">Importación completada. Registros: %1$d, escalas: %2$d, etiquetas: %3$d, franjas de aviso: %4$d</string>
     <string name="backup_import_failed">Error al importar: %1$s</string>
@@ -631,6 +632,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">El archivo supera el límite de %1$d MB.</string>
+    <string name="import_error_contents_too_large">Descomprimida, la copia supera el límite de %1$d MB.</string>
     <string name="import_error_unreadable">No se pudo leer el archivo.</string>
     <string name="import_error_unreadable_detail">No se pudo leer el archivo (%1$s).</string>
     <string name="import_error_not_a_backup">Este archivo no es una copia de seguridad de Mood Cairns.</string>

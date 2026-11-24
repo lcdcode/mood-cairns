@@ -536,6 +536,7 @@
     <string name="backup_export_success">Exportiert: %1$s</string>
     <string name="backup_export_csv_success">Exportiert: %1$s (unverschlüsselt)</string>
     <string name="backup_export_failed">Export fehlgeschlagen: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Nicht gespeichert: Die Tagebuchseite vom %1$s hat ein Datum, das die App nicht wiederherstellen könnte. Prüfe das Datum der Seite und exportiere dann erneut.</string>
     <string name="backup_error_export_too_large">Nicht gespeichert: Diese Sicherung wäre größer als %1$d MB, das Maximum, das die App wiederherstellen kann.</string>
     <string name="backup_import_success">Import abgeschlossen. Einträge: %1$d, Skalen: %2$d, Tags: %3$d, Erinnerungszeiten: %4$d</string>
     <string name="backup_import_failed">Import fehlgeschlagen: %1$s</string>
@@ -602,6 +603,7 @@
 
     <!-- Import errors -->
     <string name="import_error_too_large">Die Datei überschreitet das Limit von %1$d MB.</string>
+    <string name="import_error_contents_too_large">Entpackt ist die Sicherung größer als das Limit von %1$d MB.</string>
     <string name="import_error_unreadable">Die Datei konnte nicht gelesen werden.</string>
     <string name="import_error_unreadable_detail">Die Datei konnte nicht gelesen werden (%1$s).</string>
     <string name="import_error_not_a_backup">Diese Datei ist keine Mood-Cairns-Sicherung.</string>

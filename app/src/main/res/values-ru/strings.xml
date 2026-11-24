@@ -561,6 +561,7 @@
     <string name="backup_export_success">Успешно сохранено: %1$s</string>
     <string name="backup_export_csv_success">Успешно сохранено в CSV: %1$s (без шифрования)</string>
     <string name="backup_export_failed">Не удалось сохранить: %1$s</string>
+    <string name="backup_error_export_unrestorable_page">Не сохранено: у страницы дневника за %1$s дата, которую приложение не сможет восстановить. Проверьте дату страницы и повторите экспорт.</string>
     <string name="backup_error_export_too_large">Не сохранено: копия превысила бы %1$d МБ, максимальный размер, который приложение может восстановить.</string>
     <string name="backup_import_success">Импорт успешно завершён. Записи: %1$d, шкалы: %2$d, теги: %3$d, интервалы напоминаний: %4$d</string>
     <string name="backup_import_failed">Не удалось импортировать данные: %1$s</string>
@@ -638,6 +639,7 @@
     </plurals>
     <!-- Import errors -->
     <string name="import_error_too_large">Размер файла превышает ограничение в %1$d МБ.</string>
+    <string name="import_error_contents_too_large">После распаковки копия превышает ограничение в %1$d МБ.</string>
     <string name="import_error_unreadable">Не удалось прочитать выбранный файл.</string>
     <string name="import_error_unreadable_detail">Не удалось прочитать файл (%1$s).</string>
     <string name="import_error_not_a_backup">Этот файл не является резервной копией Mood Cairns.</string>
