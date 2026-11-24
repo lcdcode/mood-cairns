@@ -11,7 +11,7 @@ import org.junit.Test
 class ImportErrorTextTest {
 
     @Test
-    fun everyError_mapsToItsOwnMessage() {
+    fun every_error_maps_to_its_own_message() {
         val errors = listOf(
             ImportError.TooLarge(maxMegabytes = 50),
             ImportError.ContentsTooLarge(maxMegabytes = 256),
@@ -31,7 +31,7 @@ class ImportErrorTextTest {
     }
 
     @Test
-    fun details_arePassedThroughAsFormatArgs() {
+    fun details_are_passed_through_as_format_args() {
         assertEquals(
             UiText.Res(R.string.import_error_too_large, listOf(50L)),
             ImportError.TooLarge(maxMegabytes = 50).toUiText(),
@@ -55,7 +55,7 @@ class ImportErrorTextTest {
     }
 
     @Test
-    fun unreadableWithoutDetail_usesPlainMessage() {
+    fun unreadable_without_detail_uses_plain_message() {
         assertEquals(
             UiText.Res(R.string.import_error_unreadable),
             ImportError.Unreadable(detail = null).toUiText(),

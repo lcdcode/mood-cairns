@@ -10,7 +10,7 @@ import org.junit.Test
 class LockPrefKeysTest {
 
     @Test
-    fun `stored key names never change`() {
+    fun stored_key_names_never_change() {
         assertEquals("pin_hash", LockPrefKeys.PIN_HASH)
         assertEquals("pin_salt", LockPrefKeys.PIN_SALT)
         assertEquals("pin_iterations", LockPrefKeys.PIN_ITERATIONS)
@@ -30,7 +30,7 @@ class LockPrefKeysTest {
     }
 
     @Test
-    fun `authoritative keys cover the PIN hash, the full PIN wrap and the no-PIN key`() {
+    fun authoritative_keys_cover_the_pin_hash_the_full_pin_wrap_and_the_no_pin_key() {
         assertEquals(
             setOf(
                 "pin_hash", "pin_salt", "pin_iterations",

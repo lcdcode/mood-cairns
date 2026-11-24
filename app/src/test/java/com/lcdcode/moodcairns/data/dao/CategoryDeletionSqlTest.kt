@@ -23,7 +23,7 @@ class CategoryDeletionSqlTest {
     private val other = TagCategory.OTHER_ID
 
     @Test
-    fun deletingACategory_movesAndMergesTags_keepingEntryLinks() {
+    fun deleting_a_category_moves_and_merges_tags_keeping_entry_links() {
         connectV6().use { c ->
             exec(c, "INSERT INTO tag_category VALUES ('health', 'Health', 0), ('$other', NULL, 1)")
             insertTag(c, Tag(id = 1, name = "Gym", categoryId = "health", sortOrder = 0))

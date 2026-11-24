@@ -24,13 +24,13 @@ class JournalDbSchemaTest {
     fun close() = connection.close()
 
     @Test
-    fun `body is the last column`() {
+    fun body_is_the_last_column() {
         val names = JournalSchemaFixture.columns(connection, "journal_doc").map { it[0] }
         assertEquals(listOf("id", "day", "createdAt", "updatedAt", "preview", "body"), names)
     }
 
     @Test
-    fun `whole word matches and snippet marks the hit`() {
+    fun whole_word_matches_and_snippet_marks_the_hit() {
         insert("2026-11-01", "Went for a long walk in the park.")
         val hits = search(connection, "park")
         assertEquals(listOf("2026-11-01"), hits.map { it.first })
@@ -40,32 +40,32 @@ class JournalDbSchemaTest {
     }
 
     @Test
-    fun `prefix matches longer words`() {
+    fun prefix_matches_longer_words() {
         insert("2026-11-01", "walking helped")
         assertEquals(listOf("2026-11-01"), searchDays(connection, "walk"))
     }
 
     @Test
-    fun `cyrillic matching ignores case`() {
+    fun cyrillic_matching_ignores_case() {
         insert("2026-11-01", "Сегодня было ХОРОШО")
         assertEquals(listOf("2026-11-01"), searchDays(connection, "хорош"))
     }
 
     @Test
-    fun `matching ignores diacritics`() {
+    fun matching_ignores_diacritics() {
         insert("2026-11-01", "Un café con mi madre")
         assertEquals(listOf("2026-11-01"), searchDays(connection, "cafe"))
     }
 
     @Test
-    fun `all terms must match`() {
+    fun all_terms_must_match() {
         insert("2026-11-01", "rain all day")
         insert("2026-11-02", "rain then sun")
         assertEquals(listOf("2026-11-02"), searchDays(connection, "rain sun"))
     }
 
     @Test
-    fun `results are newest day first`() {
+    fun results_are_newest_day_first() {
         insert("2026-10-30", "tea")
         insert("2026-11-02", "tea")
         insert("2026-11-01", "tea")
@@ -76,7 +76,7 @@ class JournalDbSchemaTest {
     }
 
     @Test
-    fun `update re-indexes the body and refreshes the preview`() {
+    fun update_re_indexes_the_body_and_refreshes_the_preview() {
         insert("2026-11-01", "old words")
         assertEquals(1, updateBodyByDay(connection, "2026-11-01", "**fresh** text", 2_000L))
         assertEquals(emptyList<String>(), searchDays(connection, "old"))
@@ -85,19 +85,19 @@ class JournalDbSchemaTest {
     }
 
     @Test
-    fun `update of a missing day changes nothing`() {
+    fun update_of_a_missing_day_changes_nothing() {
         assertEquals(0, updateBodyByDay(connection, "2026-01-01", "x", 1L))
     }
 
     @Test
-    fun `delete removes the day from the index`() {
+    fun delete_removes_the_day_from_the_index() {
         insert("2026-11-01", "secret plans")
         exec("DELETE FROM journal_doc WHERE day = '2026-11-01'")
         assertEquals(emptyList<String>(), searchDays(connection, "secret"))
     }
 
     @Test
-    fun `query syntax typed by the user cannot break the search`() {
+    fun query_syntax_typed_by_the_user_cannot_break_the_search() {
         insert("2026-11-01", "not raining today")
         for (raw in listOf("\"NOT\" (rain", "rain OR", "body:x*", "a NEAR/3 b", "-rain")) {
             search(connection, raw) // must not throw
@@ -106,20 +106,20 @@ class JournalDbSchemaTest {
     }
 
     @Test
-    fun `only one document per day`() {
+    fun only_one_document_per_day() {
         insert("2026-11-01", "first")
         assertThrows(SQLException::class.java) { insert("2026-11-01", "second") }
     }
 
     @Test
-    fun `meta query lists newest first with the stored preview`() {
+    fun meta_query_lists_newest_first_with_the_stored_preview() {
         insert("2026-11-01", "# Monday\n- [ ] milk")
         insert("2026-11-03", "short")
         assertEquals(listOf("2026-11-03" to "short", "2026-11-01" to "Monday milk"), meta())
     }
 
     @Test
-    fun `stored previews are bounded`() {
+    fun stored_previews_are_bounded() {
         val preview = JournalSql.previewOf("word ".repeat(JournalSql.PREVIEW_CHARS))
         assertTrue(preview.length <= JournalSql.PREVIEW_CHARS + 1) // plus the ellipsis
         assertTrue(preview.endsWith("…"))

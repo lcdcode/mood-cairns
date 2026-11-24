@@ -24,7 +24,7 @@ class MoodDbV6MigrationTest {
     private val columnIndexSql = ", `columnIndex` INTEGER NOT NULL DEFAULT 0)"
 
     @Test
-    fun categoryTableSql_matchesExportedRoomSchema() {
+    fun category_table_sql_matches_exported_room_schema() {
         assertEquals(
             createSqlFromSchema("6.json", "tag_category"),
             MoodDbMigrationSql.V5_TO_V6.first(),
@@ -32,7 +32,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun tagTable_isV5PlusColumnIndex() {
+    fun tag_table_is_v5_plus_column_index() {
         val v6TagSql = createSqlFromSchema("6.json", "tag")
         assertTrue("6.json tag must end with columnIndex", v6TagSql.endsWith(columnIndexSql))
         assertEquals(
@@ -46,7 +46,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun otherTables_areUnchangedInV6() {
+    fun other_tables_are_unchanged_in_v6() {
         for (table in listOf("scale", "entry", "entry_value", "entry_tag")) {
             assertEquals(
                 "$table must not change in v6",
@@ -57,7 +57,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun migration_seedsBuiltInsInOrder_andKeepsCustomNames() {
+    fun migration_seeds_built_ins_in_order_and_keeps_custom_names() {
         connectV5().use { c ->
             exec(c, "INSERT INTO tag_category_label (category, label) VALUES ('PLACE', 'Spots')")
 
@@ -76,7 +76,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun migration_clearsOthersName_becauseOtherCanNoLongerBeRenamed() {
+    fun migration_clears_others_name_because_other_can_no_longer_be_renamed() {
         connectV5().use { c ->
             exec(c, "INSERT INTO tag_category_label VALUES ('OTHER', 'Exercises')")
 
@@ -90,7 +90,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun migration_dropsLabelTable() {
+    fun migration_drops_label_table() {
         connectV5().use { c ->
             runStatements(c, MoodDbMigrationSql.V5_TO_V6)
 
@@ -102,7 +102,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun migration_keepsTags_withColumnIndexZero() {
+    fun migration_keeps_tags_with_column_index_zero() {
         connectV5().use { c ->
             exec(
                 c,
@@ -120,7 +120,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun columnIndex_isNotNullWithDefaultZero() {
+    fun column_index_is_not_null_with_default_zero() {
         connectV5().use { c ->
             runStatements(c, MoodDbMigrationSql.V5_TO_V6)
 
@@ -133,7 +133,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun fullUpgradeChain_seedsEachTagAndCategoryOnce() {
+    fun full_upgrade_chain_seeds_each_tag_and_category_once() {
         Class.forName("org.sqlite.JDBC")
         DriverManager.getConnection("jdbc:sqlite::memory:").use { c ->
             exec(c, createSqlFromSchema("1.json", "scale"))
@@ -160,7 +160,7 @@ class MoodDbV6MigrationTest {
     }
 
     @Test
-    fun seededCategories_areTheBuiltInsInOrder_withNoCustomNames() {
+    fun seeded_categories_are_the_built_ins_in_order_with_no_custom_names() {
         assertEquals(BuiltInTagCategory.entries.map { it.id }, SeedTagCategories.all.map { it.id })
         val seeded = SeedTagCategories.all
         assertEquals(seeded.indices.toList(), seeded.map { it.sortOrder })

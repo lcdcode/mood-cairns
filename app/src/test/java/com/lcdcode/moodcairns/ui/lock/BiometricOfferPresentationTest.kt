@@ -7,7 +7,7 @@ import org.junit.Test
 class BiometricOfferPresentationTest {
 
     @Test
-    fun `without a PIN every offer is dropped`() {
+    fun without_a_pin_every_offer_is_dropped() {
         BiometricOffer.entries.forEach { offer ->
             listOf(true, false).forEach { canAuth ->
                 assertEquals(
@@ -20,7 +20,7 @@ class BiometricOfferPresentationTest {
     }
 
     @Test
-    fun `with a PIN and a usable biometric every offer asks`() {
+    fun with_a_pin_and_a_usable_biometric_every_offer_asks() {
         BiometricOffer.entries.forEach { offer ->
             assertEquals(
                 "$offer",
@@ -31,7 +31,7 @@ class BiometricOfferPresentationTest {
     }
 
     @Test
-    fun `an invalidation notice is still shown when biometrics cannot be used`() {
+    fun an_invalidation_notice_is_still_shown_when_biometrics_cannot_be_used() {
         assertEquals(
             OfferPresentation.INFORM,
             offerPresentation(BiometricOffer.INVALIDATED, pinSet = true, canAuthenticate = false),
@@ -39,7 +39,7 @@ class BiometricOfferPresentationTest {
     }
 
     @Test
-    fun `upgrade and setup offers are dropped when biometrics cannot be used`() {
+    fun upgrade_and_setup_offers_are_dropped_when_biometrics_cannot_be_used() {
         listOf(BiometricOffer.UPGRADE, BiometricOffer.SETUP).forEach { offer ->
             assertEquals(
                 "$offer",

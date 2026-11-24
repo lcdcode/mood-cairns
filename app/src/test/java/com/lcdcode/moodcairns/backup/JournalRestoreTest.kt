@@ -163,7 +163,7 @@ class JournalRestoreTest {
         { it == ImportError.Malformed(reason) }
 
     @Test
-    fun `a valid backup replaces the journal`() {
+    fun a_valid_backup_replaces_the_journal() {
         val journal = FakeJournal(sentinel)
         val incoming = pages(3)
         assertEquals(3, restore(journal, backup(incoming)))
@@ -173,14 +173,14 @@ class JournalRestoreTest {
     // Each incoming limit leaves the sentinel in place
 
     @Test
-    fun `contents over the plaintext limit leave the journal unchanged`() {
+    fun contents_over_the_plaintext_limit_leave_the_journal_unchanged() {
         val file = backup(pages(200, body = "a".repeat(2_000)))
         val limits = JournalBackupLimits.forPlaintext(64L * 1024)
         assertRefusedUnchanged(file, limits) { it is ImportError.ContentsTooLarge }
     }
 
     @Test
-    fun `a file one byte over the file limit leaves the journal unchanged`() {
+    fun a_file_one_byte_over_the_file_limit_leaves_the_journal_unchanged() {
         val file = backup(pages(50))
         val atSize = JournalBackupLimits(
             maxPlaintextBytes = 1L shl 30,
@@ -193,7 +193,7 @@ class JournalRestoreTest {
     }
 
     @Test(timeout = 30_000)
-    fun `input that inflates to nothing is stopped by the file limit`() {
+    fun input_that_inflates_to_nothing_is_stopped_by_the_file_limit() {
         // Empty deflate blocks consume input without producing output, so the plaintext limit
         // alone would read a stream like this to its end, however long it is.
         val file = emptyBlockFlood(blocks = 200_000)
@@ -202,44 +202,44 @@ class JournalRestoreTest {
     }
 
     @Test
-    fun `a page before the earliest day leaves the journal unchanged`() {
+    fun a_page_before_the_earliest_day_leaves_the_journal_unchanged() {
         val file = backup(listOf(page("1899-12-31")) + pages(2))
         assertRefusedUnchanged(file, check = refusedFor(MalformedReason.DAY_OUT_OF_RANGE))
     }
 
     @Test
-    fun `a page past the future grace leaves the journal unchanged`() {
+    fun a_page_past_the_future_grace_leaves_the_journal_unchanged() {
         val tooLate = TODAY.plusDays(JournalBackupFormat.FUTURE_GRACE_DAYS + 1).toString()
         val file = backup(pages(2) + page(tooLate))
         assertRefusedUnchanged(file, check = refusedFor(MalformedReason.DAY_OUT_OF_RANGE))
     }
 
     @Test
-    fun `a repeated day leaves the journal unchanged`() {
+    fun a_repeated_day_leaves_the_journal_unchanged() {
         val file = backup(pages(3) + pages(3).takeLast(1)) // adjacent, so only the repeat is wrong
         assertRefusedUnchanged(file, check = refusedFor(MalformedReason.DAYS_OUT_OF_ORDER))
     }
 
     @Test
-    fun `pages out of order leave the journal unchanged`() {
+    fun pages_out_of_order_leave_the_journal_unchanged() {
         val file = backup(pages(3).reversed())
         assertRefusedUnchanged(file, check = refusedFor(MalformedReason.DAYS_OUT_OF_ORDER))
     }
 
     @Test
-    fun `an over-long page leaves the journal unchanged`() {
+    fun an_over_long_page_leaves_the_journal_unchanged() {
         val file = backup(pages(2) + page("2026-11-20", "a".repeat(JournalSql.MAX_BODY_CHARS + 1)))
         assertRefusedUnchanged(file, check = refusedFor(MalformedReason.BODY_TOO_LONG))
     }
 
     @Test
-    fun `a truncated file leaves the journal unchanged`() {
+    fun a_truncated_file_leaves_the_journal_unchanged() {
         val file = backup(pages(20))
         assertRefusedUnchanged(file.copyOf(file.size - 1)) { true }
     }
 
     @Test
-    fun `a wrong passphrase leaves the journal unchanged`() {
+    fun a_wrong_passphrase_leaves_the_journal_unchanged() {
         val journal = FakeJournal(sentinel)
         assertThrows(BackupImportException::class.java) {
             runBlocking {
@@ -256,7 +256,7 @@ class JournalRestoreTest {
     // Cancellation
 
     @Test(timeout = 15_000)
-    fun `cancelling a restore stalled on its provider unblocks it and keeps the journal`() {
+    fun cancelling_a_restore_stalled_on_its_provider_unblocks_it_and_keeps_the_journal() {
         // Incompressible pages spread across the file, so the stall lands mid-transaction.
         val file = backup(pages(40).mapIndexed { i, p -> p.copy(body = incompressible(i)) })
         val stream = StallingStream(file.copyOf(file.size * 2 / 3))
@@ -282,7 +282,7 @@ class JournalRestoreTest {
     }
 
     @Test
-    fun `cancellation is checked between pages`() {
+    fun cancellation_is_checked_between_pages() {
         val journal = FakeJournal(sentinel) { count ->
             if (count == 1) currentCoroutineContext().cancel()
         }
@@ -322,7 +322,7 @@ class JournalRestoreTest {
     )
 
     @Test
-    fun `an exported journal restores`() {
+    fun an_exported_journal_restores() {
         val docs = listOf(doc("1900-01-01"), doc("2026-11-24"), doc("2026-11-26"))
         val journal = FakeJournal(sentinel)
         assertEquals(3, restore(journal, export(docs)))
@@ -330,7 +330,7 @@ class JournalRestoreTest {
     }
 
     @Test
-    fun `export refuses a page the restore would refuse, naming its day`() {
+    fun export_refuses_a_page_the_restore_would_refuse_naming_its_day() {
         for (day in listOf("1899-12-31", "2026-11-27")) {
             val thrown = assertThrows(UnrestorableJournalPageException::class.java) {
                 export(listOf(doc("2026-11-01"), doc(day)))

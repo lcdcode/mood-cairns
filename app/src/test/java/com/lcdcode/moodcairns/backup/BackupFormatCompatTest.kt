@@ -18,21 +18,21 @@ class BackupFormatCompatTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     @Test
-    fun versionConstants_coverV1ThroughV3() {
+    fun version_constants_cover_v1_through_v3() {
         assertEquals(3, BackupFile.CURRENT_VERSION)
         assertEquals(1..3, BackupFile.SUPPORTED_VERSIONS)
         assertEquals(BackupFile.CURRENT_VERSION, BackupFile.FIRST_VERSION_WITH_CATEGORIES)
     }
 
     @Test
-    fun v2TagWithoutColumnIndex_parsesAsColumnZero() {
+    fun v2_tag_without_column_index_parses_as_column_zero() {
         val v2Tag = """{"id": 1, "name": "Home", "category": "PLACE", "sortOrder": 0}"""
 
         assertEquals(0, json.decodeFromString(TagDto.serializer(), v2Tag).columnIndex)
     }
 
     @Test
-    fun v3File_roundTripsCategoriesAndColumns() {
+    fun v3_file_round_trips_categories_and_columns() {
         val original = BackupFile(
             schemaVersion = BackupFile.CURRENT_VERSION,
             exportedAt = "2026-11-10T00:00:00Z",
@@ -59,7 +59,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun v3File_doesNotWriteTheV2LabelField() {
+    fun v3_file_does_not_write_the_v2_label_field() {
         val file = BackupFile(
             schemaVersion = BackupFile.CURRENT_VERSION,
             exportedAt = "2026-11-10T00:00:00Z",
@@ -74,7 +74,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun v1Json_parsesWithEmptyTagDefaults() {
+    fun v1_json_parses_with_empty_tag_defaults() {
         val v1 = """
             {
               "schemaVersion": 1,
@@ -103,7 +103,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun scaleWithoutInvertedKey_defaultsToFalse() {
+    fun scale_without_inverted_key_defaults_to_false() {
         val preInverseScale = """
             {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
              "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4}
@@ -115,7 +115,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun scaleWithoutDefaultValueKey_parsesAsNoDefault() {
+    fun scale_without_default_value_key_parses_as_no_default() {
         val preDefaultScale = """
             {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
              "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4,
@@ -128,7 +128,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun scaleDefaultValue_roundTrips() {
+    fun scale_default_value_round_trips() {
         val original = ScaleDto(
             id = 7, name = "Focus", minValue = 1, maxValue = 10, step = 1.0f,
             colorArgb = 0x6BAA75, isBuiltIn = false, archived = false, sortOrder = 5,
@@ -145,7 +145,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun invertedScale_roundTrips() {
+    fun inverted_scale_round_trips() {
         val original = ScaleDto(
             id = 7, name = "Calm", minValue = -5, maxValue = 5, step = 1.0f,
             colorArgb = 0x6BAA75, isBuiltIn = false, archived = false, sortOrder = 5,
@@ -162,7 +162,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun scaleWithoutOncePerDayKey_defaultsToFalse() {
+    fun scale_without_once_per_day_key_defaults_to_false() {
         val preSleepScale = """
             {"id": 3, "name": "Pain", "minValue": 1, "maxValue": 10, "step": 1.0,
              "colorArgb": 0, "isBuiltIn": true, "archived": false, "sortOrder": 4,
@@ -176,7 +176,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun oncePerDayScale_roundTripsToEntity() {
+    fun once_per_day_scale_round_trips_to_entity() {
         val original = ScaleDto(
             id = 6, name = "Sleep", minValue = 0, maxValue = 12, step = 0.5f,
             colorArgb = 0x7B68D9, isBuiltIn = true, archived = false, sortOrder = 5,
@@ -193,7 +193,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun v2File_roundTripsTagsAndLinks() {
+    fun v2_file_round_trips_tags_and_links() {
         val original = BackupFile(
             schemaVersion = BackupFile.CURRENT_VERSION,
             exportedAt = "2026-01-01T00:00:00Z",
@@ -226,7 +226,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun fileWithoutCategoryLabels_parsesWithNoRenames() {
+    fun file_without_category_labels_parses_with_no_renames() {
         val preLabels = """
             {"schemaVersion": 2, "exportedAt": "2026-01-01T00:00:00Z", "appVersion": "1.1",
              "scales": [], "promptWindows": [], "entries": [], "tags": []}
@@ -238,7 +238,7 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun categoryLabels_roundTrip() {
+    fun category_labels_round_trip() {
         val original = BackupFile(
             schemaVersion = BackupFile.CURRENT_VERSION,
             exportedAt = "2026-01-01T00:00:00Z",
@@ -261,24 +261,24 @@ class BackupFormatCompatTest {
     }
 
     @Test
-    fun categoryLabelDto_mapsToEntity() {
+    fun category_label_dto_maps_to_entity() {
         val entity = TagCategoryLabelDto(category = "PERSON", label = "  Crew ").toEntityOrNull()
 
         assertEquals(TagCategory(id = "PERSON", label = "Crew", sortOrder = 1), entity)
     }
 
     @Test
-    fun categoryLabelDto_withUnknownCategory_isDropped() {
+    fun category_label_dto_with_unknown_category_is_dropped() {
         assertNull(TagCategoryLabelDto(category = "PETS", label = "Pets").toEntityOrNull())
     }
 
     @Test
-    fun categoryLabelDto_withBlankLabel_isDropped() {
+    fun category_label_dto_with_blank_label_is_dropped() {
         assertNull(TagCategoryLabelDto(category = "PLACE", label = " \n ").toEntityOrNull())
     }
 
     @Test
-    fun v2Labels_applyToBuiltIns_firstLabelWins() {
+    fun v2_labels_apply_to_built_ins_first_label_wins() {
         val categories = builtInCategoriesWithLabels(
             listOf(
                 TagCategoryLabelDto(category = "PLACE", label = "Spots"),

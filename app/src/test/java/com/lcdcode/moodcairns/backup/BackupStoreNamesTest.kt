@@ -9,7 +9,7 @@ class BackupStoreNamesTest {
     private val day = LocalDate.of(2026, 11, 12)
 
     @Test
-    fun fileNames_distinguishEachKindOfExport() {
+    fun file_names_distinguish_each_kind_of_export() {
         assertEquals("mood-cairns-backup-2026-11-12.json", BackupStore.suggestName(day))
         assertEquals("mood-cairns-config-only-2026-11-12.json", BackupStore.suggestConfigName(day))
         assertEquals("mood-cairns-journal-2026-11-12.mcj", BackupStore.suggestJournalName(day))
@@ -17,7 +17,7 @@ class BackupStoreNamesTest {
     }
 
     @Test
-    fun classifyBackupName_recognizesEachKind() {
+    fun classify_backup_name_recognizes_each_kind() {
         assertEquals(BackupKind.Mood, BackupStore.classifyBackupName(BackupStore.suggestName(day)))
         assertEquals(
             BackupKind.Config,
@@ -30,7 +30,7 @@ class BackupStoreNamesTest {
     }
 
     @Test
-    fun classifyBackupName_survivesMediaStoreDuplicateSuffix() {
+    fun classify_backup_name_survives_media_store_duplicate_suffix() {
         // MediaStore appends " (1)" to a second export on the same day.
         assertEquals(
             BackupKind.Config,

@@ -12,7 +12,7 @@ class JournalDayOfTest {
     private val lateEvening = Instant.parse("2026-11-19T23:30:00Z")
 
     @Test
-    fun `day follows the local calendar, not UTC`() {
+    fun day_follows_the_local_calendar_not_utc() {
         assertEquals(
             LocalDate.of(2026, 11, 20),
             journalDayOf(lateEvening, ZoneId.of("Europe/Berlin")),
@@ -24,7 +24,7 @@ class JournalDayOfTest {
     }
 
     @Test
-    fun `backdated entry opens its own day`() {
+    fun backdated_entry_opens_its_own_day() {
         val lastWeek = Instant.parse("2026-11-12T09:00:00Z")
         assertEquals(LocalDate.of(2026, 11, 12), journalDayOf(lastWeek, ZoneId.of("UTC")))
     }

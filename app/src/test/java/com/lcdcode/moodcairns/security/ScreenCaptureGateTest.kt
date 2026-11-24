@@ -13,27 +13,27 @@ class ScreenCaptureGateTest {
     private val duration = ScreenCaptureGate.ALLOW_DURATION_MS
 
     @Test
-    fun closedByDefault() {
+    fun closed_by_default() {
         assertFalse(gate.isAllowed())
         assertNull(gate.allowedUntil.value)
     }
 
     @Test
-    fun allowed_rightAfterOptIn() {
+    fun allowed_right_after_opt_in() {
         gate.allowTemporarily()
         assertTrue(gate.isAllowed())
         assertEquals(duration, gate.remainingMs())
     }
 
     @Test
-    fun stillAllowed_justBeforeDeadline() {
+    fun still_allowed_just_before_deadline() {
         gate.allowTemporarily()
         now += duration - 1
         assertTrue(gate.isAllowed())
     }
 
     @Test
-    fun expiresAtDeadline_andClearsState() {
+    fun expires_at_deadline_and_clears_state() {
         gate.allowTemporarily()
         now += duration
         assertFalse(gate.isAllowed())
@@ -41,14 +41,14 @@ class ScreenCaptureGateTest {
     }
 
     @Test
-    fun revoke_closesImmediately() {
+    fun revoke_closes_immediately() {
         gate.allowTemporarily()
         gate.revoke()
         assertFalse(gate.isAllowed())
     }
 
     @Test
-    fun reArming_restartsTheWindow() {
+    fun re_arming_restarts_the_window() {
         gate.allowTemporarily()
         now += duration - 1_000L
         gate.allowTemporarily()
@@ -57,7 +57,7 @@ class ScreenCaptureGateTest {
     }
 
     @Test
-    fun durationIsTenMinutes() {
+    fun duration_is_ten_minutes() {
         assertEquals(10 * 60_000L, duration)
     }
 }
@@ -73,20 +73,20 @@ class ShouldSecureWindowTest {
     )
 
     @Test
-    fun debugBuild_neverSecure() {
+    fun debug_build_never_secure() {
         (lockedStates + LockState.Unlocked).forEach { state ->
             assertFalse(shouldSecureWindow(isDebug = true, lockState = state, captureAllowed = false))
         }
     }
 
     @Test
-    fun unlocked_secureUnlessCaptureAllowed() {
+    fun unlocked_secure_unless_capture_allowed() {
         assertTrue(shouldSecureWindow(false, LockState.Unlocked, captureAllowed = false))
         assertFalse(shouldSecureWindow(false, LockState.Unlocked, captureAllowed = true))
     }
 
     @Test
-    fun nonUnlockedStates_alwaysSecure_evenWhenAllowed() {
+    fun non_unlocked_states_always_secure_even_when_allowed() {
         lockedStates.forEach { state ->
             assertTrue(state.toString(), shouldSecureWindow(false, state, captureAllowed = true))
         }

@@ -15,14 +15,14 @@ class CategoryOrderTest {
     private fun List<TagCategory>?.ids() = this?.map { it.id }
 
     @Test
-    fun withOtherLast_movesOnlyOther_keepingTheRestInOrder() {
+    fun with_other_last_moves_only_other_keeping_the_rest_in_order() {
         val shuffled = listOf("PLACE", other, "MOOD", "custom").map(::category)
 
         assertEquals(listOf("PLACE", "MOOD", "custom", other), shuffled.withOtherLast().ids())
     }
 
     @Test
-    fun categoriesMoveAmongThemselves() {
+    fun categories_move_among_themselves() {
         assertEquals(
             listOf("custom", "PLACE", "MOOD", other),
             order.withCategoryMoved(2, 0).ids(),
@@ -34,17 +34,17 @@ class CategoryOrderTest {
     }
 
     @Test
-    fun otherCannotBeMoved() {
+    fun other_cannot_be_moved() {
         assertNull(order.withCategoryMoved(3, 0))
     }
 
     @Test
-    fun nothingCanMoveBelowOther() {
+    fun nothing_can_move_below_other() {
         assertNull(order.withCategoryMoved(2, 3))
     }
 
     @Test
-    fun outOfRangeMoves_giveNull() {
+    fun out_of_range_moves_give_null() {
         assertNull(order.withCategoryMoved(0, -1))
         assertNull(order.withCategoryMoved(-1, 0))
     }

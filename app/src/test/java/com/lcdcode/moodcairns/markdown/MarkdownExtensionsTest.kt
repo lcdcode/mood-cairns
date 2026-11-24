@@ -19,7 +19,7 @@ class MarkdownExtensionsTest {
     // Checklists
 
     @Test
-    fun `checklist items carry their state and marker position`() {
+    fun checklist_items_carry_their_state_and_marker_position() {
         val source = "- [ ] buy milk\n- [x] call mom"
         val list = MarkdownParser.parse(source).single() as ListBlock
         assertEquals(MdTask(checked = false, markerOffset = 3), list.items[0].task)
@@ -28,25 +28,25 @@ class MarkdownExtensionsTest {
     }
 
     @Test
-    fun `checkbox text is removed from the item content`() {
+    fun checkbox_text_is_removed_from_the_item_content() {
         val list = MarkdownParser.parse("- [ ] buy milk").single() as ListBlock
         assertEquals(listOf(Paragraph(listOf(Text("buy milk")))), list.items.single().blocks)
     }
 
     @Test
-    fun `uppercase X counts as checked`() {
+    fun uppercase_x_counts_as_checked() {
         val list = MarkdownParser.parse("- [X] done").single() as ListBlock
         assertEquals(true, list.items.single().task?.checked)
     }
 
     @Test
-    fun `numbered checklist items are found too`() {
+    fun numbered_checklist_items_are_found_too() {
         val list = MarkdownParser.parse("1. [ ] first").single() as ListBlock
         assertEquals(MdTask(checked = false, markerOffset = 4), list.items.single().task)
     }
 
     @Test
-    fun `checklist inside a quote points at the right character`() {
+    fun checklist_inside_a_quote_points_at_the_right_character() {
         val source = "> - [ ] quoted"
         val quote = MarkdownParser.parse(source).single() as Quote
         val task = (quote.blocks.single() as ListBlock).items.single().task!!
@@ -55,14 +55,14 @@ class MarkdownExtensionsTest {
     }
 
     @Test
-    fun `ordinary list items have no task`() {
+    fun ordinary_list_items_have_no_task() {
         val list = MarkdownParser.parse("- [link](u)\n- plain").single() as ListBlock
         assertNull(list.items[0].task)
         assertNull(list.items[1].task)
     }
 
     @Test
-    fun `marker offset is unknown when no checkbox follows the item start`() {
+    fun marker_offset_is_unknown_when_no_checkbox_follows_the_item_start() {
         assertEquals(MarkdownParser.UNKNOWN_OFFSET, taskMarkerOffset("- plain", 0))
         assertEquals(MarkdownParser.UNKNOWN_OFFSET, taskMarkerOffset("- [?] odd", 0))
         assertEquals(MarkdownParser.UNKNOWN_OFFSET, taskMarkerOffset("abc", 99))
@@ -71,7 +71,7 @@ class MarkdownExtensionsTest {
     // Tables
 
     @Test
-    fun `table keeps header, alignment and rows`() {
+    fun table_keeps_header_alignment_and_rows() {
         val table = MarkdownParser.parse("| a | b | c |\n|:--|:-:|--:|\n| 1 | **2** | 3 |")
             .single() as Table
         assertEquals(
@@ -86,14 +86,14 @@ class MarkdownExtensionsTest {
     }
 
     @Test
-    fun `columns without alignment are NONE`() {
+    fun columns_without_alignment_are_none() {
         val table = MarkdownParser.parse("| a |\n|---|").single() as Table
         assertEquals(listOf(MdAlignment.NONE), table.alignments)
         assertEquals(emptyList<List<List<MdInline>>>(), table.rows)
     }
 
     @Test
-    fun `ragged rows are padded or trimmed to the header width`() {
+    fun ragged_rows_are_padded_or_trimmed_to_the_header_width() {
         val table = MarkdownParser.parse("| a | b |\n|---|---|\n| 1 |\n| 1 | 2 | 3 |")
             .single() as Table
         assertEquals(listOf(cell("1"), emptyList()), table.rows[0])
@@ -101,7 +101,7 @@ class MarkdownExtensionsTest {
     }
 
     @Test
-    fun `fitRow pads and trims`() {
+    fun fitrow_pads_and_trims() {
         assertEquals(listOf(listOf(1), emptyList()), fitRow(listOf(listOf(1)), 2))
         assertEquals(listOf(listOf(1)), fitRow(listOf(listOf(1), listOf(2)), 1))
     }
@@ -109,7 +109,7 @@ class MarkdownExtensionsTest {
     // Strikethrough
 
     @Test
-    fun `double tilde strikes through`() {
+    fun double_tilde_strikes_through() {
         assertEquals(
             listOf(Paragraph(listOf(Text("not "), Strikethrough(listOf(Text("this")))))),
             MarkdownParser.parse("not ~~this~~"),
@@ -117,7 +117,7 @@ class MarkdownExtensionsTest {
     }
 
     @Test
-    fun `single tilde stays literal text`() {
+    fun single_tilde_stays_literal_text() {
         assertEquals(
             listOf(Paragraph(listOf(Text("about ~5 minutes~ ago")))),
             MarkdownParser.parse("about ~5 minutes~ ago"),

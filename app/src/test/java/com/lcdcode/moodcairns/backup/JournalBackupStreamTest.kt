@@ -60,7 +60,7 @@ class JournalBackupStreamTest {
         file.copyOf().also { ByteBuffer.wrap(it).putInt(offset, value) }
 
     @Test
-    fun `pages round trip in order with every character intact`() {
+    fun pages_round_trip_in_order_with_every_character_intact() {
         val pages = listOf(
             page(1),
             page(2, "Сегодня **хорошо** 😀"),
@@ -70,18 +70,18 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `an empty journal round trips`() {
+    fun an_empty_journal_round_trips() {
         assertEquals(emptyList<JournalDayDto>(), readAll(backup(emptyList())))
     }
 
     @Test
-    fun `many pages spanning many chunks round trip`() {
+    fun many_pages_spanning_many_chunks_round_trip() {
         val pages = (1..28).map { page(it, "entry $it ".repeat(it * 7)) }
         assertEquals(pages, readAll(backup(pages)))
     }
 
     @Test(timeout = 30_000)
-    fun `a multi-megabyte journal streams through`() {
+    fun a_multi_megabyte_journal_streams_through() {
         val pages = (1..28).map { day ->
             page(day, (1..7_000).joinToString(" ") { "word$it-$day" }) // ~75 KB, ~2 MB total
         }
@@ -96,12 +96,12 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `the metadata record is read first`() {
+    fun the_metadata_record_is_read_first() {
         open(backup(listOf(page(1)))).use { assertEquals(meta, it.meta) }
     }
 
     @Test
-    fun `nextPage keeps returning null after the end`() {
+    fun nextpage_keeps_returning_null_after_the_end() {
         open(backup(emptyList())).use {
             assertNull(it.nextPage())
             assertNull(it.nextPage())
@@ -110,7 +110,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `journal text is compressed before encryption`() {
+    fun journal_text_is_compressed_before_encryption() {
         val pages = (1..20).map { page(it, "Today I went for a walk and felt calm. ".repeat(40)) }
         val plainSize = pages.sumOf { it.body.length }
         assertTrue(backup(pages).size < plainSize / 4)
@@ -119,38 +119,38 @@ class JournalBackupStreamTest {
     // Wrong file, wrong secret, damage
 
     @Test
-    fun `a wrong passphrase is reported before any page is read`() {
+    fun a_wrong_passphrase_is_reported_before_any_page_is_read() {
         val file = backup(listOf(page(1)))
         assertEquals(ImportError.WrongSecretOrCorrupt, failure { readAll(file, secret = "wrong") })
     }
 
     @Test
-    fun `a mood backup or an empty file is not a journal backup`() {
+    fun a_mood_backup_or_an_empty_file_is_not_a_journal_backup() {
         val moodEnvelope = "{\"envelope\":1,\"kdf\":\"PBKDF2WithHmacSHA256\"}".toByteArray()
         assertEquals(ImportError.NotAJournalBackup, failure { readAll(moodEnvelope) })
         assertEquals(ImportError.NotAJournalBackup, failure { readAll(ByteArray(0)) })
     }
 
     @Test
-    fun `a newer container version is unsupported`() {
+    fun a_newer_container_version_is_unsupported() {
         val file = backup(listOf(page(1))).also { it[VERSION_OFFSET] = 2 }
         assertEquals(ImportError.UnsupportedVersion(2), failure { readAll(file) })
     }
 
     @Test(timeout = 5_000)
-    fun `an absurd iteration count is refused before key derivation`() {
+    fun an_absurd_iteration_count_is_refused_before_key_derivation() {
         val file = withHeaderInt(backup(listOf(page(1))), ITERATIONS_OFFSET, Int.MAX_VALUE)
         assertTrue(failure { readAll(file) } is ImportError.Malformed)
     }
 
     @Test
-    fun `an out of range chunk size is refused`() {
+    fun an_out_of_range_chunk_size_is_refused() {
         val file = withHeaderInt(backup(listOf(page(1))), CHUNK_SIZE_OFFSET, Int.MAX_VALUE)
         assertTrue(failure { readAll(file) } is ImportError.Malformed)
     }
 
     @Test
-    fun `editing the salt or nonce prefix breaks decryption`() {
+    fun editing_the_salt_or_nonce_prefix_breaks_decryption() {
         for (offset in listOf(SALT_OFFSET, PREFIX_OFFSET)) {
             val file = backup(listOf(page(1)))
             file[offset] = (file[offset].toInt() xor 1).toByte()
@@ -159,7 +159,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `a truncated file is refused`() {
+    fun a_truncated_file_is_refused() {
         val file = backup((1..10).map { page(it) })
         for (keep in listOf(file.size - 1, file.size - 40, JournalStreamHeader.HEADER_BYTES + 3)) {
             failure { readAll(file.copyOf(keep)) } // must throw, never return partial pages
@@ -167,7 +167,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `an export interrupted before finishing is refused`() {
+    fun an_export_interrupted_before_finishing_is_refused() {
         val file = backup(emptyList()) { w ->
             w.writeMeta(meta)
             w.writePage(page(1))
@@ -177,7 +177,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `a record over the size limit is refused`() {
+    fun a_record_over_the_size_limit_is_refused() {
         val file = backup(emptyList()) { w ->
             w.writeMeta(meta)
             w.writeRecord("x".repeat(JournalBackupFormat.MAX_RECORD_BYTES + 1))
@@ -187,7 +187,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `a record that is not a page is malformed`() {
+    fun a_record_that_is_not_a_page_is_malformed() {
         val file = backup(emptyList()) { w ->
             w.writeMeta(meta)
             w.writeRecord("not json")
@@ -198,7 +198,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `a broken record's text never reaches the error`() {
+    fun a_broken_records_text_never_reaches_the_error() {
         // Decoder messages quote the input; the page text must not leak into logs or the UI.
         val file = backup(emptyList()) { w ->
             w.writeMeta(meta)
@@ -211,7 +211,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `metadata of another kind or a newer version is refused`() {
+    fun metadata_of_another_kind_or_a_newer_version_is_refused() {
         val otherKind = backup(listOf(page(1)), fileMeta = meta.copy(kind = "something-else"))
         assertEquals(ImportError.NotAJournalBackup, failure { readAll(otherKind) })
         val newer = backup(listOf(page(1)), fileMeta = meta.copy(journalVersion = 2))
@@ -248,21 +248,21 @@ class JournalBackupStreamTest {
             }
 
     @Test
-    fun `a backup exactly at the plaintext limit is written and restored`() {
+    fun a_backup_exactly_at_the_plaintext_limit_is_written_and_restored() {
         val pages = (1..5).map { page(it) }
         val exact = JournalBackupLimits.forPlaintext(plaintextSize(pages))
         assertEquals(pages, readWithin(exact, backupWithin(exact, pages)))
     }
 
     @Test
-    fun `export refuses one byte over the plaintext limit`() {
+    fun export_refuses_one_byte_over_the_plaintext_limit() {
         val pages = (1..5).map { page(it) }
         val tight = JournalBackupLimits.forPlaintext(plaintextSize(pages) - 1)
         assertThrows(BackupTooLargeException::class.java) { backupWithin(tight, pages) }
     }
 
     @Test
-    fun `restore refuses one byte over the plaintext limit`() {
+    fun restore_refuses_one_byte_over_the_plaintext_limit() {
         val pages = (1..5).map { page(it) }
         val tight = JournalBackupLimits.forPlaintext(plaintextSize(pages) - 1)
         val error = failure { readWithin(tight, backup(pages)) }
@@ -270,7 +270,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `a small file that inflates past the limit is refused while streaming`() {
+    fun a_small_file_that_inflates_past_the_limit_is_refused_while_streaming() {
         // 2,000 near-empty-compressing pages: a few kilobytes on disk, far more unpacked.
         val pages = (1..2_000).map { page(1, "a".repeat(2_000)) }
         val file = backup(pages)
@@ -280,7 +280,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `export refuses past the file limit even within the plaintext limit`() {
+    fun export_refuses_past_the_file_limit_even_within_the_plaintext_limit() {
         val pages = (1..5).map { page(it) }
         val limits = JournalBackupLimits(maxPlaintextBytes = 1L shl 20, maxFileBytes = 100)
         assertThrows(BackupTooLargeException::class.java) { backupWithin(limits, pages) }
@@ -289,7 +289,7 @@ class JournalBackupStreamTest {
     // Cross-kind safety
 
     @Test
-    fun `the mood import names a journal backup instead of failing vaguely`() {
+    fun the_mood_import_names_a_journal_backup_instead_of_failing_vaguely() {
         // Exactly how BackupFileReader.readText decodes a picked file.
         val raw = String(backup(listOf(page(1))), Charsets.UTF_8)
         val codec = EnvelopeCodec(Json { ignoreUnknownKeys = true })
@@ -297,7 +297,7 @@ class JournalBackupStreamTest {
     }
 
     @Test
-    fun `older apps cannot read a journal backup as a mood backup envelope`() {
+    fun older_apps_cannot_read_a_journal_backup_as_a_mood_backup_envelope() {
         // Older versions JSON-decode the file as an envelope before doing anything else.
         val raw = String(backup(listOf(page(1))), Charsets.UTF_8)
         assertThrows(SerializationException::class.java) {

@@ -27,7 +27,7 @@ class MoodDbV4MigrationTest {
     private val defaultValueColumnSql = ", `defaultValue` REAL)"
 
     @Test
-    fun migration_addsDefaultValueColumn_nullableWithNoSqlDefault() {
+    fun migration_adds_default_value_column_nullable_with_no_sql_default() {
         connectV3().use { c ->
             runStatements(c, MoodDbMigrationSql.V3_TO_V4)
 
@@ -39,7 +39,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun migration_existingScalesHaveNoDefault() {
+    fun migration_existing_scales_have_no_default() {
         connectV3().use { c ->
             insertV3Scale(c, id = 1, name = "Happiness")
 
@@ -55,7 +55,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun migration_seedsMoodTags() {
+    fun migration_seeds_mood_tags() {
         connectV3().use { c ->
             migrate(c)
 
@@ -77,7 +77,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun migration_seedsNothingForOtherCategory() {
+    fun migration_seeds_nothing_for_other_category() {
         connectV3().use { c ->
             migrate(c)
 
@@ -86,7 +86,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun moodSeeding_isIdempotent_andKeepsSameNamedUserTags() {
+    fun mood_seeding_is_idempotent_and_keeps_same_named_user_tags() {
         connectV3().use { c ->
             // The unique index is (name, category), so a user's "Joy" activity
             // must survive alongside the seeded "Joy" mood.
@@ -111,7 +111,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun fullUpgradeChain_seedsEachTagOnce() {
+    fun full_upgrade_chain_seeds_each_tag_once() {
         // A v1 install upgrades 1 -> 2 -> 3 -> 4 in a single open: V1_TO_V2
         // already seeds the mood tags via SeedTags.tags, so MIGRATION_3_4's
         // reseed must not duplicate them.
@@ -127,7 +127,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun moodSeeds_areAllInTheMoodCategory() {
+    fun mood_seeds_are_all_in_the_mood_category() {
         assertTrue(
             "SeedTags.moodTags must only hold MOOD tags",
             SeedTags.moodTags.all { it.categoryId == BuiltInTagCategory.MOOD.id },
@@ -139,7 +139,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun migrationSql_matchesExportedRoomSchema() {
+    fun migration_sql_matches_exported_room_schema() {
         val scaleCreateSql = createSqlFromSchema("4.json", "scale")
         assertTrue(
             "4.json scale createSql must declare the migrated column verbatim",
@@ -154,7 +154,7 @@ class MoodDbV4MigrationTest {
     }
 
     @Test
-    fun tagTable_isUnchangedInV4() {
+    fun tag_table_is_unchanged_in_v4() {
         // Category ids are stored as strings, so seeding moods must
         // not have altered the tag table's structure.
         assertEquals(

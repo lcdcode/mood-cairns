@@ -11,47 +11,47 @@ class BiometricBlobTest {
     private val ciphertext = ByteArray(48) { (100 + it).toByte() }
 
     @Test
-    fun `encoding matches an independently computed vector`() {
+    fun encoding_matches_an_independently_computed_vector() {
         // Python: base64.b64encode(bytes([1]) + bytes(range(12)) + bytes(range(100, 148)))
         assertEquals(KNOWN_ENCODING, BiometricBlob(iv, ciphertext).encode())
     }
 
     @Test
-    fun `decode reverses encode`() {
+    fun decode_reverses_encode() {
         val decoded = BiometricBlob.decode(KNOWN_ENCODING)!!
         assertArrayEquals(iv, decoded.iv)
         assertArrayEquals(ciphertext, decoded.ciphertext)
     }
 
     @Test
-    fun `unknown version is rejected`() {
+    fun unknown_version_is_rejected() {
         assertNull(BiometricBlob.decode(VERSION_2_ENCODING))
     }
 
     @Test
-    fun `truncated blob is rejected`() {
+    fun truncated_blob_is_rejected() {
         assertNull(BiometricBlob.decode(ONE_BYTE_SHORT_ENCODING))
     }
 
     @Test
-    fun `garbage and empty input are rejected`() {
+    fun garbage_and_empty_input_are_rejected() {
         assertNull(BiometricBlob.decode("not base64 !!"))
         assertNull(BiometricBlob.decode(""))
     }
 
     @Test
-    fun `a raw legacy DB key never decodes as a blob`() {
+    fun a_raw_legacy_db_key_never_decodes_as_a_blob() {
         val rawKeyBase64 = java.util.Base64.getEncoder().encodeToString(ByteArray(32) { 7 })
         assertNull(BiometricBlob.decode(rawKeyBase64))
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `wrong IV length cannot be constructed`() {
+    fun wrong_iv_length_cannot_be_constructed() {
         BiometricBlob(ByteArray(16), ciphertext)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun `ciphertext without the GCM tag cannot be constructed`() {
+    fun ciphertext_without_the_gcm_tag_cannot_be_constructed() {
         BiometricBlob(iv, ByteArray(32))
     }
 

@@ -17,7 +17,7 @@ class MarkdownEditingTest {
     // Inline markers
 
     @Test
-    fun `bold wraps the selection`() {
+    fun bold_wraps_the_selection() {
         assertEquals(
             EditResult("hello **world**", 8, 13),
             inline("hello world", 6, 11, InlineMarker.BOLD),
@@ -25,7 +25,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `reversed selection behaves the same`() {
+    fun reversed_selection_behaves_the_same() {
         assertEquals(
             EditResult("hello **world**", 8, 13),
             inline("hello world", 11, 6, InlineMarker.BOLD),
@@ -33,7 +33,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `bold unwraps when markers sit just outside the selection`() {
+    fun bold_unwraps_when_markers_sit_just_outside_the_selection() {
         assertEquals(
             EditResult("hello world", 6, 11),
             inline("hello **world**", 8, 13, InlineMarker.BOLD),
@@ -41,7 +41,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `bold unwraps when the selection includes the markers`() {
+    fun bold_unwraps_when_the_selection_includes_the_markers() {
         assertEquals(
             EditResult("hello world", 6, 11),
             inline("hello **world**", 6, 15, InlineMarker.BOLD),
@@ -49,7 +49,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `surrounding whitespace stays outside the markers`() {
+    fun surrounding_whitespace_stays_outside_the_markers() {
         assertEquals(
             EditResult("hello **world** ", 8, 13),
             inline("hello world ", 6, 12, InlineMarker.BOLD),
@@ -57,7 +57,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `caret inside a word wraps the word`() {
+    fun caret_inside_a_word_wraps_the_word() {
         assertEquals(
             EditResult("hello **world**", 8, 13),
             inline("hello world", 8, 8, InlineMarker.BOLD),
@@ -65,7 +65,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `caret inside a bold word unwraps it`() {
+    fun caret_inside_a_bold_word_unwraps_it() {
         assertEquals(
             EditResult("hello world", 6, 11),
             inline("hello **world**", 10, 10, InlineMarker.BOLD),
@@ -73,37 +73,37 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `caret outside a word inserts an empty pair`() {
+    fun caret_outside_a_word_inserts_an_empty_pair() {
         assertEquals(EditResult("hello ****", 8, 8), inline("hello ", 6, 6, InlineMarker.BOLD))
     }
 
     @Test
-    fun `tapping again on an empty pair removes it`() {
+    fun tapping_again_on_an_empty_pair_removes_it() {
         assertEquals(EditResult("hello ", 6, 6), inline("hello ****", 8, 8, InlineMarker.BOLD))
     }
 
     @Test
-    fun `whitespace-only selection inserts a pair at its start`() {
+    fun whitespace_only_selection_inserts_a_pair_at_its_start() {
         assertEquals(EditResult("a**   b", 2, 2), inline("a   b", 1, 4, InlineMarker.ITALIC))
     }
 
     @Test
-    fun `italic on bold text adds italic instead of stripping bold`() {
+    fun italic_on_bold_text_adds_italic_instead_of_stripping_bold() {
         assertEquals(EditResult("***word***", 3, 7), inline("**word**", 2, 6, InlineMarker.ITALIC))
     }
 
     @Test
-    fun `italic removal from bold italic keeps bold`() {
+    fun italic_removal_from_bold_italic_keeps_bold() {
         assertEquals(EditResult("**word**", 2, 6), inline("***word***", 3, 7, InlineMarker.ITALIC))
     }
 
     @Test
-    fun `bold removal from bold italic keeps italic`() {
+    fun bold_removal_from_bold_italic_keeps_italic() {
         assertEquals(EditResult("*word*", 1, 5), inline("***word***", 3, 7, InlineMarker.BOLD))
     }
 
     @Test
-    fun `code wraps in backticks`() {
+    fun code_wraps_in_backticks() {
         assertEquals(
             EditResult("run `ls` now", 5, 7),
             inline("run ls now", 4, 6, InlineMarker.CODE),
@@ -111,24 +111,24 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `out of range selection is clamped`() {
+    fun out_of_range_selection_is_clamped() {
         assertEquals(EditResult("**ab**", 2, 4), inline("ab", -5, 99, InlineMarker.BOLD))
     }
 
     // Line prefixes
 
     @Test
-    fun `bullet on the caret line moves the caret past the marker`() {
+    fun bullet_on_the_caret_line_moves_the_caret_past_the_marker() {
         assertEquals(EditResult("- milk", 4, 4), line("milk", 2, 2, LinePrefix.BULLET))
     }
 
     @Test
-    fun `bullet on an empty document`() {
+    fun bullet_on_an_empty_document() {
         assertEquals(EditResult("- ", 2, 2), line("", 0, 0, LinePrefix.BULLET))
     }
 
     @Test
-    fun `bullet applies to every selected line`() {
+    fun bullet_applies_to_every_selected_line() {
         assertEquals(
             EditResult("- milk\n- eggs", 2, 13),
             line("milk\neggs", 0, 9, LinePrefix.BULLET),
@@ -136,7 +136,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `bullet is removed when every selected line has one`() {
+    fun bullet_is_removed_when_every_selected_line_has_one() {
         assertEquals(
             EditResult("milk\neggs", 0, 9),
             line("- milk\n- eggs", 0, 13, LinePrefix.BULLET),
@@ -144,38 +144,38 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `numbered converts bullets and renumbers from one`() {
+    fun numbered_converts_bullets_and_renumbers_from_one() {
         assertEquals("1. a\n2. b\n3. c", line("- a\n- b\nc", 0, 9, LinePrefix.NUMBERED).text)
     }
 
     @Test
-    fun `numbered is removed when every selected line is numbered`() {
+    fun numbered_is_removed_when_every_selected_line_is_numbered() {
         assertEquals("a\nb", line("1. a\n7) b", 0, 9, LinePrefix.NUMBERED).text)
     }
 
     @Test
-    fun `blank lines in a selection are skipped`() {
+    fun blank_lines_in_a_selection_are_skipped() {
         assertEquals("- a\n\n- b", line("a\n\nb", 0, 4, LinePrefix.BULLET).text)
     }
 
     @Test
-    fun `selection ending right after a newline excludes the next line`() {
+    fun selection_ending_right_after_a_newline_excludes_the_next_line() {
         assertEquals("- a\nb", line("a\nb", 0, 2, LinePrefix.BULLET).text)
     }
 
     @Test
-    fun `lines outside the selection are untouched`() {
+    fun lines_outside_the_selection_are_untouched() {
         assertEquals(EditResult("x\n- y\nz", 4, 4), line("x\ny\nz", 2, 2, LinePrefix.BULLET))
     }
 
     @Test
-    fun `indentation is preserved`() {
+    fun indentation_is_preserved() {
         assertEquals("  - a", line("  a", 3, 3, LinePrefix.BULLET).text)
         assertEquals("  a", line("  - a", 5, 5, LinePrefix.BULLET).text)
     }
 
     @Test
-    fun `quote is layered over a list and removed again`() {
+    fun quote_is_layered_over_a_list_and_removed_again() {
         val quoted = line("- a", 3, 3, LinePrefix.QUOTE)
         assertEquals(EditResult("> - a", 5, 5), quoted)
         assertEquals(
@@ -185,7 +185,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `heading cycles through three levels then off`() {
+    fun heading_cycles_through_three_levels_then_off() {
         var result = EditResult("Title", 0, 0)
         val seen = (1..4).map {
             result = line(result.text, result.selStart, result.selEnd, LinePrefix.HEADING)
@@ -195,46 +195,46 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `heading replaces a list marker`() {
+    fun heading_replaces_a_list_marker() {
         assertEquals("# a", line("- a", 3, 3, LinePrefix.HEADING).text)
     }
 
     @Test
-    fun `caret inside an old marker lands after the new one`() {
+    fun caret_inside_an_old_marker_lands_after_the_new_one() {
         assertEquals(EditResult("1. a", 3, 3), line("- a", 1, 1, LinePrefix.NUMBERED))
     }
 
     // Checklists
 
     @Test
-    fun `checklist adds an unchecked box`() {
+    fun checklist_adds_an_unchecked_box() {
         assertEquals(EditResult("- [ ] milk", 6, 6), line("milk", 0, 0, LinePrefix.TASK))
     }
 
     @Test
-    fun `checklist is removed when every line is a checklist item`() {
+    fun checklist_is_removed_when_every_line_is_a_checklist_item() {
         assertEquals("a\nb", line("- [ ] a\n- [x] b", 0, 15, LinePrefix.TASK).text)
     }
 
     @Test
-    fun `checklist keeps existing ticks when converting mixed lines`() {
+    fun checklist_keeps_existing_ticks_when_converting_mixed_lines() {
         assertEquals("- [x] a\n- [ ] b", line("- [x] a\nb", 0, 9, LinePrefix.TASK).text)
     }
 
     @Test
-    fun `bullet turns a checklist item into a plain bullet`() {
+    fun bullet_turns_a_checklist_item_into_a_plain_bullet() {
         assertEquals("- a", line("- [ ] a", 7, 7, LinePrefix.BULLET).text)
     }
 
     @Test
-    fun `toggling a box flips between empty and x`() {
+    fun toggling_a_box_flips_between_empty_and_x() {
         assertEquals("- [x] a", toggleTaskAt("- [ ] a", 3))
         assertEquals("- [ ] a", toggleTaskAt("- [x] a", 3))
         assertEquals("- [ ] a", toggleTaskAt("- [X] a", 3))
     }
 
     @Test
-    fun `toggling a stale offset does nothing`() {
+    fun toggling_a_stale_offset_does_nothing() {
         assertEquals(null, toggleTaskAt("- [ ] a", 0))
         assertEquals(null, toggleTaskAt("- a", 2))
         assertEquals(null, toggleTaskAt("- [ ] a", 99))
@@ -242,7 +242,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `parser offsets toggle exactly the tapped item`() {
+    fun parser_offsets_toggle_exactly_the_tapped_item() {
         val source = "- [ ] a\n- [ ] b"
         val list = MarkdownParser.parse(source).single() as MdBlock.ListBlock
         val toggled = toggleTaskAt(source, list.items[1].task!!.markerOffset)
@@ -255,19 +255,19 @@ class MarkdownEditingTest {
     private val template = "| Column 1 | Column 2 |\n| --- | --- |\n|  |  |"
 
     @Test
-    fun `table in an empty page selects the first header`() {
+    fun table_in_an_empty_page_selects_the_first_header() {
         assertEquals(EditResult(template, 2, 10), insertTableTemplate("", 0, 0, headers))
     }
 
     @Test
-    fun `table after text on the same line starts after a blank line`() {
+    fun table_after_text_on_the_same_line_starts_after_a_blank_line() {
         val result = insertTableTemplate("intro", 5, 5, headers)
         assertEquals("intro\n\n$template", result.text)
         assertEquals("Column 1", result.text.substring(result.selStart, result.selEnd))
     }
 
     @Test
-    fun `table between lines is set off by blank lines and parses as a table`() {
+    fun table_between_lines_is_set_off_by_blank_lines_and_parses_as_a_table() {
         val result = insertTableTemplate("a\nb", 1, 1, headers)
         assertEquals("a\n\n$template\n\nb", result.text)
         val blocks = MarkdownParser.parse(result.text)
@@ -276,7 +276,7 @@ class MarkdownEditingTest {
     }
 
     @Test
-    fun `table is inserted after a selection, not over it`() {
+    fun table_is_inserted_after_a_selection_not_over_it() {
         val result = insertTableTemplate("keep me", 0, 7, headers)
         assertTrue(result.text.startsWith("keep me\n\n|"))
     }

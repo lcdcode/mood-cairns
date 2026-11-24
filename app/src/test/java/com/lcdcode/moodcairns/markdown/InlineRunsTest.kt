@@ -13,17 +13,17 @@ import org.junit.Test
 class InlineRunsTest {
 
     @Test
-    fun `empty input gives no runs`() {
+    fun empty_input_gives_no_runs() {
         assertEquals(emptyList<StyledRun>(), flattenInlines(emptyList()))
     }
 
     @Test
-    fun `plain text is one unstyled run`() {
+    fun plain_text_is_one_unstyled_run() {
         assertEquals(listOf(StyledRun("hello")), flattenInlines(listOf(Text("hello"))))
     }
 
     @Test
-    fun `nesting accumulates styles`() {
+    fun nesting_accumulates_styles() {
         assertEquals(
             listOf(
                 StyledRun("a"),
@@ -35,7 +35,7 @@ class InlineRunsTest {
     }
 
     @Test
-    fun `neighbours with the same style merge`() {
+    fun neighbours_with_the_same_style_merge() {
         assertEquals(
             listOf(StyledRun("ab", bold = true)),
             flattenInlines(listOf(Bold(listOf(Text("a"))), Bold(listOf(Text("b"))))),
@@ -43,7 +43,7 @@ class InlineRunsTest {
     }
 
     @Test
-    fun `strikethrough combines with other styles`() {
+    fun strikethrough_combines_with_other_styles() {
         assertEquals(
             listOf(StyledRun("x", italic = true, strikethrough = true)),
             flattenInlines(listOf(MdInline.Strikethrough(listOf(Italic(listOf(Text("x"))))))),
@@ -51,7 +51,7 @@ class InlineRunsTest {
     }
 
     @Test
-    fun `code inside bold keeps both`() {
+    fun code_inside_bold_keeps_both() {
         assertEquals(
             listOf(StyledRun("x", bold = true, code = true)),
             flattenInlines(listOf(Bold(listOf(Code("x"))))),
@@ -59,7 +59,7 @@ class InlineRunsTest {
     }
 
     @Test
-    fun `link children carry the destination`() {
+    fun link_children_carry_the_destination() {
         assertEquals(
             listOf(
                 StyledRun("see ", linkDestination = "u"),
@@ -70,7 +70,7 @@ class InlineRunsTest {
     }
 
     @Test
-    fun `soft and hard breaks become newlines in the surrounding run`() {
+    fun soft_and_hard_breaks_become_newlines_in_the_surrounding_run() {
         assertEquals(
             listOf(StyledRun("a\nb\nc")),
             flattenInlines(listOf(Text("a"), SoftBreak, Text("b"), HardBreak, Text("c"))),

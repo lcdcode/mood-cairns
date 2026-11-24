@@ -20,27 +20,27 @@ class ChartAxisTest {
         Scale(name = name, minValue = min, maxValue = max, colorArgb = 0, inverted = inverted)
 
     @Test
-    fun autoFit_labelsAreRawValues() {
+    fun auto_fit_labels_are_raw_values() {
         assertEquals("7", yAxisLabel(7.0, absoluteY = false, en))
         assertEquals("-3", yAxisLabel(-3.0, absoluteY = false, en))
         assertEquals("2.5", yAxisLabel(2.5, absoluteY = false, en))
     }
 
     @Test
-    fun absolute_labelsArePercentages() {
+    fun absolute_labels_are_percentages() {
         assertEquals("0%", yAxisLabel(0.0, absoluteY = true, en))
         assertEquals("50%", yAxisLabel(0.5, absoluteY = true, en))
         assertEquals("100%", yAxisLabel(1.0, absoluteY = true, en))
     }
 
     @Test
-    fun absolute_percentFollowsLocale() {
+    fun absolute_percent_follows_locale() {
         // German puts a (non-breaking) space before the percent sign.
         assertEquals("50\u00A0%", yAxisLabel(0.5, absoluteY = true, Locale.GERMANY))
     }
 
     @Test
-    fun singleScale_captionNamesItAndItsRange() {
+    fun single_scale_caption_names_it_and_its_range() {
         assertEquals(
             UiText.Res(R.string.charts_axis_caption_single, listOf("Mood", rangeLabel(1, 10, en))),
             yAxisCaption(listOf(scale("Mood", 1, 10)), absoluteY = false, en),
@@ -48,7 +48,7 @@ class ChartAxisTest {
     }
 
     @Test
-    fun singleNegativeScale_captionSpellsOutTheFloor() {
+    fun single_negative_scale_caption_spells_out_the_floor() {
         val caption = yAxisCaption(listOf(scale("Energy", -5, 5)), absoluteY = false, en)
         assertEquals(
             UiText.Res(
@@ -60,7 +60,7 @@ class ChartAxisTest {
     }
 
     @Test
-    fun builtInScale_captionUsesItsTranslatedName() {
+    fun built_in_scale_caption_uses_its_translated_name() {
         val happiness =
             Scale(name = "Happiness", minValue = 1, maxValue = 10, colorArgb = 0, isBuiltIn = true)
         assertEquals(
@@ -73,7 +73,7 @@ class ChartAxisTest {
     }
 
     @Test
-    fun multipleScales_captionWarnsTheAxisIsShared() {
+    fun multiple_scales_caption_warns_the_axis_is_shared() {
         val scales = listOf(scale("Mood", 1, 10), scale("Energy", -5, 5))
         assertEquals(
             UiText.Plural(R.plurals.charts_axis_caption_shared, 2),
@@ -82,7 +82,7 @@ class ChartAxisTest {
     }
 
     @Test
-    fun absolute_captionIgnoresScalesAndExplainsPercent() {
+    fun absolute_caption_ignores_scales_and_explains_percent() {
         val scales = listOf(scale("Mood", 1, 10), scale("Pain", -5, 5, inverted = true))
         assertEquals(
             UiText.Res(R.string.charts_axis_caption_absolute),
@@ -95,7 +95,7 @@ class ChartAxisTest {
     }
 
     @Test
-    fun noScales_captionStaysGeneric() {
+    fun no_scales_caption_stays_generic() {
         assertEquals(
             UiText.Res(R.string.charts_axis_caption_values),
             yAxisCaption(emptyList(), absoluteY = false, en),

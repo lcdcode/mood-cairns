@@ -20,7 +20,7 @@ class StringResourceConventionsTest {
         parseStrings(File(resDir, "values/strings.xml"))
 
     @Test
-    fun englishPlaceholders_arePositional() {
+    fun english_placeholders_are_positional() {
         val offenders = english.filter { (_, entry) ->
             entry.texts.any { text ->
                 FORMAT_SPECIFIER.findAll(text).any { !it.value.contains('$') }
@@ -30,7 +30,7 @@ class StringResourceConventionsTest {
     }
 
     @Test
-    fun englishPlurals_useTheSamePlaceholdersInEveryQuantity() {
+    fun english_plurals_use_the_same_placeholders_in_every_quantity() {
         val offenders = english.filter { (_, entry) ->
             entry.texts.map(::placeholders).distinct().size > 1
         }.keys
@@ -43,7 +43,7 @@ class StringResourceConventionsTest {
      * placeholder, which would crash String.format.
      */
     @Test
-    fun translations_keepEnglishPlaceholders() {
+    fun translations_keep_english_placeholders() {
         val mismatches = translationFiles().flatMap { file ->
             val locale = file.parentFile?.name ?: file.path
             parseStrings(file).mapNotNull { (name, entry) ->

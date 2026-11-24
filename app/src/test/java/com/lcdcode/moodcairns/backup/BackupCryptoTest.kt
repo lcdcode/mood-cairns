@@ -16,7 +16,7 @@ class BackupCryptoTest {
     private val fastIter = 1000
 
     @Test
-    fun encryptDecrypt_roundTrips_withPassphrase() {
+    fun encrypt_decrypt_round_trips_with_passphrase() {
         val salt = BackupCrypto.newSalt()
         val key = BackupCrypto.deriveKey("correct horse battery".toCharArray(), salt, fastIter)
         val plaintext = "{\"schemaVersion\":1}".toByteArray()
@@ -28,7 +28,7 @@ class BackupCryptoTest {
     }
 
     @Test
-    fun decrypt_failsWithWrongPassphrase() {
+    fun decrypt_fails_with_wrong_passphrase() {
         val salt = BackupCrypto.newSalt()
         val enc = BackupCrypto.encrypt(
             BackupCrypto.deriveKey("right-passphrase".toCharArray(), salt, fastIter),
@@ -43,7 +43,7 @@ class BackupCryptoTest {
     }
 
     @Test
-    fun legacyBackup_decrypts_whenDerivedWithItsRecordedIterations() {
+    fun legacy_backup_decrypts_when_derived_with_its_recorded_iterations() {
         // A backup made before the default iteration count was raised must still
         // open: decryption keys off the iteration count stored in the envelope,
         // not whatever the current default happens to be. Here a short numeric

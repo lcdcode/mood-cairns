@@ -28,20 +28,20 @@ class OncePerDayStartTest {
     )
 
     @Test
-    fun deferredDay_startsSleepAtMinimum_andLeavesRegularScales() {
+    fun deferred_day_starts_sleep_at_minimum_and_leaves_regular_scales() {
         val state = newEntry(deferredDay).withOncePerDayStarts()
 
         assertEquals(mapOf(1L to 5f, 6L to 0f), state.values)
     }
 
     @Test
-    fun freshDayOrLoading_startsSleepAtItsDefault() {
+    fun fresh_day_or_loading_starts_sleep_at_its_default() {
         assertEquals(7.5f, newEntry(DayScaleLog()).withOncePerDayStarts().values[6L])
         assertEquals(7.5f, newEntry(null).withOncePerDayStarts().values[6L])
     }
 
     @Test
-    fun changingToAFreshDay_restoresTheDefault() {
+    fun changing_to_a_fresh_day_restores_the_default() {
         val onDeferredDay = newEntry(deferredDay).withOncePerDayStarts()
 
         val movedDay = onDeferredDay.copy(elsewhereThatDay = DayScaleLog()).withOncePerDayStarts()
@@ -50,7 +50,7 @@ class OncePerDayStartTest {
     }
 
     @Test
-    fun touchedSlider_isNeverReset() {
+    fun touched_slider_is_never_reset() {
         val touched = newEntry(deferredDay).copy(
             values = mapOf(1L to 5f, 6L to 9f),
             touchedScaleIds = setOf(6L),
@@ -60,7 +60,7 @@ class OncePerDayStartTest {
     }
 
     @Test
-    fun editedEntry_isLeftAlone() {
+    fun edited_entry_is_left_alone() {
         val editing = newEntry(deferredDay).copy(editingId = 42L, values = mapOf(1L to 3f))
 
         assertEquals(mapOf(1L to 3f), editing.withOncePerDayStarts().values)
@@ -68,7 +68,7 @@ class OncePerDayStartTest {
     }
 
     @Test
-    fun reaskHint_showsOnlyForAOncePerDayScaleOnADeferredDay() {
+    fun reask_hint_shows_only_for_a_once_per_day_scale_on_a_deferred_day() {
         assertEquals(true, newEntry(deferredDay).isReasked(sleep))
         assertEquals(false, newEntry(DayScaleLog(answered = setOf(1L))).isReasked(sleep))
         assertEquals(false, newEntry(null).isReasked(sleep))
@@ -76,7 +76,7 @@ class OncePerDayStartTest {
     }
 
     @Test
-    fun regularScale_alwaysStartsAtItsDefault() {
+    fun regular_scale_always_starts_at_its_default() {
         val regularInDeferredSet = DayScaleLog(deferred = setOf(1L))
 
         assertEquals(5f, happiness.startValue(regularInDeferredSet.deferred))

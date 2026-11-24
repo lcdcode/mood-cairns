@@ -22,7 +22,7 @@ class ScaleValueRemapTest {
     private val remapSql = ScaleSql.REFLECT_VALUES.replace(Regex(":\\w+"), "?")
 
     @Test
-    fun remap_reflectsValues_onlyForTargetScale() {
+    fun remap_reflects_values_only_for_target_scale() {
         connectMemory().use { c ->
             createSchema(c)
             insertScale(c, id = 1, name = "Pain", min = 1, max = 10)
@@ -39,7 +39,7 @@ class ScaleValueRemapTest {
     }
 
     @Test
-    fun remap_handlesNegativeRanges() {
+    fun remap_handles_negative_ranges() {
         connectMemory().use { c ->
             createSchema(c)
             insertScale(c, id = 1, name = "Balance", min = -5, max = 5)
@@ -56,7 +56,7 @@ class ScaleValueRemapTest {
     }
 
     @Test
-    fun remap_appliedTwice_restoresOriginals_andStaysOnStepGrid() {
+    fun remap_applied_twice_restores_originals_and_stays_on_step_grid() {
         connectMemory().use { c ->
             createSchema(c)
             // 0..10 with step 2.5: recorded values sit on the quarter-grid.
@@ -73,7 +73,7 @@ class ScaleValueRemapTest {
     }
 
     @Test
-    fun remap_clampsIntoNewRange_whenSameSaveShrinksIt() {
+    fun remap_clamps_into_new_range_when_same_save_shrinks_it() {
         connectMemory().use { c ->
             createSchema(c)
             // Scale was 1..10; the same save flips direction AND shrinks max to 5.

@@ -13,7 +13,7 @@ import org.junit.Test
 class HardcodedUiTextTest {
 
     @Test
-    fun extractedFiles_haveNoLiteralUiText() {
+    fun extracted_files_have_no_literal_ui_text() {
         val sourceRoot = sequenceOf("src/main/java", "app/src/main/java")
             .map { File(it, "com/lcdcode/moodcairns") }
             .firstOrNull(File::isDirectory)

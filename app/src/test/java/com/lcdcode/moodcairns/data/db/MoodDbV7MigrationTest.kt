@@ -23,7 +23,7 @@ class MoodDbV7MigrationTest {
     private val oncePerDaySql = ", `oncePerDay` INTEGER NOT NULL DEFAULT 0)"
 
     @Test
-    fun scaleTable_isV6PlusOncePerDay() {
+    fun scale_table_is_v6_plus_once_per_day() {
         val v7ScaleSql = createSqlFromSchema("7.json", "scale")
         assertTrue("7.json scale must end with oncePerDay", v7ScaleSql.endsWith(oncePerDaySql))
         assertEquals(
@@ -37,7 +37,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun otherTables_areUnchangedInV7() {
+    fun other_tables_are_unchanged_in_v7() {
         for (table in listOf("entry", "entry_value", "tag", "entry_tag", "tag_category")) {
             assertEquals(
                 "$table must not change in v7",
@@ -48,7 +48,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun migratedScaleTable_matchesV7Columns() {
+    fun migrated_scale_table_matches_v7_columns() {
         connectV6().use { c ->
             runStatements(c, MoodDbMigrationSql.V6_TO_V7)
 
@@ -61,7 +61,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun migration_seedsSleepAfterExistingScales_withEverySeedField() {
+    fun migration_seeds_sleep_after_existing_scales_with_every_seed_field() {
         connectV6().use { c ->
             insertScale(c, id = 1, name = "Happiness", sortOrder = 0)
             insertScale(c, id = 2, name = "Pain", sortOrder = 7)
@@ -86,7 +86,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun migration_leavesExistingScalesDailyNotOncePerDay() {
+    fun migration_leaves_existing_scales_daily_not_once_per_day() {
         connectV6().use { c ->
             insertScale(c, id = 1, name = "Happiness", sortOrder = 0)
 
@@ -97,7 +97,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun migration_keepsUsersOwnSleepScale_untouched() {
+    fun migration_keeps_users_own_sleep_scale_untouched() {
         connectV6().use { c ->
             insertScale(c, id = 4, name = "Sleep", sortOrder = 2)
 
@@ -111,7 +111,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun migration_onEmptyScaleTable_seedsSleepFirst() {
+    fun migration_on_empty_scale_table_seeds_sleep_first() {
         connectV6().use { c ->
             runStatements(c, MoodDbMigrationSql.V6_TO_V7)
 
@@ -120,7 +120,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun sleepSeed_isIdempotent() {
+    fun sleep_seed_is_idempotent() {
         connectV6().use { c ->
             runStatements(c, MoodDbMigrationSql.V6_TO_V7)
             exec(c, MoodDbMigrationSql.seedScaleInsert(Seed.sleepScale))
@@ -130,7 +130,7 @@ class MoodDbV7MigrationTest {
     }
 
     @Test
-    fun freshInstallSeed_includesSleepOncePerDay_andOtherScalesAreNot() {
+    fun fresh_install_seed_includes_sleep_once_per_day_and_other_scales_are_not() {
         val (oncePerDay, regular) = Seed.scales.partition { it.oncePerDay }
         assertEquals(listOf(Seed.sleepScale), oncePerDay)
         assertEquals(Seed.scales.indices.toList(), Seed.scales.map { it.sortOrder })

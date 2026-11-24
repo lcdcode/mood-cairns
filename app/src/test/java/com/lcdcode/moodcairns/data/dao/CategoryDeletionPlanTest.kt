@@ -15,7 +15,7 @@ class CategoryDeletionPlanTest {
         tag(id, name, sortOrder, TagCategory.OTHER_ID)
 
     @Test
-    fun emptyCategory_plansNothing() {
+    fun empty_category_plans_nothing() {
         val plan = planCategoryDeletion(emptyList(), listOf(other(9, "Misc", 0)))
 
         assertTrue(plan.moves.isEmpty())
@@ -23,7 +23,7 @@ class CategoryDeletionPlanTest {
     }
 
     @Test
-    fun tags_appendAfterOther_inTheirCurrentOrder() {
+    fun tags_append_after_other_in_their_current_order() {
         val plan = planCategoryDeletion(
             tags = listOf(tag(1, "Yoga", sortOrder = 1), tag(2, "Gym", sortOrder = 0)),
             otherTags = listOf(other(9, "Misc", sortOrder = 4)),
@@ -34,14 +34,14 @@ class CategoryDeletionPlanTest {
     }
 
     @Test
-    fun emptyOther_startsAtZero() {
+    fun empty_other_starts_at_zero() {
         val plan = planCategoryDeletion(listOf(tag(1, "Gym", sortOrder = 3)), emptyList())
 
         assertEquals(listOf(TagMove(1, 0)), plan.moves)
     }
 
     @Test
-    fun sameNameAsAnOtherTag_mergesInsteadOfMoving() {
+    fun same_name_as_an_other_tag_merges_instead_of_moving() {
         val plan = planCategoryDeletion(
             tags = listOf(tag(1, "Gym", sortOrder = 0), tag(2, "Yoga", sortOrder = 1)),
             otherTags = listOf(other(9, "Gym", sortOrder = 0)),
@@ -52,7 +52,7 @@ class CategoryDeletionPlanTest {
     }
 
     @Test
-    fun nameMatch_isCaseSensitive_likeTheUniqueIndex() {
+    fun name_match_is_case_sensitive_like_the_unique_index() {
         val plan = planCategoryDeletion(
             tags = listOf(tag(1, "gym", sortOrder = 0)),
             otherTags = listOf(other(9, "Gym", sortOrder = 0)),
@@ -63,7 +63,7 @@ class CategoryDeletionPlanTest {
     }
 
     @Test
-    fun sortOrderTies_breakByName() {
+    fun sort_order_ties_break_by_name() {
         val plan = planCategoryDeletion(
             tags = listOf(tag(1, "yoga", sortOrder = 0), tag(2, "Gym", sortOrder = 0)),
             otherTags = emptyList(),

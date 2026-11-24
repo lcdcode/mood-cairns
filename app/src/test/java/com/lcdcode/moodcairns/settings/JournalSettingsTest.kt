@@ -9,12 +9,12 @@ import org.junit.Test
 class JournalSettingsTest {
 
     @Test
-    fun `journal is enabled by default`() {
+    fun journal_is_enabled_by_default() {
         assertTrue(JournalSettings(InMemoryPrefs()).enabled.value)
     }
 
     @Test
-    fun `disabling updates the flow and persists`() {
+    fun disabling_updates_the_flow_and_persists() {
         val prefs = InMemoryPrefs()
         val settings = JournalSettings(prefs)
         settings.setEnabled(false)
@@ -23,7 +23,7 @@ class JournalSettingsTest {
     }
 
     @Test
-    fun `stored value is read on creation`() {
+    fun stored_value_is_read_on_creation() {
         val prefs = InMemoryPrefs()
         JournalSettings(prefs).setEnabled(false)
         assertFalse(JournalSettings(prefs).enabled.value)

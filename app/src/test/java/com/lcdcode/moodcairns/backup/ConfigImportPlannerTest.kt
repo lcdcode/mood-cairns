@@ -20,7 +20,7 @@ class ConfigImportPlannerTest {
     // ---- scales ----
 
     @Test
-    fun noEntries_appliesUpdatesInsertsAndDeletes() {
+    fun no_entries_applies_updates_inserts_and_deletes() {
         val local = local(scales = listOf(scale(1, "Happiness"), scale(2, "Anxiety")))
         val incoming = incoming(
             scales = listOf(scale(9, "Happiness", color = RED), scale(10, "Sleep")),
@@ -34,7 +34,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun builtInFlag_keepsLocalValueAndIsOnlyTrustedForSeedNames() {
+    fun built_in_flag_keeps_local_value_and_is_only_trusted_for_seed_names() {
         val local = local(scales = listOf(scale(1, "Happiness", builtIn = true)))
         val incoming = incoming(
             scales = listOf(
@@ -54,7 +54,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun usedScaleMissingFromFile_isRefused() {
+    fun used_scale_missing_from_file_is_refused() {
         val sleep = scale(5, "Sleep")
         val local = local(scales = listOf(sleep), scaleUsage = mapOf(5L to usage(3, 1f, 9f)))
 
@@ -64,7 +64,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun builtInScaleMissingFromOlderFile_isKept_evenWhenUsed() {
+    fun built_in_scale_missing_from_older_file_is_kept_even_when_used() {
         val sleep = scale(6, "Sleep", builtIn = true)
         val happiness = scale(1, "Happiness", builtIn = true)
         val local = local(
@@ -80,7 +80,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun usedScaleWithFlippedDirection_isRefused() {
+    fun used_scale_with_flipped_direction_is_refused() {
         val stress = scale(5, "Stress")
         val local = local(scales = listOf(stress), scaleUsage = mapOf(5L to usage(2, 1f, 9f)))
         val incoming = incoming(scales = listOf(scale(5, "Stress", inverted = true)))
@@ -94,7 +94,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun usedScaleWithRangeExcludingRecordedValues_isRefused() {
+    fun used_scale_with_range_excluding_recorded_values_is_refused() {
         val pain = scale(5, "Pain", min = 1, max = 10)
         val local = local(scales = listOf(pain), scaleUsage = mapOf(5L to usage(4, 1f, 9f)))
         val incoming = incoming(scales = listOf(scale(5, "Pain", min = 1, max = 5)))
@@ -110,7 +110,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun usedScaleWithRangeStillCoveringRecordedValues_isAllowed() {
+    fun used_scale_with_range_still_covering_recorded_values_is_allowed() {
         val local = local(
             scales = listOf(scale(5, "Pain", min = 1, max = 10)),
             scaleUsage = mapOf(5L to usage(4, 2f, 8f)),
@@ -124,7 +124,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun unusedScale_mayFlipAndShrink() {
+    fun unused_scale_may_flip_and_shrink() {
         val local = local(scales = listOf(scale(5, "Pain", min = 1, max = 10)))
         val shrunkAndFlipped = scale(5, "Pain", min = 1, max = 3, inverted = true)
         val incoming = incoming(scales = listOf(shrunkAndFlipped))
@@ -135,7 +135,7 @@ class ConfigImportPlannerTest {
     // ---- tags and categories ----
 
     @Test
-    fun usedTagMissingFromFile_isRefusedWithItsCategory() {
+    fun used_tag_missing_from_file_is_refused_with_its_category() {
         val gym = tag(4, "Gym", category = "PLACE")
         val local = local(tags = listOf(gym), tagUsage = mapOf(4L to 2))
 
@@ -146,7 +146,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun usedTagMovedToAnotherCategory_isRefused() {
+    fun used_tag_moved_to_another_category_is_refused() {
         val local = local(
             tags = listOf(tag(4, "Gym", category = "PLACE")),
             tagUsage = mapOf(4L to 1),
@@ -159,7 +159,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun matchedTags_keepLocalIdAndTakeFileLayout_unusedTagsAreDeleted() {
+    fun matched_tags_keep_local_id_and_take_file_layout_unused_tags_are_deleted() {
         val local = local(
             tags = listOf(tag(4, "Gym", "PLACE"), tag(5, "Old", "PLACE")),
             tagUsage = mapOf(4L to 9),
@@ -179,7 +179,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun userCategories_matchByName_soUsedTagsInThemSurvive() {
+    fun user_categories_match_by_name_so_used_tags_in_them_survive() {
         val localHealth = TagCategory(id = "local-uuid", label = "Health", sortOrder = 0)
         val fileHealth = TagCategory(id = "file-uuid", label = "Health", sortOrder = 4)
         val local = local(
@@ -200,7 +200,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun newCategoryWhoseIdIsTakenLocally_getsAFreshId() {
+    fun new_category_whose_id_is_taken_locally_gets_a_fresh_id() {
         val localWork = TagCategory(id = "c1", label = "Work stuff", sortOrder = 0)
         val fileHobbies = TagCategory(id = "c1", label = "Hobbies", sortOrder = 0)
         val local = local(categories = SeedTagCategories.all + localWork)
@@ -217,7 +217,7 @@ class ConfigImportPlannerTest {
     }
 
     @Test
-    fun everyConflictIsReported_scalesBeforeTags() {
+    fun every_conflict_is_reported_scales_before_tags() {
         val local = local(
             scales = listOf(scale(1, "Sleep")),
             tags = listOf(tag(2, "Gym", "PLACE")),
@@ -235,7 +235,7 @@ class ConfigImportPlannerTest {
     // ---- prompt windows ----
 
     @Test
-    fun windows_matchBySlotAndLabel_keepingLocalIds() {
+    fun windows_match_by_slot_and_label_keeping_local_ids() {
         val morning = window(1, "Morning", PromptSlot.MORNING, hour = 8)
         val extra = window(2, "Lunch", PromptSlot.CUSTOM, hour = 12)
         val incoming = listOf(

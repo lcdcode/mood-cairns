@@ -14,7 +14,7 @@ class ConfigIssueTextTest {
     private val sleep = Scale(id = 1, name = "Sleep", minValue = 1, maxValue = 10, colorArgb = 0)
 
     @Test
-    fun unsupportedVersion_namesTheKindOfFile() {
+    fun unsupported_version_names_the_kind_of_file() {
         assertEquals(
             listOf(UiText.Res(R.string.backup_config_incompatible_version, listOf(7))),
             ConfigIssue.UnsupportedVersion(found = 7, fromConfigFile = true).toUiTexts(),
@@ -26,7 +26,7 @@ class ConfigIssueTextTest {
     }
 
     @Test
-    fun dataLoss_listsConflictsAfterTheExplanation() {
+    fun data_loss_lists_conflicts_after_the_explanation() {
         val conflict = ConfigConflict.ScaleMissing(sleep, entryCount = 3)
 
         val texts = ConfigIssue.WouldLoseData(listOf(conflict)).toUiTexts()
@@ -41,7 +41,7 @@ class ConfigIssueTextTest {
     }
 
     @Test
-    fun dataLoss_capsTheListAndCountsTheRest() {
+    fun data_loss_caps_the_list_and_counts_the_rest() {
         val conflicts = List(MAX_LISTED_CONFLICTS + 3) {
             ConfigConflict.ScaleMissing(sleep, entryCount = it + 1)
         }
@@ -53,7 +53,7 @@ class ConfigIssueTextTest {
     }
 
     @Test
-    fun conflicts_passCountNameAndRangeAsArgs() {
+    fun conflicts_pass_count_name_and_range_as_args() {
         assertEquals(
             UiText.Plural(
                 R.plurals.backup_config_conflict_scale_range,
@@ -66,7 +66,7 @@ class ConfigIssueTextTest {
     }
 
     @Test
-    fun tagConflict_namesACustomCategoryByItsLabel() {
+    fun tag_conflict_names_a_custom_category_by_its_label() {
         val tag = Tag(id = 1, name = "Chess", categoryId = "c1")
         val category = TagCategory(id = "c1", label = "Hobbies", sortOrder = 0)
 
@@ -81,7 +81,7 @@ class ConfigIssueTextTest {
     }
 
     @Test
-    fun tagConflict_withMissingCategory_isShownUnderOther() {
+    fun tag_conflict_with_missing_category_is_shown_under_other() {
         val tag = Tag(id = 1, name = "Chess", categoryId = "gone")
 
         assertEquals(

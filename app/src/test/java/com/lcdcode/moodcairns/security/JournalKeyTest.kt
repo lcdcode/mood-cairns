@@ -10,7 +10,7 @@ class JournalKeyTest {
     private fun hex(s: String): ByteArray = s.chunked(2).map { it.toInt(16).toByte() }.toByteArray()
 
     @Test
-    fun `hkdf expand matches RFC 5869 test case 1`() {
+    fun hkdf_expand_matches_rfc_5869_test_case_1() {
         // RFC 5869 A.1: the first 32 bytes of OKM are exactly T(1).
         val prk = hex("077709362c2e32df0ddc3f0dc47bba6390b6c73bb50f9c3122ec844ad7c2b3e5")
         val info = hex("f0f1f2f3f4f5f6f7f8f9")
@@ -21,7 +21,7 @@ class JournalKeyTest {
     }
 
     @Test
-    fun `derivation is frozen`() {
+    fun derivation_is_frozen() {
         // Computed independently (Python hmac). If this fails, existing journals become
         // unreadable: never update the expected value, revert the change instead.
         val dbKey = ByteArray(32) { it.toByte() }
@@ -32,7 +32,7 @@ class JournalKeyTest {
     }
 
     @Test
-    fun `derived key is 32 bytes and differs from the db key`() {
+    fun derived_key_is_32_bytes_and_differs_from_the_db_key() {
         val dbKey = ByteArray(32) { 7 }
         val journalKey = JournalKey.derive(dbKey)
         assertEquals(JournalKey.KEY_BYTES, journalKey.size)
@@ -40,14 +40,14 @@ class JournalKeyTest {
     }
 
     @Test
-    fun `different db keys give different journal keys`() {
+    fun different_db_keys_give_different_journal_keys() {
         val a = JournalKey.derive(ByteArray(32) { 1 })
         val b = JournalKey.derive(ByteArray(32) { 2 })
         assertFalse(a.contentEquals(b))
     }
 
     @Test
-    fun `derive leaves the db key untouched`() {
+    fun derive_leaves_the_db_key_untouched() {
         val dbKey = ByteArray(32) { it.toByte() }
         JournalKey.derive(dbKey)
         assertArrayEquals(ByteArray(32) { it.toByte() }, dbKey)

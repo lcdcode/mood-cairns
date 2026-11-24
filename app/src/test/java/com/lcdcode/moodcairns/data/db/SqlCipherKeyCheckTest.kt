@@ -13,7 +13,7 @@ class SqlCipherKeyCheckTest {
      * still extend android.database.SQLException before updating it.
      */
     @Test
-    fun `sqlcipher-android defines no exception types of its own`() {
+    fun sqlcipher_android_defines_no_exception_types_of_its_own() {
         val candidates = listOf(
             "net.zetetic.database.sqlcipher.SQLiteException",
             "net.zetetic.database.sqlcipher.SQLiteDatabaseCorruptException",
@@ -31,7 +31,7 @@ class SqlCipherKeyCheckTest {
     }
 
     @Test
-    fun `the platform corruption exception is caught as SQLException`() {
+    fun the_platform_corruption_exception_is_caught_as_sqlexception() {
         assertTrue(
             android.database.SQLException::class.java.isAssignableFrom(
                 android.database.sqlite.SQLiteDatabaseCorruptException::class.java,
@@ -40,7 +40,7 @@ class SqlCipherKeyCheckTest {
     }
 
     @Test
-    fun `the SQLCipher library is on the test classpath`() {
+    fun the_sqlcipher_library_is_on_the_test_classpath() {
         // Guards the canary above against passing only because the library is missing.
         Class.forName("net.zetetic.database.sqlcipher.SQLiteDatabase")
     }

@@ -37,7 +37,7 @@ class BiometricSlotsTest {
     // --- legacy retirement -------------------------------------------------------------------
 
     @Test
-    fun `no legacy key means nothing to do and nothing written`() {
+    fun no_legacy_key_means_nothing_to_do_and_nothing_written() {
         givenPinWithFullWrap()
         val before = prefs.values.toMap()
         assertEquals(LegacyCleanup.NONE, slots.retireLegacyAfterVerifiedUnlock())
@@ -45,7 +45,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `legacy key is removed durably in PIN mode and re-enrollment is offered`() {
+    fun legacy_key_is_removed_durably_in_pin_mode_and_re_enrollment_is_offered() {
         givenPinWithFullWrap()
         givenLegacyKey()
         assertEquals(LegacyCleanup.REMOVED, slots.retireLegacyAfterVerifiedUnlock())
@@ -57,7 +57,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `legacy key is removed in no-PIN mode without an offer`() {
+    fun legacy_key_is_removed_in_no_pin_mode_without_an_offer() {
         prefs.values[LockPrefKeys.DBK_NOPIN] = encode(dbKey)
         givenLegacyKey()
         assertEquals(LegacyCleanup.REMOVED, slots.retireLegacyAfterVerifiedUnlock())
@@ -66,7 +66,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `legacy key is kept when it is the only copy of the DB key`() {
+    fun legacy_key_is_kept_when_it_is_the_only_copy_of_the_db_key() {
         prefs.values[LockPrefKeys.PIN_HASH] = "hash"
         givenLegacyKey()
         val before = prefs.values.toMap()
@@ -75,7 +75,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `legacy key is kept when the PIN wrap is incomplete`() {
+    fun legacy_key_is_kept_when_the_pin_wrap_is_incomplete() {
         LockPrefKeys.PIN_WRAP_KEYS.forEach { missing ->
             val prefs = InMemoryPrefs()
             val slots = BiometricSlots(prefs)
@@ -89,7 +89,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `retirement is idempotent`() {
+    fun retirement_is_idempotent() {
         givenPinWithFullWrap()
         givenLegacyKey()
         slots.retireLegacyAfterVerifiedUnlock()
@@ -99,7 +99,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `legacy key loads for adoption only when it is a well-formed DB key`() {
+    fun legacy_key_loads_for_adoption_only_when_it_is_a_well_formed_db_key() {
         assertNull(slots.loadLegacyKeyForAdoption())
         givenLegacyKey()
         assertArrayEquals(dbKey, slots.loadLegacyKeyForAdoption())
@@ -112,7 +112,7 @@ class BiometricSlotsTest {
     // --- enrollment ----------------------------------------------------------------------------
 
     @Test
-    fun `enrollment is stored durably, turns biometric on and clears the offer`() {
+    fun enrollment_is_stored_durably_turns_biometric_on_and_clears_the_offer() {
         slots.setOffer(BiometricOffer.UPGRADE)
         assertTrue(slots.saveEnrollment(blob))
         assertTrue(slots.isEnrolled())
@@ -124,14 +124,14 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `missing and corrupt blobs are told apart`() {
+    fun missing_and_corrupt_blobs_are_told_apart() {
         assertEquals(BlobRead.Absent, slots.loadBlob())
         prefs.values[LockPrefKeys.DBK_BIO_V2] = "garbage"
         assertEquals(BlobRead.Corrupt, slots.loadBlob())
     }
 
     @Test
-    fun `clearing the enrollment turns biometric off durably`() {
+    fun clearing_the_enrollment_turns_biometric_off_durably() {
         slots.saveEnrollment(blob)
         slots.clearEnrollment()
         assertFalse(slots.isEnrolled())
@@ -141,7 +141,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `enrolled needs both the flag and the blob`() {
+    fun enrolled_needs_both_the_flag_and_the_blob() {
         prefs.values[LockPrefKeys.BIOMETRIC_ENABLED] = true
         assertFalse("flag without blob, as on every pre-fix install", slots.isEnrolled())
         prefs.values[LockPrefKeys.DBK_BIO_V2] = blob.encode()
@@ -150,7 +150,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `a legacy raw key never counts as an enrollment`() {
+    fun a_legacy_raw_key_never_counts_as_an_enrollment() {
         givenLegacyKey()
         assertFalse(slots.isEnrolled())
         assertEquals(BlobRead.Absent, slots.loadBlob())
@@ -159,7 +159,7 @@ class BiometricSlotsTest {
     // --- offer ---------------------------------------------------------------------------------
 
     @Test
-    fun `offer round trips and clears`() {
+    fun offer_round_trips_and_clears() {
         BiometricOffer.entries.forEach {
             slots.setOffer(it)
             assertEquals(it, slots.offer())
@@ -169,7 +169,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `unknown stored offer reads as none`() {
+    fun unknown_stored_offer_reads_as_none() {
         prefs.values[LockPrefKeys.BIO_OFFER] = "SOMETHING_ELSE"
         assertNull(slots.offer())
     }
@@ -177,7 +177,7 @@ class BiometricSlotsTest {
     // --- data-safety invariant -----------------------------------------------------------------
 
     @Test
-    fun `no biometric operation touches the authoritative keys`() {
+    fun no_biometric_operation_touches_the_authoritative_keys() {
         givenPinWithFullWrap()
         prefs.values[LockPrefKeys.DBK_NOPIN] = encode(dbKey)
         givenLegacyKey()
@@ -205,7 +205,7 @@ class BiometricSlotsTest {
     // --- PIN wrap state -------------------------------------------------------------------------
 
     @Test
-    fun `PIN wrap state truth table`() {
+    fun pin_wrap_state_truth_table() {
         assertEquals(PinWrapState.OPENED, pinWrapState(hasAnyWrapPart = true, unwrapped = true))
         assertEquals(
             PinWrapState.UNREADABLE,
@@ -215,7 +215,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `a partial PIN wrap never allows a new DB key`() {
+    fun a_partial_pin_wrap_never_allows_a_new_db_key() {
         val state = pinWrapState(hasAnyWrapPart = true, unwrapped = false)
         assertTrue(pinUnlockKeySource(state, hasLegacyBioKey = false) != PinKeySource.FRESH)
     }
@@ -223,7 +223,7 @@ class BiometricSlotsTest {
     // --- PIN key source ------------------------------------------------------------------------
 
     @Test
-    fun `PIN key source truth table`() {
+    fun pin_key_source_truth_table() {
         val expected = mapOf(
             (PinWrapState.OPENED to false) to PinKeySource.UNWRAPPED,
             (PinWrapState.OPENED to true) to PinKeySource.UNWRAPPED,
@@ -239,7 +239,7 @@ class BiometricSlotsTest {
     }
 
     @Test
-    fun `a new DB key is never created while a legacy key or a stored wrap exists`() {
+    fun a_new_db_key_is_never_created_while_a_legacy_key_or_a_stored_wrap_exists() {
         PinWrapState.entries.forEach { wrap ->
             listOf(false, true).forEach { legacy ->
                 val source = pinUnlockKeySource(wrap, legacy)

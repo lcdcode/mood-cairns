@@ -30,18 +30,18 @@ class JournalMarkdownExportTest {
         }
 
     @Test
-    fun `file names follow the daily note convention`() {
+    fun file_names_follow_the_daily_note_convention() {
         assertEquals("2026-11-01.md", JournalMarkdown.fileName(nov1))
     }
 
     @Test
-    fun `file content is the page with a final newline`() {
+    fun file_content_is_the_page_with_a_final_newline() {
         assertEquals("# Hi\n", JournalMarkdown.fileContent("# Hi"))
         assertEquals("# Hi\n", JournalMarkdown.fileContent("# Hi\n"))
     }
 
     @Test
-    fun `the zip holds one markdown file per day, in the order written`() {
+    fun the_zip_holds_one_markdown_file_per_day_in_the_order_written() {
         val archive = zip { w ->
             w.addPage(nov1, "# Monday\n- [x] walk", edited)
             w.addPage(nov2, "Сегодня **хорошо** 😀", edited)
@@ -56,12 +56,12 @@ class JournalMarkdownExportTest {
     }
 
     @Test
-    fun `an empty journal gives a valid empty zip`() {
+    fun an_empty_journal_gives_a_valid_empty_zip() {
         assertEquals(emptyList<Entry>(), entries(zip { }))
     }
 
     @Test
-    fun `closing the writer leaves the caller's stream open`() {
+    fun closing_the_writer_leaves_the_callers_stream_open() {
         var closed = false
         val out = object : ByteArrayOutputStream() {
             override fun close() {

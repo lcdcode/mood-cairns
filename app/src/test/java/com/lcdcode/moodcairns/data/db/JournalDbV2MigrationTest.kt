@@ -24,7 +24,7 @@ class JournalDbV2MigrationTest {
     fun close() = connection.close()
 
     @Test
-    fun `migration sql creates exactly the exported v2 table`() {
+    fun migration_sql_creates_exactly_the_exported_v2_table() {
         val migrationCreate = JournalDbMigrationSql.V1_TO_V2_TABLE.first()
             .replace("journal_doc_v2", "journal_doc")
             .replace("CREATE TABLE IF NOT EXISTS", "")
@@ -34,7 +34,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `migrated table matches a fresh v2 table column for column`() {
+    fun migrated_table_matches_a_fresh_v2_table_column_for_column() {
         seedV1()
         migrate()
         val fresh = JournalSchemaFixture.open(2)
@@ -47,7 +47,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `every page keeps its id, day, timestamps and body`() {
+    fun every_page_keeps_its_id_day_timestamps_and_body() {
         seedV1()
         migrate()
         val rows = query("SELECT id, day, createdAt, updatedAt, body FROM journal_doc ORDER BY id")
@@ -62,7 +62,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `previews are filled from the bodies`() {
+    fun previews_are_filled_from_the_bodies() {
         seedV1()
         migrate()
         val previews = query("SELECT body, preview FROM journal_doc ORDER BY id")
@@ -71,7 +71,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `search finds migrated pages`() {
+    fun search_finds_migrated_pages() {
         seedV1()
         migrate()
         assertEquals(listOf("2026-11-01"), searchDays(connection, "milk"))
@@ -79,7 +79,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `search stays in sync after migration`() {
+    fun search_stays_in_sync_after_migration() {
         seedV1()
         migrate()
         assertEquals(1, updateBodyByDay(connection, "2026-11-02", "rainy evening", 999L))
@@ -92,14 +92,14 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `day stays unique after migration`() {
+    fun day_stays_unique_after_migration() {
         seedV1()
         migrate()
         assertThrows(SQLException::class.java) { insertV2("2026-11-01", "duplicate") }
     }
 
     @Test
-    fun `new ids continue after the highest migrated id`() {
+    fun new_ids_continue_after_the_highest_migrated_id() {
         seedV1()
         migrate()
         insertV2("2026-11-07", "next")
@@ -108,7 +108,7 @@ class JournalDbV2MigrationTest {
     }
 
     @Test
-    fun `an empty journal migrates cleanly`() {
+    fun an_empty_journal_migrates_cleanly() {
         migrate()
         assertEquals(emptyList<List<String>>(), query("SELECT id FROM journal_doc"))
         insertV2("2026-11-01", "first page")

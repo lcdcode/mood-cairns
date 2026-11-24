@@ -8,7 +8,7 @@ import java.util.TimeZone
 class PickerDatesTest {
 
     @Test
-    fun `days round trip through picker millis`() {
+    fun days_round_trip_through_picker_millis() {
         val days = listOf(
             LocalDate.of(2026, 1, 1),
             LocalDate.of(2026, 11, 21),
@@ -20,7 +20,7 @@ class PickerDatesTest {
     }
 
     @Test
-    fun `conversion ignores the device time zone`() {
+    fun conversion_ignores_the_device_time_zone() {
         val original = TimeZone.getDefault()
         try {
             TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Kiritimati")) // UTC+14

@@ -26,20 +26,20 @@ class EnvelopeCodecTest {
         assertThrows(BackupImportException::class.java, block).error
 
     @Test
-    fun `round trip restores the exact plaintext`() {
+    fun round_trip_restores_the_exact_plaintext() {
         val bytes = codec.decrypt(encrypt(), passphrase.copyOf())
         assertEquals(plaintext, String(bytes, Charsets.UTF_8))
     }
 
     @Test
-    fun `every export uses a fresh salt and iv`() {
+    fun every_export_uses_a_fresh_salt_and_iv() {
         val a = envelope(encrypt())
         val b = envelope(encrypt())
         assertTrue(a.salt != b.salt && a.iv != b.iv)
     }
 
     @Test
-    fun `fields are standard padded base64 without line breaks, as Android NO_WRAP wrote`() {
+    fun fields_are_standard_padded_base64_without_line_breaks_as_android_no_wrap_wrote() {
         val e = envelope(encrypt())
         val standard = Regex("^[A-Za-z0-9+/]+={0,2}$")
         listOf(e.salt, e.iv, e.ciphertext).forEach { assertTrue(it, standard.matches(it)) }
@@ -48,13 +48,13 @@ class EnvelopeCodecTest {
     }
 
     @Test
-    fun `wrong passphrase is reported as wrong secret or corrupt`() {
+    fun wrong_passphrase_is_reported_as_wrong_secret_or_corrupt() {
         val error = importError { codec.decrypt(encrypt(), "nope".toCharArray()) }
         assertEquals(ImportError.WrongSecretOrCorrupt, error)
     }
 
     @Test
-    fun `tampered ciphertext fails authentication`() {
+    fun tampered_ciphertext_fails_authentication() {
         val tampered = withEnvelope(encrypt()) { e ->
             val bytes = Base64.getDecoder().decode(e.ciphertext)
             bytes[0] = (bytes[0].toInt() xor 1).toByte()
@@ -65,24 +65,24 @@ class EnvelopeCodecTest {
     }
 
     @Test
-    fun `text that is not an envelope is not a backup`() {
+    fun text_that_is_not_an_envelope_is_not_a_backup() {
         assertEquals(ImportError.NotABackup, importError { codec.decrypt("hello", passphrase) })
     }
 
     @Test
-    fun `unknown kdf is refused`() {
+    fun unknown_kdf_is_refused() {
         val raw = withEnvelope(encrypt()) { it.copy(kdf = "MD5") }
         assertTrue(importError { codec.decrypt(raw, passphrase) } is ImportError.Malformed)
     }
 
     @Test
-    fun `zero iterations are refused`() {
+    fun zero_iterations_are_refused() {
         val raw = withEnvelope(encrypt()) { it.copy(iter = 0) }
         assertTrue(importError { codec.decrypt(raw, passphrase) } is ImportError.Malformed)
     }
 
     @Test(timeout = 5_000)
-    fun `absurd iteration counts are refused before any key derivation`() {
+    fun absurd_iteration_counts_are_refused_before_any_key_derivation() {
         val raw = withEnvelope(encrypt()) { it.copy(iter = Int.MAX_VALUE) }
         assertTrue(importError { codec.decrypt(raw, passphrase) } is ImportError.Malformed)
         val justOver =
@@ -91,12 +91,12 @@ class EnvelopeCodecTest {
     }
 
     @Test
-    fun `today's iteration count is well inside the limit`() {
+    fun todays_iteration_count_is_well_inside_the_limit() {
         assertTrue(BackupCrypto.PBKDF2_ITERATIONS * 10 <= EnvelopeCodec.MAX_KDF_ITERATIONS)
     }
 
     @Test
-    fun `undecodable base64 is refused`() {
+    fun undecodable_base64_is_refused() {
         val raw = withEnvelope(encrypt()) { it.copy(salt = "!!not base64!!") }
         assertTrue(importError { codec.decrypt(raw, passphrase) } is ImportError.Malformed)
     }

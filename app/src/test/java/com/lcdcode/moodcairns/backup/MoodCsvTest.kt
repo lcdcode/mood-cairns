@@ -45,7 +45,7 @@ class MoodCsvTest {
     private fun rows(csv: String) = csv.split("\r\n").filter { it.isNotEmpty() }
 
     @Test
-    fun header_listsFixedColumnsThenScalesBySortOrder() {
+    fun header_lists_fixed_columns_then_scales_by_sort_order() {
         val scales = listOf(
             scale(1, "Energy", sortOrder = 2),
             scale(2, "Mood", sortOrder = 1),
@@ -56,7 +56,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun row_mapsValuesToColumns_blankWhenMissing() {
+    fun row_maps_values_to_columns_blank_when_missing() {
         val scales = listOf(scale(1, "Mood", sortOrder = 1), scale(2, "Energy", sortOrder = 2))
         val entries = listOf(
             entry(
@@ -71,7 +71,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun rows_areSortedNewestFirst() {
+    fun rows_are_sorted_newest_first() {
         val entries = listOf(
             entry(1, "2026-01-01T08:00:00Z"),
             entry(2, "2026-01-03T08:00:00Z"),
@@ -86,7 +86,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun window_isResolvedToLabel() {
+    fun window_is_resolved_to_label() {
         val windows = listOf(
             PromptWindow(
                 id = 7, label = "Evening", slot = PromptSlot.EVENING,
@@ -100,7 +100,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun fields_areRfc4180Escaped() {
+    fun fields_are_rfc4180_escaped() {
         val entries = listOf(
             entry(1, "2026-01-01T08:00:00Z", note = "hard, \"tough\" day\nreally"),
         )
@@ -110,7 +110,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun deletedScale_stillGetsColumn_soDataIsNotLost() {
+    fun deleted_scale_still_gets_column_so_data_is_not_lost() {
         // Scale 99 was recorded against but no longer declared.
         val entries = listOf(
             entry(1, "2026-01-01T08:00:00Z", values = listOf(EntryValue(1, 99, 3f))),
@@ -122,7 +122,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun tags_joinedWithSemicolonSpace() {
+    fun tags_joined_with_semicolon_space() {
         val entries = listOf(
             entry(
                 1, "2026-01-01T08:00:00Z",
@@ -138,7 +138,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun tagNameWithComma_isRfc4180Quoted() {
+    fun tag_name_with_comma_is_rfc4180_quoted() {
         val entries = listOf(
             entry(
                 1, "2026-01-01T08:00:00Z",
@@ -153,7 +153,7 @@ class MoodCsvTest {
     }
 
     @Test
-    fun wholeNumbers_dropTrailingDecimal_realDecimalsKept() {
+    fun whole_numbers_drop_trailing_decimal_real_decimals_kept() {
         val scales = listOf(scale(1, "A", sortOrder = 1), scale(2, "B", sortOrder = 2))
         val entries = listOf(
             entry(

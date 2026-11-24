@@ -12,53 +12,53 @@ class JournalStateTest {
     private val yesterday = today.minusDays(1)
 
     @Test
-    fun `missing or blank day argument means today`() {
+    fun missing_or_blank_day_argument_means_today() {
         assertEquals(today, resolveJournalDay(null, today))
         assertEquals(today, resolveJournalDay("", today))
     }
 
     @Test
-    fun `valid day argument is used`() {
+    fun valid_day_argument_is_used() {
         assertEquals(yesterday, resolveJournalDay("2026-11-19", today))
     }
 
     @Test
-    fun `invalid day argument falls back to today`() {
+    fun invalid_day_argument_falls_back_to_today() {
         assertEquals(today, resolveJournalDay("2026-13-40", today))
         assertEquals(today, resolveJournalDay("yesterday", today))
     }
 
     @Test
-    fun `body over the limit is clamped`() {
+    fun body_over_the_limit_is_clamped() {
         val body = "a".repeat(MAX_JOURNAL_BODY_CHARS + 10)
         assertEquals(MAX_JOURNAL_BODY_CHARS, clampJournalBody(body).length)
     }
 
     @Test
-    fun `clamping never splits an emoji`() {
+    fun clamping_never_splits_an_emoji() {
         val body = "a".repeat(MAX_JOURNAL_BODY_CHARS - 1) + "😀"
         assertEquals(MAX_JOURNAL_BODY_CHARS - 1, clampJournalBody(body).length)
     }
 
     @Test
-    fun `pages with text open for reading, including today`() {
+    fun pages_with_text_open_for_reading_including_today() {
         assertTrue(opensInReadMode("went hiking"))
     }
 
     @Test
-    fun `empty pages open for writing`() {
+    fun empty_pages_open_for_writing() {
         assertFalse(opensInReadMode(""))
         assertFalse(opensInReadMode("  \n"))
     }
 
     @Test
-    fun `unloaded page is never dirty, so it cannot overwrite stored text`() {
+    fun unloaded_page_is_never_dirty_so_it_cannot_overwrite_stored_text() {
         val state = JournalUiState(day = today, body = "typed early", savedBody = "")
         assertFalse(state.hasUnsavedChanges)
     }
 
     @Test
-    fun `loaded page is dirty only when the body differs from what was saved`() {
+    fun loaded_page_is_dirty_only_when_the_body_differs_from_what_was_saved() {
         val saved = JournalUiState(day = today, body = "x", savedBody = "x", loaded = true)
         assertFalse(saved.hasUnsavedChanges)
         assertTrue(saved.copy(body = "xy").hasUnsavedChanges)

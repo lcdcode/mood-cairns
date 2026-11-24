@@ -21,13 +21,13 @@ class MarkdownParserTest {
     private fun paragraph(vararg inlines: MdInline) = Paragraph(inlines.toList())
 
     @Test
-    fun `empty and blank input produce no blocks`() {
+    fun empty_and_blank_input_produce_no_blocks() {
         assertEquals(emptyList<MdBlock>(), MarkdownParser.parse(""))
         assertEquals(emptyList<MdBlock>(), MarkdownParser.parse("  \n\n "))
     }
 
     @Test
-    fun `headings keep their level`() {
+    fun headings_keep_their_level() {
         assertEquals(
             listOf(Heading(1, listOf(Text("One"))), Heading(3, listOf(Text("Three")))),
             MarkdownParser.parse("# One\n### Three"),
@@ -35,7 +35,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `nested emphasis maps to bold and italic`() {
+    fun nested_emphasis_maps_to_bold_and_italic() {
         assertEquals(
             listOf(
                 paragraph(
@@ -49,7 +49,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `inline code keeps its literal`() {
+    fun inline_code_keeps_its_literal() {
         assertEquals(
             listOf(paragraph(Text("run "), Code("ls -la"))),
             MarkdownParser.parse("run `ls -la`"),
@@ -57,7 +57,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `bullet list items hold their blocks`() {
+    fun bullet_list_items_hold_their_blocks() {
         assertEquals(
             listOf(
                 ListBlock(
@@ -74,7 +74,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `ordered list keeps its start number`() {
+    fun ordered_list_keeps_its_start_number() {
         val list = MarkdownParser.parse("3. a\n4. b").single() as ListBlock
         assertTrue(list.ordered)
         assertEquals(3, list.startNumber)
@@ -82,7 +82,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `nested list sits inside its parent item`() {
+    fun nested_list_sits_inside_its_parent_item() {
         val outer = MarkdownParser.parse("- a\n  - b").single() as ListBlock
         assertEquals(
             listOf(
@@ -94,12 +94,12 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `block quote wraps its content`() {
+    fun block_quote_wraps_its_content() {
         assertEquals(listOf(Quote(listOf(paragraph(Text("hi"))))), MarkdownParser.parse("> hi"))
     }
 
     @Test
-    fun `fenced code block keeps language and drops trailing newline`() {
+    fun fenced_code_block_keeps_language_and_drops_trailing_newline() {
         assertEquals(
             listOf(CodeBlock("val x = 1\nval y = 2", "kotlin")),
             MarkdownParser.parse("```kotlin\nval x = 1\nval y = 2\n```"),
@@ -107,12 +107,12 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `indented code block has no language`() {
+    fun indented_code_block_has_no_language() {
         assertEquals(listOf(CodeBlock("code", null)), MarkdownParser.parse("    code"))
     }
 
     @Test
-    fun `link keeps destination and label`() {
+    fun link_keeps_destination_and_label() {
         assertEquals(
             listOf(paragraph(Link("https://example.org", listOf(Text("site"))))),
             MarkdownParser.parse("[site](https://example.org)"),
@@ -120,7 +120,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `reference links resolve and their definitions are dropped`() {
+    fun reference_links_resolve_and_their_definitions_are_dropped() {
         assertEquals(
             listOf(paragraph(Link("https://example.org", listOf(Text("x"))))),
             MarkdownParser.parse("[x]: https://example.org\n\n[x]"),
@@ -128,18 +128,18 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `images degrade to their alt text`() {
+    fun images_degrade_to_their_alt_text() {
         assertEquals(listOf(paragraph(Text("a cat"))), MarkdownParser.parse("![a cat](cat.png)"))
     }
 
     @Test
-    fun `html is shown literally, never interpreted`() {
+    fun html_is_shown_literally_never_interpreted() {
         assertEquals(listOf(paragraph(Text("<div>x</div>"))), MarkdownParser.parse("<div>x</div>"))
         assertEquals(listOf(paragraph(Text("a <b>c</b>"))), MarkdownParser.parse("a <b>c</b>"))
     }
 
     @Test
-    fun `line breaks are distinguished`() {
+    fun line_breaks_are_distinguished() {
         assertEquals(
             listOf(paragraph(Text("a"), SoftBreak, Text("b"))),
             MarkdownParser.parse("a\nb"),
@@ -151,7 +151,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `thematic break between paragraphs`() {
+    fun thematic_break_between_paragraphs() {
         assertEquals(
             listOf(paragraph(Text("a")), MdBlock.ThematicBreak, paragraph(Text("b"))),
             MarkdownParser.parse("a\n\n---\n\nb"),
@@ -159,7 +159,7 @@ class MarkdownParserTest {
     }
 
     @Test
-    fun `cyrillic text passes through`() {
+    fun cyrillic_text_passes_through() {
         assertEquals(
             listOf(paragraph(Text("Сегодня "), Bold(listOf(Text("хорошо"))))),
             MarkdownParser.parse("Сегодня **хорошо**"),
@@ -167,19 +167,19 @@ class MarkdownParserTest {
     }
 
     @Test(timeout = PATHOLOGICAL_TIMEOUT_MS)
-    fun `deeply nested quotes are capped`() {
+    fun deeply_nested_quotes_are_capped() {
         val blocks = MarkdownParser.parse(">".repeat(PATHOLOGICAL_SIZE) + " x")
         assertTrue(blockDepth(blocks) <= MarkdownParser.MAX_NESTING_DEPTH)
     }
 
     @Test(timeout = PATHOLOGICAL_TIMEOUT_MS)
-    fun `deeply nested lists are capped`() {
+    fun deeply_nested_lists_are_capped() {
         val blocks = MarkdownParser.parse("- ".repeat(PATHOLOGICAL_SIZE) + "x")
         assertTrue(blockDepth(blocks) <= MarkdownParser.MAX_NESTING_DEPTH)
     }
 
     @Test(timeout = PATHOLOGICAL_TIMEOUT_MS)
-    fun `deeply nested emphasis is capped`() {
+    fun deeply_nested_emphasis_is_capped() {
         val n = PATHOLOGICAL_SIZE / 2
         val blocks = MarkdownParser.parse("*_".repeat(n) + "x" + "_*".repeat(n))
         val inlines = (blocks.single() as Paragraph).inlines
@@ -187,7 +187,7 @@ class MarkdownParserTest {
     }
 
     @Test(timeout = PATHOLOGICAL_TIMEOUT_MS)
-    fun `runs of markers and brackets terminate`() {
+    fun runs_of_markers_and_brackets_terminate() {
         MarkdownParser.parse("*".repeat(PATHOLOGICAL_SIZE))
         MarkdownParser.parse("[".repeat(PATHOLOGICAL_SIZE) + "x" + "](u)".repeat(PATHOLOGICAL_SIZE))
         MarkdownParser.parse("`".repeat(PATHOLOGICAL_SIZE))

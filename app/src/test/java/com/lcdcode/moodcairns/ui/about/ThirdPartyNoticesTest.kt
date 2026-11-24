@@ -24,13 +24,13 @@ class ThirdPartyNoticesTest {
         notices.replace("\\.", ".").split(Regex("\\s+")).joinToString(" ")
 
     @Test
-    fun `required notices are present`() {
+    fun required_notices_are_present() {
         val missing = REQUIRED_NOTICES.filterNot { flattened.contains(it) }
         assertEquals(emptyList<String>(), missing)
     }
 
     @Test
-    fun `license section numbers stay literal text`() {
+    fun license_section_numbers_stay_literal_text() {
         val orderedLists = MarkdownParser.parse(notices).flatMap(::allBlocks)
             .filter { it is MdBlock.ListBlock && it.ordered }
         assertTrue("Unescaped 'N.' turned license text into a list", orderedLists.isEmpty())

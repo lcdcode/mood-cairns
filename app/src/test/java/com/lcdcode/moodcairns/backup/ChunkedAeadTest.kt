@@ -45,25 +45,25 @@ class ChunkedAeadTest {
         copyOf().also { it[index] = (it[index].toInt() xor 1).toByte() }
 
     @Test
-    fun `round trips at every interesting length`() {
+    fun round_trips_at_every_interesting_length() {
         for (size in listOf(0, 1, CHUNK - 1, CHUNK, CHUNK + 1, 2 * CHUNK, 2 * CHUNK + 1, 1_000)) {
             assertArrayEquals("size $size", bytes(size), decrypt(encrypt(bytes(size))))
         }
     }
 
     @Test
-    fun `an empty stream is a single tag-only chunk`() {
+    fun an_empty_stream_is_a_single_tag_only_chunk() {
         assertEquals(ChunkedAead.TAG_BYTES, encrypt(ByteArray(0)).size)
     }
 
     @Test
-    fun `a full final chunk is still sealed as last`() {
+    fun a_full_final_chunk_is_still_sealed_as_last() {
         // Exactly two chunks of data: no extra empty chunk is needed.
         assertEquals(2 * segment, encrypt(bytes(2 * CHUNK)).size)
     }
 
     @Test
-    fun `flipping any byte fails authentication`() {
+    fun flipping_any_byte_fails_authentication() {
         val ciphertext = encrypt(bytes(3 * CHUNK + 5))
         for (index in listOf(0, segment - 1, segment + 3, ciphertext.size - 1)) {
             val tampered = ciphertext.flipped(index)
@@ -72,27 +72,27 @@ class ChunkedAeadTest {
     }
 
     @Test
-    fun `dropping the last chunk at a chunk boundary is detected`() {
+    fun dropping_the_last_chunk_at_a_chunk_boundary_is_detected() {
         val ciphertext = encrypt(bytes(3 * CHUNK))
         val cut = ciphertext.copyOf(2 * segment)
         assertEquals(ImportError.WrongSecretOrCorrupt, failure { decrypt(cut) })
     }
 
     @Test
-    fun `cutting a chunk in half is detected`() {
+    fun cutting_a_chunk_in_half_is_detected() {
         val ciphertext = encrypt(bytes(3 * CHUNK))
         val halfChunk = ciphertext.copyOf(segment + 20)
         assertEquals(ImportError.WrongSecretOrCorrupt, failure { decrypt(halfChunk) })
     }
 
     @Test
-    fun `losing everything after the first few bytes is malformed`() {
+    fun losing_everything_after_the_first_few_bytes_is_malformed() {
         val ciphertext = encrypt(bytes(CHUNK))
         assertTrue(failure { decrypt(ciphertext.copyOf(5)) } is ImportError.Malformed)
     }
 
     @Test
-    fun `swapping two chunks is detected`() {
+    fun swapping_two_chunks_is_detected() {
         val ciphertext = encrypt(bytes(3 * CHUNK + 1))
         val swapped = ciphertext.copyOf()
         System.arraycopy(ciphertext, segment, swapped, 0, segment)
@@ -101,20 +101,20 @@ class ChunkedAeadTest {
     }
 
     @Test
-    fun `repeating a chunk is detected`() {
+    fun repeating_a_chunk_is_detected() {
         val ciphertext = encrypt(bytes(2 * CHUNK + 1))
         val repeated = ciphertext.copyOfRange(0, segment) + ciphertext
         assertEquals(ImportError.WrongSecretOrCorrupt, failure { decrypt(repeated) })
     }
 
     @Test
-    fun `data appended after the last chunk is detected`() {
+    fun data_appended_after_the_last_chunk_is_detected() {
         val ciphertext = encrypt(bytes(CHUNK + 3)) + bytes(10)
         assertEquals(ImportError.WrongSecretOrCorrupt, failure { decrypt(ciphertext) })
     }
 
     @Test
-    fun `a different header or key fails authentication`() {
+    fun a_different_header_or_key_fails_authentication() {
         val ciphertext = encrypt(bytes(40))
         assertEquals(
             ImportError.WrongSecretOrCorrupt,
@@ -126,7 +126,7 @@ class ChunkedAeadTest {
     }
 
     @Test
-    fun `nonces differ per chunk and by last flag`() {
+    fun nonces_differ_per_chunk_and_by_last_flag() {
         val nonces = listOf(
             ChunkedAead.nonce(prefix, 0, last = false),
             ChunkedAead.nonce(prefix, 1, last = false),

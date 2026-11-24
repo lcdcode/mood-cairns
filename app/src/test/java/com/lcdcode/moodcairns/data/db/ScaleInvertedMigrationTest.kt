@@ -22,7 +22,7 @@ import java.sql.DriverManager
 class ScaleInvertedMigrationTest {
 
     @Test
-    fun migration_addsInvertedColumn_notNullDefaultZero() {
+    fun migration_adds_inverted_column_not_null_default_zero() {
         connectV2().use { c ->
             runStatements(c, MoodDbMigrationSql.V2_TO_V3)
 
@@ -34,7 +34,7 @@ class ScaleInvertedMigrationTest {
     }
 
     @Test
-    fun migration_existingRowsReadAsNotInverted() {
+    fun migration_existing_rows_read_as_not_inverted() {
         connectV2().use { c ->
             exec(
                 c,
@@ -54,7 +54,7 @@ class ScaleInvertedMigrationTest {
     }
 
     @Test
-    fun migrationSql_matchesExportedRoomSchema() {
+    fun migration_sql_matches_exported_room_schema() {
         val scaleCreateSql = scaleCreateSqlFromSchema("3.json")
         assertTrue(
             "3.json scale createSql must declare the migrated column verbatim",

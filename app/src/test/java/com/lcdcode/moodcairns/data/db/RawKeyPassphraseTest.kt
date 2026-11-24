@@ -6,7 +6,7 @@ import org.junit.Test
 class RawKeyPassphraseTest {
 
     @Test
-    fun `formats a 32 byte key as x quote 64 lowercase hex quote`() {
+    fun formats_a_32_byte_key_as_x_quote_64_lowercase_hex_quote() {
         val key = ByteArray(32) { (it * 8).toByte() }
         val expected = "x'" + key.joinToString("") { "%02x".format(it.toInt() and 0xFF) } + "'"
         val passphrase = rawKeyPassphrase(key)
@@ -15,7 +15,7 @@ class RawKeyPassphraseTest {
     }
 
     @Test
-    fun `high bytes are not sign extended`() {
+    fun high_bytes_are_not_sign_extended() {
         assertEquals("x'ff80'", String(rawKeyPassphrase(byteArrayOf(-1, -128)), Charsets.US_ASCII))
     }
 }

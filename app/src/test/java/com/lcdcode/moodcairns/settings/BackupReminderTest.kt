@@ -17,14 +17,14 @@ class BackupReminderTest {
     private fun storedDueAt() = prefs.values[BackupReminder.KEY_NEXT_DUE_AT]
 
     @Test
-    fun `fresh install is not due and starts the countdown`() {
+    fun fresh_install_is_not_due_and_starts_the_countdown() {
         val reminder = reminder()
         assertFalse(reminder.due.value)
         assertEquals(start + BackupReminder.INTERVAL_MS, storedDueAt())
     }
 
     @Test
-    fun `not due one millisecond before the interval ends`() {
+    fun not_due_one_millisecond_before_the_interval_ends() {
         val reminder = reminder()
         now = start + BackupReminder.INTERVAL_MS - 1
         reminder.refresh()
@@ -32,7 +32,7 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `due once the interval has passed`() {
+    fun due_once_the_interval_has_passed() {
         val reminder = reminder()
         now = start + BackupReminder.INTERVAL_MS
         reminder.refresh()
@@ -40,7 +40,7 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `postpone hides the card for another interval`() {
+    fun postpone_hides_the_card_for_another_interval() {
         val reminder = reminder()
         now = start + 3 * BackupReminder.INTERVAL_MS
         reminder.refresh()
@@ -53,7 +53,7 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `clock set backwards clamps the due time to one interval ahead`() {
+    fun clock_set_backwards_clamps_the_due_time_to_one_interval_ahead() {
         reminder()
         now = start - 365 * BackupReminder.INTERVAL_MS
         val reminder = reminder()
@@ -62,19 +62,19 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `due state survives a new instance`() {
+    fun due_state_survives_a_new_instance() {
         reminder()
         now = start + BackupReminder.INTERVAL_MS + 1
         assertTrue(reminder().due.value)
     }
 
     @Test
-    fun `reminder is enabled by default`() {
+    fun reminder_is_enabled_by_default() {
         assertTrue(reminder().enabled.value)
     }
 
     @Test
-    fun `disabling hides a due card and keeps it hidden`() {
+    fun disabling_hides_a_due_card_and_keeps_it_hidden() {
         val reminder = reminder()
         now = start + BackupReminder.INTERVAL_MS
         reminder.refresh()
@@ -89,7 +89,7 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `disabled setting persists across instances`() {
+    fun disabled_setting_persists_across_instances() {
         reminder().setEnabled(false)
         now = start + 10 * BackupReminder.INTERVAL_MS
         val reminder = reminder()
@@ -99,7 +99,7 @@ class BackupReminderTest {
     }
 
     @Test
-    fun `re-enabling starts a fresh countdown instead of showing at once`() {
+    fun re_enabling_starts_a_fresh_countdown_instead_of_showing_at_once() {
         val reminder = reminder()
         reminder.setEnabled(false)
         now = start + 10 * BackupReminder.INTERVAL_MS

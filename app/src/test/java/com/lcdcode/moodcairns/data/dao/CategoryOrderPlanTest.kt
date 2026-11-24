@@ -10,42 +10,42 @@ class CategoryOrderPlanTest {
     private val current = listOf("PLACE", "MOOD", "custom", other)
 
     @Test
-    fun fullRequest_isStoredAsGiven() {
+    fun full_request_is_stored_as_given() {
         val plan = planCategoryOrder(current, listOf("custom", "PLACE", "MOOD", other))
 
         assertEquals(listOf("custom", "PLACE", "MOOD", other), plan)
     }
 
     @Test
-    fun otherIsMovedLast_wherever_itIsRequested() {
+    fun other_is_moved_last_wherever_it_is_requested() {
         val plan = planCategoryOrder(current, listOf(other, "MOOD", "PLACE", "custom"))
 
         assertEquals(listOf("MOOD", "PLACE", "custom", other), plan)
     }
 
     @Test
-    fun omittedCategories_followTheRequested_inCurrentOrder() {
+    fun omitted_categories_follow_the_requested_in_current_order() {
         val plan = planCategoryOrder(current, listOf("custom"))
 
         assertEquals(listOf("custom", "PLACE", "MOOD", other), plan)
     }
 
     @Test
-    fun unknownAndRepeatedIds_areDropped() {
+    fun unknown_and_repeated_ids_are_dropped() {
         val plan = planCategoryOrder(current, listOf("MOOD", "deleted", "MOOD", "PLACE"))
 
         assertEquals(listOf("MOOD", "PLACE", "custom", other), plan)
     }
 
     @Test
-    fun otherMissingFromCurrent_isNotInvented() {
+    fun other_missing_from_current_is_not_invented() {
         val plan = planCategoryOrder(listOf("PLACE", "MOOD"), listOf("MOOD", other))
 
         assertEquals(listOf("MOOD", "PLACE"), plan)
     }
 
     @Test
-    fun emptyCurrent_givesEmptyPlan() {
+    fun empty_current_gives_empty_plan() {
         assertEquals(emptyList<String>(), planCategoryOrder(emptyList(), listOf("PLACE")))
     }
 }

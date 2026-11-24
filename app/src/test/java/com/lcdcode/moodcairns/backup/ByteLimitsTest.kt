@@ -25,20 +25,20 @@ class ByteLimitsTest {
     private fun limited(input: InputStream, max: Long) = LimitedInputStream(input, max) { tooLarge }
 
     @Test(timeout = 5_000)
-    fun `an endless stream is cut off just past the limit`() {
+    fun an_endless_stream_is_cut_off_just_past_the_limit() {
         val stream = limited(EndlessStream(), max = 10_000)
         val thrown = assertThrows(BackupImportException::class.java) { stream.readBytes() }
         assertEquals(tooLarge, thrown.error)
     }
 
     @Test
-    fun `exactly the limit reads through`() {
+    fun exactly_the_limit_reads_through() {
         val data = ByteArray(4096) { it.toByte() }
         assertArrayEquals(data, limited(ByteArrayInputStream(data), max = 4096).readBytes())
     }
 
     @Test
-    fun `single-byte reads and skips count too`() {
+    fun single_byte_reads_and_skips_count_too() {
         val stream = limited(ByteArrayInputStream(ByteArray(10)), max = 3)
         stream.read()
         stream.skip(2)
@@ -46,12 +46,12 @@ class ByteLimitsTest {
     }
 
     @Test
-    fun `mark is refused so nothing is read twice uncounted`() {
+    fun mark_is_refused_so_nothing_is_read_twice_uncounted() {
         assertFalse(limited(ByteArrayInputStream(ByteArray(1)), max = 1).markSupported())
     }
 
     @Test
-    fun `output stops before the limit is crossed`() {
+    fun output_stops_before_the_limit_is_crossed() {
         val sink = ByteArrayOutputStream()
         val out = LimitedOutputStream(sink, maxBytes = 5, maxMegabytes = 7)
         out.write(ByteArray(4))

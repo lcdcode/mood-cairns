@@ -20,7 +20,7 @@ import java.sql.DriverManager
 class ScaleDayStatusSqlTest {
 
     @Test
-    fun valueAboveMinimum_isAnswered() {
+    fun value_above_minimum_is_answered() {
         withDb { c ->
             insertValue(c, entryId = 10, recordedAt = DAY_START + HOUR, value = 7.5)
 
@@ -29,7 +29,7 @@ class ScaleDayStatusSqlTest {
     }
 
     @Test
-    fun valueAtMinimum_isDeferred_soSleepIsAskedAgain() {
+    fun value_at_minimum_is_deferred_so_sleep_is_asked_again() {
         withDb { c ->
             insertValue(c, entryId = 10, recordedAt = DAY_START + HOUR, value = 0.0)
 
@@ -38,7 +38,7 @@ class ScaleDayStatusSqlTest {
     }
 
     @Test
-    fun minimumThenRealAnswer_isAnswered() {
+    fun minimum_then_real_answer_is_answered() {
         withDb { c ->
             insertValue(c, entryId = 10, recordedAt = DAY_START + HOUR, value = 0.0)
             insertValue(c, entryId = 11, recordedAt = DAY_START + 2 * HOUR, value = 6.0)
@@ -48,7 +48,7 @@ class ScaleDayStatusSqlTest {
     }
 
     @Test
-    fun editedEntry_andOtherDays_areIgnored() {
+    fun edited_entry_and_other_days_are_ignored() {
         withDb { c ->
             insertValue(c, entryId = 10, recordedAt = DAY_START + HOUR, value = 8.0)
             insertValue(c, entryId = 11, recordedAt = DAY_START - HOUR, value = 8.0)
