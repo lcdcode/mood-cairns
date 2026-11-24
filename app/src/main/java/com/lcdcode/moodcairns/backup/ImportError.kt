@@ -7,6 +7,8 @@ package com.lcdcode.moodcairns.backup
  */
 sealed interface ImportError {
     data class TooLarge(val maxMegabytes: Long) : ImportError
+    /** The file itself may be small, but it unpacks to more than a restore accepts. */
+    data class ContentsTooLarge(val maxMegabytes: Long) : ImportError
     data class Unreadable(val detail: Diagnostic?) : ImportError
     data object NotABackup : ImportError
     data object WrongSecretOrCorrupt : ImportError
@@ -63,6 +65,7 @@ enum class MalformedReason(val code: String) {
  */
 fun ImportError.logLabel(withDetail: Boolean = false): String = when (this) {
     is ImportError.TooLarge -> "TooLarge(${maxMegabytes}MB)"
+    is ImportError.ContentsTooLarge -> "ContentsTooLarge(${maxMegabytes}MB)"
     is ImportError.Unreadable -> if (withDetail) "Unreadable($detail)" else "Unreadable"
     ImportError.NotABackup -> "NotABackup"
     ImportError.WrongSecretOrCorrupt -> "WrongSecretOrCorrupt"

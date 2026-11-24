@@ -220,6 +220,72 @@ class JournalBackupStreamTest {
         assertTrue(failure { readAll(noVersion) } is ImportError.Malformed)
     }
 
+    // Size limits shared by export and restore
+
+    /** Decompressed bytes of a backup: length-prefixed records plus the end marker. */
+    private fun plaintextSize(pages: List<JournalDayDto>): Long {
+        val json = Json
+        val records = listOf(json.encodeToString(JournalBackupMeta.serializer(), meta)) +
+            pages.map { json.encodeToString(JournalDayDto.serializer(), it) }
+        return records.sumOf { Int.SIZE_BYTES + it.toByteArray(Charsets.UTF_8).size }.toLong() +
+            Int.SIZE_BYTES
+    }
+
+    private fun backupWithin(limits: JournalBackupLimits, pages: List<JournalDayDto>) =
+        ByteArrayOutputStream().also { out ->
+            JournalBackupWriter(out, passphrase.toCharArray(), FAST_ITERATIONS, SMALL_CHUNK, limits)
+                .use { w ->
+                    w.writeMeta(meta)
+                    pages.forEach(w::writePage)
+                    w.finish()
+                }
+        }.toByteArray()
+
+    private fun readWithin(limits: JournalBackupLimits, file: ByteArray) =
+        JournalBackupReader(ByteArrayInputStream(file), passphrase.toCharArray(), limits)
+            .use { reader ->
+                generateSequence { reader.nextPage() }.toList().also { reader.requireComplete() }
+            }
+
+    @Test
+    fun `a backup exactly at the plaintext limit is written and restored`() {
+        val pages = (1..5).map { page(it) }
+        val exact = JournalBackupLimits.forPlaintext(plaintextSize(pages))
+        assertEquals(pages, readWithin(exact, backupWithin(exact, pages)))
+    }
+
+    @Test
+    fun `export refuses one byte over the plaintext limit`() {
+        val pages = (1..5).map { page(it) }
+        val tight = JournalBackupLimits.forPlaintext(plaintextSize(pages) - 1)
+        assertThrows(BackupTooLargeException::class.java) { backupWithin(tight, pages) }
+    }
+
+    @Test
+    fun `restore refuses one byte over the plaintext limit`() {
+        val pages = (1..5).map { page(it) }
+        val tight = JournalBackupLimits.forPlaintext(plaintextSize(pages) - 1)
+        val error = failure { readWithin(tight, backup(pages)) }
+        assertEquals(ImportError.ContentsTooLarge(tight.maxMegabytes), error)
+    }
+
+    @Test
+    fun `a small file that inflates past the limit is refused while streaming`() {
+        // 2,000 near-empty-compressing pages: a few kilobytes on disk, far more unpacked.
+        val pages = (1..2_000).map { page(1, "a".repeat(2_000)) }
+        val file = backup(pages)
+        val limits = JournalBackupLimits.forPlaintext(512L * 1024)
+        assertTrue(file.size < limits.maxPlaintextBytes / 4)
+        assertTrue(failure { readWithin(limits, file) } is ImportError.ContentsTooLarge)
+    }
+
+    @Test
+    fun `export refuses past the file limit even within the plaintext limit`() {
+        val pages = (1..5).map { page(it) }
+        val limits = JournalBackupLimits(maxPlaintextBytes = 1L shl 20, maxFileBytes = 100)
+        assertThrows(BackupTooLargeException::class.java) { backupWithin(limits, pages) }
+    }
+
     // Cross-kind safety
 
     @Test

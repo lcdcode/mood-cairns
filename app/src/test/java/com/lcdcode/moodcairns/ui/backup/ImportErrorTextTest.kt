@@ -14,6 +14,7 @@ class ImportErrorTextTest {
     fun everyError_mapsToItsOwnMessage() {
         val errors = listOf(
             ImportError.TooLarge(maxMegabytes = 50),
+            ImportError.ContentsTooLarge(maxMegabytes = 256),
             ImportError.Unreadable(detail = null),
             ImportError.Unreadable(detail = Diagnostic.of("EACCES")),
             ImportError.NotABackup,

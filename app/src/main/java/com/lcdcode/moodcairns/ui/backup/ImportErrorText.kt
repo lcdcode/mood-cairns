@@ -7,6 +7,8 @@ import com.lcdcode.moodcairns.ui.common.UiText
 /** User-facing sentence for [this] import failure. */
 fun ImportError.toUiText(): UiText = when (this) {
     is ImportError.TooLarge -> UiText.Res(R.string.import_error_too_large, listOf(maxMegabytes))
+    is ImportError.ContentsTooLarge ->
+        UiText.Res(R.string.import_error_contents_too_large, listOf(maxMegabytes))
     is ImportError.Unreadable ->
         if (detail == null) {
             UiText.Res(R.string.import_error_unreadable)

@@ -14,8 +14,15 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Replaces the whole journal atomically; see [JournalRepository.replaceAll]. */
+fun interface JournalReplaceTarget {
+    suspend fun replaceAll(produce: suspend (insert: suspend (JournalDoc) -> Unit) -> Unit)
+}
+
 @Singleton
-class JournalRepository @Inject constructor(private val holder: JournalDatabaseHolder) {
+class JournalRepository @Inject constructor(
+    private val holder: JournalDatabaseHolder,
+) : JournalReplaceTarget {
 
     private fun dao() = holder.journalDao()
 
@@ -57,7 +64,9 @@ class JournalRepository @Inject constructor(private val holder: JournalDatabaseH
      * calls it once per page; previews are always recomputed from the body, never trusted.
      * If [produce] throws, the transaction rolls back and the journal is unchanged.
      */
-    suspend fun replaceAll(produce: suspend (insert: suspend (JournalDoc) -> Unit) -> Unit) {
+    override suspend fun replaceAll(
+        produce: suspend (insert: suspend (JournalDoc) -> Unit) -> Unit,
+    ) {
         val database = holder.database()
         database.withTransaction {
             val dao = database.journalDao()

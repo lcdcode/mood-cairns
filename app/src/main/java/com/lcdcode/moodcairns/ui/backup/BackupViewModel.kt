@@ -22,6 +22,7 @@ import com.lcdcode.moodcairns.backup.JournalImportResult
 import com.lcdcode.moodcairns.backup.JournalImportService
 import com.lcdcode.moodcairns.backup.JournalMarkdown
 import com.lcdcode.moodcairns.backup.JournalMarkdownExporter
+import com.lcdcode.moodcairns.backup.UnrestorableJournalPageException
 import com.lcdcode.moodcairns.backup.logLabel
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
@@ -312,7 +313,8 @@ class BackupViewModel @Inject constructor(
                         name to R.string.backup_config_export_success
                     }
                     BackupPayload.Journal -> {
-                        // Streamed straight to the file: no size limit, constant memory.
+                        // Streamed straight to the file in constant memory, within the
+                        // size limits a restore accepts.
                         val name = BackupStore.suggestJournalName()
                         store.writeStream(name, JournalBackupFormat.MIME_TYPE) { out ->
                             journalExporter.export(passphrase, out)
@@ -326,6 +328,9 @@ class BackupViewModel @Inject constructor(
         } catch (e: BackupTooLargeException) {
             Log.w(TAG, "Export refused: over the import size limit", e)
             UiText.Res(R.string.backup_error_export_too_large, listOf(e.maxMegabytes))
+        } catch (e: UnrestorableJournalPageException) {
+            Log.w(TAG, "Export refused: a page would not restore (${e.error.logLabel()})")
+            UiText.Res(R.string.backup_error_export_unrestorable_page, listOf(e.day.toString()))
         } catch (t: Throwable) {
             Log.w(TAG, "Export failed", t)
             UiText.withDetail(R.string.backup_export_failed, t)

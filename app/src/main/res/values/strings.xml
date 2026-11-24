@@ -651,7 +651,9 @@
     <string name="backup_export_success">Exported %1$s</string>
     <string name="backup_export_csv_success">Exported %1$s (unencrypted)</string>
     <string name="backup_export_failed">Export failed: %1$s</string>
-    <!-- %1$d is the size limit in megabytes (50). Shown when an export is refused because it could not be restored. -->
+    <!-- %1$s is the page's date (YYYY-MM-DD). Its date is outside what a restore accepts. -->
+    <string name="backup_error_export_unrestorable_page">Not saved: the journal page for %1$s has a date this app could not restore. Check the page\'s date, then export again.</string>
+    <!-- %1$d is the size limit in megabytes (50 for mood backups, 256 for journal backups). Shown when an export is refused because it could not be restored. -->
     <string name="backup_error_export_too_large">Not saved: this backup would be larger than %1$d MB, the most the app can restore.</string>
     <!-- Label: count pairs avoid needing a plural form for each noun. -->
     <string name="backup_import_success">Import complete. Entries: %1$d, scales: %2$d, tags: %3$d, prompt windows: %4$d</string>
@@ -734,6 +736,8 @@
 
     <!-- Reasons a backup import failed. %1$s detail strings are technical, shown as-is. -->
     <string name="import_error_too_large">The file is larger than the %1$d MB limit.</string>
+    <!-- A small file that unpacks to too much data, e.g. a damaged or crafted journal backup. -->
+    <string name="import_error_contents_too_large">The backup unpacks to more than the %1$d MB limit.</string>
     <string name="import_error_unreadable">Couldn\'t read the file.</string>
     <string name="import_error_unreadable_detail">Couldn\'t read the file (%1$s).</string>
     <string name="import_error_not_a_backup">This file isn\'t a Mood Cairns backup.</string>

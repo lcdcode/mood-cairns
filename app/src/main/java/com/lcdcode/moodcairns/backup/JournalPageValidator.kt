@@ -7,17 +7,24 @@ import java.time.Instant
 import java.time.LocalDate
 
 /**
- * Checks restored pages one at a time, remembering only the days seen so far. Refuses an
- * unparseable date, a day listed twice, and a body over the editor's limit, rather than
+ * Checks pages one at a time in file order, remembering only the previous day. Refuses an
+ * unparseable date, a day outside [JournalBackupFormat.allowedDays], a day not after the
+ * previous one (which includes repeats), and a body over the editor's limit, rather than
  * silently dropping or cutting text. Throws [BackupImportException].
  */
-internal class JournalPageValidator {
-    private val seen = HashSet<LocalDate>()
+internal class JournalPageValidator(today: LocalDate) {
+    private val allowedDays = JournalBackupFormat.allowedDays(today)
+    private var previousDay: LocalDate? = null
 
     /** A page ready to insert; its preview is left empty for the repository to compute. */
     fun toDoc(dto: JournalDayDto): JournalDoc {
         val day = parse(dto.day, MalformedReason.INVALID_DAY) { LocalDate.parse(it) }
-        if (!seen.add(day)) fail(ImportError.Malformed(MalformedReason.DAYS_OUT_OF_ORDER))
+        if (day !in allowedDays) fail(ImportError.Malformed(MalformedReason.DAY_OUT_OF_RANGE))
+        val previous = previousDay
+        if (previous != null && day <= previous) {
+            fail(ImportError.Malformed(MalformedReason.DAYS_OUT_OF_ORDER))
+        }
+        previousDay = day
         if (dto.body.length > JournalSql.MAX_BODY_CHARS) {
             fail(ImportError.Malformed(MalformedReason.BODY_TOO_LONG))
         }

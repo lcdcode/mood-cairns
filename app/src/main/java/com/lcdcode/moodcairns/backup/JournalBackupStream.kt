@@ -94,11 +94,13 @@ internal class JournalBackupWriter(
     passphrase: CharArray,
     iterations: Int = BackupCrypto.PBKDF2_ITERATIONS,
     chunkSize: Int = JournalBackupFormat.DEFAULT_CHUNK_BYTES,
+    private val limits: JournalBackupLimits = JournalBackupLimits.DEFAULT,
 ) : Closeable {
     private val deflater = Deflater(Deflater.DEFAULT_COMPRESSION)
     private val records: DataOutputStream
 
     init {
+        val file = LimitedOutputStream(out, limits.maxFileBytes, limits.maxMegabytes)
         val random = SecureRandom()
         val header = JournalStreamHeader(
             iterations = iterations,
@@ -107,9 +109,9 @@ internal class JournalBackupWriter(
             chunkSize = chunkSize,
         )
         val headerBytes = header.toBytes()
-        out.write(headerBytes)
+        file.write(headerBytes)
         val chunks = ChunkEncryptingOutputStream(
-            out = out,
+            out = file,
             key = deriveAesKey(passphrase, header.salt, iterations),
             header = headerBytes,
             noncePrefix = header.noncePrefix,
@@ -132,11 +134,21 @@ internal class JournalBackupWriter(
 
     override fun close() = deflater.end()
 
-    /** Exposed for tests that need to build deliberately invalid files. */
+    /**
+     * Throws [BackupTooLargeException] before a record that would push the decompressed
+     * stream, end marker included, past what a restore accepts. Exposed for tests that need
+     * to build deliberately invalid files.
+     */
     internal fun writeRecord(json: String) {
         val bytes = json.toByteArray(Charsets.UTF_8)
+        val total = records.size().toLong() + Int.SIZE_BYTES + bytes.size + END_MARKER_BYTES
+        if (total > limits.maxPlaintextBytes) throw BackupTooLargeException(limits.maxMegabytes)
         records.writeInt(bytes.size)
         records.write(bytes)
+    }
+
+    private companion object {
+        const val END_MARKER_BYTES = Int.SIZE_BYTES
     }
 }
 
@@ -145,7 +157,11 @@ internal class JournalBackupWriter(
  * derives the key and reads the metadata record, so a wrong passphrase or wrong file is
  * reported before anything else happens. Every failure throws [BackupImportException].
  */
-internal class JournalBackupReader(input: InputStream, secret: CharArray) : Closeable {
+internal class JournalBackupReader(
+    input: InputStream,
+    secret: CharArray,
+    limits: JournalBackupLimits = JournalBackupLimits.DEFAULT,
+) : Closeable {
     private val inflater = Inflater()
     private val chunks: ChunkDecryptingInputStream
     private val records: DataInputStream
@@ -163,7 +179,12 @@ internal class JournalBackupReader(input: InputStream, secret: CharArray) : Clos
             noncePrefix = header.noncePrefix,
             chunkSize = header.chunkSize,
         )
-        records = DataInputStream(InflaterInputStream(chunks, inflater, ZIP_BUFFER_BYTES))
+        val inflated = InflaterInputStream(chunks, inflater, ZIP_BUFFER_BYTES)
+        records = DataInputStream(
+            LimitedInputStream(inflated, limits.maxPlaintextBytes) {
+                ImportError.ContentsTooLarge(limits.maxMegabytes)
+            },
+        )
         meta = readMeta()
     }
 

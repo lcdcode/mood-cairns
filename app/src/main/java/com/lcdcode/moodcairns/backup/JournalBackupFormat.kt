@@ -1,6 +1,7 @@
 package com.lcdcode.moodcairns.backup
 
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 /**
  * Journal backup file layout. Unlike mood backups (one JSON envelope read whole), a journal
@@ -14,6 +15,7 @@ import kotlinx.serialization.Serializable
  * chunks: AES-256-GCM, see [ChunkedAead]
  *   plaintext = zlib-compressed sequence of records, each an int length + UTF-8 JSON:
  *   one [JournalBackupMeta], then one [JournalDayDto] per page, then a 0-length end marker
+ *   (pages strictly oldest first, so a restore detects repeats without remembering days)
  * ```
  *
  * Bump [FORMAT_VERSION] for container changes and [JOURNAL_VERSION] for record changes an
@@ -40,6 +42,54 @@ internal object JournalBackupFormat {
 
     const val FILE_EXTENSION = "mcj"
     const val MIME_TYPE = "application/octet-stream"
+
+    /** No page is dated before this; the app's date pickers start here too. */
+    val EARLIEST_DAY: LocalDate = LocalDate.of(1900, 1, 1)
+
+    /**
+     * Pages may be dated slightly after the restoring device's today: the writing device can
+     * be up to 26 hours ahead (UTC+14 vs UTC-12), and clocks drift.
+     */
+    const val FUTURE_GRACE_DAYS = 2L
+
+    /**
+     * Days a backup may hold. Pages are written oldest first with no repeats, so together
+     * with this range it also caps the page count.
+     */
+    fun allowedDays(today: LocalDate): ClosedRange<LocalDate> =
+        EARLIEST_DAY..today.plusDays(FUTURE_GRACE_DAYS)
+}
+
+/**
+ * Size ceilings shared by export and restore, so the app never writes a backup it would
+ * refuse. [maxPlaintextBytes] bounds the decompressed record stream, which also bounds the
+ * text written to the database. [maxFileBytes] bounds the bytes read from the file, which the
+ * plaintext cap alone does not: deflate can consume input while producing nothing.
+ */
+internal data class JournalBackupLimits(val maxPlaintextBytes: Long, val maxFileBytes: Long) {
+
+    val maxMegabytes: Long get() = maxPlaintextBytes / BYTES_PER_MEGABYTE
+
+    companion object {
+        private const val BYTES_PER_MEGABYTE = 1024L * 1024L
+        private const val MAX_PLAINTEXT_MEGABYTES = 256L
+
+        /**
+         * Compressing and encrypting incompressible text adds well under 1% (deflate block
+         * headers, one GCM tag per chunk); 1/64 plus a fixed allowance for the header, zlib
+         * framing and the final chunk leaves a wide margin.
+         */
+        private const val FILE_OVERHEAD_DIVISOR = 64L
+        private const val FILE_OVERHEAD_FIXED_BYTES = 4L * 1024L
+
+        val DEFAULT = forPlaintext(MAX_PLAINTEXT_MEGABYTES * BYTES_PER_MEGABYTE)
+
+        fun forPlaintext(maxPlaintextBytes: Long) = JournalBackupLimits(
+            maxPlaintextBytes = maxPlaintextBytes,
+            maxFileBytes = maxPlaintextBytes + maxPlaintextBytes / FILE_OVERHEAD_DIVISOR +
+                FILE_OVERHEAD_FIXED_BYTES,
+        )
+    }
 }
 
 /** First record: identifies the file. Fields are nullable so a wrong file reports cleanly. */
