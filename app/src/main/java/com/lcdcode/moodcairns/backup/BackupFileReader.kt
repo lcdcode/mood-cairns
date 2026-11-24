@@ -32,8 +32,7 @@ class BackupFileReader @Inject constructor(
                 it.readCapped(BackupSizeLimit.MAX_BYTES + 1)
             }
         } catch (t: Throwable) {
-            val detail = t.message ?: t.javaClass.simpleName
-            throw BackupImportException(ImportError.Unreadable(detail))
+            throw BackupImportException(ImportError.Unreadable(Diagnostic.of(t)))
         } ?: throw BackupImportException(ImportError.Unreadable(detail = null))
 
         if (BackupSizeLimit.exceeds(bytes.size.toLong())) throw BackupImportException(tooLarge())
@@ -48,9 +47,9 @@ class BackupFileReader @Inject constructor(
         val stream = try {
             context.contentResolver.openInputStream(uri)
         } catch (e: FileNotFoundException) {
-            throw BackupImportException(ImportError.Unreadable(e.message))
+            throw BackupImportException(ImportError.Unreadable(Diagnostic.of(e)))
         } catch (e: SecurityException) {
-            throw BackupImportException(ImportError.Unreadable(e.message))
+            throw BackupImportException(ImportError.Unreadable(Diagnostic.of(e)))
         }
         return BufferedInputStream(
             stream ?: throw BackupImportException(ImportError.Unreadable(detail = null)),

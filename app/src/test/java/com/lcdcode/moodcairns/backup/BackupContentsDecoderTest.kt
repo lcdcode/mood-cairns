@@ -142,6 +142,22 @@ class BackupContentsDecoderTest {
     }
 
     @Test
+    fun rejectedNames_areNotEchoedIntoTheError() {
+        val hostile = "\n[FAKE] \u202E".repeat(10_000)
+        val scale = sleep().copy(name = hostile, step = 0f)
+        val window = morning().copy(label = hostile, startTime = "late")
+
+        assertEquals(
+            ImportError.Malformed(MalformedReason.INVALID_SCALE),
+            importError { decoder.forConfigImport(encode(configFile(scales = listOf(scale)))) },
+        )
+        assertEquals(
+            ImportError.Malformed(MalformedReason.INVALID_PROMPT_WINDOW),
+            importError { decoder.forConfigImport(encode(configFile(windows = listOf(window)))) },
+        )
+    }
+
+    @Test
     fun blankTagNames_areDroppedFromAFullBackupToo() {
         val backup = backupFile().copy(tags = listOf(gym(), gym().copy(id = 2, name = "")))
 

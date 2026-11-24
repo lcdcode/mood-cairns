@@ -16,25 +16,27 @@ internal class JournalPageValidator {
 
     /** A page ready to insert; its preview is left empty for the repository to compute. */
     fun toDoc(dto: JournalDayDto): JournalDoc {
-        val day = parse("day", dto.day) { LocalDate.parse(it) }
-        if (!seen.add(day)) fail(ImportError.Malformed("Day ${dto.day} appears twice"))
+        val day = parse(dto.day, MalformedReason.INVALID_DAY) { LocalDate.parse(it) }
+        if (!seen.add(day)) fail(ImportError.Malformed(MalformedReason.DAYS_OUT_OF_ORDER))
         if (dto.body.length > JournalSql.MAX_BODY_CHARS) {
-            fail(ImportError.Malformed("Page for ${dto.day} is longer than the editor allows"))
+            fail(ImportError.Malformed(MalformedReason.BODY_TOO_LONG))
         }
         return JournalDoc(
             day = day,
-            createdAt = parse("createdAt", dto.createdAt) { Instant.parse(it) },
-            updatedAt = parse("updatedAt", dto.updatedAt) { Instant.parse(it) },
+            createdAt = parse(dto.createdAt, MalformedReason.INVALID_CREATED_AT, Instant::parse),
+            updatedAt = parse(dto.updatedAt, MalformedReason.INVALID_UPDATED_AT, Instant::parse),
             preview = "",
             body = dto.body,
         )
     }
 
-    private fun <T> parse(field: String, value: String, parser: (String) -> T): T = try {
-        parser(value)
-    } catch (_: DateTimeException) {
-        fail(ImportError.Malformed("Invalid $field \"$value\""))
-    }
+    /** The rejected value itself is never reported: it is file content of any size. */
+    private fun <T> parse(value: String, invalid: MalformedReason, parser: (String) -> T): T =
+        try {
+            parser(value)
+        } catch (_: DateTimeException) {
+            fail(ImportError.Malformed(invalid))
+        }
 }
 
 internal fun JournalDoc.toBackupDto() = JournalDayDto(

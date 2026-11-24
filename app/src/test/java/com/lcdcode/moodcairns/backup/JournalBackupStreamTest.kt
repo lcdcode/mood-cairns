@@ -3,6 +3,7 @@ package com.lcdcode.moodcairns.backup
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -192,7 +193,21 @@ class JournalBackupStreamTest {
             w.writeRecord("not json")
             w.finish()
         }
-        assertTrue(failure { readAll(file) } is ImportError.Malformed)
+        val error = failure { readAll(file) }
+        assertEquals(ImportError.Malformed(MalformedReason.RECORD_INVALID), error)
+    }
+
+    @Test
+    fun `a broken record's text never reaches the error`() {
+        // Decoder messages quote the input; the page text must not leak into logs or the UI.
+        val file = backup(emptyList()) { w ->
+            w.writeMeta(meta)
+            w.writeRecord("{\"day\": \"" + "secret page\n\u202E".repeat(5_000))
+            w.finish()
+        }
+        val thrown = assertThrows(BackupImportException::class.java) { readAll(file) }
+        assertEquals(ImportError.Malformed(MalformedReason.RECORD_INVALID), thrown.error)
+        assertFalse(thrown.message.orEmpty().contains("secret"))
     }
 
     @Test

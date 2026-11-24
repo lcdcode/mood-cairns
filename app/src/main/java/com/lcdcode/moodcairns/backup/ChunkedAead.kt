@@ -141,7 +141,7 @@ internal class ChunkDecryptingInputStream(
 
     private fun openNextChunk() {
         val n = readFully(segment)
-        if (n < ChunkedAead.TAG_BYTES) fail(ImportError.Malformed("Journal backup is cut off"))
+        if (n < ChunkedAead.TAG_BYTES) fail(ImportError.Malformed(MalformedReason.CUT_OFF))
         val last = n < segment.size || atEndOfInput()
         val nonce = ChunkedAead.nonce(noncePrefix, counter, last)
         plain = try {

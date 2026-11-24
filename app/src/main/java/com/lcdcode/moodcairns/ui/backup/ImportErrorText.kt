@@ -11,7 +11,7 @@ fun ImportError.toUiText(): UiText = when (this) {
         if (detail == null) {
             UiText.Res(R.string.import_error_unreadable)
         } else {
-            UiText.Res(R.string.import_error_unreadable_detail, listOf(detail))
+            UiText.Res(R.string.import_error_unreadable_detail, listOf(detail.text))
         }
     ImportError.NotABackup -> UiText.Res(R.string.import_error_not_a_backup)
     ImportError.WrongSecretOrCorrupt -> UiText.Res(R.string.import_error_wrong_secret)
@@ -20,6 +20,7 @@ fun ImportError.toUiText(): UiText = when (this) {
     ImportError.NotAJournalBackup -> UiText.Res(R.string.import_error_not_journal)
     is ImportError.UnsupportedVersion ->
         UiText.Res(R.string.import_error_unsupported_version, listOf(found))
-    is ImportError.Malformed -> UiText.Res(R.string.import_error_malformed, listOf(detail))
-    is ImportError.WriteFailed -> UiText.Res(R.string.import_error_write_failed, listOf(detail))
+    is ImportError.Malformed -> UiText.Res(R.string.import_error_malformed, listOf(reason.code))
+    is ImportError.WriteFailed ->
+        UiText.Res(R.string.import_error_write_failed, listOf(detail.text))
 }

@@ -39,9 +39,10 @@ class ImportService @Inject constructor(
             serializer.toEntities(file)
         } catch (e: BackupImportException) {
             return ImportResult.Failure(e.error)
-        } catch (t: Throwable) {
-            // toEntities rejects bad timestamps, slots, etc. in a decrypted file.
-            return ImportResult.Failure(ImportError.Malformed(t.message ?: t.javaClass.simpleName))
+        } catch (_: Throwable) {
+            // toEntities rejects bad timestamps, slots, etc. in a decrypted file. Its message
+            // quotes the rejected value, so it is neither shown nor logged.
+            return ImportResult.Failure(ImportError.Malformed(MalformedReason.CONTENTS_INVALID))
         }
 
         return try {
@@ -85,7 +86,7 @@ class ImportService @Inject constructor(
                 tags = entities.tags.size,
             )
         } catch (t: Throwable) {
-            ImportResult.Failure(ImportError.WriteFailed(t.message ?: t.javaClass.simpleName))
+            ImportResult.Failure(ImportError.WriteFailed(Diagnostic.of(t)))
         }
     }
 }

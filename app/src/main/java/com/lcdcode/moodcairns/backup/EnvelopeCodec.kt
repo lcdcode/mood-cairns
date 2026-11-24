@@ -50,15 +50,15 @@ internal class EnvelopeCodec(private val json: Json) {
         }.getOrNull() ?: fail(ImportError.NotABackup)
 
         if (envelope.kdf != BackupCrypto.KDF_ALGORITHM) {
-            fail(ImportError.Malformed("Unsupported backup KDF ${envelope.kdf}"))
+            fail(ImportError.Malformed(MalformedReason.UNSUPPORTED_KDF))
         }
         if (envelope.iter !in 1..MAX_KDF_ITERATIONS) {
-            fail(ImportError.Malformed("Backup KDF iteration count ${envelope.iter} out of range"))
+            fail(ImportError.Malformed(MalformedReason.KDF_ITERATIONS_OUT_OF_RANGE))
         }
 
-        val salt = decodeField(envelope.salt, "salt")
-        val iv = decodeField(envelope.iv, "IV")
-        val ciphertext = decodeField(envelope.ciphertext, "ciphertext")
+        val salt = decodeField(envelope.salt, MalformedReason.ENVELOPE_SALT)
+        val iv = decodeField(envelope.iv, MalformedReason.ENVELOPE_IV)
+        val ciphertext = decodeField(envelope.ciphertext, MalformedReason.ENVELOPE_CIPHERTEXT)
 
         val key = BackupCrypto.deriveKey(secret, salt, envelope.iter)
         return try {
@@ -70,10 +70,10 @@ internal class EnvelopeCodec(private val json: Json) {
         }
     }
 
-    private fun decodeField(value: String, fieldName: String): ByteArray = try {
+    private fun decodeField(value: String, invalid: MalformedReason): ByteArray = try {
         decoder.decode(value)
     } catch (_: IllegalArgumentException) {
-        fail(ImportError.Malformed("Backup envelope $fieldName is malformed"))
+        fail(ImportError.Malformed(invalid))
     }
 
     companion object {

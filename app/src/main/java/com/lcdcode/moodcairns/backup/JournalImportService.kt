@@ -49,7 +49,6 @@ class JournalImportService @Inject constructor(
         writeFailed(e)
     }
 
-    private fun writeFailed(cause: Exception) = JournalImportResult.Failure(
-        ImportError.WriteFailed(cause.message ?: cause.javaClass.simpleName),
-    )
+    private fun writeFailed(cause: Exception) =
+        JournalImportResult.Failure(ImportError.WriteFailed(Diagnostic.of(cause)))
 }

@@ -2,6 +2,7 @@ package com.lcdcode.moodcairns.backup
 
 import com.lcdcode.moodcairns.data.dao.JournalSql
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -51,6 +52,23 @@ class JournalPageValidatorTest {
         malformed { validator.toDoc(page(body = "a".repeat(JournalSql.MAX_BODY_CHARS + 1))) }
         val atLimit = page(day = "2026-11-03", body = "a".repeat(JournalSql.MAX_BODY_CHARS))
         assertEquals(JournalSql.MAX_BODY_CHARS, validator.toDoc(atLimit).body.length)
+    }
+
+    @Test
+    fun `a rejected value is reported by field, never echoed`() {
+        val hostile = "2026-11-01\n[FAKE] \u202E".repeat(4_000)
+        val cases = mapOf(
+            page(day = hostile) to MalformedReason.INVALID_DAY,
+            page().copy(createdAt = hostile) to MalformedReason.INVALID_CREATED_AT,
+            page().copy(updatedAt = hostile) to MalformedReason.INVALID_UPDATED_AT,
+        )
+        for ((dto, reason) in cases) {
+            val thrown = assertThrows(BackupImportException::class.java) {
+                JournalPageValidator().toDoc(dto)
+            }
+            assertEquals(ImportError.Malformed(reason), thrown.error)
+            assertFalse(thrown.message.orEmpty().contains("FAKE"))
+        }
     }
 
     @Test

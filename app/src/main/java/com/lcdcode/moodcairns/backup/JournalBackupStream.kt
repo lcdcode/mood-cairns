@@ -59,18 +59,18 @@ internal class JournalStreamHeader(
                 fail(ImportError.UnsupportedVersion(version.toInt()))
             }
             if (guarded { data.readByte() } != JournalBackupFormat.KDF_PBKDF2_SHA256) {
-                fail(ImportError.Malformed("Unsupported journal backup KDF"))
+                fail(ImportError.Malformed(MalformedReason.UNSUPPORTED_KDF))
             }
             val iterations = guarded { data.readInt() }
             if (iterations !in 1..EnvelopeCodec.MAX_KDF_ITERATIONS) {
-                fail(ImportError.Malformed("Backup KDF iteration count $iterations out of range"))
+                fail(ImportError.Malformed(MalformedReason.KDF_ITERATIONS_OUT_OF_RANGE))
             }
             val salt = ByteArray(BackupCrypto.SALT_BYTES).also { guarded { data.readFully(it) } }
             val prefix =
                 ByteArray(ChunkedAead.NONCE_PREFIX_BYTES).also { guarded { data.readFully(it) } }
             val chunkSize = guarded { data.readInt() }
             if (chunkSize !in JournalBackupFormat.CHUNK_SIZE_RANGE) {
-                fail(ImportError.Malformed("Journal backup chunk size $chunkSize out of range"))
+                fail(ImportError.Malformed(MalformedReason.CHUNK_SIZE_OUT_OF_RANGE))
             }
             return JournalStreamHeader(iterations, salt, prefix, chunkSize)
         }
@@ -188,20 +188,18 @@ internal class JournalBackupReader(input: InputStream, secret: CharArray) : Clos
         // Draining the chunk stream decrypts any chunk the decompressor did not need, which
         // is what proves the authenticated last chunk was present.
         val moreChunks = guarded { chunks.read() } != END_OF_STREAM
-        if (moreRecords || moreChunks) {
-            fail(ImportError.Malformed("Unexpected data after the last page"))
-        }
-        if (!chunks.isComplete) fail(ImportError.Malformed("Journal backup is cut off"))
+        if (moreRecords || moreChunks) fail(ImportError.Malformed(MalformedReason.TRAILING_DATA))
+        if (!chunks.isComplete) fail(ImportError.Malformed(MalformedReason.CUT_OFF))
     }
 
     override fun close() = inflater.end()
 
     private fun readMeta(): JournalBackupMeta {
-        val record = readRecord() ?: fail(ImportError.Malformed("Journal backup has no header"))
+        val record = readRecord() ?: fail(ImportError.Malformed(MalformedReason.MISSING_METADATA))
         val meta = decode(record, JournalBackupMeta.serializer())
         if (meta.kind != JournalBackupFormat.KIND) fail(ImportError.NotAJournalBackup)
         val version = meta.journalVersion
-            ?: fail(ImportError.Malformed("Journal backup is missing journalVersion"))
+            ?: fail(ImportError.Malformed(MalformedReason.MISSING_JOURNAL_VERSION))
         if (version !in JournalBackupFormat.SUPPORTED_JOURNAL_VERSIONS) {
             fail(ImportError.UnsupportedVersion(version))
         }
@@ -212,7 +210,7 @@ internal class JournalBackupReader(input: InputStream, secret: CharArray) : Clos
         val length = guarded { records.readInt() }
         if (length == JournalBackupFormat.END_OF_RECORDS) return null
         if (length !in 1..JournalBackupFormat.MAX_RECORD_BYTES) {
-            fail(ImportError.Malformed("Journal backup record of $length bytes"))
+            fail(ImportError.Malformed(MalformedReason.RECORD_LENGTH_OUT_OF_RANGE))
         }
         val bytes = ByteArray(length).also { guarded { records.readFully(it) } }
         return String(bytes, Charsets.UTF_8)
@@ -220,10 +218,11 @@ internal class JournalBackupReader(input: InputStream, secret: CharArray) : Clos
 
     private fun <T> decode(record: String, serializer: KSerializer<T>): T = try {
         recordJson.decodeFromString(serializer, record)
-    } catch (e: SerializationException) {
-        fail(ImportError.Malformed(e.message ?: "Unreadable journal backup record"))
-    } catch (e: IllegalArgumentException) {
-        fail(ImportError.Malformed(e.message ?: "Unreadable journal backup record"))
+    } catch (_: SerializationException) {
+        // The exception text quotes the record, so it is never passed on.
+        fail(ImportError.Malformed(MalformedReason.RECORD_INVALID))
+    } catch (_: IllegalArgumentException) {
+        fail(ImportError.Malformed(MalformedReason.RECORD_INVALID))
     }
 
     private companion object {
@@ -247,11 +246,11 @@ private fun deriveAesKey(secret: CharArray, salt: ByteArray, iterations: Int): S
 private inline fun <T> guarded(read: () -> T): T = try {
     read()
 } catch (_: EOFException) {
-    fail(ImportError.Malformed("Journal backup ended early"))
-} catch (e: ZipException) {
-    fail(ImportError.Malformed(e.message ?: "Journal backup data is damaged"))
+    fail(ImportError.Malformed(MalformedReason.ENDED_EARLY))
+} catch (_: ZipException) {
+    fail(ImportError.Malformed(MalformedReason.COMPRESSION_DAMAGED))
 } catch (e: IOException) {
-    fail(ImportError.Unreadable(e.message))
+    fail(ImportError.Unreadable(Diagnostic.of(e)))
 }
 
 private fun fail(error: ImportError): Nothing = throw BackupImportException(error)

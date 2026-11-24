@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lcdcode.moodcairns.BuildConfig
 import com.lcdcode.moodcairns.R
 import com.lcdcode.moodcairns.backup.BackupFileInfo
 import com.lcdcode.moodcairns.backup.BackupSerializer
@@ -21,6 +22,7 @@ import com.lcdcode.moodcairns.backup.JournalImportResult
 import com.lcdcode.moodcairns.backup.JournalImportService
 import com.lcdcode.moodcairns.backup.JournalMarkdown
 import com.lcdcode.moodcairns.backup.JournalMarkdownExporter
+import com.lcdcode.moodcairns.backup.logLabel
 import com.lcdcode.moodcairns.security.LockManager
 import com.lcdcode.moodcairns.security.LockRepository
 import com.lcdcode.moodcairns.settings.BackupReminder
@@ -361,7 +363,7 @@ class BackupViewModel @Inject constructor(
                     listOf(result.entries, result.scales, result.tags, result.windows),
                 )
                 is ImportResult.Failure -> {
-                    Log.w(TAG, "Import failed: ${result.error}")
+                    Log.w(TAG, "Import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
                     UiText.Res(R.string.backup_import_failed, listOf(result.error.toUiText()))
                 }
             }
@@ -383,7 +385,7 @@ class BackupViewModel @Inject constructor(
             is JournalImportResult.Success ->
                 UiText.Plural(R.plurals.backup_journal_import_success, result.days)
             is JournalImportResult.Failure -> {
-                Log.w(TAG, "Journal import failed: ${result.error}")
+                Log.w(TAG, "Journal import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
                 UiText.Res(R.string.backup_journal_import_failed, listOf(result.error.toUiText()))
             }
         }
@@ -413,7 +415,8 @@ class BackupViewModel @Inject constructor(
             Log.w(TAG, "Config import refused: format version ${result.found}")
         is ConfigImportResult.WindowsNotUpdated ->
             Log.w(TAG, "Config imported without prompt windows: ${result.detail}")
-        is ConfigImportResult.Failure -> Log.w(TAG, "Config import failed: ${result.error}")
+        is ConfigImportResult.Failure ->
+            Log.w(TAG, "Config import failed: ${result.error.logLabel(BuildConfig.DEBUG)}")
     }
 
     fun dismissMessage() = _ui.update { it.copy(message = null) }
