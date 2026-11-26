@@ -176,8 +176,16 @@ app/src/main/java/com/moodcairns/
 
 ## License
 
-GPL-3.0-only — see [LICENSE](LICENSE).
+Copyright (C) 2026 lcdcode
+
+Mood Cairns is free software: you can redistribute it and/or modify it under the terms 
+of the GNU General Public License as published by the Free Software Foundation, either 
+version 3 of the License, or (at your option) any later version. It is distributed 
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+FITNESS FOR A PARTICULAR PURPOSE.
+
+See LICENSE for details.
 
 Bundled third-party components and their licenses are listed in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), which is also shown in the app under
-About > Open-source licenses. The build fails if a runtime dependency is missing from it.
+About > Open-source licenses.
